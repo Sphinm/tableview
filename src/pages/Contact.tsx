@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { Mail, MessageSquare, Github, Send, CheckCircle2, HelpCircle } from 'lucide-react';
+import { Mail, MessageSquare, Send, CheckCircle2, HelpCircle } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
+import { GithubIcon } from '../components/icons/GithubIcon';
 import { navigateTo } from '../lib/router';
 
 export const Contact = () => {
@@ -54,7 +55,7 @@ export const Contact = () => {
 
           <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800">
             <div className="size-9 rounded-xl bg-purple-950 text-purple-400 border border-purple-800/60 flex items-center justify-center mb-3">
-              <Github className="size-4" />
+              <GithubIcon className="size-4" />
             </div>
             <h3 className="text-white font-semibold text-sm mb-1">Issue Tracker</h3>
             <p className="text-xs text-slate-400 mb-2">Report bugs or request new features:</p>

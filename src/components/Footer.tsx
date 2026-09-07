@@ -1,5 +1,6 @@
 import { navigateTo } from '../lib/router';
-import { Table, ShieldCheck, Github, BookOpen, Mail, FileText } from 'lucide-react';
+import { Table, ShieldCheck, BookOpen, Mail, FileText } from 'lucide-react';
+import { GithubIcon } from './icons/GithubIcon';
 
 export const Footer = () => {
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
@@ -36,7 +37,7 @@ export const Footer = () => {
               className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors"
               aria-label="GitHub Repository"
             >
-              <Github className="size-4" />
+              <GithubIcon className="size-4" />
             </a>
           </div>
         </div>

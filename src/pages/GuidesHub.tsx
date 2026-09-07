@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { guidesData, GuideItem } from '../data/guides';
+import { guidesData, type GuideItem } from '../data/guides';
 import { navigateTo } from '../lib/router';
 import { BookOpen, Search, Clock, ArrowRight, Sparkles } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';

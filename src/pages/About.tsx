@@ -1,5 +1,6 @@
-import { Cpu, ShieldCheck, Zap, Github, Layers, Lock, Sparkles } from 'lucide-react';
+import { Cpu, ShieldCheck, Zap, Layers, Lock, Sparkles } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
+import { GithubIcon } from '../components/icons/GithubIcon';
 
 export const About = () => {
   return (
@@ -126,7 +127,7 @@ export const About = () => {
           rel="noopener noreferrer"
           className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-colors shrink-0"
         >
-          <Github className="size-4" />
+          <GithubIcon className="size-4" />
           View on GitHub
         </a>
       </div>
