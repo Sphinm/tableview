@@ -106,30 +106,6 @@ export const SeoSection = () => {
           })}
         </div>
       </div>
-
-      {/* Footer */}
-      <footer className="pt-8 border-t border-slate-900 text-center text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4">
-        <div className="flex items-center gap-2">
-          <span className="font-bold text-slate-200">TableView.dev</span>
-          <span>© {new Date().getFullYear()}</span>
-          <span>·</span>
-          <span>Open-Source In-Browser Parquet Viewer & Converter</span>
-        </div>
-
-        <div className="flex items-center gap-4 text-slate-400">
-          <a href="#top" className="hover:text-slate-200 transition-colors">
-            Back to Top
-          </a>
-          <a
-            href="https://github.com/Sphinm/tableview"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-slate-200 transition-colors"
-          >
-            GitHub
-          </a>
-        </div>
-      </footer>
     </section>
   );
 };
