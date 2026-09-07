@@ -10,12 +10,23 @@ export function parseCurrentLocation(): RouteState {
   let raw = window.location.hash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
   if (!raw || raw === '') raw = '/';
 
-  const cleanPath = raw.split('?')[0].split('#')[0];
+  // Strip query strings and hash anchors
+  let cleanPath = raw.split('?')[0].split('#')[0];
+  
+  // Normalize trailing slashes (e.g., /guides/ -> /guides)
+  if (cleanPath.length > 1 && cleanPath.endsWith('/')) {
+    cleanPath = cleanPath.slice(0, -1);
+  }
 
-  // Match /guides/:slug
-  const guideMatch = cleanPath.match(/^\/guides\/([a-zA-Z0-9_-]+)$/);
+  // Match /guides/:slug or /guide/:slug or /articles/:slug or /blog/:slug
+  const guideMatch = cleanPath.match(/^\/(?:guides|guide|docs|blog|articles?)\/([a-zA-Z0-9_-]+)$/);
   if (guideMatch) {
     return { path: '/guides/:slug', slug: guideMatch[1] };
+  }
+
+  // Aliases for guides hub: /guide, /docs, /blog, /articles
+  if (/^\/(?:guides|guide|docs|blog|articles?)$/.test(cleanPath)) {
+    return { path: '/guides' };
   }
 
   return { path: cleanPath };
