@@ -219,7 +219,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             <a
               href="/"
               onClick={(e) => handleNav(e, '/')}
-              className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap ${
                 isWorkbench
                   ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
                   : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
@@ -238,7 +238,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               <button
                 type="button"
                 onClick={toggleParquetDropdown}
-                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none ${
+                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
                   isParquetSection || parquetDropdownOpen
                     ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
                     : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
@@ -330,7 +330,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               <button
                 type="button"
                 onClick={toggleCalcDropdown}
-                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none ${
+                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
                   isCalculatorSection || calcDropdownOpen
                     ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
                     : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
@@ -412,7 +412,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             <a
               href="/guides"
               onClick={(e) => handleNav(e, '/guides')}
-              className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 ${
+              className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap ${
                 isGuides
                   ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
                   : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
@@ -421,43 +421,11 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               <BookOpen className="size-4" />
               Guides
             </a>
-
-            {/* 5. About */}
-            <a
-              href="/about"
-              onClick={(e) => handleNav(e, '/about')}
-              className={`hidden lg:flex px-3 py-1.5 rounded-lg transition-colors items-center gap-1.5 ${
-                isAbout
-                  ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
-              }`}
-            >
-              <Info className="size-4" />
-              About
-            </a>
-
-            {/* 6. Contact */}
-            <a
-              href="/contact"
-              onClick={(e) => handleNav(e, '/contact')}
-              className={`hidden lg:flex px-3 py-1.5 rounded-lg transition-colors items-center gap-1.5 ${
-                isContact
-                  ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
-              }`}
-            >
-              <MessageSquare className="size-4" />
-              Contact
-            </a>
           </nav>
         </div>
 
         {/* Right action buttons */}
         <div className="flex items-center gap-2.5">
-          <div className="hidden lg:inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-xs font-medium text-emerald-600 dark:text-emerald-400">
-            <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-            <span>100% Client Sandbox</span>
-          </div>
 
           {onTrySample && (
             <button
