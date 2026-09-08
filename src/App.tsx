@@ -3,6 +3,8 @@ import * as Sentry from '@sentry/react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { DropZone } from './components/DropZone';
+import { HeroSection } from './components/HeroSection';
+import { CompareSection } from './components/CompareSection';
 import { DataView } from './components/DataView';
 import { SeoSection } from './components/SeoSection';
 import { GuidesHub } from './pages/GuidesHub';
@@ -135,13 +137,25 @@ export function App() {
               onReset={handleReset}
             />
           ) : (
-            <DropZone
-              onFileSelected={handleFileSelected}
-              onTrySample={handleTrySample}
-              isLoading={isLoading}
-              loadingStatus={loadingStatus}
-              toolConfig={activeToolConfig}
-            />
+            <>
+              {activeToolConfig ? (
+                <DropZone
+                  onFileSelected={handleFileSelected}
+                  onTrySample={handleTrySample}
+                  isLoading={isLoading}
+                  loadingStatus={loadingStatus}
+                  toolConfig={activeToolConfig}
+                />
+              ) : (
+                <HeroSection
+                  onFileSelected={handleFileSelected}
+                  onTrySample={handleTrySample}
+                  isLoading={isLoading}
+                  loadingStatus={loadingStatus}
+                />
+              )}
+              <CompareSection />
+            </>
           )}
 
           {!currentTable && <SeoSection toolConfig={activeToolConfig} />}
