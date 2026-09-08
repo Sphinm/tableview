@@ -1,5 +1,5 @@
 import { useState, useRef, type DragEvent, type ChangeEvent } from 'react';
-import { UploadCloud, FileSpreadsheet, Lock, Zap, Sparkles } from 'lucide-react';
+import { UploadCloud, Sparkles, FolderOpen, ShieldCheck } from 'lucide-react';
 import { type ToolConfig } from '../data/tools';
 import { navigateTo } from '../lib/router';
 
@@ -24,11 +24,11 @@ export const DropZone = ({
   const activeToolSlug = toolConfig?.slug;
 
   const quickTools = [
+    { slug: '', name: 'All-in-One', path: '/' },
     { slug: 'parquet-viewer', name: 'Parquet Viewer', path: '/parquet-viewer' },
     { slug: 'parquet-to-excel', name: 'Parquet to Excel', path: '/parquet-to-excel' },
     { slug: 'parquet-to-csv', name: 'Parquet to CSV', path: '/parquet-to-csv' },
     { slug: 'csv-to-parquet', name: 'CSV to Parquet', path: '/csv-to-parquet' },
-    { slug: 'json-to-parquet', name: 'JSON to Parquet', path: '/json-to-parquet' },
     { slug: 'parquet-schema-inspector', name: 'Schema Inspector', path: '/parquet-schema-inspector' }
   ];
 
@@ -57,159 +57,163 @@ export const DropZone = ({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4 py-8 sm:py-12">
-      {/* Tool Navigation Switcher Pills */}
-      <div className="flex items-center justify-center gap-1.5 flex-wrap mb-8">
-        <button
-          onClick={() => navigateTo('/')}
-          className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-            !activeToolSlug
-              ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
-              : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80'
-          }`}
-        >
-          All-in-One Workbench
-        </button>
-        {quickTools.map(tool => (
-          <button
-            key={tool.slug}
-            onClick={() => navigateTo(tool.path)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
-              activeToolSlug === tool.slug
-                ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
-                : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80'
-            }`}
-          >
-            {tool.name}
-          </button>
-        ))}
-      </div>
-
-      {/* Hero title & intro */}
-      <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 border border-slate-800 text-slate-300 text-xs mb-4 shadow-inner">
-          <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>{toolConfig?.badge || 'DuckDB-Wasm v1.1.3 · In-Browser Analytics · 100% Client-Side'}</span>
+    <div className="w-full max-w-5xl mx-auto px-4 pt-10 pb-16">
+      {/* Hero Header */}
+      <div className="text-center max-w-3xl mx-auto mb-10">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-300 text-xs font-medium mb-5 shadow-sm">
+          <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span>{toolConfig?.badge || 'In-Browser DuckDB-Wasm · 100% Client-Side Privacy'}</span>
         </div>
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1] mb-5">
           {toolConfig ? (
             <>
               {toolConfig.h1} <span className="text-indigo-400">{toolConfig.h1Highlight}</span>
             </>
           ) : (
             <>
-              Open & Convert Parquet Files <span className="text-indigo-400">Privately</span>
+              The In-Browser <span className="text-indigo-400">Parquet Workbench</span>
             </>
           )}
         </h1>
-        <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          {toolConfig?.subtitle || (
-            <>
-              Drop any <code className="text-indigo-300 font-mono text-xs bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-900">.parquet</code>,{' '}
-              <code className="text-indigo-300 font-mono text-xs bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-900">.csv</code> or{' '}
-              <code className="text-indigo-300 font-mono text-xs bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-900">.json</code> file to preview rows, profile column schemas, and export directly to <strong className="text-slate-200">Excel (.xlsx)</strong>, CSV, or Parquet.
-            </>
-          )}
+
+        <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto">
+          {toolConfig?.subtitle ||
+            'Open, inspect schemas, query with DuckDB SQL, and convert Parquet, CSV & JSON to Excel. Runs entirely in your local browser memory with zero server uploads.'}
         </p>
       </div>
 
-      {/* Main Drag & Drop Zone */}
-      <div
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        onClick={() => !isLoading && fileInputRef.current?.click()}
-        className={`relative group rounded-3xl border-2 border-dashed transition-all duration-200 p-8 sm:p-12 text-center cursor-pointer overflow-hidden ${
-          isDragOver
-            ? 'border-indigo-400 bg-indigo-950/30 scale-[1.01] shadow-2xl shadow-indigo-500/10'
-            : 'border-slate-800 hover:border-slate-700 bg-slate-900/40 hover:bg-slate-900/70'
-        }`}
-      >
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          accept={toolConfig?.acceptExtensions || '.parquet,.geoparquet,.csv,.tsv,.json,.jsonl,.ndjson'}
-          className="hidden"
-          disabled={isLoading}
-        />
-
-        {isLoading ? (
-          <div className="py-8 flex flex-col items-center justify-center space-y-4">
-            <div className="size-12 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin" />
-            <p className="text-base font-medium text-slate-200">{loadingStatus}</p>
-            <p className="text-xs text-slate-400">Loading DuckDB Wasm and indexing column pages...</p>
+      {/* Main Workbench Window Card */}
+      <div className="rounded-2xl border border-slate-800 bg-slate-900/80 shadow-2xl backdrop-blur-xl overflow-hidden">
+        {/* Window Titlebar & Integrated Tool Navigation */}
+        <div className="border-b border-slate-800/80 bg-slate-950/60 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+          {/* macOS window control dots */}
+          <div className="hidden sm:flex items-center gap-1.5">
+            <span className="size-2.5 rounded-full bg-slate-800 border border-slate-700/60" />
+            <span className="size-2.5 rounded-full bg-slate-800 border border-slate-700/60" />
+            <span className="size-2.5 rounded-full bg-slate-800 border border-slate-700/60" />
+            <span className="text-[11px] font-mono text-slate-400 ml-2">tableview-workbench</span>
           </div>
-        ) : (
-          <div className="space-y-4">
-            <div className="mx-auto size-16 rounded-2xl bg-gradient-to-b from-indigo-500/10 to-indigo-500/20 border border-indigo-500/30 flex items-center justify-center group-hover:scale-105 transition-transform">
-              <UploadCloud className="size-8 text-indigo-400" />
-            </div>
 
-            <div>
-              <p className="text-lg font-semibold text-white">
-                Drag and drop your file here, or{' '}
-                <span className="text-indigo-400 underline underline-offset-4 group-hover:text-indigo-300">
-                  browse files
-                </span>
-              </p>
-              <p className="text-xs text-slate-400 mt-1">
-                {toolConfig?.acceptLabel || 'Supports Apache Parquet (.parquet), CSV, TSV, JSON, JSON Lines. Fast even with large files.'}
-              </p>
-            </div>
-
-            <div className="pt-2 flex flex-wrap items-center justify-center gap-2">
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onTrySample();
-                }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold text-indigo-300 bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-800/80 shadow-sm hover:shadow transition-all cursor-pointer"
-              >
-                <Sparkles className="size-3.5 text-indigo-400" />
-                No file ready? Try 1,000-Row Sample Dataset
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Trust & Feature Badges */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
-        <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-emerald-950/60 text-emerald-400 border border-emerald-800/40 shrink-0">
-            <Lock className="size-5" />
-          </div>
-          <div>
-            <h2 className="text-sm font-semibold text-slate-200">100% In-Browser Privacy</h2>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-              Your files never touch our servers. Execution happens on your local CPU via WebAssembly.
-            </p>
+          {/* Integrated Tool Selector Tabs */}
+          <div className="flex items-center gap-1 overflow-x-auto w-full sm:w-auto py-0.5">
+            {quickTools.map(tool => {
+              const isActive = (!activeToolSlug && tool.slug === '') || activeToolSlug === tool.slug;
+              return (
+                <button
+                  key={tool.slug}
+                  onClick={() => navigateTo(tool.path)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                    isActive
+                      ? 'bg-indigo-600 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                  }`}
+                >
+                  {tool.name}
+                </button>
+              );
+            })}
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-indigo-950/60 text-indigo-400 border border-indigo-800/40 shrink-0">
-            <FileSpreadsheet className="size-5" />
-          </div>
-          <div>
-            <h2 className="text-sm font-semibold text-slate-200">Convert to Excel & CSV</h2>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-              Export directly to native Microsoft Excel (.xlsx) or CSV with accurate column types and headers.
-            </p>
+        {/* Drop Zone Area */}
+        <div className="p-4 sm:p-8">
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={() => !isLoading && fileInputRef.current?.click()}
+            className={`relative rounded-xl border-2 border-dashed transition-all duration-200 p-8 sm:p-14 text-center cursor-pointer overflow-hidden ${
+              isDragOver
+                ? 'border-indigo-400 bg-indigo-950/30 scale-[1.005] shadow-2xl shadow-indigo-500/10'
+                : 'border-slate-800 hover:border-slate-700 bg-slate-950/40 hover:bg-slate-950/70'
+            }`}
+          >
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept={toolConfig?.acceptExtensions || '.parquet,.geoparquet,.csv,.tsv,.json,.jsonl,.ndjson'}
+              className="hidden"
+              disabled={isLoading}
+            />
+
+            {isLoading ? (
+              <div className="py-8 flex flex-col items-center justify-center space-y-4">
+                <div className="size-12 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin" />
+                <p className="text-base font-semibold text-white">{loadingStatus}</p>
+                <p className="text-xs text-slate-400">Loading DuckDB-Wasm engine and indexing pages...</p>
+              </div>
+            ) : (
+              <div className="space-y-5 max-w-xl mx-auto">
+                <div className="mx-auto size-14 rounded-2xl bg-indigo-950/70 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-sm">
+                  <UploadCloud className="size-7" />
+                </div>
+
+                <div>
+                  <p className="text-lg font-bold text-white tracking-tight">
+                    Drag and drop your file here, or{' '}
+                    <span className="text-indigo-400 underline underline-offset-4 hover:text-indigo-300">
+                      browse
+                    </span>
+                  </p>
+                  <p className="text-xs text-slate-400 mt-1.5">
+                    {toolConfig?.acceptLabel ||
+                      'Supports Apache Parquet (.parquet), GeoParquet, CSV, TSV, JSON, JSON Lines'}
+                  </p>
+                </div>
+
+                {/* Primary Action Buttons */}
+                <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      fileInputRef.current?.click();
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 transition-all cursor-pointer"
+                  >
+                    <FolderOpen className="size-4" />
+                    Choose Local File
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onTrySample();
+                    }}
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 shadow-sm transition-all cursor-pointer"
+                  >
+                    <Sparkles className="size-3.5 text-indigo-400" />
+                    Try 1,000-Row Sample
+                  </button>
+                </div>
+
+                {/* Supported Format Badges */}
+                <div className="pt-3 flex items-center justify-center gap-2 flex-wrap">
+                  {['.parquet', '.geoparquet', '.csv', '.tsv', '.json', '.jsonl'].map(ext => (
+                    <span
+                      key={ext}
+                      className="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-900/80 text-slate-400 border border-slate-800"
+                    >
+                      {ext}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
-        <div className="p-4 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-start gap-3">
-          <div className="p-2 rounded-lg bg-purple-950/60 text-purple-400 border border-purple-800/40 shrink-0">
-            <Zap className="size-5" />
+        {/* Workbench Bottom Bar with Privacy Assurance */}
+        <div className="border-t border-slate-800/80 bg-slate-950/60 px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+          <div className="flex items-center gap-2 text-emerald-400 font-medium">
+            <ShieldCheck className="size-4 shrink-0" />
+            <span>100% In-Browser Privacy: Files never leave your local device memory</span>
           </div>
-          <div>
-            <h2 className="text-sm font-semibold text-slate-200">Instant SQL Workbench</h2>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-              Run lightning-fast DuckDB SQL queries with aggregates, filters, and schema inspection.
-            </p>
+          <div className="text-[11px] text-slate-400 font-mono">
+            Powered by DuckDB-Wasm v1.1.3
           </div>
         </div>
       </div>

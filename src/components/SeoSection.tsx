@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { ChevronDown, ShieldCheck, Cpu, HardDriveDownload, Zap, Table } from 'lucide-react';
-import { type ToolConfig } from '../data/tools';
+import { ChevronDown, ShieldCheck, Cpu, HardDriveDownload, Table, CheckCircle2, ArrowRight } from 'lucide-react';
+import { type ToolConfig, TOOLS_CONFIG } from '../data/tools';
+import { navigateTo } from '../lib/router';
 
 interface SeoSectionProps {
   toolConfig?: ToolConfig;
@@ -11,70 +12,32 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
 
   const defaultFaqs = [
     {
-      q: 'Do my Parquet or CSV files leave my browser?',
-      a: 'No. TableView processes 100% of your data locally on your machine using DuckDB WebAssembly (Wasm). Your files and data rows are never uploaded, sent over the network, or stored on any server. You can even disconnect your Wi-Fi after the page loads and continue opening and converting files.'
+      q: 'Do my Parquet, CSV, or JSON files leave my computer?',
+      a: 'No, absolutely not. TableView executes 100% of its data ingestion, query compilation, and export serialization locally using DuckDB WebAssembly (Wasm). Your files and row values never touch external cloud servers. You can even disconnect your internet after the page loads and continue working completely offline.'
     },
     {
-      q: 'How do I convert a Parquet file to Excel (.xlsx)?',
-      a: 'Simply drag and drop your .parquet file into TableView, wait 1 second for the table preview to render, and click the green "Export to Excel (.xlsx)" button. TableView converts your columnar data directly into a native Microsoft Excel workbook with proper column names and types.'
+      q: 'How do I convert an Apache Parquet file to Excel (.xlsx)?',
+      a: 'Simply drag and drop your .parquet file onto TableView, wait a moment for the in-browser schema detection, and click "Export Excel (.xlsx)". The application converts the columnar Arrow buffers into a native Microsoft Excel workbook with correct headers and cell formats.'
     },
     {
       q: 'Can I convert CSV or JSON files into compressed Apache Parquet (.parquet)?',
-      a: 'Yes! TableView allows reverse conversion: drop any CSV, TSV, or JSON file, and click "Convert to Parquet (ZSTD)". The file is compressed and formatted directly on your computer.'
+      a: 'Yes! TableView includes a reverse converter: drop any .csv, .tsv, or .json file, select "Convert to Parquet (ZSTD)", and your browser will generate an optimized Apache Parquet file using DuckDB’s native columnar engine.'
     },
     {
-      q: 'What is the file size limit?',
-      a: 'Because TableView uses Apache Parquet column-pruning and DuckDB streaming, it can comfortably open and query files up to several hundred megabytes (and millions of rows) depending on your device RAM. Only the metadata and visible pages are materialized in memory.'
+      q: 'What is the maximum file size supported?',
+      a: 'Because Apache Parquet stores data in columnar chunks and DuckDB streams metadata and pages on-demand, TableView can comfortably explore files up to several hundred megabytes (and millions of rows) depending on your device RAM.'
     },
     {
-      q: 'What formats does TableView support?',
-      a: 'TableView natively supports Apache Parquet (.parquet), GeoParquet, Comma-Separated Values (.csv, .tsv), and JSON / JSON Lines (.json, .jsonl, .ndjson).'
-    },
-    {
-      q: 'Can I write SQL queries over my local Parquet files?',
-      a: 'Yes! Toggle to the "SQL Console" tab in the workbench to run standard DuckDB SQL queries—including filters (WHERE), aggregations (GROUP BY), joins, sorting, and window functions—directly against your local dataset.'
+      q: 'Can I execute custom SQL queries against my local files?',
+      a: 'Yes. Switch to the "SQL Console" tab in the workbench to run standard analytical SQL queries—including WHERE filters, GROUP BY aggregations, window functions, and JOINs—directly over your local dataset.'
     }
   ];
 
   const faqs = toolConfig?.faqs || defaultFaqs;
 
-  const getFeatureIcon = (iconName: string) => {
-    switch (iconName) {
-      case 'shield':
-        return <ShieldCheck className="size-5" />;
-      case 'cpu':
-        return <Cpu className="size-5" />;
-      case 'download':
-        return <HardDriveDownload className="size-5" />;
-      case 'zap':
-        return <Zap className="size-5" />;
-      case 'table':
-      default:
-        return <Table className="size-5" />;
-    }
-  };
+  const toolsList = Object.values(TOOLS_CONFIG);
 
-  const defaultFeatures = [
-    {
-      icon: 'cpu' as const,
-      title: 'Powered by DuckDB-Wasm',
-      description: 'Runs an in-process analytical SQL database directly inside your browser tab. Zero network latency, instant schema discovery, and multithreaded query speed.'
-    },
-    {
-      icon: 'shield' as const,
-      title: 'Confidential & Compliant',
-      description: 'Ideal for HIPAA, GDPR, and enterprise production logs. Sensitive customer data stays safely enclosed within your local browser memory sandbox.'
-    },
-    {
-      icon: 'download' as const,
-      title: 'Multi-Format Conversion',
-      description: 'Easily transform complex columnar schemas from AWS S3, Snowflake, or Databricks into clean, formatted Excel (.xlsx), CSV, or Parquet with ZSTD compression.'
-    }
-  ];
-
-  const features = toolConfig?.features || defaultFeatures;
-
-  // Generate FAQPage JSON-LD for rich snippets
+  // Generate FAQPage JSON-LD for search engine rich snippets
   const faqSchema = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -89,39 +52,205 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
   };
 
   return (
-    <section className="w-full max-w-5xl mx-auto px-4 py-16 border-t border-slate-900 mt-12">
+    <section className="w-full max-w-6xl mx-auto px-4 py-16 border-t border-slate-900 mt-6">
       {/* FAQ Schema Script Injection */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
-      {/* How it works grid */}
-      <div className="text-center mb-12">
-        <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-          {toolConfig ? `Why Use Our ${toolConfig.title}?` : 'Built for Fast, Private Data Inspection'}
-        </h2>
-        <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto">
-          No need to open a Jupyter notebook, spin up Python Pandas, or install heavy desktop software just to view, convert, or profile datasets.
-        </p>
+      {/* Bento Grid: Core Product Capabilities */}
+      <div className="mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3">
+            Engineered for Modern Data Engineering
+          </h2>
+          <p className="text-sm sm:text-base text-slate-400">
+            No heavy desktop installations, no Python dependencies, and zero security compromises.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Card 1: Vectorized SQL (Wide: 2 cols) */}
+          <div className="md:col-span-2 p-6 sm:p-8 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between relative overflow-hidden">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="size-8 rounded-lg bg-indigo-950/80 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+                  <Cpu className="size-4.5" />
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">
+                  Vectorized Query Engine
+                </span>
+              </div>
+
+              <h3 className="text-lg sm:text-xl font-bold text-white mb-2">
+                Embedded DuckDB-Wasm Processing
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-xl mb-4">
+                Executes columnar SQL directly on your local CPU via WebAssembly SIMD. Run group-by aggregations, string filters, and window functions over hundreds of thousands of rows in milliseconds.
+              </p>
+            </div>
+
+            {/* Code Snippet Preview */}
+            <div className="rounded-xl bg-slate-950 border border-slate-800/80 p-4 font-mono text-[11px] text-slate-300 overflow-x-auto shadow-inner">
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/60 text-slate-400 text-[10px]">
+                <span>duckdb-wasm-interactive-query</span>
+                <span className="text-emerald-400 font-mono">⚡ 4ms execution</span>
+              </div>
+              <p className="text-indigo-400">SELECT <span className="text-slate-200">category, count(*), round(avg(amount), 2) AS avg_rev</span></p>
+              <p className="text-indigo-400">FROM <span className="text-amber-300">parquet_scan('dataset.parquet')</span></p>
+              <p className="text-indigo-400">WHERE <span className="text-slate-200">status = 'COMPLETED'</span></p>
+              <p className="text-indigo-400">GROUP BY <span className="text-slate-200">1</span> ORDER BY <span className="text-slate-200">2 DESC LIMIT 5;</span></p>
+            </div>
+          </div>
+
+          {/* Card 2: Air-Gapped Privacy */}
+          <div className="p-6 sm:p-8 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="size-8 rounded-lg bg-emerald-950/80 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
+                  <ShieldCheck className="size-4.5" />
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-emerald-400">
+                  Zero Telemetry
+                </span>
+              </div>
+
+              <h3 className="text-lg font-bold text-white mb-2">
+                100% Air-Gapped Privacy
+              </h3>
+              <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                Confidential financial ledgers, HIPAA clinical databases, and internal logs never exit your machine.
+              </p>
+            </div>
+
+            <ul className="space-y-2 pt-2 border-t border-slate-800/60 text-xs text-slate-300">
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
+                <span>Zero server file uploads</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
+                <span>Works offline without Wi-Fi</span>
+              </li>
+              <li className="flex items-center gap-2">
+                <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
+                <span>In-memory sandbox lifecycle</span>
+              </li>
+            </ul>
+          </div>
+
+          {/* Card 3: Two-Way Conversion */}
+          <div className="p-6 sm:p-8 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="size-8 rounded-lg bg-purple-950/80 border border-purple-500/30 flex items-center justify-center text-purple-400">
+                  <HardDriveDownload className="size-4.5" />
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-purple-400">
+                  Bi-Directional
+                </span>
+              </div>
+
+              <h3 className="text-lg font-bold text-white mb-2">
+                Two-Way Conversion
+              </h3>
+              <p className="text-xs text-slate-400 leading-relaxed mb-4">
+                Export Parquet to native Microsoft Excel (.xlsx) or CSV, or compress bulky text CSV/JSON files into high-ratio ZSTD Parquet.
+              </p>
+            </div>
+
+            <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] font-mono text-slate-400 flex items-center justify-center gap-2">
+              <span className="text-indigo-400">.parquet</span>
+              <span>⇄</span>
+              <span className="text-emerald-400">.xlsx</span>
+              <span>⇄</span>
+              <span className="text-slate-300">.csv</span>
+            </div>
+          </div>
+
+          {/* Card 4: Schema Profiling & DDL (Wide: 2 cols) */}
+          <div className="md:col-span-2 p-6 sm:p-8 rounded-2xl bg-slate-900/60 border border-slate-800 flex flex-col justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-3">
+                <div className="size-8 rounded-lg bg-cyan-950/80 border border-cyan-500/30 flex items-center justify-center text-cyan-400">
+                  <Table className="size-4.5" />
+                </div>
+                <span className="text-xs font-semibold uppercase tracking-wider text-cyan-400">
+                  Statistical Profiling
+                </span>
+              </div>
+
+              <h3 className="text-lg font-bold text-white mb-2">
+                Deep Schema & Null Auditing
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-xl">
+                Inspect physical and logical column types, unique cardinality, minimum/maximum values, and null percentage metrics. Extract ready-to-run SQL DDL (<code className="text-cyan-300 font-mono">CREATE TABLE</code>) in a single click.
+              </p>
+            </div>
+
+            <div className="mt-4 flex items-center gap-2 flex-wrap">
+              <span className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+                Data Types
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+                Null % Warnings
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+                Approx Cardinality
+              </span>
+              <span className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+                Instant DDL Generation
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
-        {features.map((feat, idx) => (
-          <div key={idx} className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80">
-            <div className="size-10 rounded-xl bg-indigo-950/80 text-indigo-400 border border-indigo-800/60 flex items-center justify-center mb-4">
-              {getFeatureIcon(feat.icon)}
+      {/* Tools Suite Directory */}
+      <div className="mb-20">
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight mb-2">
+            Free Dedicated Online Data Tools
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400">
+            Select a specialized tool below to start viewing, converting, or inspecting your datasets.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {toolsList.map((tool) => (
+            <div
+              key={tool.slug}
+              onClick={() => navigateTo(tool.path)}
+              className="p-5 rounded-2xl bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800/80 hover:border-indigo-500/40 transition-all cursor-pointer group flex flex-col justify-between"
+            >
+              <div>
+                <div className="flex items-center justify-between mb-2.5">
+                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-800/60">
+                    {tool.badge.split('·')[0].trim()}
+                  </span>
+                  <ArrowRight className="size-4 text-slate-400 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                </div>
+                <h3 className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors mb-1.5">
+                  {tool.title}
+                </h3>
+                <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
+                  {tool.metaDescription}
+                </p>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-slate-800/60 text-[11px] font-medium text-indigo-400 flex items-center gap-1">
+                <span>Launch Tool</span>
+                <span>→</span>
+              </div>
             </div>
-            <h3 className="text-base font-semibold text-white mb-2">{feat.title}</h3>
-            <p className="text-xs text-slate-400 leading-relaxed">
-              {feat.description}
-            </p>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
 
       {/* FAQ Section */}
-      <div className="max-w-3xl mx-auto mb-16">
+      <div className="max-w-3xl mx-auto mb-12">
         <h2 className="text-xl sm:text-2xl font-bold text-white text-center mb-6">
           Frequently Asked Questions
         </h2>
