@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 
 interface AdSlotProps {
+  client?: string;
   slot?: string;
   format?: 'auto' | 'fluid' | 'rectangle';
   className?: string;
@@ -8,6 +9,7 @@ interface AdSlotProps {
 }
 
 export const AdSlot = ({
+  client = 'ca-pub-3414270480046504',
   slot = '0000000000',
   format = 'auto',
   className = '',
@@ -33,7 +35,7 @@ export const AdSlot = ({
         <ins
           className="adsbygoogle block w-full text-center"
           style={{ display: 'block' }}
-          data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+          data-ad-client={client}
           data-ad-slot={slot}
           data-ad-format={format}
           data-full-width-responsive="true"

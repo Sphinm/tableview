@@ -95,6 +95,12 @@ export function App() {
     setErrorMessage(null);
     setLoadingStatus('Generating 1,000-row sample e-commerce dataset in memory...');
 
+    // If invoked from an informational page, guide, or calculator, navigate to the workbench
+    if (path !== '/') {
+      navigateTo('/');
+    }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
     try {
       const res = await generateSampleParquet();
       setCurrentTable(res.tableName);

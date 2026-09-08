@@ -343,22 +343,46 @@ export const Footer = ({ onTrySample }: FooterProps) => {
             </h4>
             <ul className="space-y-2.5">
               <li>
-                <span className="text-slate-300 font-medium block">100% Client WebAssembly</span>
-                <span className="text-[11px] text-slate-400 block mt-0.5">
-                  Decodes Snappy, GZIP, and ZSTD blocks directly in memory.
-                </span>
+                <a
+                  href="/guides/duckdb-wasm-in-browser-olap"
+                  onClick={(e) => handleNav(e, '/guides/duckdb-wasm-in-browser-olap')}
+                  className="group block"
+                >
+                  <span className="text-slate-300 group-hover:text-slate-100 font-medium block transition-colors">
+                    100% Client WebAssembly
+                  </span>
+                  <span className="text-[11px] text-slate-400 group-hover:text-slate-300 block mt-0.5 transition-colors">
+                    Decodes Snappy, GZIP, and ZSTD blocks directly in memory.
+                  </span>
+                </a>
               </li>
               <li>
-                <span className="text-slate-300 font-medium block">Zero Cloud Egress</span>
-                <span className="text-[11px] text-slate-400 block mt-0.5">
-                  No files or row samples are ever uploaded to any backend.
-                </span>
+                <a
+                  href="/privacy"
+                  onClick={(e) => handleNav(e, '/privacy')}
+                  className="group block"
+                >
+                  <span className="text-slate-300 group-hover:text-slate-100 font-medium block transition-colors">
+                    Zero Cloud Egress
+                  </span>
+                  <span className="text-[11px] text-slate-400 group-hover:text-slate-300 block mt-0.5 transition-colors">
+                    No files or row samples are ever uploaded to any backend.
+                  </span>
+                </a>
               </li>
               <li>
-                <span className="text-slate-300 font-medium block">60 FPS Virtual Windowing</span>
-                <span className="text-[11px] text-slate-400 block mt-0.5">
-                  DOM virtualization handles hundreds of thousands of rows smoothly.
-                </span>
+                <a
+                  href="/about"
+                  onClick={(e) => handleNav(e, '/about')}
+                  className="group block"
+                >
+                  <span className="text-slate-300 group-hover:text-slate-100 font-medium block transition-colors">
+                    60 FPS Virtual Windowing
+                  </span>
+                  <span className="text-[11px] text-slate-400 group-hover:text-slate-300 block mt-0.5 transition-colors">
+                    DOM virtualization handles hundreds of thousands of rows smoothly.
+                  </span>
+                </a>
               </li>
             </ul>
           </div>
