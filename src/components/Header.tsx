@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Table, ShieldCheck, Sparkles, Menu, X, BookOpen, Info, MessageSquare, Sun, Moon, RefreshCw, Calculator } from 'lucide-react';
+import { Table, ShieldCheck, Sparkles, Menu, X, BookOpen, Info, MessageSquare, Sun, Moon, RefreshCw, Calculator, Home } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 
 interface HeaderProps {
@@ -21,7 +21,8 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
 
   const navItems = [
     { label: 'Workbench', path: '/', isHome: true },
-    { label: 'Calculator', path: '/calculator', icon: Calculator },
+    { label: 'Mortgage', path: '/mortgage-calculator', icon: Home },
+    { label: 'Finance Calcs', path: '/finance-calculator', icon: Calculator },
     { label: 'Guides', path: '/guides', icon: BookOpen },
     { label: 'About', path: '/about', icon: Info },
     { label: 'Contact', path: '/contact', icon: MessageSquare }

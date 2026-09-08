@@ -111,9 +111,14 @@ export function parseCurrentLocation(): RouteState {
     return { path: '/' };
   }
 
-  // Calculator route & aliases
-  if (/^\/(?:calculator|mortgage-calculator|finance-calculator)$/.test(cleanPath)) {
-    return { path: '/calculator' };
+  // Dedicated Mortgage Calculator route & aliases
+  if (/^\/(?:mortgage-calculator|mortgage)$/.test(cleanPath)) {
+    return { path: '/mortgage-calculator' };
+  }
+
+  // Financial Calculators Hub route & aliases
+  if (/^\/(?:finance-calculator|calculators|financial-calculators|calculator)$/.test(cleanPath)) {
+    return { path: '/finance-calculator' };
   }
 
   return { path: cleanPath };

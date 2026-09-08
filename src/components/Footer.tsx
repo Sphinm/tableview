@@ -226,13 +226,25 @@ export const Footer = ({ onTrySample }: FooterProps) => {
               </li>
               <li>
                 <a
-                  href="/calculator"
-                  onClick={(e) => handleNav(e, '/calculator')}
+                  href="/mortgage-calculator"
+                  onClick={(e) => handleNav(e, '/mortgage-calculator')}
                   className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
                 >
                   <span>Mortgage Calculator</span>
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 opacity-80 group-hover:opacity-100 font-mono">
                     New
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/finance-calculator"
+                  onClick={(e) => handleNav(e, '/finance-calculator')}
+                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
+                >
+                  <span>Financial Calculators</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 opacity-80 group-hover:opacity-100 font-mono">
+                    Suite
                   </span>
                 </a>
               </li>

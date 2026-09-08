@@ -14,6 +14,7 @@ import { Contact } from './pages/Contact';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
 import { MortgageCalculator } from './pages/MortgageCalculator';
+import { FinanceCalculatorHub } from './pages/FinanceCalculatorHub';
 import { loadFileIntoDuckDB, generateSampleParquet } from './lib/duckdb';
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
 import { TOOLS_CONFIG } from './data/tools';
@@ -184,8 +185,12 @@ export function App() {
       case '/terms':
         return <TermsOfService />;
 
-      case '/calculator':
+      case '/mortgage-calculator':
         return <MortgageCalculator onTrySample={handleTrySample} />;
+
+      case '/finance-calculator':
+      case '/calculator':
+        return <FinanceCalculatorHub />;
 
       default:
         return (

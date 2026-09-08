@@ -31,9 +31,9 @@ interface MortgageCalculatorProps {
 export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => {
   useEffect(() => {
     updatePageMeta(
-      'Mortgage & Finance Calculator - Free In-Browser Payment & Amortization Tool | TableView.dev',
+      'Mortgage Calculator - Real Estate Home Loan & Amortization Tool | TableView.dev',
       'Free, 100% private in-browser mortgage calculator. Calculate monthly payments with PMI, property taxes, home insurance, and HOA fees. Includes interactive amortization schedules and Excel/CSV export.',
-      '/calculator'
+      '/mortgage-calculator'
     );
   }, []);
 
@@ -203,7 +203,15 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
             <span>100% In-Browser Private Calculator · Zero Cloud Egress</span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={() => navigateTo('/finance-calculator')}
+              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-800 text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+            >
+              <span>Auto, Loan & Savings Calcs</span>
+              <ArrowRight className="size-3" />
+            </button>
+
             <button
               onClick={() => setBuyOrRefi('buy')}
               className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
@@ -212,7 +220,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                   : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-100'
               }`}
             >
-              Purchase / Buy Home
+              Buy Home
             </button>
             <button
               onClick={() => setBuyOrRefi('refi')}
@@ -222,7 +230,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                   : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-100'
               }`}
             >
-              Refinance Loan
+              Refinance
             </button>
           </div>
         </div>
@@ -230,7 +238,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
         <div>
           <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-100 tracking-tight flex items-center gap-3">
             <Calculator className="size-8 text-indigo-400" />
-            <span>Mortgage & Finance Calculator</span>
+            <span>Home Mortgage & Loan Calculator</span>
           </h1>
           <p className="text-xs sm:text-sm text-slate-400 max-w-3xl mt-1 leading-relaxed">
             Accurately calculate your total monthly mortgage payment including principal, interest, real estate taxes, homeowner insurance, PMI, and HOA fees. Includes real-time amortization schedules and bi-weekly savings analysis.
