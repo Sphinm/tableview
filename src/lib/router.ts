@@ -48,10 +48,16 @@ export function parseCurrentLocation(): RouteState {
     // Ignore in case of restricted environments
   }
 
-  // Always prioritize real pathname. Only treat hash as a route if it explicitly begins with '#/'
+  // Prioritize real pathname, but if hash begins with '#/' (e.g. legacy link or old bug like /page1#/page2),
+  // honor the '#/' path and clean up the address bar to canonical format.
   let raw = window.location.pathname;
-  if ((!raw || raw === '/') && window.location.hash.startsWith('#/')) {
+  if (window.location.hash.startsWith('#/')) {
     raw = window.location.hash.slice(1);
+    try {
+      window.history.replaceState({}, '', raw);
+    } catch {
+      // Ignore
+    }
   }
   if (!raw || raw === '') raw = '/';
 

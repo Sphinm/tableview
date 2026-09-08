@@ -318,21 +318,25 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {relatedGuides.map((rel) => (
-              <div
+              <a
                 key={rel.id}
-                onClick={() => navigateTo(`/guides/${rel.slug}`)}
-                className="p-4 rounded-xl bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800 hover:border-indigo-500/40 transition-colors cursor-pointer"
+                href={`/guides/${rel.slug}`}
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo(`/guides/${rel.slug}`);
+                }}
+                className="block p-4 rounded-xl bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800 hover:border-indigo-500/40 transition-colors cursor-pointer group"
               >
                 <span className="text-[10px] font-semibold text-indigo-400 block mb-1">
                   {rel.category}
                 </span>
-                <h4 className="text-xs sm:text-sm font-bold text-white hover:text-indigo-300 transition-colors line-clamp-1 mb-1">
+                <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-indigo-300 transition-colors line-clamp-1 mb-1">
                   {rel.title}
                 </h4>
                 <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
                   {rel.excerpt}
                 </p>
-              </div>
+              </a>
             ))}
           </div>
         </div>
