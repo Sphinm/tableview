@@ -697,7 +697,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
                 </tr>
               </thead>
 
-              <tbody className="divide-y divide-slate-800/60 bg-slate-900/50">
+              <tbody data-clarity-mask="true" className="divide-y divide-slate-800/60 bg-slate-900/50">
                 {isLoading ? (
                   <tr>
                     <td colSpan={columns.length + 1} className="py-20 text-center text-slate-400">
