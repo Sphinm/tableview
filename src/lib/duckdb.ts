@@ -311,6 +311,109 @@ export async function exportToJson(
   triggerDownload(blob, `${tableName.replace(/\.[^/.]+$/, '')}_exported.json`);
 }
 
+/**
+ * Export table data to Apache Parquet format (.parquet)
+ */
+export async function exportToParquet(
+  tableName: string,
+  fileType: 'parquet' | 'csv' | 'json',
+  compression: 'ZSTD' | 'SNAPPY' | 'GZIP' | 'UNCOMPRESSED' = 'ZSTD',
+  customFilter?: string
+): Promise<void> {
+  const { conn, db } = await getDuckDB();
+  const tempParquetName = `export_${Date.now()}.parquet`;
+
+  let scanExpr = `'${tableName}'`;
+  if (fileType === 'parquet') scanExpr = `parquet_scan('${tableName}')`;
+  else if (fileType === 'csv') scanExpr = `read_csv_auto('${tableName}')`;
+  else if (fileType === 'json') scanExpr = `read_json_auto('${tableName}')`;
+
+  let query = `COPY (SELECT * FROM ${scanExpr}`;
+  if (customFilter && customFilter.trim()) {
+    query += ` WHERE ${customFilter}`;
+  }
+  query += `) TO '${tempParquetName}' (FORMAT PARQUET, COMPRESSION '${compression}');`;
+
+  await conn.query(query);
+
+  const buffer = await db.copyFileToBuffer(tempParquetName);
+  const blob = new Blob([buffer.buffer as ArrayBuffer], { type: 'application/octet-stream' });
+  triggerDownload(blob, `${tableName.replace(/\.[^/.]+$/, '')}_converted_${compression.toLowerCase()}.parquet`);
+}
+
+export interface ColumnSummary {
+  columnName: string;
+  columnType: string;
+  min: string;
+  max: string;
+  approxUnique: string;
+  avg: string;
+  std: string;
+  q25: string;
+  q50: string;
+  q75: string;
+  count: string;
+  nullPercentage: string;
+}
+
+/**
+ * Run DuckDB's in-engine analytical profiling (SUMMARIZE) on the dataset
+ */
+export async function summarizeTable(
+  tableName: string,
+  fileType: 'parquet' | 'csv' | 'json'
+): Promise<ColumnSummary[]> {
+  const { conn } = await getDuckDB();
+
+  let scanExpr = `'${tableName}'`;
+  if (fileType === 'parquet') scanExpr = `parquet_scan('${tableName}')`;
+  else if (fileType === 'csv') scanExpr = `read_csv_auto('${tableName}')`;
+  else if (fileType === 'json') scanExpr = `read_json_auto('${tableName}')`;
+
+  try {
+    const res = await conn.query(`SUMMARIZE SELECT * FROM ${scanExpr};`);
+    const rows = res.toArray().map(row => {
+      const obj = row.toJSON();
+      return {
+        columnName: String(obj.column_name ?? ''),
+        columnType: String(obj.column_type ?? ''),
+        min: obj.min !== null && obj.min !== undefined ? String(obj.min) : '—',
+        max: obj.max !== null && obj.max !== undefined ? String(obj.max) : '—',
+        approxUnique: obj.approx_unique !== null && obj.approx_unique !== undefined ? String(obj.approx_unique) : '—',
+        avg: obj.avg !== null && obj.avg !== undefined ? String(Number(obj.avg).toFixed(2)) : '—',
+        std: obj.std !== null && obj.std !== undefined ? String(Number(obj.std).toFixed(2)) : '—',
+        q25: obj.q25 !== null && obj.q25 !== undefined ? String(obj.q25) : '—',
+        q50: obj.q50 !== null && obj.q50 !== undefined ? String(obj.q50) : '—',
+        q75: obj.q75 !== null && obj.q75 !== undefined ? String(obj.q75) : '—',
+        count: obj.count !== null && obj.count !== undefined ? String(obj.count) : '—',
+        nullPercentage: obj.null_percentage !== null && obj.null_percentage !== undefined ? `${Number(obj.null_percentage).toFixed(1)}%` : '0.0%'
+      };
+    });
+    return rows;
+  } catch (err) {
+    console.warn('SUMMARIZE query failed, falling back to DESCRIBE:', err);
+    // Fallback using DESCRIBE
+    const descRes = await conn.query(`DESCRIBE SELECT * FROM ${scanExpr};`);
+    return descRes.toArray().map(row => {
+      const obj = row.toJSON();
+      return {
+        columnName: String(obj.column_name ?? ''),
+        columnType: String(obj.column_type ?? ''),
+        min: '—',
+        max: '—',
+        approxUnique: '—',
+        avg: '—',
+        std: '—',
+        q25: '—',
+        q50: '—',
+        q75: '—',
+        count: '—',
+        nullPercentage: String(obj.null ?? '') === 'YES' ? 'Nullable' : 'Not Null'
+      };
+    });
+  }
+}
+
 function triggerDownload(blob: Blob, filename: string) {
   const link = document.createElement('a');
   link.href = URL.createObjectURL(blob);

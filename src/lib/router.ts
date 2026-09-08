@@ -5,6 +5,37 @@ export interface RouteState {
   slug?: string;
 }
 
+import { TOOLS_CONFIG } from '../data/tools';
+
+export function updatePageMeta(title: string, description: string, canonicalPath: string = '/') {
+  document.title = title;
+
+  let metaDesc = document.querySelector('meta[name="description"]');
+  if (!metaDesc) {
+    metaDesc = document.createElement('meta');
+    metaDesc.setAttribute('name', 'description');
+    document.head.appendChild(metaDesc);
+  }
+  metaDesc.setAttribute('content', description);
+
+  let metaTitle = document.querySelector('meta[name="title"]');
+  if (metaTitle) metaTitle.setAttribute('content', title);
+
+  let ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.setAttribute('content', title);
+
+  let ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.setAttribute('content', description);
+
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (!canonical) {
+    canonical = document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    document.head.appendChild(canonical);
+  }
+  canonical.setAttribute('href', `https://tableview.dev${canonicalPath}`);
+}
+
 export function parseCurrentLocation(): RouteState {
   // Support both hash fallback (#/about) and pathname (/about)
   let raw = window.location.hash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
@@ -16,6 +47,15 @@ export function parseCurrentLocation(): RouteState {
   // Normalize trailing slashes (e.g., /guides/ -> /guides)
   if (cleanPath.length > 1 && cleanPath.endsWith('/')) {
     cleanPath = cleanPath.slice(0, -1);
+  }
+
+  // Check if matches a dedicated tool landing page
+  const potentialToolSlug = cleanPath.startsWith('/tools/')
+    ? cleanPath.replace('/tools/', '')
+    : cleanPath.slice(1);
+
+  if (potentialToolSlug && TOOLS_CONFIG[potentialToolSlug]) {
+    return { path: '/tools/:toolSlug', slug: potentialToolSlug };
   }
 
   // Match /guides/:slug or /guide/:slug or /articles/:slug or /blog/:slug

@@ -1,21 +1,36 @@
 import { useState, useRef, type DragEvent, type ChangeEvent } from 'react';
 import { UploadCloud, FileSpreadsheet, Lock, Zap, Sparkles } from 'lucide-react';
+import { type ToolConfig } from '../data/tools';
+import { navigateTo } from '../lib/router';
 
 interface DropZoneProps {
   onFileSelected: (file: File) => void;
   onTrySample: () => void;
   isLoading: boolean;
   loadingStatus?: string;
+  toolConfig?: ToolConfig;
 }
 
 export const DropZone = ({
   onFileSelected,
   onTrySample,
   isLoading,
-  loadingStatus = 'Initializing engine...'
+  loadingStatus = 'Initializing engine...',
+  toolConfig
 }: DropZoneProps) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const activeToolSlug = toolConfig?.slug;
+
+  const quickTools = [
+    { slug: 'parquet-viewer', name: 'Parquet Viewer', path: '/parquet-viewer' },
+    { slug: 'parquet-to-excel', name: 'Parquet to Excel', path: '/parquet-to-excel' },
+    { slug: 'parquet-to-csv', name: 'Parquet to CSV', path: '/parquet-to-csv' },
+    { slug: 'csv-to-parquet', name: 'CSV to Parquet', path: '/csv-to-parquet' },
+    { slug: 'json-to-parquet', name: 'JSON to Parquet', path: '/json-to-parquet' },
+    { slug: 'parquet-schema-inspector', name: 'Schema Inspector', path: '/parquet-schema-inspector' }
+  ];
 
   const handleDragOver = (e: DragEvent) => {
     e.preventDefault();
@@ -43,22 +58,58 @@ export const DropZone = ({
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 py-8 sm:py-12">
+      {/* Tool Navigation Switcher Pills */}
+      <div className="flex items-center justify-center gap-1.5 flex-wrap mb-8">
+        <button
+          onClick={() => navigateTo('/')}
+          className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+            !activeToolSlug
+              ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
+              : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80'
+          }`}
+        >
+          All-in-One Workbench
+        </button>
+        {quickTools.map(tool => (
+          <button
+            key={tool.slug}
+            onClick={() => navigateTo(tool.path)}
+            className={`px-3 py-1.5 rounded-xl text-xs font-medium transition-all cursor-pointer ${
+              activeToolSlug === tool.slug
+                ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-500/20'
+                : 'bg-slate-900/80 text-slate-400 hover:text-slate-200 hover:bg-slate-800 border border-slate-800/80'
+            }`}
+          >
+            {tool.name}
+          </button>
+        ))}
+      </div>
+
       {/* Hero title & intro */}
       <div className="text-center mb-8">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900 border border-slate-800 text-slate-300 text-xs mb-4">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/90 border border-slate-800 text-slate-300 text-xs mb-4 shadow-inner">
           <span className="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-          <span>DuckDB WebAssembly · In-Browser SQL & Exporter</span>
+          <span>{toolConfig?.badge || 'DuckDB-Wasm v1.1.3 · In-Browser Analytics · 100% Client-Side'}</span>
         </div>
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
-          Open & Convert Parquet Files{' '}
-          <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-            Privately
-          </span>
+        <h1 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight mb-4">
+          {toolConfig ? (
+            <>
+              {toolConfig.h1} <span className="text-indigo-400">{toolConfig.h1Highlight}</span>
+            </>
+          ) : (
+            <>
+              Open & Convert Parquet Files <span className="text-indigo-400">Privately</span>
+            </>
+          )}
         </h1>
-        <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          Drop any <code className="text-indigo-300 font-mono text-sm bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-900">.parquet</code>,{' '}
-          <code className="text-indigo-300 font-mono text-sm bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-900">.csv</code> or{' '}
-          <code className="text-indigo-300 font-mono text-sm bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-900">.json</code> file to preview rows, inspect schemas, and export directly to native <strong className="text-slate-200">Excel (.xlsx)</strong> or CSV.
+        <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          {toolConfig?.subtitle || (
+            <>
+              Drop any <code className="text-indigo-300 font-mono text-xs bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-900">.parquet</code>,{' '}
+              <code className="text-indigo-300 font-mono text-xs bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-900">.csv</code> or{' '}
+              <code className="text-indigo-300 font-mono text-xs bg-indigo-950/60 px-1.5 py-0.5 rounded border border-indigo-900">.json</code> file to preview rows, profile column schemas, and export directly to <strong className="text-slate-200">Excel (.xlsx)</strong>, CSV, or Parquet.
+            </>
+          )}
         </p>
       </div>
 
@@ -78,7 +129,7 @@ export const DropZone = ({
           type="file"
           ref={fileInputRef}
           onChange={handleFileChange}
-          accept=".parquet,.geoparquet,.csv,.tsv,.json,.jsonl,.ndjson"
+          accept={toolConfig?.acceptExtensions || '.parquet,.geoparquet,.csv,.tsv,.json,.jsonl,.ndjson'}
           className="hidden"
           disabled={isLoading}
         />
@@ -103,7 +154,7 @@ export const DropZone = ({
                 </span>
               </p>
               <p className="text-xs text-slate-400 mt-1">
-                Supports Apache Parquet (.parquet), CSV, TSV, JSON, JSON Lines. Fast even with large files.
+                {toolConfig?.acceptLabel || 'Supports Apache Parquet (.parquet), CSV, TSV, JSON, JSON Lines. Fast even with large files.'}
               </p>
             </div>
 

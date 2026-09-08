@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { DropZone } from './components/DropZone';
@@ -11,7 +11,8 @@ import { Contact } from './pages/Contact';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
 import { loadFileIntoDuckDB, generateSampleParquet } from './lib/duckdb';
-import { useRouter, navigateTo } from './lib/router';
+import { useRouter, navigateTo, updatePageMeta } from './lib/router';
+import { TOOLS_CONFIG } from './data/tools';
 import { AlertCircle, ArrowLeft, FileQuestion } from 'lucide-react';
 
 export function App() {
@@ -21,6 +22,34 @@ export function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<string>('Initializing engine...');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Update meta tags based on current route
+  useEffect(() => {
+    if (path === '/tools/:toolSlug' && slug && TOOLS_CONFIG[slug]) {
+      const cfg = TOOLS_CONFIG[slug];
+      updatePageMeta(cfg.metaTitle, cfg.metaDescription, cfg.path);
+    } else if (path === '/') {
+      updatePageMeta(
+        'TableView.dev — Fast, Private In-Browser Parquet Viewer, SQL Workbench & Excel Converter',
+        'Fast, 100% private in-browser Apache Parquet inspector, SQL query workbench, and native Excel converter powered by DuckDB-Wasm. Zero server file uploads.',
+        '/'
+      );
+    } else if (path === '/guides') {
+      updatePageMeta(
+        'Apache Parquet & DuckDB Guides | TableView.dev',
+        'In-depth technical guides, architecture comparisons, and performance benchmarks for Apache Parquet, DuckDB-Wasm, and columnar formats.',
+        '/guides'
+      );
+    } else if (path === '/about') {
+      updatePageMeta('About TableView.dev — In-Browser Data Processing', 'Learn about TableView.dev and our client-side architecture.', '/about');
+    } else if (path === '/contact') {
+      updatePageMeta('Contact & Feedback | TableView.dev', 'Contact the TableView engineering team.', '/contact');
+    } else if (path === '/privacy') {
+      updatePageMeta('Privacy Policy | TableView.dev', 'TableView privacy policy: 100% local processing with zero server file storage.', '/privacy');
+    } else if (path === '/terms') {
+      updatePageMeta('Terms of Service | TableView.dev', 'TableView terms of service.', '/terms');
+    }
+  }, [path, slug]);
 
   const handleFileSelected = async (file: File) => {
     setIsLoading(true);
@@ -32,10 +61,6 @@ export function App() {
       const res = await loadFileIntoDuckDB(file);
       setCurrentTable(res.tableName);
       setFileType(res.fileType);
-      // Ensure we are viewing the home/workbench
-      if (path !== '/') {
-        navigateTo('/');
-      }
     } catch (err: any) {
       console.error('Failed to load file:', err);
       setErrorMessage(`Failed to open ${file.name}: ${err.message || 'Unknown error'}. Make sure the file is not corrupted.`);
@@ -53,9 +78,6 @@ export function App() {
       const res = await generateSampleParquet();
       setCurrentTable(res.tableName);
       setFileType(res.fileType);
-      if (path !== '/') {
-        navigateTo('/');
-      }
     } catch (err: any) {
       console.error('Failed to generate sample:', err);
       setErrorMessage(`Failed to generate sample dataset: ${err.message || 'Unknown error'}`);
@@ -71,40 +93,46 @@ export function App() {
 
   // Render current view based on route path
   const renderCurrentView = () => {
-    switch (path) {
-      case '/':
-        return (
-          <>
-            {errorMessage && (
-              <div className="max-w-4xl mx-auto px-4 mt-6 w-full">
-                <div className="p-4 rounded-2xl bg-red-950/60 border border-red-800 text-red-300 text-sm flex items-start gap-3">
-                  <AlertCircle className="size-5 text-red-400 shrink-0 mt-0.5" />
-                  <div>
-                    <p className="font-semibold text-red-200">Error opening file</p>
-                    <p className="text-xs text-red-300/90 mt-0.5">{errorMessage}</p>
-                  </div>
+    // Check if on dedicated tool landing page
+    const activeToolConfig = (path === '/tools/:toolSlug' && slug) ? TOOLS_CONFIG[slug] : undefined;
+
+    if (path === '/' || activeToolConfig) {
+      return (
+        <>
+          {errorMessage && (
+            <div className="max-w-4xl mx-auto px-4 mt-6 w-full">
+              <div className="p-4 rounded-2xl bg-red-950/60 border border-red-800 text-red-300 text-sm flex items-start gap-3">
+                <AlertCircle className="size-5 text-red-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-red-200">Error opening file</p>
+                  <p className="text-xs text-red-300/90 mt-0.5">{errorMessage}</p>
                 </div>
               </div>
-            )}
+            </div>
+          )}
 
-            {currentTable ? (
-              <DataView
-                tableName={currentTable}
-                fileType={fileType}
-                onReset={handleReset}
-              />
-            ) : (
-              <DropZone
-                onFileSelected={handleFileSelected}
-                onTrySample={handleTrySample}
-                isLoading={isLoading}
-                loadingStatus={loadingStatus}
-              />
-            )}
+          {currentTable ? (
+            <DataView
+              tableName={currentTable}
+              fileType={fileType}
+              onReset={handleReset}
+            />
+          ) : (
+            <DropZone
+              onFileSelected={handleFileSelected}
+              onTrySample={handleTrySample}
+              isLoading={isLoading}
+              loadingStatus={loadingStatus}
+              toolConfig={activeToolConfig}
+            />
+          )}
 
-            {!currentTable && <SeoSection />}
-          </>
-        );
+          {!currentTable && <SeoSection toolConfig={activeToolConfig} />}
+        </>
+      );
+    }
+
+    switch (path) {
 
       case '/guides':
         return <GuidesHub />;

@@ -1,10 +1,15 @@
 import { useState } from 'react';
-import { ChevronDown, ShieldCheck, Cpu, HardDriveDownload } from 'lucide-react';
+import { ChevronDown, ShieldCheck, Cpu, HardDriveDownload, Zap, Table } from 'lucide-react';
+import { type ToolConfig } from '../data/tools';
 
-export const SeoSection = () => {
+interface SeoSectionProps {
+  toolConfig?: ToolConfig;
+}
+
+export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const faqs = [
+  const defaultFaqs = [
     {
       q: 'Do my Parquet or CSV files leave my browser?',
       a: 'No. TableView processes 100% of your data locally on your machine using DuckDB WebAssembly (Wasm). Your files and data rows are never uploaded, sent over the network, or stored on any server. You can even disconnect your Wi-Fi after the page loads and continue opening and converting files.'
@@ -12,6 +17,10 @@ export const SeoSection = () => {
     {
       q: 'How do I convert a Parquet file to Excel (.xlsx)?',
       a: 'Simply drag and drop your .parquet file into TableView, wait 1 second for the table preview to render, and click the green "Export to Excel (.xlsx)" button. TableView converts your columnar data directly into a native Microsoft Excel workbook with proper column names and types.'
+    },
+    {
+      q: 'Can I convert CSV or JSON files into compressed Apache Parquet (.parquet)?',
+      a: 'Yes! TableView allows reverse conversion: drop any CSV, TSV, or JSON file, and click "Convert to Parquet (ZSTD)". The file is compressed and formatted directly on your computer.'
     },
     {
       q: 'What is the file size limit?',
@@ -23,52 +32,92 @@ export const SeoSection = () => {
     },
     {
       q: 'Can I write SQL queries over my local Parquet files?',
-      a: 'Yes! Toggle to the "SQL Console" tab in the workbench to run any standard DuckDB SQL statement—including filters (WHERE), aggregations (GROUP BY), joins, sorting, and window functions—directly against your local dataset.'
+      a: 'Yes! Toggle to the "SQL Console" tab in the workbench to run standard DuckDB SQL queries—including filters (WHERE), aggregations (GROUP BY), joins, sorting, and window functions—directly against your local dataset.'
     }
   ];
 
+  const faqs = toolConfig?.faqs || defaultFaqs;
+
+  const getFeatureIcon = (iconName: string) => {
+    switch (iconName) {
+      case 'shield':
+        return <ShieldCheck className="size-5" />;
+      case 'cpu':
+        return <Cpu className="size-5" />;
+      case 'download':
+        return <HardDriveDownload className="size-5" />;
+      case 'zap':
+        return <Zap className="size-5" />;
+      case 'table':
+      default:
+        return <Table className="size-5" />;
+    }
+  };
+
+  const defaultFeatures = [
+    {
+      icon: 'cpu' as const,
+      title: 'Powered by DuckDB-Wasm',
+      description: 'Runs an in-process analytical SQL database directly inside your browser tab. Zero network latency, instant schema discovery, and multithreaded query speed.'
+    },
+    {
+      icon: 'shield' as const,
+      title: 'Confidential & Compliant',
+      description: 'Ideal for HIPAA, GDPR, and enterprise production logs. Sensitive customer data stays safely enclosed within your local browser memory sandbox.'
+    },
+    {
+      icon: 'download' as const,
+      title: 'Multi-Format Conversion',
+      description: 'Easily transform complex columnar schemas from AWS S3, Snowflake, or Databricks into clean, formatted Excel (.xlsx), CSV, or Parquet with ZSTD compression.'
+    }
+  ];
+
+  const features = toolConfig?.features || defaultFeatures;
+
+  // Generate FAQPage JSON-LD for rich snippets
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    'mainEntity': faqs.map(f => ({
+      '@type': 'Question',
+      'name': f.q,
+      'acceptedAnswer': {
+        '@type': 'Answer',
+        'text': f.a
+      }
+    }))
+  };
+
   return (
     <section className="w-full max-w-5xl mx-auto px-4 py-16 border-t border-slate-900 mt-12">
+      {/* FAQ Schema Script Injection */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
+
       {/* How it works grid */}
       <div className="text-center mb-12">
         <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-          Built for Fast, Private Data Inspection
+          {toolConfig ? `Why Use Our ${toolConfig.title}?` : 'Built for Fast, Private Data Inspection'}
         </h2>
         <p className="text-sm sm:text-base text-slate-400 max-w-2xl mx-auto">
-          No need to open a Jupyter notebook, spin up Python Pandas, or install heavy desktop viewers just to see what is inside a dataset.
+          No need to open a Jupyter notebook, spin up Python Pandas, or install heavy desktop software just to view, convert, or profile datasets.
         </p>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-16">
-        <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80">
-          <div className="size-10 rounded-xl bg-indigo-950 text-indigo-400 border border-indigo-800/60 flex items-center justify-center mb-4">
-            <Cpu className="size-5" />
+        {features.map((feat, idx) => (
+          <div key={idx} className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80">
+            <div className="size-10 rounded-xl bg-indigo-950/80 text-indigo-400 border border-indigo-800/60 flex items-center justify-center mb-4">
+              {getFeatureIcon(feat.icon)}
+            </div>
+            <h3 className="text-base font-semibold text-white mb-2">{feat.title}</h3>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              {feat.description}
+            </p>
           </div>
-          <h3 className="text-base font-semibold text-white mb-2">Powered by DuckDB-Wasm</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Runs an in-process analytical SQL database directly inside your browser tab. Zero network latency, instant schema discovery, and multithreaded query speed.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80">
-          <div className="size-10 rounded-xl bg-emerald-950 text-emerald-400 border border-emerald-800/60 flex items-center justify-center mb-4">
-            <ShieldCheck className="size-5" />
-          </div>
-          <h3 className="text-base font-semibold text-white mb-2">Confidential & Compliant</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Ideal for HIPAA, GDPR, and enterprise production logs. Sensitive customer data stays safely enclosed within your local browser memory sandbox.
-          </p>
-        </div>
-
-        <div className="p-6 rounded-2xl bg-slate-900/50 border border-slate-800/80">
-          <div className="size-10 rounded-xl bg-purple-950 text-purple-400 border border-purple-800/60 flex items-center justify-center mb-4">
-            <HardDriveDownload className="size-5" />
-          </div>
-          <h3 className="text-base font-semibold text-white mb-2">One-Click Multi-Format Export</h3>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            Easily transform complex columnar schemas from AWS S3, Snowflake, or Databricks into clean, formatted Excel (.xlsx) or CSV files for business teams.
-          </p>
-        </div>
+        ))}
       </div>
 
       {/* FAQ Section */}

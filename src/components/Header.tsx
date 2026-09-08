@@ -30,15 +30,13 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
   };
 
   return (
-    <header className="border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-50">
+    <header className="border-b border-slate-800 bg-slate-950/90 backdrop-blur-md sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Left: Logo & Nav Links */}
         <div className="flex items-center gap-8">
           <div className="flex items-center gap-3">
-            <div className="size-9 rounded-xl bg-gradient-to-br from-indigo-500 via-purple-500 to-pink-500 p-0.5 shadow-lg shadow-indigo-500/20">
-              <div className="w-full h-full bg-slate-950 rounded-[10px] flex items-center justify-center">
-                <Table className="size-5 text-indigo-400" />
-              </div>
+            <div className="size-9 rounded-xl bg-indigo-950/70 border border-indigo-500/30 flex items-center justify-center shadow-sm">
+              <Table className="size-5 text-indigo-400" />
             </div>
             <div className="flex items-baseline gap-2">
               <a
@@ -48,8 +46,8 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
               >
                 TableView<span className="text-indigo-400">.dev</span>
               </a>
-              <span className="hidden xl:inline text-xs px-2 py-0.5 rounded-full bg-indigo-950/80 text-indigo-300 border border-indigo-800/60 font-mono">
-                Wasm Engine
+              <span className="hidden xl:inline text-xs px-2 py-0.5 rounded-full bg-slate-900 text-slate-400 border border-slate-800 font-mono">
+                v1.2 · DuckDB Wasm
               </span>
             </div>
           </div>

@@ -44,17 +44,17 @@ export const Footer = () => {
 
         {/* 4-column link grid */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 text-xs">
-          {/* Column 1: Core Workbench */}
+          {/* Column 1: Tools & Converters */}
           <div>
             <h4 className="text-white font-semibold uppercase tracking-wider text-[11px] mb-4 flex items-center gap-1.5">
               <Table className="size-3.5 text-indigo-400" />
-              Workbench
+              Free Online Tools
             </h4>
             <ul className="space-y-2.5">
               <li>
                 <a
-                  href="/"
-                  onClick={(e) => handleNav(e, '/')}
+                  href="/parquet-viewer"
+                  onClick={(e) => handleNav(e, '/parquet-viewer')}
                   className="hover:text-indigo-400 transition-colors"
                 >
                   Parquet Viewer Online
@@ -62,29 +62,47 @@ export const Footer = () => {
               </li>
               <li>
                 <a
-                  href="/"
-                  onClick={(e) => handleNav(e, '/')}
+                  href="/parquet-to-excel"
+                  onClick={(e) => handleNav(e, '/parquet-to-excel')}
                   className="hover:text-indigo-400 transition-colors"
                 >
-                  DuckDB SQL Console
+                  Parquet to Excel (.xlsx)
                 </a>
               </li>
               <li>
                 <a
-                  href="/"
-                  onClick={(e) => handleNav(e, '/')}
+                  href="/parquet-to-csv"
+                  onClick={(e) => handleNav(e, '/parquet-to-csv')}
                   className="hover:text-indigo-400 transition-colors"
                 >
-                  Export to Excel (.xlsx)
+                  Parquet to CSV Converter
                 </a>
               </li>
               <li>
                 <a
-                  href="/"
-                  onClick={(e) => handleNav(e, '/')}
+                  href="/csv-to-parquet"
+                  onClick={(e) => handleNav(e, '/csv-to-parquet')}
                   className="hover:text-indigo-400 transition-colors"
                 >
-                  CSV & JSON Inspector
+                  CSV to Parquet (ZSTD)
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/json-to-parquet"
+                  onClick={(e) => handleNav(e, '/json-to-parquet')}
+                  className="hover:text-indigo-400 transition-colors"
+                >
+                  JSON to Parquet Converter
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/parquet-schema-inspector"
+                  onClick={(e) => handleNav(e, '/parquet-schema-inspector')}
+                  className="hover:text-indigo-400 transition-colors"
+                >
+                  Parquet Schema Inspector
                 </a>
               </li>
             </ul>
