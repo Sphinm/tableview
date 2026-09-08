@@ -111,6 +111,11 @@ export function parseCurrentLocation(): RouteState {
     return { path: '/' };
   }
 
+  // Calculator route & aliases
+  if (/^\/(?:calculator|mortgage-calculator|finance-calculator)$/.test(cleanPath)) {
+    return { path: '/calculator' };
+  }
+
   return { path: cleanPath };
 }
 

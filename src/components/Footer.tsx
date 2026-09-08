@@ -224,6 +224,18 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                   Parquet Schema Inspector
                 </a>
               </li>
+              <li>
+                <a
+                  href="/calculator"
+                  onClick={(e) => handleNav(e, '/calculator')}
+                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
+                >
+                  <span>Mortgage Calculator</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 opacity-80 group-hover:opacity-100 font-mono">
+                    New
+                  </span>
+                </a>
+              </li>
             </ul>
           </div>
 
