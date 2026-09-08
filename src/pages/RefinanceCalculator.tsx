@@ -1147,13 +1147,13 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
           <div className="flex flex-wrap items-center gap-2.5">
             {/* View Selector */}
-            <div className="flex items-center p-1 rounded-xl bg-slate-950 border border-slate-800 text-xs">
+            <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-xs">
               <button
                 onClick={() => setScheduleView('annual')}
                 className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
                   scheduleView === 'annual'
-                    ? 'bg-slate-800 text-slate-100 font-semibold'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-white text-slate-950 font-semibold shadow-sm border border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-transparent'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
                 }`}
               >
                 Annual Summary
@@ -1162,8 +1162,8 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                 onClick={() => setScheduleView('monthly')}
                 className={`px-3 py-1 rounded-lg font-medium transition-all cursor-pointer ${
                   scheduleView === 'monthly'
-                    ? 'bg-slate-800 text-slate-100 font-semibold'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-white text-slate-950 font-semibold shadow-sm border border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-transparent'
+                    : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
                 }`}
               >
                 Monthly Schedule

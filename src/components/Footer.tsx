@@ -88,7 +88,7 @@ export const Footer = ({ onTrySample }: FooterProps) => {
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-12 border-b border-slate-800 gap-6">
           <div className="space-y-3">
             <div className="flex items-center gap-3">
-              <div className="size-9 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-700/60 dark:border-transparent flex items-center justify-center font-bold shadow-sm ring-1 ring-slate-800/80">
+              <div className="brand-icon size-9 rounded-xl flex items-center justify-center font-bold shadow-sm ring-1 ring-slate-800/80">
                 <Table className="size-5" />
               </div>
               <div>

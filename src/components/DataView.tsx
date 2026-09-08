@@ -331,13 +331,13 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
       {/* Main Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
         {/* View mode switcher */}
-        <div className="flex items-center p-1 rounded-xl bg-slate-900 border border-slate-800">
+        <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
           <button
             onClick={() => setActiveTab('grid')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
               activeTab === 'grid'
-                ? 'bg-slate-800 text-slate-100 font-semibold shadow-sm border border-slate-700'
-                : 'text-slate-400 hover:text-slate-100'
+                ? 'bg-white text-slate-950 font-semibold shadow-sm border border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
             }`}
           >
             <FileSpreadsheet className="size-4" />
@@ -347,8 +347,8 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             onClick={() => setActiveTab('schema')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
               activeTab === 'schema'
-                ? 'bg-slate-800 text-slate-100 font-semibold shadow-sm border border-slate-700'
-                : 'text-slate-400 hover:text-slate-100'
+                ? 'bg-white text-slate-950 font-semibold shadow-sm border border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
             }`}
           >
             <TableProperties className="size-4" />
@@ -358,8 +358,8 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             onClick={() => setActiveTab('sql')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
               activeTab === 'sql'
-                ? 'bg-slate-800 text-slate-100 font-semibold shadow-sm border border-slate-700'
-                : 'text-slate-400 hover:text-slate-100'
+                ? 'bg-white text-slate-950 font-semibold shadow-sm border border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
             }`}
           >
             <Terminal className="size-4" />
@@ -402,7 +402,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             <button
               onClick={() => setShowParquetModal(true)}
               disabled={!!isExporting}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 border border-slate-800 dark:border-transparent shadow-sm transition-all cursor-pointer disabled:opacity-50"
+              className="btn-primary flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold shadow-sm transition-all cursor-pointer disabled:opacity-50"
               title="Convert this table directly to compressed Apache Parquet (.parquet)"
             >
               <Download className="size-4" />
@@ -456,7 +456,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
       {showParquetModal && (
         <div className="mb-4 p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
+            <h4 className="text-xs font-bold text-slate-100 flex items-center gap-1.5">
               <Download className="size-3.5 text-indigo-400" />
               Configure Apache Parquet Export
             </h4>
@@ -482,13 +482,13 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             <button
               onClick={() => handleExport('parquet')}
               disabled={!!isExporting}
-              className="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 border border-slate-800 dark:border-transparent text-xs font-semibold cursor-pointer shadow-sm"
+              className="btn-primary px-4 py-1.5 rounded-xl text-xs font-semibold cursor-pointer shadow-sm disabled:opacity-50"
             >
               Download .parquet
             </button>
             <button
               onClick={() => setShowParquetModal(false)}
-              className="px-2 py-1 text-xs text-slate-400 hover:text-white"
+              className="px-2 py-1 text-xs text-slate-400 hover:text-slate-100"
             >
               Cancel
             </button>
@@ -501,7 +501,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
         <div className="space-y-4 mb-6">
           <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+              <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
                 <TableProperties className="size-4 text-indigo-400" />
                 Column Schema & Statistical Distribution
               </h3>
@@ -513,7 +513,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             <div className="flex items-center gap-2">
               <button
                 onClick={handleCopyDdl}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium text-slate-300 hover:text-slate-100 bg-slate-800 hover:bg-slate-700 border border-slate-700 transition-all cursor-pointer"
               >
                 {ddlCopied ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5 text-slate-400" />}
                 {ddlCopied ? 'DDL Copied!' : 'Copy SQL DDL (CREATE TABLE)'}
@@ -661,7 +661,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             <button
               onClick={handleExecuteSql}
               disabled={isLoading}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 border border-slate-800 dark:border-transparent shadow-sm transition-all cursor-pointer disabled:opacity-50"
+              className="btn-primary flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold shadow-sm transition-all cursor-pointer disabled:opacity-50"
             >
               <Play className="size-3.5 fill-current text-emerald-400 dark:text-emerald-600" />
               {isLoading ? 'Running...' : 'Execute SQL (⌘+Enter)'}

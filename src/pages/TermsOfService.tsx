@@ -10,7 +10,7 @@ export const TermsOfService = () => {
           <Scale className="size-3.5" />
           <span>Last Updated: September 2026</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-4">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-100 tracking-tight mb-4">
           Terms of Service
         </h1>
         <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
@@ -21,7 +21,7 @@ export const TermsOfService = () => {
       {/* Content */}
       <div className="space-y-10 text-sm leading-relaxed">
         <section>
-          <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-100 mb-3 flex items-center gap-2">
             <CheckCircle2 className="size-5 text-indigo-400" />
             1. Agreement to Terms
           </h2>
@@ -31,7 +31,7 @@ export const TermsOfService = () => {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-100 mb-3 flex items-center gap-2">
             <CheckCircle2 className="size-5 text-indigo-400" />
             2. Description of Service & Software Architecture
           </h2>
@@ -44,7 +44,7 @@ export const TermsOfService = () => {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-100 mb-3 flex items-center gap-2">
             <CheckCircle2 className="size-5 text-indigo-400" />
             3. Local Processing & Data Ownership
           </h2>
@@ -57,7 +57,7 @@ export const TermsOfService = () => {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-100 mb-3 flex items-center gap-2">
             <CheckCircle2 className="size-5 text-indigo-400" />
             4. Acceptable Use Policy
           </h2>
@@ -71,7 +71,7 @@ export const TermsOfService = () => {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-100 mb-3 flex items-center gap-2">
             <CheckCircle2 className="size-5 text-indigo-400" />
             5. Disclaimer of Warranties
           </h2>
@@ -81,7 +81,7 @@ export const TermsOfService = () => {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-100 mb-3 flex items-center gap-2">
             <CheckCircle2 className="size-5 text-indigo-400" />
             6. Limitation of Liability
           </h2>
@@ -91,7 +91,7 @@ export const TermsOfService = () => {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-100 mb-3 flex items-center gap-2">
             <CheckCircle2 className="size-5 text-indigo-400" />
             7. Third-Party Links & Advertising
           </h2>
@@ -101,7 +101,7 @@ export const TermsOfService = () => {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-100 mb-3 flex items-center gap-2">
             <CheckCircle2 className="size-5 text-indigo-400" />
             8. Changes to Terms
           </h2>
@@ -111,7 +111,7 @@ export const TermsOfService = () => {
         </section>
 
         <section>
-          <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-100 mb-3 flex items-center gap-2">
             <CheckCircle2 className="size-5 text-indigo-400" />
             9. Contact Information
           </h2>

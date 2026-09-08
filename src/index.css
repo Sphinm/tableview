@@ -251,6 +251,41 @@ html.dark .btn-primary:hover {
   color: #090a0f !important;
 }
 
+/* Secondary Button: Outlined / card button with high contrast in both modes */
+.btn-secondary {
+  background-color: #ffffff;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1;
+  transition: all 0.15s ease-in-out;
+}
+.btn-secondary:hover {
+  background-color: #f8fafc;
+  color: #0f172a !important;
+  border-color: #94a3b8;
+}
+html.dark .btn-secondary {
+  background-color: #0f1013;
+  color: #e0e4ec !important;
+  border: 1px solid #2b2f3a;
+}
+html.dark .btn-secondary:hover {
+  background-color: #1d2027;
+  color: #ffffff !important;
+  border-color: #464c5a;
+}
+
+/* Brand Logo Icon Container */
+.brand-icon {
+  background-color: #0f172a;
+  color: #ffffff !important;
+  border: 1px solid #1e293b;
+}
+html.dark .brand-icon {
+  background-color: #ffffff;
+  color: #090a0f !important;
+  border: 1px solid transparent;
+}
+
 /* High-contrast Recommended Badge */
 .badge-recommended {
   background-color: #0f172a;
@@ -261,10 +296,36 @@ html.dark .badge-recommended {
   color: #090a0f !important;
 }
 
+/* Safeguard: any button with bg-slate-900 and text-white in light mode */
+html.light .bg-slate-900.text-white:not(.btn-primary) {
+  background-color: #0f172a !important;
+  color: #ffffff !important;
+  border-color: #1e293b !important;
+}
+
+/* Safeguard: any active tab with bg-slate-800 and text-white in light mode */
+html.light .bg-slate-800.text-white,
+html.light button.bg-slate-800.text-white {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Light mode text safeguard for headings */
+html.light h1.text-white,
+html.light h2.text-white,
+html.light h3.text-white,
+html.light h4.text-white,
+html.light h5.text-white,
+html.light h6.text-white {
+  color: #0f172a !important;
+}
+
 /* Light mode text safeguard for unstyled text elements */
 html.light p.text-white,
-html.light span.text-white:not(button *, .badge-recommended, .btn-primary, [class*="bg-slate-"], [class*="bg-black"], [class*="bg-indigo-"], [class*="bg-emerald-"], [class*="bg-purple-"], [class*="bg-red-"]),
-html.light div.text-white:not(button *, .badge-recommended, .btn-primary, [class*="bg-slate-"], [class*="bg-black"], [class*="bg-indigo-"], [class*="bg-emerald-"], [class*="bg-purple-"], [class*="bg-red-"]) {
+html.light span.text-white:not(button *, .badge-recommended, .btn-primary, [class*="bg-slate-900"], [class*="bg-black"], [class*="bg-indigo-"], [class*="bg-emerald-"], [class*="bg-purple-"], [class*="bg-red-"]),
+html.light div.text-white:not(button *, .badge-recommended, .btn-primary, [class*="bg-slate-900"], [class*="bg-black"], [class*="bg-indigo-"], [class*="bg-emerald-"], [class*="bg-purple-"], [class*="bg-red-"]) {
   color: #0f172a;
 }
 

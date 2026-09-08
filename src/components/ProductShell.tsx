@@ -86,13 +86,13 @@ export const ProductShell = ({
         </div>
 
         {/* Center: View Switcher */}
-        <div className="flex items-center p-0.5 rounded-lg bg-slate-900 border border-slate-800 text-xs">
+        <div className="flex items-center p-0.5 rounded-lg bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs">
           <button
             onClick={() => setActiveTab('table')}
             className={`px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'table'
-                ? 'bg-slate-800 text-white font-medium shadow-sm border border-slate-700/80'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-white text-slate-950 font-semibold shadow-sm border border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700/80'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
             <Table className="size-3" />
@@ -102,8 +102,8 @@ export const ProductShell = ({
             onClick={() => setActiveTab('sql')}
             className={`px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'sql'
-                ? 'bg-slate-800 text-white font-medium shadow-sm border border-slate-700/80'
-                : 'text-slate-400 hover:text-slate-200'
+                ? 'bg-white text-slate-950 font-semibold shadow-sm border border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700/80'
+                : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200'
             }`}
           >
             <Terminal className="size-3" />
@@ -125,7 +125,7 @@ export const ProductShell = ({
             {/* Mock Toolbar */}
             <div className="flex items-center justify-between gap-3 mb-3 text-xs">
               <div className="flex items-center gap-2 text-slate-400 font-mono text-[11px]">
-                <span className="text-white font-semibold">5 columns</span>
+                <span className="text-slate-100 font-semibold">5 columns</span>
                 <span>·</span>
                 <span>Snappy Compressed</span>
                 <span>·</span>
@@ -200,7 +200,7 @@ export const ProductShell = ({
         {isDragOver && (
           <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-6 text-center border-2 border-dashed border-indigo-400 animate-in fade-in duration-150 z-20">
             <UploadCloud className="size-12 text-indigo-400 animate-bounce mb-3" />
-            <h4 className="text-base font-bold text-white mb-1">Drop file to open immediately</h4>
+            <h4 className="text-base font-bold text-slate-100 mb-1">Drop file to open immediately</h4>
             <p className="text-xs text-slate-400">Supports .parquet, .csv, .tsv, .json, and .xlsx</p>
           </div>
         )}

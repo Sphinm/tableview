@@ -170,7 +170,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
       <div className="space-y-12 leading-relaxed text-sm text-slate-300">
         {guide.sections.map((section, sectionIdx) => (
           <section key={section.id} id={section.id} className="scroll-mt-24">
-            <h2 className="text-lg sm:text-xl font-bold text-white mb-4">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-100 mb-4">
               {section.heading}
             </h2>
 
@@ -189,7 +189,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
                   <span className="font-mono text-[11px] uppercase tracking-wider">{section.code.language}</span>
                   <button
                     onClick={() => handleCopyCode(section.code!.code, sectionIdx)}
-                    className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer text-[11px]"
+                    className="flex items-center gap-1 hover:text-slate-100 transition-colors cursor-pointer text-[11px]"
                   >
                     {copiedCodeIndex === sectionIdx ? (
                       <>

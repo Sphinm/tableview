@@ -121,7 +121,7 @@ export const HeroSection = ({
             {/* Stat Counters */}
             <div className="pt-6 border-t border-slate-900 grid grid-cols-3 gap-4 text-center lg:text-left">
               <div>
-                <div className="text-xl sm:text-2xl font-bold font-mono text-white">0s</div>
+                <div className="text-xl sm:text-2xl font-bold font-mono text-slate-100">0s</div>
                 <div className="text-[11px] text-slate-400 uppercase tracking-wider font-mono mt-0.5">Setup Time</div>
               </div>
               <div>

@@ -68,7 +68,7 @@ export const DropZone = ({
           <span>{toolConfig?.badge || 'In-Browser DuckDB-Wasm · 100% Client-Side Privacy'}</span>
         </div>
 
-        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1] mb-5">
+        <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-slate-100 tracking-tight leading-[1.1] mb-5">
           {toolConfig ? (
             <>
               {toolConfig.h1} <span className="text-indigo-400">{toolConfig.h1Highlight}</span>
@@ -106,10 +106,10 @@ export const DropZone = ({
                 <button
                   key={tool.slug}
                   onClick={() => navigateTo(tool.path)}
-                  className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-slate-800 text-white font-medium shadow-sm border border-slate-700/80'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                      ? 'bg-white text-slate-950 font-semibold shadow-sm border border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700/80'
+                      : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/60'
                   }`}
                 >
                   {tool.name}
@@ -144,7 +144,7 @@ export const DropZone = ({
             {isLoading ? (
               <div className="py-8 flex flex-col items-center justify-center space-y-4">
                 <div className="size-12 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin" />
-                <p className="text-lg font-semibold text-white">{loadingStatus}</p>
+                <p className="text-lg font-semibold text-slate-100">{loadingStatus}</p>
                 <p className="text-sm text-slate-400">Loading DuckDB-Wasm engine and indexing pages...</p>
               </div>
             ) : (

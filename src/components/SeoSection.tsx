@@ -62,7 +62,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
       {/* Bento Grid: Core Product Capabilities */}
       <div className="mb-20">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-100 tracking-tight mb-3">
             Engineered for Modern Data Engineering
           </h2>
           <p className="text-base sm:text-lg text-slate-400">
@@ -83,7 +83,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-slate-100 mb-2">
                 Embedded DuckDB-Wasm Processing
               </h3>
               <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-xl mb-4">
@@ -116,7 +116,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-slate-100 mb-2">
                 100% Air-Gapped Privacy
               </h3>
               <p className="text-sm text-slate-400 leading-relaxed mb-4">
@@ -152,7 +152,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-slate-100 mb-2">
                 Two-Way Conversion
               </h3>
               <p className="text-sm text-slate-400 leading-relaxed mb-4">
@@ -181,7 +181,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 </span>
               </div>
 
-              <h3 className="text-xl font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-slate-100 mb-2">
                 Deep Schema & Null Auditing
               </h3>
               <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-xl">
@@ -210,7 +210,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
       {/* Tools Suite Directory */}
       <div className="mb-20">
         <div className="text-center max-w-3xl mx-auto mb-10">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 tracking-tight mb-3">
             Free Dedicated Online Data Tools
           </h2>
           <p className="text-sm sm:text-base text-slate-400">
@@ -232,7 +232,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                   </span>
                   <ArrowRight className="size-4 text-slate-400 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
                 </div>
-                <h3 className="text-base font-bold text-white group-hover:text-indigo-300 transition-colors mb-2">
+                <h3 className="text-base font-bold text-slate-100 group-hover:text-indigo-300 transition-colors mb-2">
                   {tool.title}
                 </h3>
                 <p className="text-sm text-slate-400 leading-relaxed line-clamp-2">
@@ -251,7 +251,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
 
       {/* FAQ Section */}
       <div className="max-w-3xl mx-auto mb-12">
-        <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 text-center mb-6">
           Frequently Asked Questions
         </h2>
 
