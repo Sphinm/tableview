@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import * as Sentry from '@sentry/react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { DropZone } from './components/DropZone';
@@ -74,6 +75,10 @@ export function App() {
       setFileType(res.fileType);
     } catch (err: any) {
       console.error('Failed to load file:', err);
+      Sentry.captureException(err, {
+        tags: { action: 'load_file' },
+        extra: { fileName: file.name, fileSize: file.size, fileType: file.type }
+      });
       setErrorMessage(`Failed to open ${file.name}: ${err.message || 'Unknown error'}. Make sure the file is not corrupted.`);
     } finally {
       setIsLoading(false);
@@ -91,6 +96,7 @@ export function App() {
       setFileType(res.fileType);
     } catch (err: any) {
       console.error('Failed to generate sample:', err);
+      Sentry.captureException(err, { tags: { action: 'generate_sample' } });
       setErrorMessage(`Failed to generate sample dataset: ${err.message || 'Unknown error'}`);
     } finally {
       setIsLoading(false);
