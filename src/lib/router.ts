@@ -37,11 +37,25 @@ export function updatePageMeta(title: string, description: string, canonicalPath
 }
 
 export function parseCurrentLocation(): RouteState {
-  // Support both hash fallback (#/about) and pathname (/about)
-  let raw = window.location.hash ? window.location.hash.replace(/^#/, '') : window.location.pathname;
+  // Check if restored from a static 404 fallback redirect
+  try {
+    const redirected = sessionStorage.getItem('redirect_path');
+    if (redirected) {
+      sessionStorage.removeItem('redirect_path');
+      window.history.replaceState({}, '', redirected);
+    }
+  } catch {
+    // Ignore in case of restricted environments
+  }
+
+  // Always prioritize real pathname. Only treat hash as a route if it explicitly begins with '#/'
+  let raw = window.location.pathname;
+  if ((!raw || raw === '/') && window.location.hash.startsWith('#/')) {
+    raw = window.location.hash.slice(1);
+  }
   if (!raw || raw === '') raw = '/';
 
-  // Strip query strings and hash anchors
+  // Strip query strings and in-page hash anchors
   let cleanPath = raw.split('?')[0].split('#')[0];
   
   // Normalize trailing slashes (e.g., /guides/ -> /guides)
@@ -49,7 +63,7 @@ export function parseCurrentLocation(): RouteState {
     cleanPath = cleanPath.slice(0, -1);
   }
 
-  // Check if matches a dedicated tool landing page
+  // Check if matches a dedicated tool landing page (e.g. /parquet-viewer or /tools/parquet-viewer)
   const potentialToolSlug = cleanPath.startsWith('/tools/')
     ? cleanPath.replace('/tools/', '')
     : cleanPath.slice(1);
@@ -69,31 +83,79 @@ export function parseCurrentLocation(): RouteState {
     return { path: '/guides' };
   }
 
+  // Canonical aliases for standard informational pages to avoid 404s
+  if (/^\/(?:privacy|privacy-policy)$/.test(cleanPath)) {
+    return { path: '/privacy' };
+  }
+
+  if (/^\/(?:terms|terms-of-service|tos)$/.test(cleanPath)) {
+    return { path: '/terms' };
+  }
+
+  if (/^\/(?:about|about-us)$/.test(cleanPath)) {
+    return { path: '/about' };
+  }
+
+  if (/^\/(?:contact|contact-us|support)$/.test(cleanPath)) {
+    return { path: '/contact' };
+  }
+
+  // Workbench aliases: /tools, /converters, /viewers
+  if (/^\/(?:tools|converters|viewers)$/.test(cleanPath)) {
+    return { path: '/' };
+  }
+
   return { path: cleanPath };
 }
 
 export function navigateTo(to: string) {
-  // If user is using hash routing, preserve hash mode; else use standard pushState
-  if (window.location.hash) {
-    window.location.hash = to.startsWith('/') ? to : `/${to}`;
-  } else {
-    window.history.pushState({}, '', to);
-    window.dispatchEvent(new PopStateEvent('popstate'));
-  }
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  const target = to.startsWith('/') ? to : `/${to}`;
+  window.history.pushState({}, '', target);
+  window.dispatchEvent(new PopStateEvent('popstate'));
 }
 
 export function useRouter() {
   const [route, setRoute] = useState<RouteState>(() => parseCurrentLocation());
 
   useEffect(() => {
+    let lastPath = window.location.pathname;
+
+    const scrollToAnchor = () => {
+      if (window.location.hash && !window.location.hash.startsWith('#/')) {
+        const id = window.location.hash.replace(/^#/, '');
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    };
+
     const handleLocationChange = () => {
-      setRoute(parseCurrentLocation());
-      window.scrollTo({ top: 0, behavior: 'instant' });
+      const currentPath = window.location.pathname;
+      const newRoute = parseCurrentLocation();
+      setRoute(newRoute);
+
+      if (currentPath !== lastPath) {
+        lastPath = currentPath;
+        if (window.location.hash && !window.location.hash.startsWith('#/')) {
+          setTimeout(scrollToAnchor, 120);
+        } else {
+          window.scrollTo({ top: 0, behavior: 'instant' });
+        }
+      } else {
+        // Hash changed on the same page
+        setTimeout(scrollToAnchor, 60);
+      }
     };
 
     window.addEventListener('popstate', handleLocationChange);
     window.addEventListener('hashchange', handleLocationChange);
+
+    // Initial check on mount if landing directly on an anchor URL (e.g. /guides/...#architecture)
+    if (window.location.hash && !window.location.hash.startsWith('#/')) {
+      setTimeout(scrollToAnchor, 180);
+    }
+
     return () => {
       window.removeEventListener('popstate', handleLocationChange);
       window.removeEventListener('hashchange', handleLocationChange);

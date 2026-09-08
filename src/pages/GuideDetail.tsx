@@ -142,7 +142,15 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
             <li key={section.id}>
               <a
                 href={`#${section.id}`}
-                className="text-slate-400 hover:text-indigo-300 transition-colors flex items-center gap-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const target = document.getElementById(section.id);
+                  if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    window.history.pushState(null, '', `#${section.id}`);
+                  }
+                }}
+                className="text-slate-400 hover:text-indigo-300 transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <span className="text-slate-400 font-mono text-[11px]">{idx + 1}.</span>
                 <span>{section.heading}</span>
@@ -153,7 +161,15 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
             <li>
               <a
                 href="#faqs"
-                className="text-slate-400 hover:text-indigo-300 transition-colors flex items-center gap-2"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const target = document.getElementById('faqs');
+                  if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    window.history.pushState(null, '', '#faqs');
+                  }
+                }}
+                className="text-slate-400 hover:text-indigo-300 transition-colors flex items-center gap-2 cursor-pointer"
               >
                 <span className="text-slate-400 font-mono text-[11px]">{guide.sections.length + 1}.</span>
                 <span>Frequently Asked Questions</span>
@@ -166,7 +182,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
       {/* Article Sections */}
       <div className="space-y-12 leading-relaxed text-sm text-slate-300">
         {guide.sections.map((section, sectionIdx) => (
-          <section key={section.id} id={section.id} className="scroll-mt-20">
+          <section key={section.id} id={section.id} className="scroll-mt-24">
             <h2 className="text-lg sm:text-xl font-bold text-white mb-4">
               {section.heading}
             </h2>
@@ -239,7 +255,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
 
         {/* FAQ Section */}
         {guide.faqs && guide.faqs.length > 0 && (
-          <section id="faqs" className="scroll-mt-20 pt-6 border-t border-slate-800">
+          <section id="faqs" className="scroll-mt-24 pt-6 border-t border-slate-800">
             <h2 className="text-lg sm:text-xl font-bold text-white mb-6">
               Frequently Asked Questions
             </h2>

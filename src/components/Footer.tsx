@@ -236,7 +236,7 @@ export const Footer = () => {
               <li>
                 <a
                   href="/privacy#advertising"
-                  onClick={(e) => handleNav(e, '/privacy')}
+                  onClick={(e) => handleNav(e, '/privacy#advertising')}
                   className="hover:text-indigo-400 transition-colors"
                 >
                   Ad Choices & Cookies

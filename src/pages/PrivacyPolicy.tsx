@@ -1,5 +1,6 @@
 import { Shield, Lock, Eye, FileText, CheckCircle2 } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
+import { navigateTo } from '../lib/router';
 
 export const PrivacyPolicy = () => {
   return (
@@ -52,7 +53,7 @@ export const PrivacyPolicy = () => {
           </ul>
         </section>
 
-        <section id="advertising">
+        <section id="advertising" className="scroll-mt-24">
           <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
             <Eye className="size-5 text-indigo-400" />
             2. Google AdSense & Third-Party Advertising
@@ -158,7 +159,14 @@ export const PrivacyPolicy = () => {
               privacy@tableview.dev
             </a>{' '}
             or visit our{' '}
-            <a href="/contact" className="text-indigo-400 hover:underline font-medium">
+            <a
+              href="/contact"
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo('/contact');
+              }}
+              className="text-indigo-400 hover:underline font-medium cursor-pointer"
+            >
               Contact Page
             </a>.
           </p>

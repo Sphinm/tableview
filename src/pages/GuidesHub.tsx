@@ -112,9 +112,18 @@ export const GuidesHub = () => {
                 </div>
 
                 {/* Title */}
-                <h3 className="text-base font-bold text-white group-hover:text-indigo-300 transition-colors mb-2.5 line-clamp-2 leading-snug">
-                  {guide.title}
-                </h3>
+                <a
+                  href={`/guides/${guide.slug}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleOpenGuide(guide.slug);
+                  }}
+                  className="block focus:outline-none"
+                >
+                  <h3 className="text-base font-bold text-white group-hover:text-indigo-300 transition-colors mb-2.5 line-clamp-2 leading-snug">
+                    {guide.title}
+                  </h3>
+                </a>
 
                 {/* Excerpt */}
                 <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-4">
