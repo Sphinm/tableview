@@ -207,28 +207,12 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             <div className="brand-icon size-8 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-105 transition-all">
               <Table className="size-4.5" />
             </div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-base font-bold text-slate-100 tracking-tight">TableView</span>
-              <span className="text-xs text-slate-400 font-mono">.dev</span>
-            </div>
+            <span className="text-base font-bold text-slate-100 tracking-tight">TableView</span>
           </a>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1 text-sm">
-            {/* 1. Workbench */}
-            <a
-              href="/"
-              onClick={(e) => handleNav(e, '/')}
-              className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap ${
-                isWorkbench
-                  ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
-              }`}
-            >
-              Workbench
-            </a>
-
-            {/* 2. Parquet Tools Dropdown Menu */}
+          <nav className="hidden md:flex items-center gap-1.5 text-sm">
+            {/* 1. Parquet Tools Dropdown Menu */}
             <div
               ref={parquetDropdownRef}
               className="relative"
