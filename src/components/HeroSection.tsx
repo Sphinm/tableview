@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Sparkles, FolderOpen, ShieldCheck, ArrowRight } from 'lucide-react';
+import { Sparkles, FolderOpen, ShieldCheck, ArrowRight, RefreshCw } from 'lucide-react';
 import { ProductShell } from './ProductShell';
 
 interface HeroSectionProps {
@@ -86,11 +86,21 @@ export const HeroSection = ({
               <button
                 onClick={onTrySample}
                 disabled={isLoading}
-                className="btn-primary w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50"
+                title={isLoading ? loadingStatus : 'Generate 1,000-row sample dataset in memory'}
+                className="btn-primary w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer disabled:opacity-75 whitespace-nowrap"
               >
-                <Sparkles className="size-4 text-amber-400 dark:text-amber-500" />
-                <span>{isLoading ? loadingStatus : 'Try 1-Click Sample Dataset'}</span>
-                <ArrowRight className="size-3.5 opacity-80" />
+                {isLoading ? (
+                  <>
+                    <RefreshCw className="size-4 animate-spin" />
+                    <span>Generating Sample...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="size-4 text-amber-400 dark:text-amber-500" />
+                    <span>Try 1-Click Sample Dataset</span>
+                    <ArrowRight className="size-3.5 opacity-80" />
+                  </>
+                )}
               </button>
 
               <button

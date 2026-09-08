@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Table, ShieldCheck, Sparkles, Menu, X, BookOpen, Info, MessageSquare, Sun, Moon } from 'lucide-react';
+import { Table, ShieldCheck, Sparkles, Menu, X, BookOpen, Info, MessageSquare, Sun, Moon, RefreshCw } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 
 interface HeaderProps {
@@ -84,10 +84,19 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             <button
               onClick={onTrySample}
               disabled={isLoading}
-              className="btn-primary inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-50"
+              className="btn-primary inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-75 shrink-0 whitespace-nowrap"
             >
-              <Sparkles className="size-4 text-amber-400 dark:text-amber-500" />
-              <span>Try Sample</span>
+              {isLoading ? (
+                <>
+                  <RefreshCw className="size-3.5 animate-spin" />
+                  <span>Loading...</span>
+                </>
+              ) : (
+                <>
+                  <Sparkles className="size-4 text-amber-400 dark:text-amber-500" />
+                  <span>Try Sample</span>
+                </>
+              )}
             </button>
           )}
 

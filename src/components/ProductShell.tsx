@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Table, Terminal, Download, UploadCloud, CheckCircle2, Play } from 'lucide-react';
+import { Table, Terminal, Download, UploadCloud, CheckCircle2, Play, RefreshCw } from 'lucide-react';
 
 interface ProductShellProps {
   onFileSelected: (file: File) => void;
@@ -217,15 +217,25 @@ export const ProductShell = ({
           <button
             onClick={onTrySample}
             disabled={isLoading}
-            className="flex-1 sm:flex-none px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm border border-slate-800 dark:border-transparent transition-all cursor-pointer disabled:opacity-50"
+            title={isLoading ? loadingStatus : 'Launch Full Workbench Demo'}
+            className="btn-primary px-3.5 py-1.5 rounded-lg font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all cursor-pointer disabled:opacity-75 shrink-0 whitespace-nowrap"
           >
-            <Play className="size-3 fill-current text-emerald-400 dark:text-emerald-600" />
-            <span>{isLoading ? loadingStatus : 'Launch Full Workbench'}</span>
+            {isLoading ? (
+              <>
+                <RefreshCw className="size-3 animate-spin" />
+                <span>Loading Demo...</span>
+              </>
+            ) : (
+              <>
+                <Play className="size-3 fill-current text-emerald-400 dark:text-emerald-600" />
+                <span>Launch Full Workbench</span>
+              </>
+            )}
           </button>
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={isLoading}
-            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors cursor-pointer"
+            className="px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium transition-colors cursor-pointer shrink-0 whitespace-nowrap"
           >
             Upload Own File
           </button>
