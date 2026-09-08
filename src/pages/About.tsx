@@ -1,6 +1,6 @@
-import { Cpu, ShieldCheck, Zap, Layers, Lock, Sparkles } from 'lucide-react';
+import { Cpu, ShieldCheck, Zap, Layers, Lock, Sparkles, MessageSquare } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
-import { GithubIcon } from '../components/icons/GithubIcon';
+import { navigateTo } from '../lib/router';
 
 export const About = () => {
   return (
@@ -113,22 +113,24 @@ export const About = () => {
         </div>
       </div>
 
-      {/* Open Source Contribution */}
+      {/* Feedback & Product Evolution */}
       <div className="p-8 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-purple-950/40 to-slate-950/40 border border-indigo-900/60 flex flex-col sm:flex-row items-center justify-between gap-6">
         <div>
-          <h3 className="text-lg font-bold text-white mb-1">Open Source & Community Driven</h3>
+          <h3 className="text-lg font-bold text-white mb-1">Continuous Innovation & Feedback</h3>
           <p className="text-xs sm:text-sm text-slate-400 max-w-lg">
-            TableView.dev is continuously developed by passionate data engineers. Found a bug or need support for a new data format? Check our GitHub.
+            TableView.dev is continuously updated with faster Wasm drivers and broader columnar format support. Have a format request or feature idea?
           </p>
         </div>
         <a
-          href="https://github.com/Sphinm/tableview"
-          target="_blank"
-          rel="noopener noreferrer"
+          href="/contact"
+          onClick={(e) => {
+            e.preventDefault();
+            navigateTo('/contact');
+          }}
           className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-colors shrink-0"
         >
-          <GithubIcon className="size-4" />
-          View on GitHub
+          <MessageSquare className="size-4" />
+          Send Feedback
         </a>
       </div>
 

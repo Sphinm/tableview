@@ -33,13 +33,13 @@ export const TermsOfService = () => {
         <section>
           <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
             <CheckCircle2 className="size-5 text-indigo-400" />
-            2. Description of Service & Open Source License
+            2. Description of Service & Software Architecture
           </h2>
           <p className="text-slate-400 mb-3">
             TableView.dev provides an in-browser utility for viewing, inspecting, querying with DuckDB SQL, and converting tabular file formats (such as Apache Parquet, CSV, TSV, and JSON).
           </p>
           <p className="text-slate-400">
-            The source code of TableView.dev is made available under the <strong>MIT License</strong>. You are free to inspect, fork, and contribute to the software repository on GitHub in accordance with the MIT License terms.
+            The client-side core of TableView.dev operates under open developer standards and is licensed under the <strong>MIT License</strong>.
           </p>
         </section>
 

@@ -1,6 +1,5 @@
 import { navigateTo } from '../lib/router';
 import { Table, ShieldCheck, BookOpen, Mail, FileText } from 'lucide-react';
-import { GithubIcon } from './icons/GithubIcon';
 
 export const Footer = () => {
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
@@ -30,15 +29,6 @@ export const Footer = () => {
               <ShieldCheck className="size-3.5" />
               100% Client-Side Sandbox
             </span>
-            <a
-              href="https://github.com/Sphinm/tableview"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white border border-slate-800 transition-colors"
-              aria-label="GitHub Repository"
-            >
-              <GithubIcon className="size-4" />
-            </a>
           </div>
         </div>
 
@@ -199,22 +189,20 @@ export const Footer = () => {
               </li>
               <li>
                 <a
-                  href="https://github.com/Sphinm/tableview/issues"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/contact"
+                  onClick={(e) => handleNav(e, '/contact')}
                   className="hover:text-indigo-400 transition-colors"
                 >
-                  Report an Issue
+                  Report an Issue / Bug
                 </a>
               </li>
               <li>
                 <a
-                  href="https://github.com/Sphinm/tableview"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  href="/about"
+                  onClick={(e) => handleNav(e, '/about')}
                   className="hover:text-indigo-400 transition-colors"
                 >
-                  GitHub Source Code
+                  DuckDB-Wasm Engine
                 </a>
               </li>
             </ul>
