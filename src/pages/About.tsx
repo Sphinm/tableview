@@ -1,4 +1,4 @@
-import { Cpu, ShieldCheck, Zap, Layers, Lock, Sparkles, MessageSquare } from 'lucide-react';
+import { Cpu, ShieldCheck, Zap, Layers, Lock, Sparkles, ArrowRight } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
 import { navigateTo } from '../lib/router';
 
@@ -69,8 +69,8 @@ export const About = () => {
           </div>
 
           <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800 flex items-start gap-4">
-            <div className="size-10 rounded-xl bg-purple-950 text-purple-400 border border-purple-800/60 flex items-center justify-center shrink-0">
-              <Zap className="size-5" />
+            <div className="size-10 rounded-xl bg-slate-900 text-slate-300 border border-slate-800 flex items-center justify-center shrink-0">
+              <Zap className="size-5 text-indigo-400" />
             </div>
             <div>
               <h4 className="text-white font-semibold text-sm mb-1">Streaming Multi-Format Exporter</h4>
@@ -114,7 +114,7 @@ export const About = () => {
       </div>
 
       {/* Feedback & Product Evolution */}
-      <div className="p-8 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-purple-950/40 to-slate-950/40 border border-indigo-900/60 flex flex-col sm:flex-row items-center justify-between gap-6">
+      <div className="p-8 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/30 to-slate-900 border border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-6">
         <div>
           <h3 className="text-lg font-bold text-white mb-1">Continuous Innovation & Feedback</h3>
           <p className="text-xs sm:text-sm text-slate-400 max-w-lg">
@@ -127,10 +127,10 @@ export const About = () => {
             e.preventDefault();
             navigateTo('/contact');
           }}
-          className="px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-colors shrink-0"
+          className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 text-xs font-semibold flex items-center gap-2 shadow-sm border border-slate-800 dark:border-transparent transition-colors shrink-0"
         >
-          <MessageSquare className="size-4" />
-          Send Feedback
+          <span>Share Feedback</span>
+          <ArrowRight className="size-3.5" />
         </a>
       </div>
 

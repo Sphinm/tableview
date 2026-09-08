@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, type FormEvent } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef, type FormEvent } from 'react';
 import {
   FileSpreadsheet,
   FileText,
@@ -49,6 +49,12 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
   // Density mode
   const [density, setDensity] = useState<'compact' | 'normal'>('normal');
 
+  // Virtual scrolling refs & state
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const columnsRef = useRef<ColumnSchema[]>(columns);
+  columnsRef.current = columns;
+  const [, setScrollTop] = useState<number>(0);
+
   // Copy feedback toast
   const [copiedCell, setCopiedCell] = useState<string | null>(null);
 
@@ -85,13 +91,14 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
   const [showParquetModal, setShowParquetModal] = useState<boolean>(false);
 
   // Load initial data
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     setSqlError(null);
     try {
       let filterExpr: string | undefined = undefined;
-      if (searchFilter.trim() && columns.length > 0) {
-        const textCols = columns.filter(c => c.type.includes('VARCHAR') || c.type.includes('STRING') || c.type.includes('TEXT'));
+      const currentCols = columnsRef.current;
+      if (searchFilter.trim() && currentCols.length > 0) {
+        const textCols = currentCols.filter(c => c.type.includes('VARCHAR') || c.type.includes('STRING') || c.type.includes('TEXT'));
         if (textCols.length > 0) {
           filterExpr = textCols
             .map(c => `lower(cast("${c.name}" as varchar)) LIKE '%${searchFilter.toLowerCase().replace(/'/g, "''")}%'`)
@@ -110,14 +117,22 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [tableName, fileType, page, pageSize, searchFilter, sortCol, sortAsc]);
 
   useEffect(() => {
     fetchData();
-  }, [tableName, fileType, page, pageSize, sortCol, sortAsc]);
+  }, [fetchData]);
+
+  // Reset scroll on page or sorting changes
+  useEffect(() => {
+    setScrollTop(0);
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollTop = 0;
+    }
+  }, [page, pageSize, sortCol, sortAsc]);
 
   // Load schema summary when tab is switched to 'schema'
-  const loadSchemaSummary = async () => {
+  const loadSchemaSummary = useCallback(async () => {
     if (summaries.length > 0) return;
     setIsLoadingSchema(true);
     try {
@@ -128,15 +143,15 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
     } finally {
       setIsLoadingSchema(false);
     }
-  };
+  }, [summaries.length, tableName, fileType]);
 
   useEffect(() => {
     if (activeTab === 'schema') {
       loadSchemaSummary();
     }
-  }, [activeTab]);
+  }, [activeTab, loadSchemaSummary]);
 
-  const handleExecuteSql = async () => {
+  const handleExecuteSql = useCallback(async () => {
     setIsLoading(true);
     setSqlError(null);
     try {
@@ -152,7 +167,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [customSql]);
 
   // Keyboard shortcut: Cmd/Ctrl + Enter to execute SQL
   useEffect(() => {
@@ -164,7 +179,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeTab, customSql]);
+  }, [activeTab, handleExecuteSql]);
 
   const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -318,7 +333,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             onClick={() => setActiveTab('grid')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
               activeTab === 'grid'
-                ? 'bg-indigo-600 text-white shadow'
+                ? 'bg-slate-800 text-white font-semibold shadow-sm border border-slate-700/80'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -329,7 +344,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             onClick={() => setActiveTab('schema')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
               activeTab === 'schema'
-                ? 'bg-indigo-600 text-white shadow'
+                ? 'bg-slate-800 text-white font-semibold shadow-sm border border-slate-700/80'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -340,7 +355,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             onClick={() => setActiveTab('sql')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
               activeTab === 'sql'
-                ? 'bg-indigo-600 text-white shadow'
+                ? 'bg-slate-800 text-white font-semibold shadow-sm border border-slate-700/80'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -384,20 +399,20 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             <button
               onClick={() => setShowParquetModal(true)}
               disabled={!!isExporting}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-500 shadow-md shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 border border-slate-800 dark:border-transparent shadow-sm transition-all cursor-pointer disabled:opacity-50"
               title="Convert this table directly to compressed Apache Parquet (.parquet)"
             >
-              <Download className="size-4 text-white" />
+              <Download className="size-4" />
               {isExporting === 'parquet' ? 'Converting...' : 'Convert to Parquet (ZSTD)'}
             </button>
           ) : (
             <button
               onClick={() => setShowParquetModal(true)}
               disabled={!!isExporting}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-indigo-300 bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-800/80 transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-700 transition-all cursor-pointer disabled:opacity-50"
               title="Export or re-compress to Apache Parquet (.parquet)"
             >
-              <Download className="size-4 text-indigo-400" />
+              <Download className="size-4 text-slate-400" />
               {isExporting === 'parquet' ? 'Exporting...' : 'Parquet'}
             </button>
           )}
@@ -436,7 +451,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
 
       {/* Parquet Export Codec Modal / Popover */}
       {showParquetModal && (
-        <div className="mb-4 p-4 rounded-2xl bg-slate-900 border border-indigo-500/40 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div className="mb-4 p-4 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
             <h4 className="text-xs font-bold text-white flex items-center gap-1.5">
               <Download className="size-3.5 text-indigo-400" />
@@ -464,7 +479,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             <button
               onClick={() => handleExport('parquet')}
               disabled={!!isExporting}
-              className="px-4 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold cursor-pointer shadow"
+              className="px-4 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 border border-slate-800 dark:border-transparent text-xs font-semibold cursor-pointer shadow-sm"
             >
               Download .parquet
             </button>
@@ -579,30 +594,30 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
           {/* Quick Query Template Chips */}
           <div className="flex items-center gap-2 flex-wrap pt-1">
             <span className="text-[11px] text-slate-400 flex items-center gap-1">
-              <Sparkles className="size-3 text-indigo-400" />
+              <Sparkles className="size-3 text-amber-400" />
               Templates:
             </span>
             <button
               onClick={() => applySqlTemplate('count')}
-              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-indigo-200 border border-slate-700 cursor-pointer"
+              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 hover:text-white border border-slate-700 cursor-pointer"
             >
               COUNT(*)
             </button>
             <button
               onClick={() => applySqlTemplate('top10')}
-              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-indigo-200 border border-slate-700 cursor-pointer"
+              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 hover:text-white border border-slate-700 cursor-pointer"
             >
               Top 10 Frequency
             </button>
             <button
               onClick={() => applySqlTemplate('nulls')}
-              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-indigo-200 border border-slate-700 cursor-pointer"
+              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 hover:text-white border border-slate-700 cursor-pointer"
             >
               Check Nulls
             </button>
             <button
               onClick={() => applySqlTemplate('summary')}
-              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-indigo-200 border border-slate-700 cursor-pointer"
+              className="px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 hover:text-white border border-slate-700 cursor-pointer"
             >
               Numeric Summary (AVG/MIN/MAX)
             </button>
@@ -612,7 +627,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             value={customSql}
             onChange={(e) => setCustomSql(e.target.value)}
             rows={4}
-            className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-indigo-200 focus:outline-none focus:border-indigo-500 transition-colors resize-y"
+            className="w-full p-3 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors resize-y"
             placeholder="SELECT * FROM table LIMIT 50;"
           />
 
@@ -643,9 +658,9 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             <button
               onClick={handleExecuteSql}
               disabled={isLoading}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 shadow-md transition-all cursor-pointer disabled:opacity-50"
+              className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 border border-slate-800 dark:border-transparent shadow-sm transition-all cursor-pointer disabled:opacity-50"
             >
-              <Play className="size-3.5 fill-white" />
+              <Play className="size-3.5 fill-current text-emerald-400 dark:text-emerald-600" />
               {isLoading ? 'Running...' : 'Execute SQL (⌘+Enter)'}
             </button>
           </div>
@@ -653,164 +668,197 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
       )}
 
       {/* Tab 1: Grid Table Container */}
-      {activeTab === 'grid' && (
-        <div className="rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl overflow-hidden">
-          <div className="overflow-x-auto max-h-[600px] relative">
-            <table className="w-full border-collapse text-left font-mono">
-              <thead className="bg-slate-950/90 backdrop-blur sticky top-0 z-20 border-b border-slate-800 shadow-sm">
-                <tr>
-                  <th className={`w-14 text-slate-400 border-r border-slate-800/80 select-none text-center ${density === 'compact' ? 'p-1.5 text-xs' : 'p-3.5 text-sm'}`}>
-                    #
-                  </th>
-                  {columns.map((col) => {
-                    const isSorted = sortCol === col.name;
-                    return (
-                      <th
-                        key={col.name}
-                        onClick={() => handleSort(col.name)}
-                        className={`border-r border-slate-800/80 last:border-r-0 hover:bg-slate-900/80 cursor-pointer transition-colors select-none group ${
-                          density === 'compact' ? 'p-2 text-xs' : 'p-3.5 text-sm'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between gap-2">
-                          <span className="font-semibold text-slate-200 group-hover:text-indigo-300">
-                            {col.name}
-                          </span>
-                          <div className="flex items-center gap-1.5">
-                            <span className="text-[10px] font-normal text-slate-400 px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">
-                              {col.type}
+      {activeTab === 'grid' && (() => {
+        // Virtual Table Windowing calculation for silky 60fps scrolling under big data
+        const rowHeight = density === 'compact' ? 33 : 45;
+        const containerHeight = 600;
+        const overscan = 6;
+        const totalBatchRows = rows.length;
+        const startIndex = Math.max(0, Math.floor(scrollTop / rowHeight) - overscan);
+        const endIndex = Math.min(totalBatchRows, Math.ceil((scrollTop + containerHeight) / rowHeight) + overscan);
+        const visibleRows = rows.slice(startIndex, endIndex);
+        const topSpacerHeight = startIndex * rowHeight;
+        const bottomSpacerHeight = Math.max(0, (totalBatchRows - endIndex) * rowHeight);
+
+        return (
+          <div className="rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl overflow-hidden">
+            <div
+              ref={scrollContainerRef}
+              onScroll={(e) => setScrollTop(e.currentTarget.scrollTop)}
+              className="overflow-x-auto max-h-[600px] relative"
+            >
+              <table className="w-full border-collapse text-left font-mono">
+                <thead className="bg-slate-950/90 backdrop-blur sticky top-0 z-20 border-b border-slate-800 shadow-sm">
+                  <tr>
+                    <th className={`w-14 text-slate-400 border-r border-slate-800/80 select-none text-center ${density === 'compact' ? 'p-1.5 text-xs' : 'p-3.5 text-sm'}`}>
+                      #
+                    </th>
+                    {columns.map((col) => {
+                      const isSorted = sortCol === col.name;
+                      return (
+                        <th
+                          key={col.name}
+                          onClick={() => handleSort(col.name)}
+                          className={`border-r border-slate-800/80 last:border-r-0 hover:bg-slate-900/80 cursor-pointer transition-colors select-none group ${
+                            density === 'compact' ? 'p-2 text-xs' : 'p-3.5 text-sm'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="font-semibold text-slate-200 group-hover:text-white transition-colors">
+                              {col.name}
                             </span>
-                            {isSorted ? (
-                              sortAsc ? (
-                                <ArrowUp className="size-4 text-indigo-400" />
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-[10px] font-normal text-slate-400 px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">
+                                {col.type}
+                              </span>
+                              {isSorted ? (
+                                sortAsc ? (
+                                  <ArrowUp className="size-4 text-indigo-400" />
+                                ) : (
+                                  <ArrowDown className="size-4 text-indigo-400" />
+                                )
                               ) : (
-                                <ArrowDown className="size-4 text-indigo-400" />
-                              )
-                            ) : (
-                              <ArrowUpDown className="size-3.5 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
-                            )}
+                                <ArrowUpDown className="size-3.5 text-slate-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              )}
+                            </div>
                           </div>
+                        </th>
+                      );
+                    })}
+                  </tr>
+                </thead>
+
+                <tbody data-clarity-mask="true" className="divide-y divide-slate-800/60 bg-slate-900/50">
+                  {isLoading ? (
+                    <tr>
+                      <td colSpan={columns.length + 1} className="py-20 text-center text-slate-400">
+                        <div className="flex flex-col items-center justify-center space-y-3">
+                          <RefreshCw className="size-6 text-indigo-400 animate-spin" />
+                          <p className="text-sm">Querying local DuckDB memory...</p>
                         </div>
-                      </th>
-                    );
-                  })}
-                </tr>
-              </thead>
-
-              <tbody data-clarity-mask="true" className="divide-y divide-slate-800/60 bg-slate-900/50">
-                {isLoading ? (
-                  <tr>
-                    <td colSpan={columns.length + 1} className="py-20 text-center text-slate-400">
-                      <div className="flex flex-col items-center justify-center space-y-3">
-                        <RefreshCw className="size-6 text-indigo-400 animate-spin" />
-                        <p className="text-sm">Querying local DuckDB memory...</p>
-                      </div>
-                    </td>
-                  </tr>
-                ) : rows.length === 0 ? (
-                  <tr>
-                    <td colSpan={columns.length + 1} className="py-16 text-center text-slate-400 text-sm">
-                      No matching records found.
-                    </td>
-                  </tr>
-                ) : (
-                  rows.map((row, idx) => (
-                    <tr key={idx} className="hover:bg-slate-800/50 transition-colors">
-                      <td className={`text-center text-slate-400 border-r border-slate-800/50 select-none ${
-                        density === 'compact' ? 'p-1.5 text-xs' : 'p-3 text-sm'
-                      }`}>
-                        {page * pageSize + idx + 1}
                       </td>
-                      {columns.map((col) => {
-                        const val = row[col.name];
-                        const isNull = val === null || val === undefined;
-                        const displayVal = isNull
-                          ? 'null'
-                          : typeof val === 'object'
-                          ? JSON.stringify(val)
-                          : String(val);
-
+                    </tr>
+                  ) : rows.length === 0 ? (
+                    <tr>
+                      <td colSpan={columns.length + 1} className="py-16 text-center text-slate-400 text-sm">
+                        No matching records found.
+                      </td>
+                    </tr>
+                  ) : (
+                    <>
+                      {topSpacerHeight > 0 && (
+                        <tr style={{ height: `${topSpacerHeight}px` }} aria-hidden="true">
+                          <td colSpan={columns.length + 1} className="p-0 border-0 pointer-events-none" />
+                        </tr>
+                      )}
+                      {visibleRows.map((row, idx) => {
+                        const actualIndex = startIndex + idx;
                         return (
-                          <td
-                            key={col.name}
-                            onClick={() => !isNull && handleCellClick(displayVal)}
-                            className={`border-r border-slate-800/50 last:border-r-0 truncate max-w-xs cursor-pointer hover:bg-indigo-950/30 transition-colors ${
-                              density === 'compact' ? 'p-2 text-xs' : 'p-3 text-sm'
-                            } ${
-                              isNull
-                                ? 'text-slate-400 italic'
-                                : typeof val === 'number'
-                                ? 'text-indigo-300'
-                                : typeof val === 'boolean'
-                                ? 'text-purple-300'
-                                : 'text-slate-200'
-                            }`}
-                            title={`Click to copy: ${displayVal}`}
-                          >
-                            {displayVal}
-                          </td>
+                          <tr key={actualIndex} className="hover:bg-slate-800/50 transition-colors">
+                            <td className={`text-center text-slate-400 border-r border-slate-800/50 select-none ${
+                              density === 'compact' ? 'p-1.5 text-xs' : 'p-3 text-sm'
+                            }`}>
+                              {page * pageSize + actualIndex + 1}
+                            </td>
+                            {columns.map((col) => {
+                              const val = row[col.name];
+                              const isNull = val === null || val === undefined;
+                              const displayVal = isNull
+                                ? 'null'
+                                : typeof val === 'object'
+                                ? JSON.stringify(val)
+                                : String(val);
+
+                              return (
+                                <td
+                                  key={col.name}
+                                  onClick={() => !isNull && handleCellClick(displayVal)}
+                                  className={`border-r border-slate-800/50 last:border-r-0 truncate max-w-xs cursor-pointer hover:bg-slate-800/60 transition-colors ${
+                                    density === 'compact' ? 'p-2 text-xs' : 'p-3 text-sm'
+                                  } ${
+                                    isNull
+                                      ? 'text-slate-400 italic'
+                                      : typeof val === 'number'
+                                      ? 'text-indigo-300'
+                                      : typeof val === 'boolean'
+                                      ? 'text-amber-400 font-semibold'
+                                      : 'text-slate-200'
+                                  }`}
+                                  title={`Click to copy: ${displayVal}`}
+                                >
+                                  {displayVal}
+                                </td>
+                              );
+                            })}
+                          </tr>
                         );
                       })}
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination Footer */}
-          <div className="p-4 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4 text-sm text-slate-400">
-            <div className="flex items-center gap-2.5">
-              <span>
-                Showing{' '}
-                <strong className="text-slate-200">
-                  {totalRows > 0 ? page * pageSize + 1 : 0}
-                </strong>{' '}
-                to{' '}
-                <strong className="text-slate-200">
-                  {Math.min((page + 1) * pageSize, totalRows)}
-                </strong>{' '}
-                of <strong className="text-slate-200">{totalRows.toLocaleString()}</strong> rows
-              </span>
-
-              <select
-                value={pageSize}
-                onChange={(e) => {
-                  setPageSize(Number(e.target.value));
-                  setPage(0);
-                }}
-                className="ml-2 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 text-sm focus:outline-none focus:border-indigo-500"
-              >
-                <option value={25}>25 / page</option>
-                <option value={50}>50 / page</option>
-                <option value={100}>100 / page</option>
-                <option value={200}>200 / page</option>
-              </select>
+                      {bottomSpacerHeight > 0 && (
+                        <tr style={{ height: `${bottomSpacerHeight}px` }} aria-hidden="true">
+                          <td colSpan={columns.length + 1} className="p-0 border-0 pointer-events-none" />
+                        </tr>
+                      )}
+                    </>
+                  )}
+                </tbody>
+              </table>
             </div>
 
-            <div className="flex items-center gap-2.5">
-              <button
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
-                disabled={page === 0 || isLoading}
-                className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
-              >
-                <ChevronLeft className="size-4.5" />
-              </button>
-              <span>
-                Page <strong className="text-slate-200">{page + 1}</strong> of{' '}
-                <strong className="text-slate-200">{Math.max(1, totalPages)}</strong>
-              </span>
-              <button
-                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
-                disabled={page >= totalPages - 1 || isLoading}
-                className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
-              >
-                <ChevronRight className="size-4.5" />
-              </button>
+            {/* Pagination Footer */}
+            <div className="p-4 bg-slate-950 border-t border-slate-800 flex flex-wrap items-center justify-between gap-4 text-sm text-slate-400">
+              <div className="flex items-center gap-2.5">
+                <span>
+                  Showing{' '}
+                  <strong className="text-slate-200">
+                    {totalRows > 0 ? page * pageSize + 1 : 0}
+                  </strong>{' '}
+                  to{' '}
+                  <strong className="text-slate-200">
+                    {Math.min((page + 1) * pageSize, totalRows)}
+                  </strong>{' '}
+                  of <strong className="text-slate-200">{totalRows.toLocaleString()}</strong> rows
+                </span>
+
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setPage(0);
+                  }}
+                  className="ml-2 px-2.5 py-1.5 rounded-lg bg-slate-900 border border-slate-800 text-slate-300 text-sm focus:outline-none focus:border-indigo-500"
+                >
+                  <option value={25}>25 / page</option>
+                  <option value={50}>50 / page</option>
+                  <option value={100}>100 / page</option>
+                  <option value={200}>200 / page</option>
+                  <option value={500}>500 / page (Virtual)</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-2.5">
+                <button
+                  onClick={() => setPage((p) => Math.max(0, p - 1))}
+                  disabled={page === 0 || isLoading}
+                  className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
+                >
+                  <ChevronLeft className="size-4.5" />
+                </button>
+                <span>
+                  Page <strong className="text-slate-200">{page + 1}</strong> of{' '}
+                  <strong className="text-slate-200">{Math.max(1, totalPages)}</strong>
+                </span>
+                <button
+                  onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                  disabled={page >= totalPages - 1 || isLoading}
+                  className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
+                >
+                  <ChevronRight className="size-4.5" />
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 };

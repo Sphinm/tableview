@@ -84,9 +84,9 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             <button
               onClick={onTrySample}
               disabled={isLoading}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-semibold text-indigo-300 bg-indigo-950/50 hover:bg-indigo-900/60 border border-indigo-800/60 transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-300 dark:text-slate-200 dark:bg-slate-900 dark:hover:bg-slate-800 dark:border-slate-800 transition-all cursor-pointer disabled:opacity-50 shadow-sm"
             >
-              <Sparkles className="size-4 text-indigo-400" />
+              <Sparkles className="size-4 text-amber-500" />
               <span>Try Sample</span>
             </button>
           )}

@@ -59,7 +59,7 @@ export const DropZone = ({
   return (
     <div className="relative w-full max-w-5xl mx-auto px-4 pt-10 pb-16">
       {/* Ambient background glow for high-end dark theme */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 -z-10 w-[600px] h-[350px] bg-gradient-to-b from-indigo-500/10 via-purple-500/5 to-transparent blur-3xl pointer-events-none rounded-full" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -z-10 w-[600px] h-[350px] bg-gradient-to-b from-blue-500/10 via-indigo-500/5 to-transparent blur-3xl pointer-events-none rounded-full" />
 
       {/* Hero Header */}
       <div className="text-center max-w-3xl mx-auto mb-10">
@@ -108,7 +108,7 @@ export const DropZone = ({
                   onClick={() => navigateTo(tool.path)}
                   className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-indigo-600 text-white shadow-sm'
+                      ? 'bg-slate-800 text-white font-medium shadow-sm border border-slate-700/80'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
                   }`}
                 >
@@ -136,7 +136,7 @@ export const DropZone = ({
               type="file"
               ref={fileInputRef}
               onChange={handleFileChange}
-              accept={toolConfig?.acceptExtensions || '.parquet,.geoparquet,.csv,.tsv,.json,.jsonl,.ndjson'}
+              accept={toolConfig?.acceptExtensions || '.parquet,.geoparquet,.csv,.tsv,.json,.jsonl,.ndjson,.xlsx,.xls'}
               className="hidden"
               disabled={isLoading}
             />
@@ -162,7 +162,7 @@ export const DropZone = ({
                   </p>
                   <p className="text-sm text-slate-400 mt-2">
                     {toolConfig?.acceptLabel ||
-                      'Supports Apache Parquet (.parquet), GeoParquet, CSV, TSV, JSON, JSON Lines'}
+                      'Supports Apache Parquet (.parquet), GeoParquet, CSV, TSV, JSON, Excel (.xlsx)'}
                   </p>
                 </div>
 
@@ -174,7 +174,7 @@ export const DropZone = ({
                       e.stopPropagation();
                       fileInputRef.current?.click();
                     }}
-                    className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-600/25 transition-all cursor-pointer"
+                    className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 border border-slate-800 dark:border-transparent shadow-md transition-all cursor-pointer"
                   >
                     <FolderOpen className="size-4.5" />
                     Choose Local File
@@ -188,14 +188,14 @@ export const DropZone = ({
                     }}
                     className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 shadow-sm transition-all cursor-pointer"
                   >
-                    <Sparkles className="size-4 text-indigo-400" />
+                    <Sparkles className="size-4 text-amber-400" />
                     Try 1,000-Row Sample
                   </button>
                 </div>
 
                 {/* Supported Format Badges */}
                 <div className="pt-3 flex items-center justify-center gap-2 flex-wrap">
-                  {['.parquet', '.geoparquet', '.csv', '.tsv', '.json', '.jsonl'].map(ext => (
+                  {['.parquet', '.geoparquet', '.csv', '.tsv', '.json', '.xlsx'].map(ext => (
                     <span
                       key={ext}
                       className="px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-slate-900/80 text-slate-300 border border-slate-800"

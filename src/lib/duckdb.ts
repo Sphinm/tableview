@@ -74,7 +74,16 @@ export async function loadFileIntoDuckDB(file: File): Promise<{
   const lowerName = cleanName.toLowerCase();
   let fileType: 'parquet' | 'csv' | 'json' = 'parquet';
 
-  if (lowerName.endsWith('.csv') || lowerName.endsWith('.tsv')) {
+  if (lowerName.endsWith('.xlsx') || lowerName.endsWith('.xls')) {
+    const workbook = XLSX.read(buffer, { type: 'array' });
+    const firstSheetName = workbook.SheetNames[0] || 'Sheet1';
+    const sheet = workbook.Sheets[firstSheetName];
+    const csvContent = sheet ? XLSX.utils.sheet_to_csv(sheet) : '';
+    const csvBuffer = new TextEncoder().encode(csvContent);
+    const csvFileName = cleanName.replace(/\.[^/.]+$/, '') + '.csv';
+    await db.registerFileBuffer(csvFileName, csvBuffer);
+    return { tableName: csvFileName, fileType: 'csv' };
+  } else if (lowerName.endsWith('.csv') || lowerName.endsWith('.tsv')) {
     fileType = 'csv';
   } else if (lowerName.endsWith('.json') || lowerName.endsWith('.jsonl') || lowerName.endsWith('.ndjson')) {
     fileType = 'json';
@@ -251,6 +260,28 @@ export async function exportToCsv(
 }
 
 /**
+ * Recursively sanitize BigInt and complex values for JSON and Excel exports
+ */
+function sanitizeValueForExport(val: any): any {
+  if (typeof val === 'bigint') {
+    return val <= Number.MAX_SAFE_INTEGER && val >= Number.MIN_SAFE_INTEGER
+      ? Number(val)
+      : val.toString();
+  }
+  if (val !== null && typeof val === 'object') {
+    if (Array.isArray(val)) {
+      return val.map(sanitizeValueForExport);
+    }
+    const clean: Record<string, any> = {};
+    for (const k of Object.keys(val)) {
+      clean[k] = sanitizeValueForExport(val[k]);
+    }
+    return clean;
+  }
+  return val;
+}
+
+/**
  * Export table data to native Excel (.xlsx) using SheetJS
  */
 export async function exportToExcel(
@@ -273,7 +304,7 @@ export async function exportToExcel(
   query += ` LIMIT ${limitRows};`;
 
   const dataRes = await conn.query(query);
-  const rows = dataRes.toArray().map(row => row.toJSON());
+  const rows = dataRes.toArray().map(row => sanitizeValueForExport(row.toJSON()));
 
   const worksheet = XLSX.utils.json_to_sheet(rows);
   const workbook = XLSX.utils.book_new();
@@ -304,7 +335,7 @@ export async function exportToJson(
 
   const query = `SELECT * FROM ${scanExpr} LIMIT ${limitRows};`;
   const dataRes = await conn.query(query);
-  const rows = dataRes.toArray().map(row => row.toJSON());
+  const rows = dataRes.toArray().map(row => sanitizeValueForExport(row.toJSON()));
 
   const jsonStr = JSON.stringify(rows, null, 2);
   const blob = new Blob([jsonStr], { type: 'application/json' });

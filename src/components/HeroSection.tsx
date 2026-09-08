@@ -31,7 +31,7 @@ export const HeroSection = ({
       <input
         ref={fileInputRef}
         type="file"
-        accept=".parquet,.csv,.tsv,.json,.jsonl,.ndjson"
+        accept=".parquet,.csv,.tsv,.json,.jsonl,.ndjson,.xlsx,.xls"
         className="hidden"
         onChange={(e) => {
           if (e.target.files?.[0]) onFileSelected(e.target.files[0]);
@@ -39,22 +39,22 @@ export const HeroSection = ({
       />
 
       {/* Ambient background glow mesh */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-gradient-to-tr from-indigo-600/15 via-purple-600/15 to-pink-600/10 rounded-full blur-[120px] pointer-events-none -z-10" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-gradient-to-tr from-blue-600/10 via-indigo-600/10 to-cyan-500/10 rounded-full blur-[120px] pointer-events-none -z-10" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           {/* Left Column: Copy & Actions */}
           <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
             {/* Version badge */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r from-indigo-950/80 to-purple-950/80 border border-indigo-800/80 text-indigo-300 shadow-sm">
-              <span className="size-1.5 rounded-full bg-indigo-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-medium bg-slate-900 border border-slate-800 text-slate-300 shadow-sm">
+              <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span>DuckDB-Wasm Engine · 100% Client-Side Sandbox</span>
             </div>
 
             {/* Headline */}
             <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.15]">
               In-Browser Parquet & SQL Workbench.{' '}
-              <span className="bg-gradient-to-r from-indigo-400 via-purple-300 to-pink-400 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-blue-500 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">
                 Zero Setup. 100% Private.
               </span>
             </h1>
@@ -86,9 +86,9 @@ export const HeroSection = ({
               <button
                 onClick={onTrySample}
                 disabled={isLoading}
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 hover:shadow-indigo-600/50 hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50 border border-slate-800 dark:border-transparent"
               >
-                <Sparkles className="size-4 text-indigo-200" />
+                <Sparkles className="size-4 text-amber-400 dark:text-amber-500" />
                 <span>{isLoading ? loadingStatus : 'Try 1-Click Sample Dataset'}</span>
                 <ArrowRight className="size-3.5 opacity-80" />
               </button>
@@ -96,7 +96,7 @@ export const HeroSection = ({
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isLoading}
-                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 text-slate-200 font-medium text-xs sm:text-sm flex items-center justify-center gap-2 border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-200 font-medium text-xs sm:text-sm flex items-center justify-center gap-2 border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer"
               >
                 <FolderOpen className="size-4 text-slate-400" />
                 <span>Select Local File</span>
@@ -105,7 +105,7 @@ export const HeroSection = ({
 
             <p className="text-[11px] text-slate-400 flex items-center justify-center lg:justify-start gap-1.5">
               <ShieldCheck className="size-3.5 text-emerald-400 shrink-0" />
-              <span>Files never leave your computer. Drag and drop any .parquet or .csv file here.</span>
+              <span>Files never leave your computer. Supports .parquet, .csv, and .xlsx.</span>
             </p>
 
             {/* Stat Counters */}

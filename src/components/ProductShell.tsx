@@ -44,7 +44,7 @@ export const ProductShell = ({
     { id: 'ORD-9820', time: '2026-09-08 14:18', country: '🇩🇪 Germany', amount: '$1,120.00', status: 'PROCESSING', statusColor: 'bg-indigo-950/80 text-indigo-400 border-indigo-800/80' },
     { id: 'ORD-9819', time: '2026-09-08 14:05', country: '🇸🇬 Singapore', amount: '$89.99', status: 'COMPLETED', statusColor: 'bg-emerald-950/80 text-emerald-400 border-emerald-800/80' },
     { id: 'ORD-9818', time: '2026-09-08 13:50', country: '🇯🇵 Japan', amount: '$430.25', status: 'COMPLETED', statusColor: 'bg-emerald-950/80 text-emerald-400 border-emerald-800/80' },
-    { id: 'ORD-9817', time: '2026-09-08 13:33', country: '🇬🇧 United Kingdom', amount: '$612.00', status: 'SHIPPED', statusColor: 'bg-purple-950/80 text-purple-400 border-purple-800/80' }
+    { id: 'ORD-9817', time: '2026-09-08 13:33', country: '🇬🇧 United Kingdom', amount: '$612.00', status: 'SHIPPED', statusColor: 'bg-slate-800 text-slate-300 border-slate-700' }
   ];
 
   return (
@@ -61,7 +61,7 @@ export const ProductShell = ({
       <input
         ref={fileInputRef}
         type="file"
-        accept=".parquet,.csv,.tsv,.json,.jsonl,.ndjson"
+        accept=".parquet,.csv,.tsv,.json,.jsonl,.ndjson,.xlsx,.xls"
         className="hidden"
         onChange={(e) => {
           if (e.target.files?.[0]) onFileSelected(e.target.files[0]);
@@ -69,8 +69,8 @@ export const ProductShell = ({
       />
 
       {/* Glow highlight */}
-      <div className="absolute -top-24 -right-24 size-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 size-64 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -top-24 -right-24 size-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-24 -left-24 size-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Window Titlebar */}
       <div className="px-4 py-3 bg-slate-950/80 border-b border-slate-800/80 flex items-center justify-between gap-3">
@@ -95,7 +95,7 @@ export const ProductShell = ({
             onClick={() => setActiveTab('table')}
             className={`px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'table'
-                ? 'bg-indigo-600 text-white font-medium shadow-sm'
+                ? 'bg-slate-800 text-white font-medium shadow-sm border border-slate-700/80'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -106,7 +106,7 @@ export const ProductShell = ({
             onClick={() => setActiveTab('sql')}
             className={`px-2.5 py-1 rounded-md transition-all flex items-center gap-1.5 cursor-pointer ${
               activeTab === 'sql'
-                ? 'bg-indigo-600 text-white font-medium shadow-sm'
+                ? 'bg-slate-800 text-white font-medium shadow-sm border border-slate-700/80'
                 : 'text-slate-400 hover:text-slate-200'
             }`}
           >
@@ -181,13 +181,13 @@ export const ProductShell = ({
           <div className="space-y-3 font-mono text-xs">
             <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800/80 text-slate-300 leading-relaxed overflow-x-auto">
               <div className="text-slate-500 mb-1">// In-browser analytical query running locally on CPU</div>
-              <div><span className="text-purple-400">SELECT</span> customer_country,</div>
-              <div className="pl-4"><span className="text-indigo-400">COUNT</span>(order_id) <span className="text-purple-400">AS</span> total_orders,</div>
-              <div className="pl-4"><span className="text-indigo-400">ROUND</span>(<span className="text-indigo-400">SUM</span>(amount_usd), 2) <span className="text-purple-400">AS</span> total_revenue</div>
-              <div><span className="text-purple-400">FROM</span> <span className="text-emerald-400">"sales_stream_q3.parquet"</span></div>
-              <div><span className="text-purple-400">WHERE</span> status = <span className="text-emerald-400">'COMPLETED'</span></div>
-              <div><span className="text-purple-400">GROUP BY</span> customer_country</div>
-              <div><span className="text-purple-400">ORDER BY</span> total_revenue <span className="text-purple-400">DESC</span>;</div>
+              <div><span className="text-blue-400">SELECT</span> customer_country,</div>
+              <div className="pl-4"><span className="text-cyan-400">COUNT</span>(order_id) <span className="text-blue-400">AS</span> total_orders,</div>
+              <div className="pl-4"><span className="text-cyan-400">ROUND</span>(<span className="text-cyan-400">SUM</span>(amount_usd), 2) <span className="text-blue-400">AS</span> total_revenue</div>
+              <div><span className="text-blue-400">FROM</span> <span className="text-emerald-400">"sales_stream_q3.parquet"</span></div>
+              <div><span className="text-blue-400">WHERE</span> status = <span className="text-emerald-400">'COMPLETED'</span></div>
+              <div><span className="text-blue-400">GROUP BY</span> customer_country</div>
+              <div><span className="text-blue-400">ORDER BY</span> total_revenue <span className="text-blue-400">DESC</span>;</div>
             </div>
 
             <div className="p-2.5 rounded-lg bg-slate-950/80 border border-slate-800/80 flex items-center justify-between text-[11px] text-slate-400">
@@ -202,10 +202,10 @@ export const ProductShell = ({
 
         {/* Drag overlay state */}
         {isDragOver && (
-          <div className="absolute inset-0 bg-indigo-950/90 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-6 text-center border-2 border-dashed border-indigo-400 animate-in fade-in duration-150 z-20">
+          <div className="absolute inset-0 bg-slate-950/90 backdrop-blur-md rounded-2xl flex flex-col items-center justify-center p-6 text-center border-2 border-dashed border-indigo-400 animate-in fade-in duration-150 z-20">
             <UploadCloud className="size-12 text-indigo-400 animate-bounce mb-3" />
             <h4 className="text-base font-bold text-white mb-1">Drop file to open immediately</h4>
-            <p className="text-xs text-indigo-200/90">Supports .parquet, .csv, .tsv, .json, and .jsonl</p>
+            <p className="text-xs text-slate-400">Supports .parquet, .csv, .tsv, .json, and .xlsx</p>
           </div>
         )}
       </div>
@@ -213,7 +213,7 @@ export const ProductShell = ({
       {/* Interactive Bottom Bar */}
       <div className="p-3.5 bg-slate-950/90 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs">
         <div className="flex items-center gap-2 text-slate-400">
-          <span className="size-2 rounded-full bg-indigo-400" />
+          <span className="size-2 rounded-full bg-emerald-400" />
           <span>Interactive Live Demo. No file needed to test:</span>
         </div>
 
@@ -221,9 +221,9 @@ export const ProductShell = ({
           <button
             onClick={onTrySample}
             disabled={isLoading}
-            className="flex-1 sm:flex-none px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-semibold text-xs flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/30 transition-all cursor-pointer disabled:opacity-50"
+            className="flex-1 sm:flex-none px-3.5 py-1.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 font-semibold text-xs flex items-center justify-center gap-1.5 shadow-sm border border-slate-800 dark:border-transparent transition-all cursor-pointer disabled:opacity-50"
           >
-            <Play className="size-3 fill-current" />
+            <Play className="size-3 fill-current text-emerald-400 dark:text-emerald-600" />
             <span>{isLoading ? loadingStatus : 'Launch Full Workbench'}</span>
           </button>
           <button
