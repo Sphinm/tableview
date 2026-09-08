@@ -41,7 +41,7 @@ export const Footer = ({ onTrySample }: FooterProps) => {
 
   return (
     <footer className="w-full bg-slate-950 border-t border-slate-800 text-slate-400 mt-20 pt-16 pb-12 relative transition-colors">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Pre-Footer Action Banner */}
         <div className="relative rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900/90 to-slate-950 p-6 sm:p-10 mb-16 shadow-xl overflow-hidden">
           {/* Subtle background glow */}
@@ -142,25 +142,22 @@ export const Footer = ({ onTrySample }: FooterProps) => {
           </div>
         </div>
 
-        {/* 4-column link grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 sm:gap-10 py-12 text-sm">
-          {/* Column 1: Tools & Converters */}
+        {/* 5-column link grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 sm:gap-6 py-12 text-sm">
+          {/* Column 1: Parquet & Data Tools */}
           <div>
             <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
               <Table className="size-3.5 text-slate-400" />
-              Free Online Tools
+              Parquet & Data
             </h4>
             <ul className="space-y-2.5">
               <li>
                 <a
                   href="/parquet-viewer"
                   onClick={(e) => handleNav(e, '/parquet-viewer')}
-                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
+                  className="hover:text-slate-100 transition-colors block"
                 >
-                  <span>Parquet Viewer Online</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 opacity-80 group-hover:opacity-100 font-mono">
-                    Instant
-                  </span>
+                  Parquet Viewer
                 </a>
               </li>
               <li>
@@ -169,7 +166,7 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                   onClick={(e) => handleNav(e, '/parquet-to-excel')}
                   className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
                 >
-                  <span>Parquet to Excel (.xlsx)</span>
+                  <span>Parquet to Excel</span>
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 opacity-80 group-hover:opacity-100 font-mono">
                     Popular
                   </span>
@@ -181,19 +178,16 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                   onClick={(e) => handleNav(e, '/parquet-to-csv')}
                   className="hover:text-slate-100 transition-colors block"
                 >
-                  Parquet to CSV Converter
+                  Parquet to CSV
                 </a>
               </li>
               <li>
                 <a
                   href="/csv-to-parquet"
                   onClick={(e) => handleNav(e, '/csv-to-parquet')}
-                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
+                  className="hover:text-slate-100 transition-colors block"
                 >
-                  <span>CSV to Parquet (ZSTD)</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 opacity-80 group-hover:opacity-100 font-mono">
-                    Fast
-                  </span>
+                  CSV to Parquet
                 </a>
               </li>
               <li>
@@ -202,7 +196,7 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                   onClick={(e) => handleNav(e, '/json-to-parquet')}
                   className="hover:text-slate-100 transition-colors block"
                 >
-                  JSON to Parquet Converter
+                  JSON to Parquet
                 </a>
               </li>
               <li>
@@ -211,9 +205,19 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                   onClick={(e) => handleNav(e, '/parquet-schema-inspector')}
                   className="hover:text-slate-100 transition-colors block"
                 >
-                  Parquet Schema Inspector
+                  Schema & Metadata
                 </a>
               </li>
+            </ul>
+          </div>
+
+          {/* Column 2: Financial Calculators */}
+          <div>
+            <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
+              <Calculator className="size-3.5 text-indigo-400" />
+              Calculators
+            </h4>
+            <ul className="space-y-2.5">
               <li>
                 <a
                   href="/mortgage-calculator"
@@ -230,30 +234,43 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                 <a
                   href="/refinance-calculator"
                   onClick={(e) => handleNav(e, '/refinance-calculator')}
-                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
+                  className="hover:text-slate-100 transition-colors block"
                 >
-                  <span>Refinance Calculator</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 opacity-80 group-hover:opacity-100 font-mono">
-                    Break-Even
-                  </span>
+                  Refinance Break-Even
                 </a>
               </li>
               <li>
                 <a
+                  href="/finance-calculator#auto-calculator"
+                  onClick={(e) => handleNav(e, '/finance-calculator#auto-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Auto Loan Calculator
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/finance-calculator#savings-calculator"
+                  onClick={(e) => handleNav(e, '/finance-calculator#savings-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Compound Savings
+                </a>
+              </li>
+              <li className="pt-1">
+                <a
                   href="/finance-calculator"
                   onClick={(e) => handleNav(e, '/finance-calculator')}
-                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
+                  className="text-slate-200 hover:text-slate-100 transition-colors font-medium flex items-center gap-1.5 group"
                 >
-                  <span>Financial Calculators</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 opacity-80 group-hover:opacity-100 font-mono">
-                    Suite
-                  </span>
+                  <span>All 8+ Calculators</span>
+                  <ArrowRight className="size-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                 </a>
               </li>
             </ul>
           </div>
 
-          {/* Column 2: Technical Guides */}
+          {/* Column 3: Technical Guides */}
           <div>
             <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
               <BookOpen className="size-3.5 text-slate-400" />
@@ -318,7 +335,7 @@ export const Footer = ({ onTrySample }: FooterProps) => {
             </ul>
           </div>
 
-          {/* Column 3: Architecture & Security */}
+          {/* Column 4: Architecture & Security */}
           <div>
             <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
               <Cpu className="size-3.5 text-slate-400" />
@@ -346,7 +363,7 @@ export const Footer = ({ onTrySample }: FooterProps) => {
             </ul>
           </div>
 
-          {/* Column 4: Project & Support */}
+          {/* Column 5: Project & Support */}
           <div>
             <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
               <Mail className="size-3.5 text-slate-400" />
