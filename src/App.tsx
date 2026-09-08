@@ -14,6 +14,7 @@ import { Contact } from './pages/Contact';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
 import { MortgageCalculator } from './pages/MortgageCalculator';
+import { RefinanceCalculator } from './pages/RefinanceCalculator';
 import { FinanceCalculatorHub } from './pages/FinanceCalculatorHub';
 import { loadFileIntoDuckDB, generateSampleParquet } from './lib/duckdb';
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
@@ -187,6 +188,9 @@ export function App() {
 
       case '/mortgage-calculator':
         return <MortgageCalculator onTrySample={handleTrySample} />;
+
+      case '/refinance-calculator':
+        return <RefinanceCalculator onTrySample={handleTrySample} />;
 
       case '/finance-calculator':
       case '/calculator':

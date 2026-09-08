@@ -116,6 +116,11 @@ export function parseCurrentLocation(): RouteState {
     return { path: '/mortgage-calculator' };
   }
 
+  // Dedicated Refinance Calculator route & aliases (including should-i-refinance.php)
+  if (/^\/(?:refinance-calculator|refinance|calculators\/should-i-refinance(?:\.php)?|should-i-refinance)$/.test(cleanPath)) {
+    return { path: '/refinance-calculator' };
+  }
+
   // Financial Calculators Hub route & aliases
   if (/^\/(?:finance-calculator|calculators|financial-calculators|calculator)$/.test(cleanPath)) {
     return { path: '/finance-calculator' };

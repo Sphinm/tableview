@@ -50,7 +50,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
   const [homeInsuranceYearly, setHomeInsuranceYearly] = useState<number>(1500);
   const [monthlyHoa, setMonthlyHoa] = useState<number>(0);
   const [loanType, setLoanType] = useState<'conventional' | 'fha' | 'va' | 'usda'>('conventional');
-  const [buyOrRefi, setBuyOrRefi] = useState<'buy' | 'refi'>('buy');
+  const buyOrRefi = 'buy' as const;
   
   // Extra Principal Input for Simulator
   const [extraMonthlyPrincipal, setExtraMonthlyPrincipal] = useState<number>(0);
@@ -203,34 +203,25 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
             <span>100% In-Browser Private Calculator · Zero Cloud Egress</span>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => navigateTo('/mortgage-calculator')}
+              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold btn-primary shadow-sm cursor-pointer"
+            >
+              Purchase Loan
+            </button>
+            <button
+              onClick={() => navigateTo('/refinance-calculator')}
+              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-100 hover:border-slate-700 transition-all cursor-pointer flex items-center gap-1.5"
+            >
+              <span>Refinance Break-Even</span>
+              <ArrowRight className="size-3 text-indigo-400" />
+            </button>
             <button
               onClick={() => navigateTo('/finance-calculator')}
-              className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-800 text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+              className="hidden sm:flex px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 transition-all cursor-pointer"
             >
-              <span>Auto, Loan & Savings Calcs</span>
-              <ArrowRight className="size-3" />
-            </button>
-
-            <button
-              onClick={() => setBuyOrRefi('buy')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                buyOrRefi === 'buy'
-                  ? 'btn-primary shadow-sm'
-                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-100'
-              }`}
-            >
-              Buy Home
-            </button>
-            <button
-              onClick={() => setBuyOrRefi('refi')}
-              className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                buyOrRefi === 'refi'
-                  ? 'btn-primary shadow-sm'
-                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-100'
-              }`}
-            >
-              Refinance
+              All Calcs
             </button>
           </div>
         </div>

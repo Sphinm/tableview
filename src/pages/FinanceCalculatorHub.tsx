@@ -7,7 +7,8 @@ import {
   Home,
   ShieldCheck,
   ArrowRight,
-  PiggyBank
+  PiggyBank,
+  RefreshCw
 } from 'lucide-react';
 import {
   calculateAutoLoan,
@@ -140,26 +141,49 @@ export const FinanceCalculatorHub = () => {
         </div>
       </div>
 
-      {/* Featured Real Estate Banner Card */}
-      <div className="rounded-2xl border border-indigo-500/20 bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-slate-950 p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
-        <div className="flex items-center gap-3.5">
-          <div className="size-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0">
-            <Home className="size-5" />
+      {/* Featured Real Estate & Refinance Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="rounded-2xl border border-indigo-500/20 bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-slate-950 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0">
+              <Home className="size-5" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-slate-100">Home Mortgage Calculator</h2>
+              <p className="text-xs text-slate-400">
+                PITI payments, dynamic PMI drop-off, property taxes, and full amortization.
+              </p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-sm font-bold text-slate-100">Looking for Residential Home Loan & Mortgage Calculation?</h2>
-            <p className="text-xs text-slate-400">
-              Calculate PITI payments, dynamic PMI drop-off, property taxes, and complete 360-month amortization schedules.
-            </p>
-          </div>
+          <button
+            onClick={() => navigateTo('/mortgage-calculator')}
+            className="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 shrink-0 shadow-md cursor-pointer whitespace-nowrap"
+          >
+            <span>Open</span>
+            <ArrowRight className="size-3" />
+          </button>
         </div>
-        <button
-          onClick={() => navigateTo('/mortgage-calculator')}
-          className="btn-primary px-4 py-2 rounded-xl text-xs font-semibold flex items-center gap-1.5 shrink-0 shadow-md cursor-pointer whitespace-nowrap"
-        >
-          <span>Open Mortgage Calculator</span>
-          <ArrowRight className="size-3.5" />
-        </button>
+
+        <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/40 via-slate-900/60 to-slate-950 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
+          <div className="flex items-center gap-3">
+            <div className="size-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
+              <RefreshCw className="size-5" />
+            </div>
+            <div>
+              <h2 className="text-sm font-bold text-slate-100">Refinance Break-Even Tool</h2>
+              <p className="text-xs text-slate-400">
+                Compare current vs new mortgage, discount points, tax shift, and 7-year equity.
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigateTo('/refinance-calculator')}
+            className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1 shrink-0 shadow-md cursor-pointer whitespace-nowrap transition-all"
+          >
+            <span>Evaluate Refi</span>
+            <ArrowRight className="size-3" />
+          </button>
+        </div>
       </div>
 
       {/* Tool Categories Tab Bar */}
