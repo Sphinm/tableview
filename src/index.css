@@ -11,6 +11,46 @@
   --color-slate-300: var(--color-text-sub);
   --color-slate-200: var(--color-text-main);
   --color-slate-100: var(--color-text-heading);
+
+  /* Semantic Accent: Indigo */
+  --color-indigo-950: var(--color-indigo-surface);
+  --color-indigo-900: var(--color-indigo-surface-hover);
+  --color-indigo-800: var(--color-indigo-border);
+  --color-indigo-400: var(--color-indigo-text-accent);
+  --color-indigo-300: var(--color-indigo-text);
+  --color-indigo-200: var(--color-indigo-text-subtle);
+
+  /* Semantic Accent: Emerald */
+  --color-emerald-950: var(--color-emerald-surface);
+  --color-emerald-900: var(--color-emerald-surface-hover);
+  --color-emerald-800: var(--color-emerald-border);
+  --color-emerald-400: var(--color-emerald-text-accent);
+  --color-emerald-300: var(--color-emerald-text);
+
+  /* Semantic Accent: Purple */
+  --color-purple-950: var(--color-purple-surface);
+  --color-purple-900: var(--color-purple-surface-hover);
+  --color-purple-800: var(--color-purple-border);
+  --color-purple-400: var(--color-purple-text-accent);
+  --color-purple-300: var(--color-purple-text);
+
+  /* Semantic Accent: Cyan */
+  --color-cyan-950: var(--color-cyan-surface);
+  --color-cyan-800: var(--color-cyan-border);
+  --color-cyan-400: var(--color-cyan-text-accent);
+  --color-cyan-300: var(--color-cyan-text);
+
+  /* Semantic Accent: Red */
+  --color-red-950: var(--color-red-surface);
+  --color-red-900: var(--color-red-surface-hover);
+  --color-red-800: var(--color-red-border);
+  --color-red-400: var(--color-red-text-accent);
+  --color-red-300: var(--color-red-text);
+  --color-red-200: var(--color-red-text-subtle);
+
+  /* Semantic Accent: Amber */
+  --color-amber-400: var(--color-amber-text-accent);
+  --color-amber-300: var(--color-amber-text);
 }
 
 :root {
@@ -25,6 +65,46 @@
   --color-text-sub: #c2c8d4;
   --color-text-main: #e0e4ec;
   --color-text-heading: #ffffff;
+
+  /* Indigo */
+  --color-indigo-surface: #0e1026;
+  --color-indigo-surface-hover: #1e1b4b;
+  --color-indigo-border: #312e81;
+  --color-indigo-text-accent: #818cf8;
+  --color-indigo-text: #a5b4fc;
+  --color-indigo-text-subtle: #c7d2fe;
+
+  /* Emerald */
+  --color-emerald-surface: #022c22;
+  --color-emerald-surface-hover: #064e3b;
+  --color-emerald-border: #065f46;
+  --color-emerald-text-accent: #34d399;
+  --color-emerald-text: #6ee7b7;
+
+  /* Purple */
+  --color-purple-surface: #240d38;
+  --color-purple-surface-hover: #3b0764;
+  --color-purple-border: #581c87;
+  --color-purple-text-accent: #c084fc;
+  --color-purple-text: #d8b4fe;
+
+  /* Cyan */
+  --color-cyan-surface: #083344;
+  --color-cyan-border: #155e75;
+  --color-cyan-text-accent: #22d3ee;
+  --color-cyan-text: #67e8f9;
+
+  /* Red */
+  --color-red-surface: #450a0a;
+  --color-red-surface-hover: #7f1d1d;
+  --color-red-border: #991b1b;
+  --color-red-text-accent: #f87171;
+  --color-red-text: #fca5a5;
+  --color-red-text-subtle: #fecaca;
+
+  /* Amber */
+  --color-amber-text-accent: #fbbf24;
+  --color-amber-text: #fcd34d;
 }
 
 html.light {
@@ -39,6 +119,46 @@ html.light {
   --color-text-sub: #334155;
   --color-text-main: #1e293b;
   --color-text-heading: #0f172a;
+
+  /* Indigo */
+  --color-indigo-surface: #eef2ff;
+  --color-indigo-surface-hover: #e0e7ff;
+  --color-indigo-border: #c7d2fe;
+  --color-indigo-text-accent: #4f46e5;
+  --color-indigo-text: #3730a3;
+  --color-indigo-text-subtle: #312e81;
+
+  /* Emerald */
+  --color-emerald-surface: #ecfdf5;
+  --color-emerald-surface-hover: #d1fae5;
+  --color-emerald-border: #a7f3d0;
+  --color-emerald-text-accent: #059669;
+  --color-emerald-text: #065f46;
+
+  /* Purple */
+  --color-purple-surface: #faf5ff;
+  --color-purple-surface-hover: #f3e8ff;
+  --color-purple-border: #e9d5ff;
+  --color-purple-text-accent: #9333ea;
+  --color-purple-text: #6b21a8;
+
+  /* Cyan */
+  --color-cyan-surface: #ecfeff;
+  --color-cyan-border: #a5f3fc;
+  --color-cyan-text-accent: #0891b2;
+  --color-cyan-text: #0e7490;
+
+  /* Red */
+  --color-red-surface: #fef2f2;
+  --color-red-surface-hover: #fee2e2;
+  --color-red-border: #fecaca;
+  --color-red-text-accent: #dc2626;
+  --color-red-text: #991b1b;
+  --color-red-text-subtle: #7f1d1d;
+
+  /* Amber */
+  --color-amber-text-accent: #d97706;
+  --color-amber-text: #b45309;
 }
 
 html.dark {
@@ -53,6 +173,46 @@ html.dark {
   --color-text-sub: #c2c8d4;
   --color-text-main: #e0e4ec;
   --color-text-heading: #ffffff;
+
+  /* Indigo */
+  --color-indigo-surface: #0e1026;
+  --color-indigo-surface-hover: #1e1b4b;
+  --color-indigo-border: #312e81;
+  --color-indigo-text-accent: #818cf8;
+  --color-indigo-text: #a5b4fc;
+  --color-indigo-text-subtle: #c7d2fe;
+
+  /* Emerald */
+  --color-emerald-surface: #022c22;
+  --color-emerald-surface-hover: #064e3b;
+  --color-emerald-border: #065f46;
+  --color-emerald-text-accent: #34d399;
+  --color-emerald-text: #6ee7b7;
+
+  /* Purple */
+  --color-purple-surface: #240d38;
+  --color-purple-surface-hover: #3b0764;
+  --color-purple-border: #581c87;
+  --color-purple-text-accent: #c084fc;
+  --color-purple-text: #d8b4fe;
+
+  /* Cyan */
+  --color-cyan-surface: #083344;
+  --color-cyan-border: #155e75;
+  --color-cyan-text-accent: #22d3ee;
+  --color-cyan-text: #67e8f9;
+
+  /* Red */
+  --color-red-surface: #450a0a;
+  --color-red-surface-hover: #7f1d1d;
+  --color-red-border: #991b1b;
+  --color-red-text-accent: #f87171;
+  --color-red-text: #fca5a5;
+  --color-red-text-subtle: #fecaca;
+
+  /* Amber */
+  --color-amber-text-accent: #fbbf24;
+  --color-amber-text: #fcd34d;
 }
 
 @layer base {
