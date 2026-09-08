@@ -217,7 +217,7 @@ export function App() {
         {renderCurrentView()}
       </main>
 
-      <Footer />
+      <Footer onTrySample={handleTrySample} />
     </div>
   );
 }
