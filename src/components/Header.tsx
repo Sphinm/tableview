@@ -1,14 +1,16 @@
 import { useState } from 'react';
-import { Table, ShieldCheck, Sparkles, Menu, X, BookOpen, Info, MessageSquare } from 'lucide-react';
+import { Table, ShieldCheck, Sparkles, Menu, X, BookOpen, Info, MessageSquare, Sun, Moon } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 
 interface HeaderProps {
   onTrySample?: () => void;
   isLoading?: boolean;
   currentPath?: string;
+  theme?: 'dark' | 'light';
+  onToggleTheme?: () => void;
 }
 
-export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProps) => {
+export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dark', onToggleTheme }: HeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
@@ -49,7 +51,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
           </a>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1 text-xs">
+          <nav className="hidden md:flex items-center gap-1.5 text-sm">
             {navItems.map((item) => {
               const active = isCurrent(item.path, item.isHome);
               return (
@@ -59,11 +61,11 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                   onClick={(e) => handleNav(e, item.path)}
                   className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 ${
                     active
-                      ? 'bg-slate-800 text-white font-medium'
+                      ? 'bg-slate-800 text-white font-semibold'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900/60'
                   }`}
                 >
-                  {item.icon && <item.icon className="size-3.5" />}
+                  {item.icon && <item.icon className="size-4" />}
                   {item.label}
                 </a>
               );
@@ -73,7 +75,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
 
         {/* Right action buttons */}
         <div className="flex items-center gap-2.5">
-          <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-emerald-950/40 border border-emerald-800/50 text-[11px] font-medium text-emerald-400">
+          <div className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-emerald-950/40 border border-emerald-800/50 text-xs font-medium text-emerald-400">
             <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
             <span>100% Client Sandbox</span>
           </div>
@@ -82,17 +84,33 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
             <button
               onClick={onTrySample}
               disabled={isLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-indigo-300 bg-indigo-950/50 hover:bg-indigo-900/60 border border-indigo-800/60 transition-all cursor-pointer disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-sm font-semibold text-indigo-300 bg-indigo-950/50 hover:bg-indigo-900/60 border border-indigo-800/60 transition-all cursor-pointer disabled:opacity-50"
             >
-              <Sparkles className="size-3.5 text-indigo-400" />
+              <Sparkles className="size-4 text-indigo-400" />
               <span>Try Sample</span>
+            </button>
+          )}
+
+          {/* Theme Switcher Toggle */}
+          {onToggleTheme && (
+            <button
+              onClick={onToggleTheme}
+              className="p-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/80 transition-colors border border-slate-800 cursor-pointer"
+              title={theme === 'dark' ? 'Switch to Light Theme (白色主题)' : 'Switch to Dark Theme (黑色主题)'}
+              aria-label="Toggle theme color"
+            >
+              {theme === 'dark' ? (
+                <Sun className="size-4.5 text-amber-400" />
+              ) : (
+                <Moon className="size-4.5 text-indigo-500" />
+              )}
             </button>
           )}
 
           {/* Mobile menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 md:hidden"
+            className="p-1.5 rounded-lg bg-slate-900 text-slate-400 hover:text-white border border-slate-800 md:hidden cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -102,7 +120,25 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
 
       {/* Mobile dropdown menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-900 bg-slate-950 px-4 pt-3 pb-5 space-y-2 text-sm animate-in fade-in duration-150">
+        <div className="md:hidden border-t border-slate-900 bg-slate-950 px-4 pt-3 pb-5 space-y-2.5 text-sm animate-in fade-in duration-150">
+          {onToggleTheme && (
+            <button
+              onClick={() => {
+                onToggleTheme();
+                setMobileMenuOpen(false);
+              }}
+              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-slate-300 text-sm font-medium cursor-pointer"
+            >
+              <span className="flex items-center gap-2">
+                {theme === 'dark' ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4 text-indigo-400" />}
+                <span>Theme Mode</span>
+              </span>
+              <span className="text-xs text-indigo-400 font-semibold px-2 py-0.5 rounded bg-indigo-950/60 border border-indigo-800/50">
+                {theme === 'dark' ? 'Dark (黑色)' : 'Light (白色)'}
+              </span>
+            </button>
+          )}
+
           {navItems.map((item) => {
             const active = isCurrent(item.path, item.isHome);
             return (
@@ -110,7 +146,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                 key={item.path}
                 href={item.path}
                 onClick={(e) => handleNav(e, item.path)}
-                className={`block px-3 py-2 rounded-xl flex items-center gap-2.5 ${
+                className={`block px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 ${
                   active
                     ? 'bg-slate-800 text-white font-semibold'
                     : 'text-slate-400 hover:text-white hover:bg-slate-900'

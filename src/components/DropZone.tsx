@@ -63,8 +63,8 @@ export const DropZone = ({
 
       {/* Hero Header */}
       <div className="text-center max-w-3xl mx-auto mb-10">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-slate-900/90 border border-slate-800 text-slate-300 text-xs font-medium mb-5 shadow-sm">
-          <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-slate-300 text-xs sm:text-sm font-medium mb-5 shadow-sm">
+          <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>{toolConfig?.badge || 'In-Browser DuckDB-Wasm · 100% Client-Side Privacy'}</span>
         </div>
 
@@ -80,7 +80,7 @@ export const DropZone = ({
           )}
         </h1>
 
-        <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto">
+        <p className="text-lg sm:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto">
           {toolConfig?.subtitle ||
             'Open, inspect schemas, query with DuckDB SQL, and convert Parquet, CSV & JSON to Excel. Runs entirely in your local browser memory with zero server uploads.'}
         </p>
@@ -89,13 +89,13 @@ export const DropZone = ({
       {/* Main Workbench Window Card */}
       <div className="rounded-2xl border border-slate-800 bg-slate-900/80 shadow-2xl backdrop-blur-xl overflow-hidden">
         {/* Window Titlebar & Integrated Tool Navigation */}
-        <div className="border-b border-slate-800/80 bg-slate-950/60 px-4 py-2.5 flex flex-wrap items-center justify-between gap-3">
+        <div className="border-b border-slate-800/80 bg-slate-950/60 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
           {/* macOS window control dots */}
           <div className="hidden sm:flex items-center gap-1.5">
             <span className="size-2.5 rounded-full bg-red-500/80" />
             <span className="size-2.5 rounded-full bg-amber-500/80" />
             <span className="size-2.5 rounded-full bg-emerald-500/80" />
-            <span className="text-[11px] font-mono text-slate-400 ml-2">tableview-workbench</span>
+            <span className="text-xs font-mono text-slate-400 ml-2">tableview-workbench</span>
           </div>
 
           {/* Integrated Tool Selector Tabs */}
@@ -106,7 +106,7 @@ export const DropZone = ({
                 <button
                   key={tool.slug}
                   onClick={() => navigateTo(tool.path)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all whitespace-nowrap cursor-pointer ${
+                  className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all whitespace-nowrap cursor-pointer ${
                     isActive
                       ? 'bg-indigo-600 text-white shadow-sm'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
@@ -144,39 +144,39 @@ export const DropZone = ({
             {isLoading ? (
               <div className="py-8 flex flex-col items-center justify-center space-y-4">
                 <div className="size-12 rounded-full border-4 border-indigo-500/20 border-t-indigo-500 animate-spin" />
-                <p className="text-base font-semibold text-white">{loadingStatus}</p>
-                <p className="text-xs text-slate-400">Loading DuckDB-Wasm engine and indexing pages...</p>
+                <p className="text-lg font-semibold text-white">{loadingStatus}</p>
+                <p className="text-sm text-slate-400">Loading DuckDB-Wasm engine and indexing pages...</p>
               </div>
             ) : (
-              <div className="space-y-5 max-w-xl mx-auto">
-                <div className="mx-auto size-14 rounded-2xl bg-indigo-950/70 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-sm">
-                  <UploadCloud className="size-7" />
+              <div className="space-y-6 max-w-xl mx-auto">
+                <div className="mx-auto size-16 rounded-2xl bg-indigo-950/70 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-sm">
+                  <UploadCloud className="size-8" />
                 </div>
 
                 <div>
-                  <p className="text-lg font-bold text-white tracking-tight">
+                  <p className="text-xl sm:text-2xl font-bold text-white tracking-tight">
                     Drag and drop your file here, or{' '}
                     <span className="text-indigo-400 underline underline-offset-4 hover:text-indigo-300">
                       browse
                     </span>
                   </p>
-                  <p className="text-xs text-slate-400 mt-1.5">
+                  <p className="text-sm text-slate-400 mt-2">
                     {toolConfig?.acceptLabel ||
                       'Supports Apache Parquet (.parquet), GeoParquet, CSV, TSV, JSON, JSON Lines'}
                   </p>
                 </div>
 
                 {/* Primary Action Buttons */}
-                <div className="pt-2 flex flex-wrap items-center justify-center gap-3">
+                <div className="pt-2 flex flex-wrap items-center justify-center gap-3.5">
                   <button
                     type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       fileInputRef.current?.click();
                     }}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-600/20 transition-all cursor-pointer"
+                    className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-500 shadow-lg shadow-indigo-600/25 transition-all cursor-pointer"
                   >
-                    <FolderOpen className="size-4" />
+                    <FolderOpen className="size-4.5" />
                     Choose Local File
                   </button>
 
@@ -186,9 +186,9 @@ export const DropZone = ({
                       e.stopPropagation();
                       onTrySample();
                     }}
-                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 shadow-sm transition-all cursor-pointer"
+                    className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 shadow-sm transition-all cursor-pointer"
                   >
-                    <Sparkles className="size-3.5 text-indigo-400" />
+                    <Sparkles className="size-4 text-indigo-400" />
                     Try 1,000-Row Sample
                   </button>
                 </div>
@@ -198,7 +198,7 @@ export const DropZone = ({
                   {['.parquet', '.geoparquet', '.csv', '.tsv', '.json', '.jsonl'].map(ext => (
                     <span
                       key={ext}
-                      className="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-900/80 text-slate-400 border border-slate-800"
+                      className="px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-slate-900/80 text-slate-300 border border-slate-800"
                     >
                       {ext}
                     </span>
@@ -210,12 +210,12 @@ export const DropZone = ({
         </div>
 
         {/* Workbench Bottom Bar with Privacy Assurance */}
-        <div className="border-t border-slate-800/80 bg-slate-950/60 px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+        <div className="border-t border-slate-800/80 bg-slate-950/60 px-6 py-3.5 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs sm:text-sm text-slate-400">
           <div className="flex items-center gap-2 text-emerald-400 font-medium">
-            <ShieldCheck className="size-4 shrink-0" />
+            <ShieldCheck className="size-4.5 shrink-0" />
             <span>100% In-Browser Privacy: Files never leave your local device memory</span>
           </div>
-          <div className="text-[11px] text-slate-400 font-mono">
+          <div className="text-xs text-slate-400 font-mono">
             Powered by DuckDB-Wasm v1.1.3
           </div>
         </div>

@@ -33,10 +33,10 @@ export const Footer = () => {
         </div>
 
         {/* 4-column link grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 text-xs">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 text-sm">
           {/* Column 1: Tools & Converters */}
           <div>
-            <h4 className="text-white font-semibold uppercase tracking-wider text-[11px] mb-4 flex items-center gap-1.5">
+            <h4 className="text-white font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
               <Table className="size-3.5 text-indigo-400" />
               Free Online Tools
             </h4>
@@ -100,8 +100,8 @@ export const Footer = () => {
 
           {/* Column 2: Technical Guides */}
           <div>
-            <h4 className="text-white font-semibold uppercase tracking-wider text-[11px] mb-4 flex items-center gap-1.5">
-              <BookOpen className="size-3.5 text-indigo-400" />
+            <h4 className="text-white font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
+              <BookOpen className="size-4 text-indigo-400" />
               Technical Guides
             </h4>
             <ul className="space-y-2.5">
@@ -164,8 +164,8 @@ export const Footer = () => {
 
           {/* Column 3: Project & About */}
           <div>
-            <h4 className="text-white font-semibold uppercase tracking-wider text-[11px] mb-4 flex items-center gap-1.5">
-              <Mail className="size-3.5 text-indigo-400" />
+            <h4 className="text-white font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
+              <Mail className="size-4 text-indigo-400" />
               Project & Support
             </h4>
             <ul className="space-y-2.5">
@@ -210,8 +210,8 @@ export const Footer = () => {
 
           {/* Column 4: Legal & Compliance */}
           <div>
-            <h4 className="text-white font-semibold uppercase tracking-wider text-[11px] mb-4 flex items-center gap-1.5">
-              <FileText className="size-3.5 text-indigo-400" />
+            <h4 className="text-white font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
+              <FileText className="size-4 text-indigo-400" />
               Legal & Privacy
             </h4>
             <ul className="space-y-2.5">
@@ -243,7 +243,7 @@ export const Footer = () => {
                 </a>
               </li>
               <li>
-                <span className="text-slate-400 text-[11px] block mt-2">
+                <span className="text-slate-400 text-xs block mt-2">
                   Zero Server Log Policy: All file decoding executes exclusively on client CPU memory.
                 </span>
               </li>
@@ -252,9 +252,9 @@ export const Footer = () => {
         </div>
 
         {/* Bottom row */}
-        <div className="pt-8 border-t border-slate-900 text-[11px] text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="pt-8 border-t border-slate-900 text-xs text-slate-400 flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            © {new Date().getFullYear()} TableView.dev. All rights reserved. Open-source under MIT License.
+            © {new Date().getFullYear()} TableView.dev. All rights reserved. Licensed under MIT.
           </div>
           <div className="text-slate-400 text-center sm:text-right">
             Apache Parquet is a registered trademark of the Apache Software Foundation. DuckDB is a trademark of the DuckDB Foundation.

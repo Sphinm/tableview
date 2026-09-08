@@ -13,15 +13,26 @@ import { TermsOfService } from './pages/TermsOfService';
 import { loadFileIntoDuckDB, generateSampleParquet } from './lib/duckdb';
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
 import { TOOLS_CONFIG } from './data/tools';
+import { getInitialTheme, applyTheme, type Theme } from './lib/theme';
 import { AlertCircle, ArrowLeft, FileQuestion } from 'lucide-react';
 
 export function App() {
   const { path, slug } = useRouter();
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
   const [currentTable, setCurrentTable] = useState<string | null>(null);
   const [fileType, setFileType] = useState<'parquet' | 'csv' | 'json'>('parquet');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<string>('Initializing engine...');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // Apply theme class and meta tags on change
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
+
+  const handleToggleTheme = () => {
+    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+  };
 
   // Update meta tags based on current route
   useEffect(() => {
@@ -178,6 +189,8 @@ export function App() {
         onTrySample={handleTrySample}
         isLoading={isLoading}
         currentPath={path}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
 
       <main className="flex-1 flex flex-col">

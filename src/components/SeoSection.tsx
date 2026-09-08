@@ -62,10 +62,10 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
       {/* Bento Grid: Core Product Capabilities */}
       <div className="mb-20">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-3">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-3">
             Engineered for Modern Data Engineering
           </h2>
-          <p className="text-sm sm:text-base text-slate-400">
+          <p className="text-base sm:text-lg text-slate-400">
             No heavy desktop installations, no Python dependencies, and zero security compromises.
           </p>
         </div>
@@ -83,17 +83,17 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 </span>
               </div>
 
-              <h3 className="text-lg sm:text-xl font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-white mb-2">
                 Embedded DuckDB-Wasm Processing
               </h3>
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-xl mb-4">
+              <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-xl mb-4">
                 Executes columnar SQL directly on your local CPU via WebAssembly SIMD. Run group-by aggregations, string filters, and window functions over hundreds of thousands of rows in milliseconds.
               </p>
             </div>
 
             {/* Code Snippet Preview */}
-            <div className="rounded-xl bg-slate-950 border border-slate-800/80 p-4 font-mono text-[11px] text-slate-300 overflow-x-auto shadow-inner">
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/60 text-slate-400 text-[10px]">
+            <div className="rounded-xl bg-slate-950 border border-slate-800/80 p-4 font-mono text-xs sm:text-sm text-slate-300 overflow-x-auto shadow-inner">
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800/60 text-slate-400 text-xs">
                 <span>duckdb-wasm-interactive-query</span>
                 <span className="text-emerald-400 font-mono">⚡ 4ms execution</span>
               </div>
@@ -116,25 +116,25 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 </span>
               </div>
 
-              <h3 className="text-lg font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-white mb-2">
                 100% Air-Gapped Privacy
               </h3>
-              <p className="text-xs text-slate-400 leading-relaxed mb-4">
+              <p className="text-sm text-slate-400 leading-relaxed mb-4">
                 Confidential financial ledgers, HIPAA clinical databases, and internal logs never exit your machine.
               </p>
             </div>
 
-            <ul className="space-y-2 pt-2 border-t border-slate-800/60 text-xs text-slate-300">
+            <ul className="space-y-2.5 pt-3 border-t border-slate-800/60 text-sm text-slate-300">
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
                 <span>Zero server file uploads</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
                 <span>Works offline without Wi-Fi</span>
               </li>
               <li className="flex items-center gap-2">
-                <CheckCircle2 className="size-3.5 text-emerald-400 shrink-0" />
+                <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
                 <span>In-memory sandbox lifecycle</span>
               </li>
             </ul>
@@ -152,20 +152,20 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 </span>
               </div>
 
-              <h3 className="text-lg font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-white mb-2">
                 Two-Way Conversion
               </h3>
-              <p className="text-xs text-slate-400 leading-relaxed mb-4">
+              <p className="text-sm text-slate-400 leading-relaxed mb-4">
                 Export Parquet to native Microsoft Excel (.xlsx) or CSV, or compress bulky text CSV/JSON files into high-ratio ZSTD Parquet.
               </p>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-[11px] font-mono text-slate-400 flex items-center justify-center gap-2">
-              <span className="text-indigo-400">.parquet</span>
+            <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-mono text-slate-400 flex items-center justify-center gap-2.5">
+              <span className="text-indigo-400 font-semibold">.parquet</span>
               <span>⇄</span>
-              <span className="text-emerald-400">.xlsx</span>
+              <span className="text-emerald-400 font-semibold">.xlsx</span>
               <span>⇄</span>
-              <span className="text-slate-300">.csv</span>
+              <span className="text-slate-300 font-semibold">.csv</span>
             </div>
           </div>
 
@@ -181,25 +181,25 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 </span>
               </div>
 
-              <h3 className="text-lg font-bold text-white mb-2">
+              <h3 className="text-xl font-bold text-white mb-2">
                 Deep Schema & Null Auditing
               </h3>
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-xl">
+              <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-xl">
                 Inspect physical and logical column types, unique cardinality, minimum/maximum values, and null percentage metrics. Extract ready-to-run SQL DDL (<code className="text-cyan-300 font-mono">CREATE TABLE</code>) in a single click.
               </p>
             </div>
 
             <div className="mt-4 flex items-center gap-2 flex-wrap">
-              <span className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+              <span className="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
                 Data Types
               </span>
-              <span className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+              <span className="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
                 Null % Warnings
               </span>
-              <span className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+              <span className="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
                 Approx Cardinality
               </span>
-              <span className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
+              <span className="px-3 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-xs font-mono text-slate-300">
                 Instant DDL Generation
               </span>
             </div>
@@ -210,37 +210,37 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
       {/* Tools Suite Directory */}
       <div className="mb-20">
         <div className="text-center max-w-3xl mx-auto mb-10">
-          <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight mb-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-white tracking-tight mb-3">
             Free Dedicated Online Data Tools
           </h2>
-          <p className="text-xs sm:text-sm text-slate-400">
+          <p className="text-sm sm:text-base text-slate-400">
             Select a specialized tool below to start viewing, converting, or inspecting your datasets.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {toolsList.map((tool) => (
             <div
               key={tool.slug}
               onClick={() => navigateTo(tool.path)}
-              className="p-5 rounded-2xl bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800/80 hover:border-indigo-500/40 transition-all cursor-pointer group flex flex-col justify-between"
+              className="p-5 sm:p-6 rounded-2xl bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800/80 hover:border-indigo-500/40 transition-all cursor-pointer group flex flex-col justify-between"
             >
               <div>
-                <div className="flex items-center justify-between mb-2.5">
-                  <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-300 border border-indigo-800/60">
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-xs font-mono font-medium px-2.5 py-1 rounded-md bg-indigo-950/80 text-indigo-300 border border-indigo-800/60">
                     {tool.badge.split('·')[0].trim()}
                   </span>
                   <ArrowRight className="size-4 text-slate-400 group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
                 </div>
-                <h3 className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors mb-1.5">
+                <h3 className="text-base font-bold text-white group-hover:text-indigo-300 transition-colors mb-2">
                   {tool.title}
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
+                <p className="text-sm text-slate-400 leading-relaxed line-clamp-2">
                   {tool.metaDescription}
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-800/60 text-[11px] font-medium text-indigo-400 flex items-center gap-1">
+              <div className="mt-5 pt-3 border-t border-slate-800/60 text-xs font-semibold text-indigo-400 flex items-center gap-1.5">
                 <span>Launch Tool</span>
                 <span>→</span>
               </div>
@@ -251,11 +251,11 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
 
       {/* FAQ Section */}
       <div className="max-w-3xl mx-auto mb-12">
-        <h2 className="text-xl sm:text-2xl font-bold text-white text-center mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-white text-center mb-6">
           Frequently Asked Questions
         </h2>
 
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           {faqs.map((faq, index) => {
             const isOpen = openFaq === index;
             return (
@@ -265,17 +265,17 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
               >
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : index)}
-                  className="w-full p-4 text-left flex items-center justify-between gap-4 cursor-pointer"
+                  className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer"
                 >
-                  <span className="text-sm font-medium text-slate-200">{faq.q}</span>
+                  <span className="text-base font-semibold text-slate-200">{faq.q}</span>
                   <ChevronDown
-                    className={`size-4 text-slate-400 transition-transform duration-200 shrink-0 ${
+                    className={`size-5 text-slate-400 transition-transform duration-200 shrink-0 ${
                       isOpen ? 'rotate-180 text-indigo-400' : ''
                     }`}
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-4 pb-4 pt-1 text-xs text-slate-400 border-t border-slate-800/60 leading-relaxed">
+                  <div className="px-5 pb-5 pt-1 text-sm sm:text-base text-slate-400 border-t border-slate-800/60 leading-relaxed">
                     {faq.a}
                   </div>
                 )}

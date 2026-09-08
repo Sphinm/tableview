@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
 @theme {
-  --color-slate-950: #050608;
-  --color-slate-900: #0f1013;
-  --color-slate-800: #1d2027;
-  --color-slate-700: #2b2f3a;
-  --color-slate-600: #464c5a;
-  --color-slate-500: #656d7e;
-  --color-slate-400: #939aa8;
-  --color-slate-300: #c2c8d4;
-  --color-slate-200: #e0e4ec;
-  --color-slate-100: #f2f4f8;
+  --color-slate-950: var(--color-bg-canvas);
+  --color-slate-900: var(--color-bg-card);
+  --color-slate-800: var(--color-border-subtle);
+  --color-slate-700: var(--color-border-strong);
+  --color-slate-600: var(--color-text-tertiary);
+  --color-slate-500: var(--color-text-placeholder);
+  --color-slate-400: var(--color-text-secondary);
+  --color-slate-300: var(--color-text-sub);
+  --color-slate-200: var(--color-text-main);
+  --color-slate-100: var(--color-text-heading);
+}
+
+:root {
+  /* Default: Obsidian Dark Theme */
+  --color-bg-canvas: #050608;
+  --color-bg-card: #0f1013;
+  --color-border-subtle: #1d2027;
+  --color-border-strong: #2b2f3a;
+  --color-text-tertiary: #464c5a;
+  --color-text-placeholder: #656d7e;
+  --color-text-secondary: #939aa8;
+  --color-text-sub: #c2c8d4;
+  --color-text-main: #e0e4ec;
+  --color-text-heading: #ffffff;
+}
+
+html.light {
+  /* Clean Crisp Light Theme */
+  --color-bg-canvas: #f8fafc;
+  --color-bg-card: #ffffff;
+  --color-border-subtle: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+  --color-text-tertiary: #94a3b8;
+  --color-text-placeholder: #64748b;
+  --color-text-secondary: #475569;
+  --color-text-sub: #334155;
+  --color-text-main: #1e293b;
+  --color-text-heading: #0f172a;
+}
+
+html.dark {
+  /* Explicit Dark Theme */
+  --color-bg-canvas: #050608;
+  --color-bg-card: #0f1013;
+  --color-border-subtle: #1d2027;
+  --color-border-strong: #2b2f3a;
+  --color-text-tertiary: #464c5a;
+  --color-text-placeholder: #656d7e;
+  --color-text-secondary: #939aa8;
+  --color-text-sub: #c2c8d4;
+  --color-text-main: #e0e4ec;
+  --color-text-heading: #ffffff;
 }
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-100 antialiased selection:bg-indigo-500 selection:text-white min-h-screen;
+    @apply bg-slate-950 text-slate-200 antialiased selection:bg-indigo-500 selection:text-white min-h-screen text-[15px] sm:text-[16px] leading-relaxed;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   code, kbd, samp, pre {
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
+}
+
+/* Light mode text-white safeguard: ensure headings & labels are dark in light theme unless on saturated colored buttons */
+html.light .text-white:not(.keep-white, [class*="bg-indigo-"], [class*="bg-emerald-600"], [class*="bg-purple-600"], [class*="bg-red-600"]) {
+  color: #0f172a !important;
+}
+
+html.light .shadow-2xl,
+html.light .shadow-xl {
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.04) !important;
 }
 
 /* Custom scrollbars for data tables */
@@ -40,4 +92,17 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(60, 66, 80, 1);
+}
+
+html.light ::-webkit-scrollbar-track {
+  background: rgba(241, 245, 249, 0.9);
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: rgba(203, 213, 225, 0.9);
+  border-radius: 4px;
+}
+
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 1);
 }
