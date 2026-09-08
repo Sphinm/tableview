@@ -51,9 +51,12 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
 
   // Virtual scrolling refs & state
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [scrollTop, setScrollTop] = useState<number>(0);
   const columnsRef = useRef<ColumnSchema[]>(columns);
-  columnsRef.current = columns;
-  const [, setScrollTop] = useState<number>(0);
+
+  useEffect(() => {
+    columnsRef.current = columns;
+  }, [columns]);
 
   // Copy feedback toast
   const [copiedCell, setCopiedCell] = useState<string | null>(null);
