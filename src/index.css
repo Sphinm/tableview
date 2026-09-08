@@ -225,9 +225,47 @@ html.dark {
   }
 }
 
-/* Light mode text-white safeguard: ensure headings & labels are dark in light theme unless on saturated colored buttons */
-html.light .text-white:not(.keep-white, [class*="bg-indigo-"], [class*="bg-emerald-600"], [class*="bg-purple-600"], [class*="bg-red-600"]) {
-  color: #0f172a !important;
+/* Headings automatically adapt to theme contrast */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text-heading);
+}
+
+/* Primary Solid Button: Ultra high-contrast in both modes */
+.btn-primary {
+  background-color: #0f172a;
+  color: #ffffff !important;
+  border: 1px solid #1e293b;
+  transition: all 0.15s ease-in-out;
+}
+.btn-primary:hover {
+  background-color: #1e293b;
+  color: #ffffff !important;
+}
+html.dark .btn-primary {
+  background-color: #ffffff;
+  color: #090a0f !important;
+  border: 1px solid transparent;
+}
+html.dark .btn-primary:hover {
+  background-color: #f1f5f9;
+  color: #090a0f !important;
+}
+
+/* High-contrast Recommended Badge */
+.badge-recommended {
+  background-color: #0f172a;
+  color: #ffffff !important;
+}
+html.dark .badge-recommended {
+  background-color: #ffffff;
+  color: #090a0f !important;
+}
+
+/* Light mode text safeguard for unstyled text elements */
+html.light p.text-white,
+html.light span.text-white:not(button *, .badge-recommended, .btn-primary, [class*="bg-slate-"], [class*="bg-black"], [class*="bg-indigo-"], [class*="bg-emerald-"], [class*="bg-purple-"], [class*="bg-red-"]),
+html.light div.text-white:not(button *, .badge-recommended, .btn-primary, [class*="bg-slate-"], [class*="bg-black"], [class*="bg-indigo-"], [class*="bg-emerald-"], [class*="bg-purple-"], [class*="bg-red-"]) {
+  color: #0f172a;
 }
 
 html.light .shadow-2xl,

@@ -52,7 +52,7 @@ export const HeroSection = ({
             </div>
 
             {/* Headline */}
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.15]">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-100 tracking-tight leading-[1.15]">
               In-Browser Parquet & SQL Workbench.{' '}
               <span className="bg-gradient-to-r from-blue-500 via-indigo-400 to-cyan-400 bg-clip-text text-transparent">
                 Zero Setup. 100% Private.
@@ -86,7 +86,7 @@ export const HeroSection = ({
               <button
                 onClick={onTrySample}
                 disabled={isLoading}
-                className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50 border border-slate-800 dark:border-transparent"
+                className="btn-primary w-full sm:w-auto px-6 py-3 rounded-xl font-semibold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all cursor-pointer disabled:opacity-50"
               >
                 <Sparkles className="size-4 text-amber-400 dark:text-amber-500" />
                 <span>{isLoading ? loadingStatus : 'Try 1-Click Sample Dataset'}</span>
@@ -96,7 +96,7 @@ export const HeroSection = ({
               <button
                 onClick={() => fileInputRef.current?.click()}
                 disabled={isLoading}
-                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-900/80 hover:bg-slate-800 text-slate-200 font-medium text-xs sm:text-sm flex items-center justify-center gap-2 border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer"
+                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-slate-100 font-medium text-xs sm:text-sm flex items-center justify-center gap-2 border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer"
               >
                 <FolderOpen className="size-4 text-slate-400" />
                 <span>Select Local File</span>

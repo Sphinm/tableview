@@ -8,16 +8,16 @@ export const Footer = () => {
   };
 
   return (
-    <footer className="w-full bg-slate-950 border-t border-slate-900 text-slate-400 mt-20 pt-16 pb-12">
+    <footer className="w-full bg-slate-950 border-t border-slate-800 text-slate-400 mt-20 pt-16 pb-12">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Top brand row */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-12 border-b border-slate-900 gap-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-12 border-b border-slate-800 gap-6">
           <div>
             <div className="flex items-center gap-2.5 mb-2">
-              <div className="size-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-600/30">
+              <div className="size-8 rounded-lg bg-slate-900 dark:bg-white text-white dark:text-slate-950 border border-slate-700/60 dark:border-transparent flex items-center justify-center font-bold shadow-sm">
                 <Table className="size-4" />
               </div>
-              <span className="font-bold text-white text-lg tracking-tight">TableView.dev</span>
+              <span className="font-bold text-slate-100 text-lg tracking-tight">TableView.dev</span>
             </div>
             <p className="text-xs text-slate-400 max-w-md leading-relaxed">
               Fast, 100% private in-browser Apache Parquet inspector, SQL query workbench, and native Excel converter powered by DuckDB-Wasm.
@@ -25,7 +25,7 @@ export const Footer = () => {
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-950/60 border border-emerald-800/80 text-emerald-400">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
               <ShieldCheck className="size-3.5" />
               100% Client-Side Sandbox
             </span>
@@ -36,8 +36,8 @@ export const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 py-12 text-sm">
           {/* Column 1: Tools & Converters */}
           <div>
-            <h4 className="text-white font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
-              <Table className="size-3.5 text-indigo-400" />
+            <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
+              <Table className="size-3.5 text-slate-400" />
               Free Online Tools
             </h4>
             <ul className="space-y-2.5">
@@ -100,8 +100,8 @@ export const Footer = () => {
 
           {/* Column 2: Technical Guides */}
           <div>
-            <h4 className="text-white font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
-              <BookOpen className="size-4 text-indigo-400" />
+            <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
+              <BookOpen className="size-4 text-slate-400" />
               Technical Guides
             </h4>
             <ul className="space-y-2.5">
@@ -109,7 +109,7 @@ export const Footer = () => {
                 <a
                   href="/guides/what-is-apache-parquet"
                   onClick={(e) => handleNav(e, '/guides/what-is-apache-parquet')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   What is Apache Parquet?
                 </a>
@@ -118,7 +118,7 @@ export const Footer = () => {
                 <a
                   href="/guides/convert-parquet-to-excel"
                   onClick={(e) => handleNav(e, '/guides/convert-parquet-to-excel')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   Parquet to Excel Guide
                 </a>
@@ -127,7 +127,7 @@ export const Footer = () => {
                 <a
                   href="/guides/duckdb-wasm-in-browser-olap"
                   onClick={(e) => handleNav(e, '/guides/duckdb-wasm-in-browser-olap')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   DuckDB-Wasm Deep Dive
                 </a>
@@ -136,7 +136,7 @@ export const Footer = () => {
                 <a
                   href="/guides/inspect-parquet-metadata-and-schema"
                   onClick={(e) => handleNav(e, '/guides/inspect-parquet-metadata-and-schema')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   Inspect Schema & Metadata
                 </a>
@@ -145,7 +145,7 @@ export const Footer = () => {
                 <a
                   href="/guides/parquet-vs-csv-vs-json-benchmark"
                   onClick={(e) => handleNav(e, '/guides/parquet-vs-csv-vs-json-benchmark')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   Storage & Cost Benchmarks
                 </a>
@@ -154,7 +154,7 @@ export const Footer = () => {
                 <a
                   href="/guides"
                   onClick={(e) => handleNav(e, '/guides')}
-                  className="text-indigo-400 hover:text-indigo-300 transition-colors font-medium"
+                  className="text-slate-300 hover:text-slate-100 transition-colors font-medium"
                 >
                   Browse All 6 Guides →
                 </a>
@@ -164,8 +164,8 @@ export const Footer = () => {
 
           {/* Column 3: Project & About */}
           <div>
-            <h4 className="text-white font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
-              <Mail className="size-4 text-indigo-400" />
+            <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
+              <Mail className="size-4 text-slate-400" />
               Project & Support
             </h4>
             <ul className="space-y-2.5">
@@ -173,7 +173,7 @@ export const Footer = () => {
                 <a
                   href="/about"
                   onClick={(e) => handleNav(e, '/about')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   About TableView
                 </a>
@@ -182,7 +182,7 @@ export const Footer = () => {
                 <a
                   href="/contact"
                   onClick={(e) => handleNav(e, '/contact')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   Contact & Feedback
                 </a>
@@ -191,7 +191,7 @@ export const Footer = () => {
                 <a
                   href="/contact"
                   onClick={(e) => handleNav(e, '/contact')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   Report an Issue / Bug
                 </a>
@@ -200,7 +200,7 @@ export const Footer = () => {
                 <a
                   href="/about"
                   onClick={(e) => handleNav(e, '/about')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   DuckDB-Wasm Engine
                 </a>
@@ -210,8 +210,8 @@ export const Footer = () => {
 
           {/* Column 4: Legal & Compliance */}
           <div>
-            <h4 className="text-white font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
-              <FileText className="size-4 text-indigo-400" />
+            <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
+              <FileText className="size-4 text-slate-400" />
               Legal & Privacy
             </h4>
             <ul className="space-y-2.5">
@@ -219,7 +219,7 @@ export const Footer = () => {
                 <a
                   href="/privacy"
                   onClick={(e) => handleNav(e, '/privacy')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   Privacy Policy
                 </a>
@@ -228,7 +228,7 @@ export const Footer = () => {
                 <a
                   href="/terms"
                   onClick={(e) => handleNav(e, '/terms')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   Terms of Service
                 </a>
@@ -237,7 +237,7 @@ export const Footer = () => {
                 <a
                   href="/privacy#advertising"
                   onClick={(e) => handleNav(e, '/privacy#advertising')}
-                  className="hover:text-indigo-400 transition-colors"
+                  className="hover:text-slate-100 transition-colors"
                 >
                   Ad Choices & Cookies
                 </a>

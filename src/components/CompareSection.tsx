@@ -40,14 +40,14 @@ export const CompareSection = () => {
   ];
 
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 border-t border-slate-900">
+    <section className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 border-t border-slate-800">
       {/* Section Header */}
       <div className="text-center max-w-3xl mx-auto mb-14">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-indigo-950/60 border border-indigo-800 text-indigo-400 mb-3.5">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-900 border border-slate-800 text-slate-300 mb-3.5 shadow-sm">
           <Scale className="size-3.5" />
           <span>Workflow Comparison</span>
         </div>
-        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight mb-4">
+        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-100 tracking-tight mb-4">
           How TableView Compares to Traditional Tools
         </h2>
         <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
@@ -56,16 +56,16 @@ export const CompareSection = () => {
       </div>
 
       {/* Comparison Matrix Table */}
-      <div className="rounded-2xl border border-slate-800/80 bg-slate-950/40 backdrop-blur-xl overflow-hidden shadow-2xl">
+      <div className="rounded-2xl border border-slate-800 bg-slate-950/60 backdrop-blur-xl overflow-hidden shadow-2xl">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse min-w-[700px]">
             <thead>
-              <tr className="border-b border-slate-800/80 bg-slate-900/60 text-xs text-slate-300">
+              <tr className="border-b border-slate-800 bg-slate-900/80 text-xs text-slate-300">
                 <th className="p-4 sm:p-5 font-semibold w-1/4">Evaluation Criteria</th>
-                <th className="p-4 sm:p-5 font-bold w-1/4 bg-indigo-950/40 border-x border-indigo-500/30 text-indigo-300">
+                <th className="p-4 sm:p-5 font-bold w-1/4 bg-slate-800/70 border-x-2 border-slate-700/80 text-slate-100 shadow-sm">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-white font-extrabold">TableView.dev</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] bg-indigo-600 text-white font-semibold flex items-center gap-1">
+                    <span className="text-sm text-slate-100 font-extrabold">TableView.dev</span>
+                    <span className="badge-recommended px-2 py-0.5 rounded-full text-[10px] font-bold flex items-center gap-1 shadow-sm">
                       <Sparkles className="size-2.5" />
                       Recommended
                     </span>
@@ -76,17 +76,17 @@ export const CompareSection = () => {
                 <th className="p-4 sm:p-5 font-semibold w-1/6 text-slate-400">Cloud Web Converters</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-xs">
+            <tbody className="divide-y divide-slate-800/80 text-xs">
               {comparisonData.map((row, idx) => (
-                <tr key={idx} className="hover:bg-slate-900/20 transition-colors">
+                <tr key={idx} className="hover:bg-slate-900/40 transition-colors">
                   <td className="p-4 sm:p-5 font-medium text-slate-200">
                     {row.feature}
                   </td>
                   {/* TableView Column (Highlighted) */}
-                  <td className="p-4 sm:p-5 bg-indigo-950/20 border-x border-indigo-500/20 font-medium text-white">
-                    <div className="flex items-center gap-2">
-                      <div className="size-5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800/80 flex items-center justify-center shrink-0">
-                        <Check className="size-3" />
+                  <td className="p-4 sm:p-5 bg-slate-800/30 border-x-2 border-slate-700/60 font-semibold text-slate-100">
+                    <div className="flex items-center gap-2.5">
+                      <div className="size-5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 flex items-center justify-center shrink-0">
+                        <Check className="size-3 stroke-[3]" />
                       </div>
                       <span>{row.tableview.text}</span>
                     </div>
@@ -106,10 +106,10 @@ export const CompareSection = () => {
                     </div>
                   </td>
                   {/* Cloud Converters Column */}
-                  <td className={`p-4 sm:p-5 ${row.cloud.highlightBad ? 'text-red-400/90 font-medium' : 'text-slate-400'}`}>
+                  <td className={`p-4 sm:p-5 ${row.cloud.highlightBad ? 'text-red-500 font-medium' : 'text-slate-400'}`}>
                     <div className="flex items-center gap-2">
                       {row.cloud.icon && (
-                        <row.cloud.icon className={`size-4 shrink-0 ${row.cloud.highlightBad ? 'text-red-400' : 'text-slate-400'}`} />
+                        <row.cloud.icon className={`size-4 shrink-0 ${row.cloud.highlightBad ? 'text-red-500' : 'text-slate-400'}`} />
                       )}
                       <span>{row.cloud.text}</span>
                     </div>

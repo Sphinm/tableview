@@ -30,13 +30,13 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <BookOpen className="size-12 text-slate-400 mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-white mb-2">Guide Not Found</h1>
+        <h1 className="text-2xl font-bold text-slate-100 mb-2">Guide Not Found</h1>
         <p className="text-xs sm:text-sm text-slate-400 mb-6">
           The requested technical guide could not be found or may have been updated.
         </p>
         <button
           onClick={() => navigateTo('/guides')}
-          className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold inline-flex items-center gap-2 transition-colors cursor-pointer"
+          className="btn-primary px-4 py-2 rounded-xl text-xs font-semibold inline-flex items-center gap-2 cursor-pointer shadow-sm"
         >
           <ArrowLeft className="size-3.5" />
           Back to Guides Hub
@@ -58,32 +58,19 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
   };
 
   // Find other guides for related recommendations
-  const relatedGuides = guidesData
-    .filter((g) => g.slug !== guide.slug)
-    .slice(0, 2);
+  const relatedGuides = guidesData.filter((g) => g.slug !== guide.slug).slice(0, 2);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 text-slate-300">
-      {/* Breadcrumb navigation */}
-      <nav className="flex items-center gap-2 text-xs text-slate-400 mb-8 overflow-x-auto pb-1">
-        <a
-          href="/"
-          onClick={(e) => {
-            e.preventDefault();
-            navigateTo('/');
-          }}
-          className="hover:text-slate-200 transition-colors whitespace-nowrap"
-        >
-          Home
-        </a>
-        <ChevronRight className="size-3 shrink-0" />
+    <article className="max-w-4xl mx-auto px-4 sm:px-6 py-10 text-slate-300">
+      {/* Breadcrumbs */}
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-slate-400 mb-8">
         <a
           href="/guides"
           onClick={(e) => {
             e.preventDefault();
             navigateTo('/guides');
           }}
-          className="hover:text-slate-200 transition-colors whitespace-nowrap"
+          className="hover:text-slate-200 transition-colors"
         >
           Guides
         </a>
@@ -94,19 +81,19 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
       {/* Article Header */}
       <header className="mb-10 pb-8 border-b border-slate-800">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-950/80 text-indigo-400 border border-indigo-800/60">
+          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-slate-800 text-slate-200 border border-slate-700">
             {guide.category}
           </span>
           <button
             onClick={handleShare}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs text-slate-400 hover:text-white border border-slate-800 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs text-slate-400 hover:text-slate-100 border border-slate-800 transition-colors cursor-pointer"
           >
             {copiedLink ? <Check className="size-3.5 text-emerald-400" /> : <Share2 className="size-3.5" />}
             <span>{copiedLink ? 'Link Copied!' : 'Share'}</span>
           </button>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight leading-tight mb-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-100 tracking-tight leading-tight mb-4">
           {guide.title}
         </h1>
 
@@ -256,7 +243,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
         {/* FAQ Section */}
         {guide.faqs && guide.faqs.length > 0 && (
           <section id="faqs" className="scroll-mt-24 pt-6 border-t border-slate-800">
-            <h2 className="text-lg sm:text-xl font-bold text-white mb-6">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-100 mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-3">
@@ -265,7 +252,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
                 return (
                   <div
                     key={index}
-                    className="rounded-xl bg-slate-900/60 border border-slate-800 overflow-hidden"
+                    className="rounded-xl bg-slate-900 border border-slate-800 overflow-hidden shadow-sm"
                   >
                     <button
                       onClick={() => setOpenFaq(isOpen ? null : index)}
@@ -274,12 +261,12 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
                       <span className="text-xs sm:text-sm font-medium text-slate-200">{faq.q}</span>
                       <ChevronDown
                         className={`size-4 text-slate-400 transition-transform duration-200 shrink-0 ${
-                          isOpen ? 'rotate-180 text-indigo-400' : ''
+                          isOpen ? 'rotate-180 text-slate-200' : ''
                         }`}
                       />
                     </button>
                     {isOpen && (
-                      <div className="px-4 pb-4 pt-1 text-xs text-slate-400 border-t border-slate-800/60 leading-relaxed">
+                      <div className="px-4 pb-4 pt-1 text-xs text-slate-400 border-t border-slate-800 leading-relaxed">
                         {faq.a}
                       </div>
                     )}
@@ -292,19 +279,19 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
       </div>
 
       {/* CTA Box to Workbench */}
-      <div className="my-12 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/30 to-slate-900 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+      <div className="my-12 p-6 sm:p-8 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-md">
         <div>
-          <h3 className="text-base font-bold text-white mb-1.5 flex items-center gap-2">
-            <Table className="size-4 text-indigo-400" />
+          <h3 className="text-base font-bold text-slate-100 mb-1.5 flex items-center gap-2">
+            <Table className="size-4 text-slate-400" />
             Inspect Parquet Files Instantly
           </h3>
-          <p className="text-xs text-slate-300/90 max-w-md leading-relaxed">
+          <p className="text-xs text-slate-400 max-w-md leading-relaxed">
             Need to inspect schemas or convert Parquet to Excel? TableView runs 100% locally in your browser with zero server uploads.
           </p>
         </div>
         <button
           onClick={() => navigateTo('/')}
-          className="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 border border-slate-800 dark:border-transparent text-xs font-semibold shadow-sm transition-colors whitespace-nowrap cursor-pointer"
+          className="btn-primary px-5 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition-colors whitespace-nowrap cursor-pointer"
         >
           Open TableView Workbench →
         </button>
@@ -325,12 +312,12 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
                   e.preventDefault();
                   navigateTo(`/guides/${rel.slug}`);
                 }}
-                className="block p-4 rounded-xl bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800 hover:border-indigo-500/40 transition-colors cursor-pointer group"
+                className="block p-4 rounded-xl bg-slate-900/50 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer group"
               >
-                <span className="text-[10px] font-semibold text-indigo-400 block mb-1">
+                <span className="text-[10px] font-semibold text-slate-400 block mb-1">
                   {rel.category}
                 </span>
-                <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-indigo-300 transition-colors line-clamp-1 mb-1">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-100 group-hover:text-slate-300 transition-colors line-clamp-1 mb-1">
                   {rel.title}
                 </h4>
                 <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
@@ -341,6 +328,6 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
           </div>
         </div>
       )}
-    </div>
+    </article>
   );
 };

@@ -40,10 +40,10 @@ export const ProductShell = ({
   };
 
   const sampleRows = [
-    { id: 'ORD-9821', time: '2026-09-08 14:22', country: '🇺🇸 United States', amount: '$249.50', status: 'COMPLETED', statusColor: 'bg-emerald-950/80 text-emerald-400 border-emerald-800/80' },
-    { id: 'ORD-9820', time: '2026-09-08 14:18', country: '🇩🇪 Germany', amount: '$1,120.00', status: 'PROCESSING', statusColor: 'bg-indigo-950/80 text-indigo-400 border-indigo-800/80' },
-    { id: 'ORD-9819', time: '2026-09-08 14:05', country: '🇸🇬 Singapore', amount: '$89.99', status: 'COMPLETED', statusColor: 'bg-emerald-950/80 text-emerald-400 border-emerald-800/80' },
-    { id: 'ORD-9818', time: '2026-09-08 13:50', country: '🇯🇵 Japan', amount: '$430.25', status: 'COMPLETED', statusColor: 'bg-emerald-950/80 text-emerald-400 border-emerald-800/80' },
+    { id: 'ORD-9821', time: '2026-09-08 14:22', country: '🇺🇸 United States', amount: '$249.50', status: 'COMPLETED', statusColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' },
+    { id: 'ORD-9820', time: '2026-09-08 14:18', country: '🇩🇪 Germany', amount: '$1,120.00', status: 'PROCESSING', statusColor: 'bg-slate-800 text-slate-300 border-slate-700' },
+    { id: 'ORD-9819', time: '2026-09-08 14:05', country: '🇸🇬 Singapore', amount: '$89.99', status: 'COMPLETED', statusColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' },
+    { id: 'ORD-9818', time: '2026-09-08 13:50', country: '🇯🇵 Japan', amount: '$430.25', status: 'COMPLETED', statusColor: 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/20' },
     { id: 'ORD-9817', time: '2026-09-08 13:33', country: '🇬🇧 United Kingdom', amount: '$612.00', status: 'SHIPPED', statusColor: 'bg-slate-800 text-slate-300 border-slate-700' }
   ];
 
@@ -54,8 +54,8 @@ export const ProductShell = ({
       onDrop={handleDrop}
       className={`relative w-full rounded-2xl border transition-all duration-300 shadow-2xl overflow-hidden backdrop-blur-xl ${
         isDragOver
-          ? 'border-indigo-500 bg-indigo-950/20 shadow-indigo-500/20 scale-[1.01]'
-          : 'border-slate-800/90 bg-slate-900/70 shadow-black/60 hover:border-slate-700/80'
+          ? 'border-slate-500 bg-slate-800/40 shadow-xl scale-[1.01]'
+          : 'border-slate-800 bg-slate-900/90 shadow-black/60 hover:border-slate-700'
       }`}
     >
       <input
@@ -68,12 +68,8 @@ export const ProductShell = ({
         }}
       />
 
-      {/* Glow highlight */}
-      <div className="absolute -top-24 -right-24 size-64 bg-blue-500/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-24 -left-24 size-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
-
       {/* Window Titlebar */}
-      <div className="px-4 py-3 bg-slate-950/80 border-b border-slate-800/80 flex items-center justify-between gap-3">
+      <div className="px-4 py-3 bg-slate-950/80 border-b border-slate-800 flex items-center justify-between gap-3">
         {/* Left: macOS dots & file tag */}
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-1.5">
@@ -83,7 +79,7 @@ export const ProductShell = ({
           </div>
           <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-800">
             <span className="text-xs font-mono font-medium text-slate-300">sales_stream_q3.parquet</span>
-            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-indigo-950 text-indigo-400 border border-indigo-800/60">
+            <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700">
               1,000 rows
             </span>
           </div>
@@ -161,8 +157,8 @@ export const ProductShell = ({
                 </thead>
                 <tbody className="divide-y divide-slate-800/50 text-[11px]">
                   {sampleRows.map((row) => (
-                    <tr key={row.id} className="hover:bg-indigo-950/20 transition-colors">
-                      <td className="p-2.5 text-indigo-300 font-semibold">{row.id}</td>
+                    <tr key={row.id} className="hover:bg-slate-800/40 transition-colors">
+                      <td className="p-2.5 text-slate-100 font-semibold">{row.id}</td>
                       <td className="p-2.5 text-slate-400">{row.time}</td>
                       <td className="p-2.5 text-slate-200">{row.country}</td>
                       <td className="p-2.5 text-right font-medium text-emerald-300">{row.amount}</td>

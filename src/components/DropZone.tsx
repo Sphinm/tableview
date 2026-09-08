@@ -149,14 +149,14 @@ export const DropZone = ({
               </div>
             ) : (
               <div className="space-y-6 max-w-xl mx-auto">
-                <div className="mx-auto size-16 rounded-2xl bg-indigo-950/70 border border-indigo-500/30 flex items-center justify-center text-indigo-400 shadow-sm">
+                <div className="mx-auto size-16 rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center text-slate-200 shadow-sm">
                   <UploadCloud className="size-8" />
                 </div>
 
                 <div>
-                  <p className="text-xl sm:text-2xl font-bold text-white tracking-tight">
+                  <p className="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight">
                     Drag and drop your file here, or{' '}
-                    <span className="text-indigo-400 underline underline-offset-4 hover:text-indigo-300">
+                    <span className="text-slate-200 underline underline-offset-4 hover:text-slate-100">
                       browse
                     </span>
                   </p>
@@ -174,7 +174,7 @@ export const DropZone = ({
                       e.stopPropagation();
                       fileInputRef.current?.click();
                     }}
-                    className="inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold text-white bg-slate-900 hover:bg-slate-800 dark:bg-white dark:text-slate-950 dark:hover:bg-slate-100 border border-slate-800 dark:border-transparent shadow-md transition-all cursor-pointer"
+                    className="btn-primary inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold shadow-md transition-all cursor-pointer"
                   >
                     <FolderOpen className="size-4.5" />
                     Choose Local File
@@ -186,7 +186,7 @@ export const DropZone = ({
                       e.stopPropagation();
                       onTrySample();
                     }}
-                    className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold text-slate-200 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 shadow-sm transition-all cursor-pointer"
+                    className="inline-flex items-center gap-2.5 px-5 py-3 rounded-xl text-sm font-semibold text-slate-200 hover:text-slate-100 bg-slate-900 hover:bg-slate-800 border border-slate-700/80 shadow-sm transition-all cursor-pointer"
                   >
                     <Sparkles className="size-4 text-amber-400" />
                     Try 1,000-Row Sample

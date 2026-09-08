@@ -20,16 +20,16 @@ export const PrivacyPolicy = () => {
       </div>
 
       {/* Core Privacy Highlight Box */}
-      <div className="p-6 rounded-2xl bg-indigo-950/40 border border-indigo-800/60 mb-12">
+      <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm mb-12">
         <div className="flex items-start gap-4">
-          <div className="p-2.5 rounded-xl bg-indigo-900/60 text-indigo-400 shrink-0 mt-0.5">
+          <div className="p-2.5 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 shrink-0 mt-0.5">
             <Lock className="size-6" />
           </div>
           <div>
-            <h3 className="text-base font-semibold text-white mb-1.5">
+            <h3 className="text-base font-semibold text-slate-100 mb-1.5">
               The 100% Client-Side Sandbox Guarantee
             </h3>
-            <p className="text-xs sm:text-sm text-indigo-200/90 leading-relaxed">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               When you drag, drop, or open an Apache Parquet, CSV, TSV, or JSON file in TableView.dev, <strong>zero bytes are uploaded to our servers</strong>. All file parsing, DuckDB SQL execution, and Excel conversions happen entirely inside your local browser memory via WebAssembly (Wasm). Your confidential business data never leaves your computer.
             </p>
           </div>

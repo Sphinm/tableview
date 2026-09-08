@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { guidesData, type GuideItem } from '../data/guides';
 import { navigateTo } from '../lib/router';
-import { BookOpen, Search, Clock, ArrowRight, Sparkles } from 'lucide-react';
+import { BookOpen, Search, Clock, ArrowRight } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
 
 export const GuidesHub = () => {
@@ -37,43 +37,43 @@ export const GuidesHub = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-slate-300">
       {/* Header */}
-      <div className="text-center max-w-3xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-indigo-950/60 border border-indigo-800 text-indigo-400 mb-4">
-          <Sparkles className="size-3.5" />
-          <span>Technical Knowledge Hub</span>
+      <div className="mb-10 text-center sm:text-left">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-900 border border-slate-800 text-slate-300 mb-4 shadow-sm">
+          <BookOpen className="size-3.5" />
+          <span>Technical Knowledge Base</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-4">
-          Parquet & In-Browser Analytics Guides
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-100 tracking-tight mb-4">
+          Parquet & Columnar Data Guides
         </h1>
-        <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-          Comprehensive, field-tested technical guides on Apache Parquet, DuckDB-Wasm internals, columnar optimization, and data engineering best practices.
+        <p className="text-sm sm:text-base text-slate-400 max-w-2xl leading-relaxed">
+          Comprehensive developer guides on Apache Parquet file internals, DuckDB in-browser execution, metadata schema inspection, and lossless format conversions.
         </p>
       </div>
 
-      {/* Search and Filters */}
-      <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 mb-10">
-        {/* Search input */}
-        <div className="relative flex-1 max-w-md">
-          <Search className="size-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+      {/* Search & Category Filter Bar */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 pb-6 border-b border-slate-800">
+        {/* Search */}
+        <div className="relative w-full sm:w-80">
+          <Search className="size-4 text-slate-400 absolute left-3.5 top-3 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search guides by title, keyword, or tag..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-900/80 border border-slate-800 text-xs text-slate-200 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-colors"
+            placeholder="Search guides (e.g. DuckDB, Excel)..."
+            className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-slate-600 transition-colors"
           />
         </div>
 
-        {/* Category pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-2 md:pb-0 scrollbar-none text-xs">
+        {/* Category Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 text-xs">
           {categories.map((cat) => (
             <button
               key={cat}
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-indigo-600 text-white font-medium shadow-md shadow-indigo-600/30'
-                  : 'bg-slate-900 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                  ? 'btn-primary font-semibold shadow-sm'
+                  : 'bg-slate-900 text-slate-400 hover:text-slate-100 hover:bg-slate-800 border border-slate-800'
               }`}
             >
               {cat}
@@ -97,12 +97,12 @@ export const GuidesHub = () => {
             <article
               key={guide.id}
               onClick={() => handleOpenGuide(guide.slug)}
-              className="group p-6 rounded-2xl bg-slate-900/50 hover:bg-slate-900/80 border border-slate-800/80 hover:border-indigo-500/50 transition-all flex flex-col justify-between cursor-pointer shadow-sm hover:shadow-xl hover:shadow-indigo-950/20"
+              className="group p-6 rounded-2xl bg-slate-900/50 hover:bg-slate-900/80 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between cursor-pointer shadow-sm hover:shadow-xl"
             >
               <div>
                 {/* Meta badge & read time */}
                 <div className="flex items-center justify-between gap-2 mb-3">
-                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-indigo-950/80 text-indigo-400 border border-indigo-800/60">
+                  <span className="text-[11px] font-semibold px-2.5 py-0.5 rounded-md bg-slate-800 text-slate-200 border border-slate-700">
                     {guide.category}
                   </span>
                   <div className="flex items-center gap-1 text-[11px] text-slate-400">
@@ -112,18 +112,9 @@ export const GuidesHub = () => {
                 </div>
 
                 {/* Title */}
-                <a
-                  href={`/guides/${guide.slug}`}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleOpenGuide(guide.slug);
-                  }}
-                  className="block focus:outline-none"
-                >
-                  <h3 className="text-base font-bold text-white group-hover:text-indigo-300 transition-colors mb-2.5 line-clamp-2 leading-snug">
-                    {guide.title}
-                  </h3>
-                </a>
+                <h3 className="text-base font-bold text-slate-100 group-hover:text-slate-300 transition-colors mb-2.5 line-clamp-2 leading-snug">
+                  {guide.title}
+                </h3>
 
                 {/* Excerpt */}
                 <p className="text-xs text-slate-400 line-clamp-3 leading-relaxed mb-4">

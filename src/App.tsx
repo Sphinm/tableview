@@ -187,13 +187,13 @@ export function App() {
         return (
           <div className="max-w-md mx-auto px-4 py-24 text-center">
             <FileQuestion className="size-12 text-indigo-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Page Not Found</h2>
+            <h2 className="text-2xl font-bold text-slate-100 mb-2">Page Not Found</h2>
             <p className="text-xs text-slate-400 mb-6 leading-relaxed">
               The page you are looking for does not exist or may have been moved.
             </p>
             <button
               onClick={() => navigateTo('/')}
-              className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold inline-flex items-center gap-2 cursor-pointer transition-colors"
+              className="btn-primary px-4 py-2 rounded-xl text-xs font-semibold inline-flex items-center gap-2 cursor-pointer shadow-sm"
             >
               <ArrowLeft className="size-3.5" />
               Return to Workbench
