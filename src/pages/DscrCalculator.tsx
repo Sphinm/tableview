@@ -9,14 +9,116 @@ import {
   FileSpreadsheet,
   HelpCircle,
   Sparkles,
-  Percent
+  Percent,
+  CheckCircle2,
+  ArrowRight,
+  BookOpen,
+  ShieldCheck
 } from 'lucide-react';
 import {
   calculateDscr,
   generateDscrAmortization,
   type DscrInputs
 } from '../lib/dscrCalculator';
-import { updatePageMeta } from '../lib/router';
+import { updatePageMeta, navigateTo } from '../lib/router';
+
+const dscrSchemas = [
+  {
+    '@type': 'WebApplication',
+    name: 'DSCR Loan Calculator for Rental Properties',
+    url: 'https://tableview.dev/dscr-loan-calculator',
+    description: 'Free in-browser DSCR loan calculator for real estate investors. Accurately calculate Debt-Service Coverage Ratio, monthly PITIA, net cash flow, and maximum loan amounts.',
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'All',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    }
+  },
+  {
+    '@type': 'FinancialProduct',
+    name: 'DSCR Real Estate Investment Mortgage',
+    description: 'Non-QM mortgage program underwriting based on rental property cash flow rather than personal W-2 income or DTI.',
+    category: 'MortgageLoan'
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://tableview.dev/'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Financial Calculators',
+        item: 'https://tableview.dev/finance-calculator'
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'DSCR Loan Calculator',
+        item: 'https://tableview.dev/dscr-loan-calculator'
+      }
+    ]
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What is a DSCR loan and how does it work?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'A DSCR (Debt-Service Coverage Ratio) loan is a non-QM mortgage for real estate investors. Rather than verifying personal W-2 tax returns or personal debt-to-income (DTI) ratios, lenders qualify the loan based solely on the property\'s expected or actual rental income compared to its monthly PITIA (Principal, Interest, Taxes, Insurance, HOA).'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'What is the minimum DSCR required to qualify for a loan?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Most non-QM lenders seek a DSCR of 1.20x to 1.25x for competitive rates and up to 80% LTV. However, many lenders offer sub-1.0 or no-ratio DSCR loans down to 0.75x or even 0.0x for properties in high-appreciation markets or short-term rentals, typically requiring a 25% to 30% down payment.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'How is the DSCR ratio calculated?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'DSCR = Gross Monthly Rental Income / Monthly PITIA. For example, if a rental property generates $3,000 per month in gross rent and the total monthly payment (PITIA) is $2,400, the DSCR is $3,000 / $2,400 = 1.25x.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'Can I use an LLC or corporate entity for a DSCR loan?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. In fact, most DSCR lenders encourage or mandate that properties close in the name of an LLC, LP, or corporation to shield personal assets and facilitate multi-partner syndications.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'Are short-term rentals (Airbnb and VRBO) eligible for DSCR financing?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes. Many modern DSCR lenders allow projected or historical short-term rental revenue verified through AirDNA Rentalizer or 12-month platform operating statements to underwrite debt service.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'What is the difference between Interest-Only and 30-Year Fixed DSCR loans?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'An interest-only (I/O) DSCR loan lowers your mandatory monthly payment during the initial 5 to 10 year period by eliminating principal payments. This significantly boosts your monthly DSCR ratio and maximizes immediate cash flow.'
+        }
+      }
+    ]
+  }
+];
 
 interface DscrCalculatorProps {
   onTrySample?: () => void;
@@ -27,7 +129,8 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
     updatePageMeta(
       'DSCR Loan Calculator — Real Estate Investor Cash Flow & Debt Coverage Tool | TableView.dev',
       'Free, 100% private in-browser DSCR loan calculator for rental property investors. Calculate debt-service coverage ratio, cash flow, maximum loan amount, and cash-on-cash return with Excel export.',
-      '/dscr-loan-calculator'
+      '/dscr-loan-calculator',
+      dscrSchemas
     );
   }, []);
 
@@ -820,52 +923,316 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
           </div>
         </div>
 
-        {/* Section 3: Educational Guide & In-Depth Investor FAQ */}
-        <div className="mt-16 pt-10 border-t border-slate-800 grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h3 className="text-xl font-bold text-slate-100 mb-4 flex items-center gap-2">
-              <HelpCircle className="size-5 text-indigo-400" />
-              What is a DSCR Loan & How Does It Work?
-            </h3>
-            <div className="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
-              <p>
-                A <strong>DSCR (Debt-Service Coverage Ratio) loan</strong> is a specialized type of non-QM (Non-Qualified Mortgage) loan designed for real estate investors. Unlike conventional mortgages that evaluate personal income, W-2 tax returns, and debt-to-income (DTI) ratios, DSCR lenders qualify borrowers based exclusively on the property's rental cash flow.
-              </p>
-              <p>
-                The formula used by secondary market mortgage underwriters is:
-              </p>
-              <div className="p-3 bg-slate-900 border border-slate-800 rounded-xl font-mono text-xs text-indigo-300">
-                DSCR = Gross Monthly Rental Income / Monthly PITIA
+        {/* Section 3: Deep Formula, Underwriting Guidelines & Educational Guide */}
+        <div className="mt-16 pt-10 border-t border-slate-800 space-y-12">
+          {/* Subsection 1: Mathematical Formula & Line-by-Line Breakdown */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-100 mb-4 flex items-center gap-2">
+                <BookOpen className="size-6 text-indigo-400" />
+                How to Calculate Debt-Service Coverage Ratio (DSCR)
+              </h2>
+              <div className="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <p>
+                  A <strong>DSCR (Debt-Service Coverage Ratio) loan</strong> is a premier non-QM (Non-Qualified Mortgage) financing program engineered specifically for real estate investors. Unlike conventional Fannie Mae or Freddie Mac loans, DSCR lenders qualify borrowers based exclusively on the property's gross rental cash flow rather than personal W-2 income, tax returns, or debt-to-income (DTI) ratios.
+                </p>
+                <p>
+                  Secondary market mortgage underwriters calculate the coverage ratio using this exact mathematical formula:
+                </p>
+                <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl font-mono text-xs sm:text-sm text-indigo-300">
+                  <div className="text-center font-bold mb-1">DSCR = Gross Monthly Rental Income ÷ Monthly PITIA</div>
+                  <div className="text-slate-400 text-center text-xs font-normal">Where PITIA = Principal + Interest + Taxes + Insurance + HOA</div>
+                </div>
+                <ul className="space-y-2 pt-2">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong>Gross Rental Income:</strong> Verified via appraisal Form 1007 (Rent Schedule), executed lease agreements, or 12-month AirDNA short-term rental market performance.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong>Monthly PITIA:</strong> The comprehensive mortgage liability, including principal amortized over 30 years, note interest rate, real estate taxes, hazard/flood insurance, and mandatory HOA dues.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong>Interest-Only Advantage:</strong> Electing an Interest-Only (I/O) structure removes principal from the denominator during initial years, substantially elevating your DSCR ratio.</span>
+                  </li>
+                </ul>
               </div>
-              <p>
-                Where <strong>PITIA</strong> represents Principal, Interest, Taxes, Insurance, and HOA dues.
+            </div>
+
+            {/* Practical Underwriting Example Card */}
+            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">Underwriting Example</span>
+                <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-800/60">Passed (1.25x DSCR)</span>
+              </div>
+              <div className="space-y-2 text-xs font-mono">
+                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                  <span className="text-slate-400">Property Purchase Price</span>
+                  <span className="text-slate-200 font-semibold">$450,000</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                  <span className="text-slate-400">Down Payment (20% LTV 80%)</span>
+                  <span className="text-slate-200">$90,000 (Loan: $360,000)</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                  <span className="text-slate-400">30-Yr Fixed P&I Payment (7.25%)</span>
+                  <span className="text-slate-200">$2,456 / mo</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                  <span className="text-slate-400">Property Taxes & Hazard Insurance</span>
+                  <span className="text-slate-200">$583 / mo</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                  <span className="text-slate-300 font-bold">Total Monthly PITIA Debt</span>
+                  <span className="text-rose-400 font-bold">$3,039 / mo</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                  <span className="text-slate-300 font-bold">Market Rental Income</span>
+                  <span className="text-emerald-400 font-bold">$3,800 / mo</span>
+                </div>
+                <div className="flex justify-between pt-2 text-sm font-bold">
+                  <span className="text-indigo-300">Coverage Ratio ($3,800 ÷ $3,039)</span>
+                  <span className="text-emerald-400">1.250x</span>
+                </div>
+              </div>
+              <p className="text-[11px] text-slate-400 italic">
+                At 1.25x DSCR, the borrower meets prime institutional underwriting criteria, unlocking tier-1 interest rate pricing and maximum 80% LTV financing without submitting tax returns.
               </p>
             </div>
           </div>
 
-          <div>
-            <h3 className="text-xl font-bold text-slate-100 mb-4">Frequently Asked Questions</h3>
-            <div className="space-y-4 text-xs sm:text-sm">
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <h4 className="font-semibold text-slate-200">What is the minimum DSCR required to qualify?</h4>
-                <p className="text-slate-400 mt-1">
-                  Most private lenders prefer a DSCR of <strong>1.20x to 1.25x</strong> for standard pricing. However, many lenders offer "no-ratio" or "sub-1.0 DSCR" programs down to 0.75x if you provide a 25% to 30% down payment and 6+ months of cash reserves.
+          {/* Subsection 2: DSCR Underwriting Matrix Table */}
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
+                  <ShieldCheck className="size-5 text-indigo-400" />
+                  DSCR Lender Qualification Tiers & Underwriting Matrix
+                </h3>
+                <p className="text-xs text-slate-400">Standard guidelines applied by private capital and secondary non-QM securitization conduits.</p>
+              </div>
+              <span className="text-[11px] px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700 w-fit">
+                Updated for 2025/2026 Guidelines
+              </span>
+            </div>
+
+            <div className="overflow-x-auto rounded-2xl border border-slate-800 shadow-xl">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead className="bg-slate-900 border-b border-slate-800 text-slate-300 font-semibold">
+                  <tr>
+                    <th className="p-3.5">DSCR Tier</th>
+                    <th className="p-3.5">Cash Flow Status</th>
+                    <th className="p-3.5">Max LTV</th>
+                    <th className="p-3.5">Interest Rate Impact</th>
+                    <th className="p-3.5">Min Reserves Required</th>
+                    <th className="p-3.5">Underwriting Verdict</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 bg-slate-950">
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-emerald-400">≥ 1.25x</td>
+                    <td className="p-3.5 text-slate-300">Strong Cash Flow (25%+ surplus)</td>
+                    <td className="p-3.5 text-slate-200 font-mono">80% LTV</td>
+                    <td className="p-3.5 text-emerald-400 font-medium">Lowest (Baseline Par)</td>
+                    <td className="p-3.5 text-slate-300">3 to 6 months PITIA</td>
+                    <td className="p-3.5 text-emerald-300 font-semibold">Automatic Institutional Approval</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-indigo-400">1.00x – 1.24x</td>
+                    <td className="p-3.5 text-slate-300">Breakeven to Moderate Cash Flow</td>
+                    <td className="p-3.5 text-slate-200 font-mono">75% – 80% LTV</td>
+                    <td className="p-3.5 text-slate-300 font-medium">+0.250% to +0.375%</td>
+                    <td className="p-3.5 text-slate-300">6 months PITIA</td>
+                    <td className="p-3.5 text-indigo-300 font-semibold">Standard Approval</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-amber-400">0.75x – 0.99x</td>
+                    <td className="p-3.5 text-slate-300">Deficit / Negative Cash Flow</td>
+                    <td className="p-3.5 text-slate-200 font-mono">70% – 75% LTV</td>
+                    <td className="p-3.5 text-amber-400 font-medium">+0.500% to +0.875%</td>
+                    <td className="p-3.5 text-slate-300">6 to 9 months PITIA</td>
+                    <td className="p-3.5 text-amber-300 font-semibold">Sub-1.0 Program (Needs FICO 700+)</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-rose-400">&lt; 0.75x / No Ratio</td>
+                    <td className="p-3.5 text-slate-300">High Deficit or Vacant Asset</td>
+                    <td className="p-3.5 text-slate-200 font-mono">65% – 70% LTV</td>
+                    <td className="p-3.5 text-rose-400 font-medium">+1.000% to +1.500%</td>
+                    <td className="p-3.5 text-slate-300">9 to 12 months PITIA</td>
+                    <td className="p-3.5 text-rose-300 font-semibold">No-Ratio Exception (High Equity Required)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Subsection 3: DSCR Loan vs Conventional vs Hard Money Comparison */}
+          <div className="space-y-4">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
+              <Calculator className="size-5 text-indigo-400" />
+              DSCR Loan vs Conventional Mortgage vs Hard Money Comparison
+            </h3>
+
+            <div className="overflow-x-auto rounded-2xl border border-slate-800 shadow-xl">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead className="bg-slate-900 border-b border-slate-800 text-slate-300 font-semibold">
+                  <tr>
+                    <th className="p-3.5">Feature / Dimension</th>
+                    <th className="p-3.5 text-indigo-400">DSCR Investment Loan</th>
+                    <th className="p-3.5 text-slate-300">Conventional Fannie/Freddie</th>
+                    <th className="p-3.5 text-amber-400">Hard Money / Bridge Loan</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 bg-slate-950">
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-semibold text-slate-200">Income Verification</td>
+                    <td className="p-3.5 text-indigo-300 font-semibold">Rental Income Only (Form 1007/Lease)</td>
+                    <td className="p-3.5 text-slate-400">W-2, Paystubs, 2 Yrs Tax Returns</td>
+                    <td className="p-3.5 text-amber-300 font-semibold">After-Repair Value (ARV) & Scope</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-semibold text-slate-200">DTI Restrictions</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">None (0% Personal DTI Impact)</td>
+                    <td className="p-3.5 text-slate-400">Strict 45% – 50% Ceiling</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">None</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-semibold text-slate-200">Property Portfolio Limit</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">Unlimited Properties</td>
+                    <td className="p-3.5 text-rose-400 font-semibold">Capped at 10 Mortgaged Properties</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">Unlimited Properties</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-semibold text-slate-200">Vesting in LLC / Entity</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">Permitted & Highly Encouraged</td>
+                    <td className="p-3.5 text-rose-400">Individual Names Only (No LLCs)</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">Required in Business Entity</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-semibold text-slate-200">Loan Term & Structure</td>
+                    <td className="p-3.5 text-slate-200">30-Year Fixed / 10-Yr Interest-Only</td>
+                    <td className="p-3.5 text-slate-200">15 or 30-Year Fully Amortized Fixed</td>
+                    <td className="p-3.5 text-slate-200">6 to 18 Months Interest-Only Bridge</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-semibold text-slate-200">Speed of Funding</td>
+                    <td className="p-3.5 text-slate-200">14 to 21 Business Days</td>
+                    <td className="p-3.5 text-slate-400">30 to 50+ Days</td>
+                    <td className="p-3.5 text-emerald-400 font-bold">5 to 10 Business Days</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Subsection 4: Comprehensive In-Depth Investor FAQ */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+              <HelpCircle className="size-5 text-indigo-400" />
+              Frequently Asked Questions About DSCR Loans
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">What is a DSCR loan and how does it work?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  A DSCR (Debt-Service Coverage Ratio) loan is a non-QM mortgage for real estate investors. Rather than verifying personal W-2 tax returns or personal debt-to-income (DTI) ratios, lenders qualify the loan based solely on the property's expected or actual rental income compared to its monthly PITIA (Principal, Interest, Taxes, Insurance, HOA).
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <h4 className="font-semibold text-slate-200">Can I use a DSCR loan for Short-Term Rentals (Airbnb/VRBO)?</h4>
-                <p className="text-slate-400 mt-1">
-                  Yes! Lenders frequently underwrite AirDNA projections or historical 12-month short-term rental revenue statements to verify qualified debt service.
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">What is the minimum DSCR required to qualify?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Most non-QM lenders seek a DSCR of 1.20x to 1.25x for competitive rates and up to 80% LTV. However, many lenders offer sub-1.0 or no-ratio DSCR loans down to 0.75x or even 0.0x for properties in high-appreciation markets or short-term rentals, typically requiring a 25% to 30% down payment.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <h4 className="font-semibold text-slate-200">Can I close in an LLC name?</h4>
-                <p className="text-slate-400 mt-1">
-                  Yes, virtually all DSCR lenders permit or even require vesting under a business entity (LLC, Corporation, or Partnership) to protect personal liability.
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">How is the DSCR ratio calculated?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  DSCR = Gross Monthly Rental Income / Monthly PITIA. For example, if a rental property generates $3,000 per month in gross rent and the total monthly payment (PITIA) is $2,400, the DSCR is $3,000 / $2,400 = 1.25x.
                 </p>
               </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">Can I use an LLC or corporate entity for a DSCR loan?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Yes. In fact, most DSCR lenders encourage or mandate that properties close in the name of an LLC, LP, or corporation to shield personal assets and facilitate multi-partner syndications.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">Are short-term rentals (Airbnb and VRBO) eligible for DSCR financing?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Yes. Many modern DSCR lenders allow projected or historical short-term rental revenue verified through AirDNA Rentalizer or 12-month platform operating statements to underwrite debt service.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">What is the difference between Interest-Only and 30-Year Fixed DSCR loans?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  An interest-only (I/O) DSCR loan lowers your mandatory monthly payment during the initial 5 to 10 year period by eliminating principal payments. This significantly boosts your monthly DSCR ratio and maximizes immediate cash flow.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Subsection 5: Related Financial Calculators & Tool Cross-Links */}
+          <div className="pt-6 border-t border-slate-800">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
+              Explore Related Real Estate & Finance Calculators
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <a
+                href="/hard-money-calculator"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/hard-money-calculator');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
+                  <span>Hard Money & Fix-and-Flip</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Calculate 70% rule MAO, points, holding interest, and net flip profit margins.
+                </p>
+              </a>
+
+              <a
+                href="/mortgage-calculator"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/mortgage-calculator');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
+                  <span>Mortgage Payment Calculator</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Analyze 15/30-year fixed loan amortization, PMI thresholds, and principal payoff.
+                </p>
+              </a>
+
+              <a
+                href="/refinance-calculator"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/refinance-calculator');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
+                  <span>Mortgage Refinance Calculator</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Compute monthly savings, closing cost break-even timeline, and lifetime interest delta.
+                </p>
+              </a>
             </div>
           </div>
         </div>

@@ -6,7 +6,10 @@ import {
   Zap,
   HardDrive,
   ArrowRight,
-  Database
+  Database,
+  BookOpen,
+  HelpCircle,
+  ShieldCheck
 } from 'lucide-react';
 import {
   calculateParquetSavings,
@@ -18,6 +21,104 @@ import {
 } from '../lib/parquetSavingsCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
 
+const parquetSchemas = [
+  {
+    '@type': 'WebApplication',
+    name: 'Parquet Cloud Storage & Query Savings Calculator',
+    url: 'https://tableview.dev/parquet-storage-calculator',
+    description: 'Calculate cloud storage and query engine bill savings when migrating from CSV/JSON to Apache Parquet across AWS S3, Athena, Google BigQuery, and Snowflake external tables.',
+    applicationCategory: 'DeveloperApplication',
+    operatingSystem: 'All',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    }
+  },
+  {
+    '@type': 'SoftwareApplication',
+    name: 'Apache Parquet Cloud Cost Optimizer',
+    description: 'Cloud FinOps analytics tool estimating columnar storage reduction, dictionary encoding gains, and Athena SQL scan cost cuts.',
+    applicationCategory: 'DeveloperApplication'
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://tableview.dev/'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Cloud & FinOps Calculators',
+        item: 'https://tableview.dev/parquet-storage-calculator'
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'Parquet Savings Calculator',
+        item: 'https://tableview.dev/parquet-storage-calculator'
+      }
+    ]
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Why does Apache Parquet reduce AWS S3 storage bills by 80% to 90%?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Unlike row-based text files (CSV or JSON) where repetitive text strings are duplicated row by row, Apache Parquet organizes data in columns. Similar data types are grouped together, enabling ultra-efficient dictionary encoding, run-length encoding (RLE), bit-packing, and high-ratio compression codecs like ZSTD or Snappy.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'How does Parquet cut Amazon Athena and Google BigQuery scanning costs?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Serverless query engines like AWS Athena bill $5.00 per TB of data scanned from S3. Because Parquet is columnar, a query selecting only 3 columns from a 50-column dataset reads ONLY those 3 columns from disk (column projection), skipping 90%+ of the file bytes. Combined with min/max predicate pushdown, Athena scan bills routinely fall by 90% to 99%.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'Which Parquet compression codec is best: Snappy, ZSTD, or GZIP?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Snappy is the cloud default: it offers blazing fast decompression speeds with ~75% size reduction, ideal for real-time streaming queries. ZSTD (level 3) is the modern gold standard: it achieves 85% to 90% compression ratios while maintaining decomp speed close to Snappy. GZIP provides maximum compression but suffers from significantly slower decompression CPU overhead.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'What is Predicate Pushdown and Row Group Pruning?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Parquet files divide tables into Row Groups (typically 128 MB to 512 MB) and store min/max statistics for every column in the file footer metadata. When you run a query like "WHERE event_date >= \'2025-01-01\'", the query engine reads the footer and skips reading entire row groups that don\'t match the criteria, avoiding millions of bytes of I/O.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'Can I convert large CSV or JSON files to Parquet directly in the browser?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Yes! Using TableView\'s DuckDB-Wasm in-browser converter, you can convert gigabyte-sized CSV, JSON, and NDJSON files into Snappy or ZSTD Parquet files directly inside your browser without uploading any confidential data to third-party servers.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'How does Parquet compare to Apache ORC or Avro?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Avro is a row-oriented format optimized for write-heavy streaming message queues (Kafka). Parquet and ORC are both columnar formats optimized for analytical read queries (OLAP). Parquet has achieved universal cross-platform dominance across Spark, DuckDB, Trino, Snowflake, Databricks, ClickHouse, and AWS Athena.'
+        }
+      }
+    ]
+  }
+];
+
 interface ParquetSavingsCalculatorProps {
   onTrySample?: () => void;
 }
@@ -27,7 +128,8 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
     updatePageMeta(
       'Parquet Cloud Storage & Query Savings Calculator — AWS S3 & Athena Cost Tool | TableView.dev',
       'Calculate exact cloud bill savings by converting CSV, JSON, or text logs to Apache Parquet. Estimate AWS S3 storage reduction and Athena/BigQuery scan savings.',
-      '/parquet-storage-calculator'
+      '/parquet-storage-calculator',
+      parquetSchemas
     );
   }, []);
 
@@ -507,6 +609,282 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                 <span>Convert to Parquet Now</span>
                 <ArrowRight className="size-3.5" />
               </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: Architecture Deep Dive, 10 TB Benchmark Matrix & Educational Guide */}
+        <div className="mt-16 pt-10 border-t border-slate-800 space-y-12">
+          {/* Subsection 1: Why Parquet Saves Money */}
+          <div className="space-y-4">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2">
+              <Zap className="size-6 text-emerald-400" />
+              Why Apache Parquet Cuts Cloud Storage & Query Bills by 80% to 95%
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-4xl">
+              Traditional data formats like CSV, TSV, and JSON store data row-by-row in plain text. When your cloud data lake grows into tens or hundreds of terabytes, row-based formats cause massive cloud spend because analytical queries scan every single character from beginning to end. Apache Parquet completely revolutionizes cloud data economics through four architectural pillars:
+            </p>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-emerald-400 text-xs sm:text-sm">
+                  <Database className="size-4 shrink-0" />
+                  <span>1. Columnar Projection</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  In a table with 50 columns, running <code className="text-indigo-300 font-mono text-[11px]">SELECT user_id, amount</code> reads ONLY those 2 columns from S3. The remaining 48 columns are completely skipped on disk, slashing Athena/BigQuery scan costs by 95%.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-emerald-400 text-xs sm:text-sm">
+                  <HardDrive className="size-4 shrink-0" />
+                  <span>2. Dictionary Encoding</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Repeating strings (e.g. status codes, state names, browser agents) are assigned a compact integer index in a local dictionary table, collapsing gigabytes of redundant characters into tiny byte arrays.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-emerald-400 text-xs sm:text-sm">
+                  <BookOpen className="size-4 shrink-0" />
+                  <span>3. Predicate Pushdown</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Parquet files contain header and footer metadata recording the minimum and maximum values for each 128 MB Row Group. Query engines use these statistics to skip reading unneeded chunks entirely.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-emerald-400 text-xs sm:text-sm">
+                  <Sparkles className="size-4 shrink-0" />
+                  <span>4. Modern Codecs (ZSTD)</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Because similar data types and values are stored contiguous to one another, compression algorithms like Zstandard (ZSTD) and Snappy achieve compression factors of 5x to 10x over raw text.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Subsection 2: 10 TB Storage & Query Scan Cost Comparison Benchmark */}
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
+                  <ShieldCheck className="size-5 text-emerald-400" />
+                  10 TB Cloud Cost Benchmark: Raw CSV vs Snappy vs ZSTD Parquet
+                </h3>
+                <p className="text-xs text-slate-400">Modeled with standard AWS S3 Standard ($0.023/GB) and Athena ($5.00/TB scanned) running 50 queries/day.</p>
+              </div>
+              <span className="text-[11px] px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700 w-fit">
+                Based on 10 TB Raw Telemetry
+              </span>
+            </div>
+
+            <div className="overflow-x-auto rounded-2xl border border-slate-800 shadow-xl">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead className="bg-slate-900 border-b border-slate-800 text-slate-300 font-semibold">
+                  <tr>
+                    <th className="p-3.5">Storage Format & Codec</th>
+                    <th className="p-3.5">Stored Size</th>
+                    <th className="p-3.5">Monthly S3 Cost</th>
+                    <th className="p-3.5">Athena Scanning Cost</th>
+                    <th className="p-3.5">Total Monthly Bill</th>
+                    <th className="p-3.5">Annual FinOps Savings</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 bg-slate-950">
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-rose-400">Raw Uncompressed CSV</td>
+                    <td className="p-3.5 font-mono text-slate-200">10,000 GB (10 TB)</td>
+                    <td className="p-3.5 font-mono text-slate-300">$230.00 / mo</td>
+                    <td className="p-3.5 font-mono text-rose-400 font-medium">$7,500.00 / mo</td>
+                    <td className="p-3.5 font-mono text-rose-400 font-bold">$7,730.00 / mo</td>
+                    <td className="p-3.5 text-slate-400">Baseline ($0 saved)</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-amber-300">GZIP Compressed CSV (.csv.gz)</td>
+                    <td className="p-3.5 font-mono text-slate-200">3,000 GB (3 TB)</td>
+                    <td className="p-3.5 font-mono text-slate-300">$69.00 / mo</td>
+                    <td className="p-3.5 font-mono text-amber-400 font-medium">$2,250.00 / mo</td>
+                    <td className="p-3.5 font-mono text-amber-300 font-bold">$2,319.00 / mo</td>
+                    <td className="p-3.5 text-emerald-400 font-mono font-semibold">+$64,932 / year</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-cyan-300">Parquet + Snappy (Standard)</td>
+                    <td className="p-3.5 font-mono text-slate-200">2,200 GB (2.2 TB)</td>
+                    <td className="p-3.5 font-mono text-slate-300">$50.60 / mo</td>
+                    <td className="p-3.5 font-mono text-cyan-300 font-medium">$247.50 / mo</td>
+                    <td className="p-3.5 font-mono text-cyan-300 font-bold">$298.10 / mo</td>
+                    <td className="p-3.5 text-emerald-400 font-mono font-bold">+$89,182 / year</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50 bg-emerald-950/20">
+                    <td className="p-3.5 font-bold text-emerald-400 flex items-center gap-1.5">
+                      <Sparkles className="size-3.5 text-amber-400" />
+                      <span>Parquet + ZSTD Level 3 (Recommended)</span>
+                    </td>
+                    <td className="p-3.5 font-mono text-emerald-300 font-bold">1,400 GB (1.4 TB)</td>
+                    <td className="p-3.5 font-mono text-emerald-400">$32.20 / mo</td>
+                    <td className="p-3.5 font-mono text-emerald-400 font-medium">$157.50 / mo</td>
+                    <td className="p-3.5 font-mono text-emerald-400 font-bold">$189.70 / mo</td>
+                    <td className="p-3.5 text-emerald-300 font-mono font-bold">+$90,483 / year (97.5% Cut)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Subsection 3: Compression Codec Selection Guide */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+              <h4 className="text-sm font-bold text-cyan-400 flex items-center gap-2">
+                <Zap className="size-4" />
+                Snappy Codec (Fastest Decompression)
+              </h4>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Default for Apache Spark, Trino, and Hive. Prioritizes maximum CPU decompression throughput over raw ratio. Ideal for real-time streaming queries where query latency must remain below 100 milliseconds.
+              </p>
+              <div className="text-[11px] text-slate-400 font-mono bg-slate-950 p-2 rounded-lg border border-slate-800">
+                Avg Ratio: 70% – 78% reduction<br />CPU Decompression: Blazing fast
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-slate-900 border border-emerald-800/80 bg-emerald-950/10 space-y-3">
+              <h4 className="text-sm font-bold text-emerald-400 flex items-center gap-2">
+                <Sparkles className="size-4 text-amber-400" />
+                Zstandard / ZSTD (Best Overall)
+              </h4>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                The modern gold standard created by Meta. Provides near-GZIP compression density while retaining near-Snappy decompression speed. Supported natively across DuckDB, Snowflake, Athena, and BigQuery.
+              </p>
+              <div className="text-[11px] text-slate-400 font-mono bg-slate-950 p-2 rounded-lg border border-slate-800">
+                Avg Ratio: 85% – 92% reduction<br />CPU Decompression: Ultra balanced
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+              <h4 className="text-sm font-bold text-slate-300 flex items-center gap-2">
+                <HardDrive className="size-4" />
+                GZIP Codec (Cold Archival)
+              </h4>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Maximum bit-packing compression. However, GZIP suffers from significant CPU decompression latency and cannot be split as efficiently across threads. Recommended exclusively for write-once cold archival storage.
+              </p>
+              <div className="text-[11px] text-slate-400 font-mono bg-slate-950 p-2 rounded-lg border border-slate-800">
+                Avg Ratio: 82% – 88% reduction<br />CPU Decompression: High latency
+              </div>
+            </div>
+          </div>
+
+          {/* Subsection 4: Comprehensive In-Depth Parquet FAQs */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+              <HelpCircle className="size-5 text-emerald-400" />
+              Frequently Asked Questions About Parquet Cloud Savings
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">Why does Apache Parquet reduce AWS S3 storage bills by 80% to 90%?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Unlike row-based text files (CSV or JSON) where repetitive text strings are duplicated row by row, Apache Parquet organizes data in columns. Similar data types are grouped together, enabling ultra-efficient dictionary encoding, run-length encoding (RLE), bit-packing, and high-ratio compression codecs like ZSTD or Snappy.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">How does Parquet cut Amazon Athena and Google BigQuery scanning costs?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Serverless query engines like AWS Athena bill $5.00 per TB of data scanned from S3. Because Parquet is columnar, a query selecting only 3 columns from a 50-column dataset reads ONLY those 3 columns from disk (column projection), skipping 90%+ of the file bytes. Combined with min/max predicate pushdown, Athena scan bills routinely fall by 90% to 99%.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">Which Parquet compression codec is best: Snappy, ZSTD, or GZIP?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Snappy is the cloud default: it offers blazing fast decompression speeds with ~75% size reduction, ideal for real-time streaming queries. ZSTD (level 3) is the modern gold standard: it achieves 85% to 90% compression ratios while maintaining decomp speed close to Snappy. GZIP provides maximum compression but suffers from significantly slower decompression CPU overhead.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">What is Predicate Pushdown and Row Group Pruning?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Parquet files divide tables into Row Groups (typically 128 MB to 512 MB) and store min/max statistics for every column in the file footer metadata. When you run a query like "WHERE event_date &gt;= '2025-01-01'", the query engine reads the footer and skips reading entire row groups that don't match the criteria, avoiding millions of bytes of I/O.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">Can I convert large CSV or JSON files to Parquet directly in the browser?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Yes! Using TableView's DuckDB-Wasm in-browser converter, you can convert gigabyte-sized CSV, JSON, and NDJSON files into Snappy or ZSTD Parquet files directly inside your browser without uploading any confidential data to third-party servers.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">How does Parquet compare to Apache ORC or Avro?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Avro is a row-oriented format optimized for write-heavy streaming message queues (Kafka). Parquet and ORC are both columnar formats optimized for analytical read queries (OLAP). Parquet has achieved universal cross-platform dominance across Spark, DuckDB, Trino, Snowflake, Databricks, ClickHouse, and AWS Athena.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Subsection 5: Related Data Engineering Tools Cross-Links */}
+          <div className="pt-6 border-t border-slate-800">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
+              Explore Related Parquet & Cloud FinOps Tools
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <a
+                href="/csv-to-parquet"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/csv-to-parquet');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-emerald-300 flex items-center justify-between">
+                  <span>CSV to Parquet Converter</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-emerald-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  100% private, client-side DuckDB-Wasm converter with Snappy/ZSTD compression.
+                </p>
+              </a>
+
+              <a
+                href="/parquet-viewer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/parquet-viewer');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-emerald-300 flex items-center justify-between">
+                  <span>Online Parquet Viewer</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-emerald-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Inspect file schema, row groups, metadata, and execute live SQL in your browser.
+                </p>
+              </a>
+
+              <a
+                href="/snowflake-cost-calculator"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/snowflake-cost-calculator');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-emerald-300 flex items-center justify-between">
+                  <span>Snowflake Cost Calculator</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-emerald-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Estimate warehouse sizing credits, multi-cluster autoscaling, and storage costs.
+                </p>
+              </a>
             </div>
           </div>
         </div>

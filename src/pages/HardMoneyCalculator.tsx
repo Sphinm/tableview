@@ -7,14 +7,116 @@ import {
   AlertTriangle,
   Download,
   FileSpreadsheet,
-  Percent
+  Percent,
+  CheckCircle2,
+  ArrowRight,
+  BookOpen,
+  HelpCircle
 } from 'lucide-react';
 import {
   calculateHardMoney,
   type HardMoneyInputs,
   type HardMoneyResult
 } from '../lib/hardMoneyCalculator';
-import { updatePageMeta } from '../lib/router';
+import { updatePageMeta, navigateTo } from '../lib/router';
+
+const hardMoneySchemas = [
+  {
+    '@type': 'WebApplication',
+    name: 'Hard Money Loan & Fix-and-Flip Profit Calculator',
+    url: 'https://tableview.dev/hard-money-calculator',
+    description: 'Calculate hard money loan costs, points, interest-only monthly payments, 70% rule Maximum Allowable Offer (MAO), and net flip profit margins.',
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'All',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    }
+  },
+  {
+    '@type': 'FinancialProduct',
+    name: 'Hard Money Bridge Loan & Rehab Financing',
+    description: 'Short-term real estate asset-based bridge loan for property acquisition, renovation, and fix-and-flip investing.',
+    category: 'LoanOrCredit'
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://tableview.dev/'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Financial Calculators',
+        item: 'https://tableview.dev/finance-calculator'
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'Hard Money Loan Calculator',
+        item: 'https://tableview.dev/hard-money-calculator'
+      }
+    ]
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'What is a hard money loan and how does it work for house flipping?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'A hard money loan is an asset-based, short-term bridge loan provided by private investors or specialized lending companies to fund the purchase and renovation of real estate. Underwriting is primarily collateral-driven—focusing on the property\'s After Repair Value (ARV) and renovation scope—rather than personal W-2 income.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'What is the 70% Rule in real estate flipping?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'The 70% rule states that an investor should pay no more than 70% of the After Repair Value (ARV) of a home minus estimated repair and rehab costs: Maximum Allowable Offer (MAO) = (ARV × 70%) - Rehab Costs. The remaining 30% margin covers lender points, holding interest, acquisition/exit closing fees, and developer net profit.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'How do hard money points and interest work?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Points are upfront lender origination fees expressed as a percentage of the total loan amount (e.g., 2 points on a $200,000 loan = $4,000). Interest rates typically range from 9.5% to 13.5% annualized, serviced monthly as interest-only payments throughout the 6 to 12 month project duration.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'How does the rehab escrow draw process work?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Lenders do not hand over the entire rehab budget upfront. Instead, funds are held in an escrow account and released in "draws" or disbursements as construction milestones (e.g., framing, rough plumbing, drywall, finishes) are completed and confirmed via third-party site inspections.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'What is Dutch interest vs as-incurred interest in hard money lending?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'In "Dutch interest", the borrower pays monthly interest on the entire total approved loan amount (purchase loan plus undrawn rehab escrow) from day one. In "as-incurred interest", the borrower only pays interest on the drawn balance, saving thousands of dollars in carrying costs during early construction.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'What credit score and down payment are needed for a hard money loan?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Most hard money lenders require a minimum credit score of 620 to 660. Down payments typically range from 10% to 20% of the purchase price (80% to 90% Purchase LTV), while 100% of verified renovation costs are financed in the escrow facility.'
+        }
+      }
+    ]
+  }
+];
 
 interface HardMoneyCalculatorProps {
   onTrySample?: () => void;
@@ -25,7 +127,8 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
     updatePageMeta(
       'Hard Money Loan Calculator — Fix & Flip Profit, Points & 70% Rule Tool | TableView.dev',
       'Free in-browser Hard Money Loan calculator for real estate flippers. Calculate points, interest-only holding costs, 70% rule Maximum Allowable Offer (MAO), net flip profit, and annualized ROI.',
-      '/hard-money-calculator'
+      '/hard-money-calculator',
+      hardMoneySchemas
     );
   }, []);
 
@@ -600,6 +703,291 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               >
                 {copiedLink ? 'Link Copied!' : 'Share This Deal'}
               </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: The 70% Rule Formula, Underwriting Matrix & Educational Guide */}
+        <div className="mt-16 pt-10 border-t border-slate-800 space-y-12">
+          {/* Subsection 1: Mathematical 70% Rule Breakdown */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-100 mb-4 flex items-center gap-2">
+                <BookOpen className="size-6 text-indigo-400" />
+                The 70% Rule in House Flipping: Formula & Sizing
+              </h2>
+              <div className="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+                <p>
+                  The <strong>70% Rule</strong> is the quintessential underwriting benchmark used by real estate investors, wholesalers, and hard money lenders to evaluate fix-and-flip acquisitions. It determines the <strong>Maximum Allowable Offer (MAO)</strong> an investor should pay to ensure healthy profit margins and protect against unforeseen market downturns.
+                </p>
+                <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl font-mono text-xs sm:text-sm text-indigo-300">
+                  <div className="text-center font-bold mb-1">MAO = (After Repair Value × 70%) − Rehab Budget</div>
+                  <div className="text-slate-400 text-center text-xs font-normal">Where ARV is the verified post-renovation comparable sales value</div>
+                </div>
+                <p className="text-slate-300">
+                  The remaining <strong>30% margin</strong> is deliberately calibrated to absorb real estate project friction:
+                </p>
+                <ul className="space-y-2 pt-1">
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong>8% – 10% Transaction Costs:</strong> Buy/sell closing costs, title insurance, transfer taxes, and 5%–6% exit realtor commissions.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong>6% – 8% Financing & Holding:</strong> Lender origination points, monthly interest-only payments, property taxes, insurance, and utilities during construction.</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <CheckCircle2 className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <span><strong>12% – 15% Net Investor Profit:</strong> The target profit spread compensating the operator for risk, capital outlay, and general contracting execution.</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Practical 70% Rule Example Card */}
+            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">70% Rule Case Study</span>
+                <span className="text-xs font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800/60">$390k ARV Model</span>
+              </div>
+              <div className="space-y-2 text-xs font-mono">
+                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                  <span className="text-slate-400">After Repair Value (ARV)</span>
+                  <span className="text-slate-200 font-semibold">$390,000</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                  <span className="text-slate-400">70% Baseline Target ($390k × 0.70)</span>
+                  <span className="text-slate-200">$273,000</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                  <span className="text-slate-400">Less: Estimated Rehab Budget</span>
+                  <span className="text-rose-400">−$65,000</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                  <span className="text-slate-300 font-bold">Maximum Allowable Offer (MAO)</span>
+                  <span className="text-emerald-400 font-bold">$208,000</span>
+                </div>
+                <div className="flex justify-between py-1 border-b border-slate-800/60">
+                  <span className="text-slate-400">Actual Purchase Contract</span>
+                  <span className="text-amber-400">$240,000</span>
+                </div>
+                <div className="flex justify-between pt-2 text-sm font-bold">
+                  <span className="text-indigo-300">Purchase vs MAO Variance</span>
+                  <span className="text-amber-400">+$32,000 (Slightly Tight Margin)</span>
+                </div>
+              </div>
+              <p className="text-[11px] text-slate-400 italic">
+                Pro tip: When purchasing above the strict 70% MAO, negotiate seller concessions or compress construction duration to prevent carrying interest from eroding net returns.
+              </p>
+            </div>
+          </div>
+
+          {/* Subsection 2: Hard Money vs DSCR vs Private Money vs Conventional Table */}
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h3 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
+                  <ShieldCheck className="size-5 text-indigo-400" />
+                  Hard Money vs DSCR vs Private Money vs Conventional Mortgages
+                </h3>
+                <p className="text-xs text-slate-400">Evaluate financing vehicle tradeoffs based on project stage, asset condition, and capital velocity.</p>
+              </div>
+            </div>
+
+            <div className="overflow-x-auto rounded-2xl border border-slate-800 shadow-xl">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead className="bg-slate-900 border-b border-slate-800 text-slate-300 font-semibold">
+                  <tr>
+                    <th className="p-3.5">Loan Category</th>
+                    <th className="p-3.5">Primary Use Case</th>
+                    <th className="p-3.5">Speed to Fund</th>
+                    <th className="p-3.5">Interest Rate & Terms</th>
+                    <th className="p-3.5">Rehab Financed?</th>
+                    <th className="p-3.5">Income / Underwriting Basis</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 bg-slate-950">
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-amber-400">Hard Money Loan</td>
+                    <td className="p-3.5 text-slate-200">Fix & flip, distressed rehab, heavy value-add</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">5 to 10 Days</td>
+                    <td className="p-3.5 text-slate-300">9.5% – 13.5% (Interest-Only, 6–18 mos)</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">Up to 100% of Rehab in Escrow</td>
+                    <td className="p-3.5 text-slate-300">Collateral ARV & borrower flip track record</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-indigo-400">DSCR Rental Loan</td>
+                    <td className="p-3.5 text-slate-200">Turnkey rental buy-and-hold, BRRRR cash-out refinance</td>
+                    <td className="p-3.5 text-slate-300 font-semibold">14 to 21 Days</td>
+                    <td className="p-3.5 text-slate-300">6.8% – 8.5% (30-Year Fixed / 10-Yr I/O)</td>
+                    <td className="p-3.5 text-rose-400">No (Must be habitable)</td>
+                    <td className="p-3.5 text-slate-300">Property gross rental income vs PITIA debt</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-cyan-400">Private Money</td>
+                    <td className="p-3.5 text-slate-200">Gap funding, 2nd position lien, syndications</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">24 to 72 Hours</td>
+                    <td className="p-3.5 text-slate-300">8.0% – 12.0% (Negotiable equity/debt)</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">100% Customizable</td>
+                    <td className="p-3.5 text-slate-300">Personal relationship & trust with private lender</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-slate-400">Conventional Fannie/Freddie</td>
+                    <td className="p-3.5 text-slate-200">Primary residence or low-leverage turnkey rental</td>
+                    <td className="p-3.5 text-rose-400 font-semibold">30 to 45+ Days</td>
+                    <td className="p-3.5 text-slate-300">6.2% – 7.2% (15 or 30-Year Fixed Amortized)</td>
+                    <td className="p-3.5 text-rose-400">No (Rigid inspection standards)</td>
+                    <td className="p-3.5 text-slate-300">Strict personal W-2 income & &lt;45% DTI ceiling</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Subsection 3: Carrying Costs & Draw Mechanics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+              <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
+                <DollarSign className="size-5 text-amber-400" />
+                Dutch Interest vs As-Incurred Interest
+              </h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                When shopping hard money lenders, ask whether interest is billed <strong>as-incurred (drawn balance)</strong> or as <strong>Dutch interest (total loan facility)</strong>:
+              </p>
+              <div className="space-y-2 text-xs">
+                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+                  <span className="font-semibold text-emerald-400">As-Incurred Interest:</span> You only pay interest on the purchase loan amount plus the exact rehab funds disbursed so far. This saves $2,000–$6,000 on typical flips.
+                </div>
+                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
+                  <span className="font-semibold text-rose-400">Dutch Interest:</span> The lender charges interest on the full approved loan balance (including unreleased construction funds sitting in escrow) from day one.
+                </div>
+              </div>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
+              <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
+                <Hammer className="size-5 text-indigo-400" />
+                Mastering the Construction Draw Schedule
+              </h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Rehab funds are held in escrow and released as work milestones are verified. Follow these steps to prevent contractor delays:
+              </p>
+              <ol className="list-decimal list-inside space-y-1.5 text-xs text-slate-300">
+                <li><strong>Draw 1: Demolition & Rough-In:</strong> Tear out, framing, HVAC ducting, plumbing rough, electrical wiring.</li>
+                <li><strong>Draw 2: Insulation & Drywall:</strong> City permits passed, insulation hung, drywall taped and textured.</li>
+                <li><strong>Draw 3: Finishes & Fixtures:</strong> Tile, kitchen cabinets, quartz countertops, plumbing trim, vanities.</li>
+                <li><strong>Draw 4: Final Punch List & Exterior:</strong> Painting, flooring, landscaping, exterior curb appeal, final inspection.</li>
+              </ol>
+            </div>
+          </div>
+
+          {/* Subsection 4: Comprehensive In-Depth Flipping FAQs */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+              <HelpCircle className="size-5 text-indigo-400" />
+              Frequently Asked Questions About Hard Money Loans
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">What is a hard money loan and how does it work for house flipping?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  A hard money loan is an asset-based, short-term bridge loan provided by private investors or specialized lending companies to fund the purchase and renovation of real estate. Underwriting is primarily collateral-driven—focusing on the property's After Repair Value (ARV) and renovation scope—rather than personal W-2 income.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">What is the 70% Rule in real estate flipping?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  The 70% rule states that an investor should pay no more than 70% of the After Repair Value (ARV) of a home minus estimated repair and rehab costs: Maximum Allowable Offer (MAO) = (ARV × 70%) - Rehab Costs. The remaining 30% margin covers lender points, holding interest, acquisition/exit closing fees, and developer net profit.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">How do hard money points and interest work?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Points are upfront lender origination fees expressed as a percentage of the total loan amount (e.g., 2 points on a $200,000 loan = $4,000). Interest rates typically range from 9.5% to 13.5% annualized, serviced monthly as interest-only payments throughout the 6 to 12 month project duration.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">How does the rehab escrow draw process work?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Lenders do not hand over the entire rehab budget upfront. Instead, funds are held in an escrow account and released in "draws" or disbursements as construction milestones (e.g., framing, rough plumbing, drywall, finishes) are completed and confirmed via third-party site inspections.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">What is Dutch interest vs as-incurred interest in hard money lending?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  In "Dutch interest", the borrower pays monthly interest on the entire total approved loan amount (purchase loan plus undrawn rehab escrow) from day one. In "as-incurred interest", the borrower only pays interest on the drawn balance, saving thousands of dollars in carrying costs during early construction.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">What credit score and down payment are needed for a hard money loan?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Most hard money lenders require a minimum credit score of 620 to 660. Down payments typically range from 10% to 20% of the purchase price (80% to 90% Purchase LTV), while 100% of verified renovation costs are financed in the escrow facility.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Subsection 5: Related Real Estate Calculators Cross-Links */}
+          <div className="pt-6 border-t border-slate-800">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
+              Explore Related Real Estate & Finance Calculators
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <a
+                href="/dscr-loan-calculator"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/dscr-loan-calculator');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
+                  <span>DSCR Loan Calculator</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  BRRRR refinance exit? Calculate rental debt coverage and cash-on-cash returns.
+                </p>
+              </a>
+
+              <a
+                href="/mortgage-calculator"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/mortgage-calculator');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
+                  <span>Mortgage Payment Calculator</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Analyze 15/30-year fixed loan amortization, PMI thresholds, and principal payoff.
+                </p>
+              </a>
+
+              <a
+                href="/refinance-calculator"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/refinance-calculator');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
+                  <span>Mortgage Refinance Calculator</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Evaluate permanent take-out financing, break-even months, and interest savings.
+                </p>
+              </a>
             </div>
           </div>
         </div>

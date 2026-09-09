@@ -7,7 +7,12 @@ export interface RouteState {
 
 import { TOOLS_CONFIG } from '../data/tools';
 
-export function updatePageMeta(title: string, description: string, canonicalPath: string = '/') {
+export function updatePageMeta(
+  title: string,
+  description: string,
+  canonicalPath: string = '/',
+  schemas?: Record<string, any>[]
+) {
   document.title = title;
 
   let metaDesc = document.querySelector('meta[name="description"]');
@@ -27,6 +32,38 @@ export function updatePageMeta(title: string, description: string, canonicalPath
   let ogDesc = document.querySelector('meta[property="og:description"]');
   if (ogDesc) ogDesc.setAttribute('content', description);
 
+  let ogUrl = document.querySelector('meta[property="og:url"]');
+  if (!ogUrl) {
+    ogUrl = document.createElement('meta');
+    ogUrl.setAttribute('property', 'og:url');
+    document.head.appendChild(ogUrl);
+  }
+  ogUrl.setAttribute('content', `https://tableview.dev${canonicalPath}`);
+
+  let twitterCard = document.querySelector('meta[name="twitter:card"]');
+  if (!twitterCard) {
+    twitterCard = document.createElement('meta');
+    twitterCard.setAttribute('name', 'twitter:card');
+    document.head.appendChild(twitterCard);
+  }
+  twitterCard.setAttribute('content', 'summary_large_image');
+
+  let twitterTitle = document.querySelector('meta[name="twitter:title"]');
+  if (!twitterTitle) {
+    twitterTitle = document.createElement('meta');
+    twitterTitle.setAttribute('name', 'twitter:title');
+    document.head.appendChild(twitterTitle);
+  }
+  twitterTitle.setAttribute('content', title);
+
+  let twitterDesc = document.querySelector('meta[name="twitter:description"]');
+  if (!twitterDesc) {
+    twitterDesc = document.createElement('meta');
+    twitterDesc.setAttribute('name', 'twitter:description');
+    document.head.appendChild(twitterDesc);
+  }
+  twitterDesc.setAttribute('content', description);
+
   let canonical = document.querySelector('link[rel="canonical"]');
   if (!canonical) {
     canonical = document.createElement('link');
@@ -34,6 +71,27 @@ export function updatePageMeta(title: string, description: string, canonicalPath
     document.head.appendChild(canonical);
   }
   canonical.setAttribute('href', `https://tableview.dev${canonicalPath}`);
+
+  // Inject or update JSON-LD structured schemas
+  const oldScript = document.getElementById('page-structured-data');
+  if (oldScript) {
+    oldScript.remove();
+  }
+
+  if (schemas && schemas.length > 0) {
+    const script = document.createElement('script');
+    script.id = 'page-structured-data';
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(
+      schemas.length === 1
+        ? schemas[0]
+        : {
+            '@context': 'https://schema.org',
+            '@graph': schemas
+          }
+    );
+    document.head.appendChild(script);
+  }
 }
 
 export function parseCurrentLocation(): RouteState {

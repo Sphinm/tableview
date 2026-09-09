@@ -5,7 +5,12 @@ import {
   FileSpreadsheet,
   Sparkles,
   TrendingDown,
-  HardDrive
+  HardDrive,
+  CheckCircle2,
+  ArrowRight,
+  HelpCircle,
+  Layers,
+  ShieldCheck
 } from 'lucide-react';
 import {
   calculateSnowflakeCost,
@@ -16,7 +21,105 @@ import {
   type SnowflakeEdition,
   type SnowflakeResult
 } from '../lib/snowflakeCalculator';
-import { updatePageMeta } from '../lib/router';
+import { updatePageMeta, navigateTo } from '../lib/router';
+
+const snowflakeSchemas = [
+  {
+    '@type': 'WebApplication',
+    name: 'Snowflake Warehouse Cost & Credit Calculator',
+    url: 'https://tableview.dev/snowflake-cost-calculator',
+    description: 'Free Snowflake cost estimator for data teams and FinOps engineers. Accurately calculate warehouse credit consumption, multi-cluster autoscaling, compressed storage tiers, and auto-suspend savings.',
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'All',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    }
+  },
+  {
+    '@type': 'SoftwareApplication',
+    name: 'Snowflake FinOps Cost Optimization Suite',
+    description: 'Interactive cost modeling tool for Snowflake Virtual Warehouses, Standard/Enterprise/Business Critical editions, and S3/Azure storage.',
+    applicationCategory: 'DeveloperApplication'
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'Home',
+        item: 'https://tableview.dev/'
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: 'Cloud & FinOps Calculators',
+        item: 'https://tableview.dev/snowflake-cost-calculator'
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: 'Snowflake Cost Calculator',
+        item: 'https://tableview.dev/snowflake-cost-calculator'
+      }
+    ]
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'How does Snowflake calculate virtual warehouse credit consumption?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Snowflake compute is billed in credits per second, with a 60-second minimum charge every time a warehouse starts or resizes. T-shirt sizes scale exponentially in powers of 2: X-Small consumes 1 credit/hour, Small consumes 2 credits/hour, Medium consumes 4, Large consumes 8, X-Large consumes 16, and up to 6X-Large at 512 credits/hour.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'What is the price per Snowflake credit across editions?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'On-demand list prices are typically $2.00 per credit for Standard Edition, $3.00 for Enterprise Edition (which includes multi-cluster warehouses and 90-day Time Travel), and $4.00 for Business Critical Edition (which includes HIPAA/PCI compliance, Tri-Secret Secure customer-managed keys, and private networking links).'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'How does Multi-Cluster Warehouse (MCW) autoscaling affect cost?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Multi-cluster warehouses (available on Enterprise and above) scale horizontally by spinning up identical warehouse clusters (e.g., Min: 1, Max: 4) to eliminate query queue times during peak dashboard spikes. Cost is strictly additive: 3 active Medium clusters running for 1 hour consume 3 × 4 = 12 credits.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'What is the recommended Auto-Suspend setting for Snowflake warehouses?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'For interactive BI dashboards and ad-hoc analytics, set AUTO_SUSPEND = 60 (1 minute). Because Snowflake bills by the second after the initial 60 seconds, reducing the auto-suspend window from the default 10 minutes down to 1 minute frequently slashes idle compute spend by 25% to 50%.'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'How much does Snowflake storage cost per TB?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'On-demand capacity storage is billed at $40 per TB per month, while committed pre-purchased capacity contracts discount storage down to approximately $23 per TB per month. Snowflake automatically compresses data upon ingestion (typically achieving a 3x to 5x compression factor).'
+        }
+      },
+      {
+        '@type': 'Question',
+        name: 'Should I scale up (larger warehouse) or scale out (multi-cluster)?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Scale up (e.g. Medium to Large) when you need to speed up a single heavy ETL job, large aggregation, or memory-intensive query. Scale out (multi-cluster) when hundreds of concurrent users or BI tools like Tableau/Looker are experiencing query queuing delays.'
+        }
+      }
+    ]
+  }
+];
 
 interface SnowflakeCalculatorProps {
   onTrySample?: () => void;
@@ -27,7 +130,8 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
     updatePageMeta(
       'Snowflake Cost Calculator — Warehouse Sizing, Credits & FinOps Estimator | TableView.dev',
       'Free in-browser Snowflake cost and credit calculator. Estimate monthly compute, multi-cluster warehouse autoscaling, storage, and auto-suspend FinOps savings.',
-      '/snowflake-cost-calculator'
+      '/snowflake-cost-calculator',
+      snowflakeSchemas
     );
   }, []);
 
@@ -456,6 +560,323 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
               >
                 {copiedLink ? 'Link Copied!' : 'Share Estimate'}
               </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Section 3: Snowflake Sizing Matrix, FinOps Playbook & Educational Guide */}
+        <div className="mt-16 pt-10 border-t border-slate-800 space-y-12">
+          {/* Subsection 1: Warehouse Credit Consumption Matrix */}
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2">
+                  <Layers className="size-6 text-cyan-400" />
+                  Snowflake Warehouse Sizing & Credit Consumption Matrix
+                </h2>
+                <p className="text-xs text-slate-400">Virtual warehouses scale compute power exponentially in powers of 2.</p>
+              </div>
+              <span className="text-[11px] px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700 w-fit">
+                Billed Per-Second (60s Minimum)
+              </span>
+            </div>
+
+            <div className="overflow-x-auto rounded-2xl border border-slate-800 shadow-xl">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead className="bg-slate-900 border-b border-slate-800 text-slate-300 font-semibold">
+                  <tr>
+                    <th className="p-3.5">Size</th>
+                    <th className="p-3.5">Credits / Hour</th>
+                    <th className="p-3.5">Servers (Nodes)</th>
+                    <th className="p-3.5">Standard ($2/cr)</th>
+                    <th className="p-3.5">Enterprise ($3/cr)</th>
+                    <th className="p-3.5">Optimal Workload Match</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 bg-slate-950">
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-cyan-300">X-Small (XS)</td>
+                    <td className="p-3.5 font-mono text-slate-200">1 credit</td>
+                    <td className="p-3.5 text-slate-400">1 server (8 threads)</td>
+                    <td className="p-3.5 font-mono text-slate-300">$2.00 / hr</td>
+                    <td className="p-3.5 font-mono text-cyan-400 font-medium">$3.00 / hr</td>
+                    <td className="p-3.5 text-slate-300">Lightweight ELT, single-table staging, low-volume tasks</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-cyan-300">Small (S)</td>
+                    <td className="p-3.5 font-mono text-slate-200">2 credits</td>
+                    <td className="p-3.5 text-slate-400">2 servers (16 threads)</td>
+                    <td className="p-3.5 font-mono text-slate-300">$4.00 / hr</td>
+                    <td className="p-3.5 font-mono text-cyan-400 font-medium">$6.00 / hr</td>
+                    <td className="p-3.5 text-slate-300">Scheduled dbt models, moderate ingestion pipelines, small team BI</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-cyan-300">Medium (M)</td>
+                    <td className="p-3.5 font-mono text-slate-200">4 credits</td>
+                    <td className="p-3.5 text-slate-400">4 servers (32 threads)</td>
+                    <td className="p-3.5 font-mono text-slate-300">$8.00 / hr</td>
+                    <td className="p-3.5 font-mono text-cyan-400 font-medium">$12.00 / hr</td>
+                    <td className="p-3.5 text-slate-300">Production BI reporting (Looker/Tableau), medium data mart transforms</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-cyan-300">Large (L)</td>
+                    <td className="p-3.5 font-mono text-slate-200">8 credits</td>
+                    <td className="p-3.5 text-slate-400">8 servers (64 threads)</td>
+                    <td className="p-3.5 font-mono text-slate-300">$16.00 / hr</td>
+                    <td className="p-3.5 font-mono text-cyan-400 font-medium">$24.00 / hr</td>
+                    <td className="p-3.5 text-slate-300">Complex multi-table joins, hourly automated pipelines, heavy aggregations</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-indigo-400">X-Large (XL)</td>
+                    <td className="p-3.5 font-mono text-slate-200">16 credits</td>
+                    <td className="p-3.5 text-slate-400">16 servers (128 threads)</td>
+                    <td className="p-3.5 font-mono text-slate-300">$32.00 / hr</td>
+                    <td className="p-3.5 font-mono text-indigo-300 font-medium">$48.00 / hr</td>
+                    <td className="p-3.5 text-slate-300">Large-scale batch warehouse loads, billion-row customer telemetry</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-bold text-indigo-400">2X-Large to 4X-Large</td>
+                    <td className="p-3.5 font-mono text-slate-200">32 – 128 credits</td>
+                    <td className="p-3.5 text-slate-400">32 – 128 servers</td>
+                    <td className="p-3.5 font-mono text-slate-300">$64 – $256 / hr</td>
+                    <td className="p-3.5 font-mono text-indigo-300 font-medium">$96 – $384 / hr</td>
+                    <td className="p-3.5 text-slate-300">Petabyte-scale enterprise migrations, machine learning feature engineering</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Subsection 2: Top 5 FinOps Strategies */}
+          <div className="space-y-4">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
+              <TrendingDown className="size-5 text-emerald-400" />
+              Top 5 FinOps Strategies to Cut Snowflake Spend by 30%+
+            </h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+                  <span>1. Set AUTO_SUSPEND = 60</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Default auto-suspend is 10 minutes (600 seconds). For interactive analytics, reducing this to 60 seconds eliminates idle compute waste immediately after analysts finish querying.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+                  <span>2. Isolate ETL from BI</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Never mix scheduled batch data pipelines with live user BI dashboards on the same warehouse. Dedicated warehouses prevent queued queries from forcing expensive autoscaling.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+                  <span>3. Enforce Resource Monitors</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Attach Snowflake Resource Monitors to every warehouse cluster with hard 100% suspend caps and 80%/90% alert notifications to stop runaway Cartesian product queries.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+                  <span>4. Use Transient Staging Tables</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Staging and raw ELT tables don't need 90 days of Time Travel or 7-day Fail-Safe insurance. Creating them as `TRANSIENT` slashes uncompressed auxiliary storage overhead.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+                  <span>5. Offload Raw Data to Parquet</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Keep cold historical logs in external object storage (AWS S3, Google Cloud Storage) formatted as Apache Parquet, and query via external tables or Iceberg tables at fraction of cost.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+                  <span>6. Pre-Purchase Capacity</span>
+                </div>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Negotiate 1 to 3-year capacity commitments with Snowflake sales reps. Storage drops from $40/TB to $23/TB, and effective credit rates drop by 15% to 30%.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Subsection 3: Editions Comparison Table */}
+          <div className="space-y-4">
+            <h3 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
+              <ShieldCheck className="size-5 text-cyan-400" />
+              Snowflake Editions Comparison Matrix
+            </h3>
+
+            <div className="overflow-x-auto rounded-2xl border border-slate-800 shadow-xl">
+              <table className="w-full text-left text-xs border-collapse">
+                <thead className="bg-slate-900 border-b border-slate-800 text-slate-300 font-semibold">
+                  <tr>
+                    <th className="p-3.5">Capability / Feature</th>
+                    <th className="p-3.5 text-slate-300">Standard Edition</th>
+                    <th className="p-3.5 text-cyan-400">Enterprise Edition</th>
+                    <th className="p-3.5 text-indigo-400">Business Critical Edition</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60 bg-slate-950">
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-semibold text-slate-200">On-Demand Price / Credit</td>
+                    <td className="p-3.5 font-mono text-slate-200">$2.00 / credit</td>
+                    <td className="p-3.5 font-mono text-cyan-300 font-bold">$3.00 / credit</td>
+                    <td className="p-3.5 font-mono text-indigo-300 font-bold">$4.00 / credit</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-semibold text-slate-200">Multi-Cluster Warehouses (Auto-Scale)</td>
+                    <td className="p-3.5 text-rose-400">Not Available</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">Included (Max concurrency)</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">Included</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-semibold text-slate-200">Time Travel Retention Window</td>
+                    <td className="p-3.5 text-slate-400">1 Day Maximum</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">Up to 90 Days</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">Up to 90 Days</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-semibold text-slate-200">Search Optimization Service</td>
+                    <td className="p-3.5 text-rose-400">Not Available</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">Included</td>
+                    <td className="p-3.5 text-emerald-400 font-semibold">Included</td>
+                  </tr>
+                  <tr className="hover:bg-slate-900/50">
+                    <td className="p-3.5 font-semibold text-slate-200">Security & Compliance Enclaves</td>
+                    <td className="p-3.5 text-slate-400">SOC 1/2, PCI-DSS (L2)</td>
+                    <td className="p-3.5 text-slate-200">Column/Row-Level Security Policies</td>
+                    <td className="p-3.5 text-indigo-300 font-semibold">Tri-Secret Secure, HIPAA, AWS PrivateLink</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          {/* Subsection 4: Comprehensive In-Depth FinOps FAQs */}
+          <div className="space-y-4">
+            <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+              <HelpCircle className="size-5 text-cyan-400" />
+              Frequently Asked Questions About Snowflake Costs
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">How does Snowflake calculate virtual warehouse credit consumption?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Snowflake compute is billed in credits per second, with a 60-second minimum charge every time a warehouse starts or resizes. T-shirt sizes scale exponentially in powers of 2: X-Small consumes 1 credit/hour, Small consumes 2 credits/hour, Medium consumes 4, Large consumes 8, X-Large consumes 16, and up to 6X-Large at 512 credits/hour.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">What is the price per Snowflake credit across editions?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  On-demand list prices are typically $2.00 per credit for Standard Edition, $3.00 for Enterprise Edition (which includes multi-cluster warehouses and 90-day Time Travel), and $4.00 for Business Critical Edition (which includes HIPAA/PCI compliance, Tri-Secret Secure customer-managed keys, and private networking links).
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">How does Multi-Cluster Warehouse (MCW) autoscaling affect cost?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Multi-cluster warehouses (available on Enterprise and above) scale horizontally by spinning up identical warehouse clusters (e.g., Min: 1, Max: 4) to eliminate query queue times during peak dashboard spikes. Cost is strictly additive: 3 active Medium clusters running for 1 hour consume 3 × 4 = 12 credits.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">What is the recommended Auto-Suspend setting for Snowflake warehouses?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  For interactive BI dashboards and ad-hoc analytics, set AUTO_SUSPEND = 60 (1 minute). Because Snowflake bills by the second after the initial 60 seconds, reducing the auto-suspend window from the default 10 minutes down to 1 minute frequently slashes idle compute spend by 25% to 50%.
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">How much does Snowflake storage cost per TB?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  On-demand capacity storage is billed at $40 per TB per month, while committed pre-purchased capacity contracts discount storage down to approximately $23 per TB per month. Snowflake automatically compresses data upon ingestion (typically achieving a 3x to 5x compression factor).
+                </p>
+              </div>
+
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">Should I scale up (larger warehouse) or scale out (multi-cluster)?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Scale up (e.g. Medium to Large) when you need to speed up a single heavy ETL job, large aggregation, or memory-intensive query. Scale out (multi-cluster) when hundreds of concurrent users or BI tools like Tableau/Looker are experiencing query queuing delays.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* Subsection 5: Related Cloud Data Tools Cross-Links */}
+          <div className="pt-6 border-t border-slate-800">
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
+              Explore Related Cloud Data Engineering & FinOps Tools
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <a
+                href="/parquet-storage-calculator"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/parquet-storage-calculator');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-cyan-300 flex items-center justify-between">
+                  <span>Parquet Storage & Query Savings</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-cyan-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Cut AWS S3 and Athena costs by 80%+ converting CSV/JSON to Apache Parquet.
+                </p>
+              </a>
+
+              <a
+                href="/parquet-viewer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/parquet-viewer');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-cyan-300 flex items-center justify-between">
+                  <span>Online Parquet Viewer</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-cyan-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Inspect Parquet schema, metadata, and run SQL queries in-browser via DuckDB-Wasm.
+                </p>
+              </a>
+
+              <a
+                href="/csv-to-parquet"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigateTo('/csv-to-parquet');
+                }}
+                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/60 transition-all cursor-pointer"
+              >
+                <div className="font-bold text-slate-200 text-sm group-hover:text-cyan-300 flex items-center justify-between">
+                  <span>CSV to Parquet Converter</span>
+                  <ArrowRight className="size-4 text-slate-500 group-hover:text-cyan-400 transition-transform group-hover:translate-x-1" />
+                </div>
+                <p className="text-xs text-slate-400 mt-1">
+                  Client-side fast conversion with Snappy, ZSTD, and GZIP compression codecs.
+                </p>
+              </a>
             </div>
           </div>
         </div>
