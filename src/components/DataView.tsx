@@ -55,6 +55,25 @@ const formatCellValue = (val: any): string => {
   return String(val);
 };
 
+/**
+ * Format complex DuckDB type strings into concise badges for table headers
+ */
+const formatTypeBadge = (type: string): string => {
+  if (!type) return '';
+  if (type.startsWith('List<Struct<')) return 'List<Struct>';
+  if (type.startsWith('Struct<')) return 'Struct';
+  if (type.startsWith('Map<')) return 'Map';
+  if (type.startsWith('List<')) {
+    const inner = type.slice(5, -1);
+    if (inner.length > 10) return 'List<...>';
+    return type;
+  }
+  if (type.length > 16) {
+    return `${type.slice(0, 14)}…`;
+  }
+  return type;
+};
+
 export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
   const [activeTab, setActiveTab] = useState<'grid' | 'schema' | 'sql'>('grid');
   const [columns, setColumns] = useState<ColumnSchema[]>([]);
@@ -258,7 +277,9 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
   };
 
   // SQL Templates
-  const applySqlTemplate = (templateType: 'count' | 'top10' | 'nulls' | 'summary') => {
+  const firstListCol = columns.find(c => c.type.startsWith('List<') || c.type.includes('[]'))?.name;
+
+  const applySqlTemplate = (templateType: 'count' | 'top10' | 'nulls' | 'summary' | 'unnest') => {
     let scanExpr = `'${tableName}'`;
     if (fileType === 'parquet') scanExpr = `parquet_scan('${tableName}')`;
     else if (fileType === 'csv') scanExpr = `read_csv_auto('${tableName}')`;
@@ -278,6 +299,8 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
       sql = `SELECT\n  ${nullCols}\nFROM ${scanExpr};`;
     } else if (templateType === 'summary') {
       sql = `SELECT\n  min("${numCol}") AS min_val,\n  avg("${numCol}") AS avg_val,\n  max("${numCol}") AS max_val,\n  stddev("${numCol}") AS std_val\nFROM ${scanExpr};`;
+    } else if (templateType === 'unnest' && firstListCol) {
+      sql = `SELECT unnest("${firstListCol}") FROM ${scanExpr};`;
     }
     setCustomSql(sql);
     setActiveTab('sql');
@@ -571,8 +594,11 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
                     summaries.map((s) => (
                       <tr key={s.columnName} className="hover:bg-slate-800/50 transition-colors">
                         <td className="p-3 font-semibold text-slate-200">{s.columnName}</td>
-                        <td className="p-3">
-                          <span className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-indigo-300 text-[11px]">
+                        <td className="p-3 max-w-xs">
+                          <span
+                            className="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-indigo-300 text-[11px] block truncate font-mono"
+                            title={s.columnType}
+                          >
                             {s.columnType}
                           </span>
                         </td>
@@ -640,6 +666,15 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             >
               Numeric Summary (AVG/MIN/MAX)
             </button>
+            {firstListCol && (
+              <button
+                onClick={() => applySqlTemplate('unnest')}
+                className="px-2.5 py-1 rounded-lg bg-indigo-950/80 hover:bg-indigo-900/80 text-[11px] text-indigo-300 hover:text-indigo-100 border border-indigo-700/60 cursor-pointer transition-colors"
+                title={`Flatten '${firstListCol}' array into multiple rows using DuckDB unnest()`}
+              >
+                Flatten {firstListCol} (UNNEST)
+              </button>
+            )}
           </div>
 
           <textarea
@@ -733,12 +768,15 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
                           }`}
                         >
                           <div className="flex items-center justify-between gap-2">
-                            <span className="font-semibold text-slate-200 group-hover:text-slate-100 transition-colors">
+                            <span className="font-semibold text-slate-200 group-hover:text-slate-100 transition-colors truncate">
                               {col.name}
                             </span>
-                            <div className="flex items-center gap-1.5">
-                              <span className="text-[10px] font-normal text-slate-400 px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800">
-                                {col.type}
+                            <div className="flex items-center gap-1.5 shrink-0">
+                              <span
+                                className="text-[10px] font-normal text-slate-400 px-1.5 py-0.5 rounded bg-slate-900 border border-slate-800 max-w-[110px] truncate"
+                                title={col.type}
+                              >
+                                {formatTypeBadge(col.type)}
                               </span>
                               {isSorted ? (
                                 sortAsc ? (
