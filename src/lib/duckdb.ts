@@ -124,6 +124,46 @@ export async function generateSampleParquet(): Promise<{ tableName: string; file
 }
 
 /**
+ * Recursively sanitize BigInt and complex values so they can be safely serialized,
+ * rendered in React, and exported without BigInt TypeErrors.
+ */
+export function sanitizeRowValues(val: any): any {
+  if (val === null || val === undefined) {
+    return val;
+  }
+  if (typeof val === 'bigint') {
+    return val <= Number.MAX_SAFE_INTEGER && val >= Number.MIN_SAFE_INTEGER
+      ? Number(val)
+      : val.toString();
+  }
+  if (Array.isArray(val)) {
+    return val.map(sanitizeRowValues);
+  }
+  if (val instanceof Date) {
+    return val.toISOString();
+  }
+  if (typeof val === 'object') {
+    const clean: Record<string, any> = {};
+    for (const k of Object.keys(val)) {
+      clean[k] = sanitizeRowValues(val[k]);
+    }
+    return clean;
+  }
+  return val;
+}
+
+/**
+ * Polyfill BigInt.prototype.toJSON defensively
+ */
+if (typeof (BigInt.prototype as any).toJSON !== 'function') {
+  (BigInt.prototype as any).toJSON = function () {
+    return this <= Number.MAX_SAFE_INTEGER && this >= Number.MIN_SAFE_INTEGER
+      ? Number(this)
+      : this.toString();
+  };
+}
+
+/**
  * Query data with pagination and sorting
  */
 export async function queryTable(
@@ -177,17 +217,8 @@ export async function queryTable(
     type: f.type.toString()
   }));
 
-  // Parse Arrow records to clean JS objects
-  const rows = dataRes.toArray().map(row => {
-    const obj = row.toJSON();
-    // Handle BigInt or special Arrow types
-    for (const key in obj) {
-      if (typeof obj[key] === 'bigint') {
-        obj[key] = Number(obj[key]);
-      }
-    }
-    return obj;
-  });
+  // Parse Arrow records to clean JS objects with recursive BigInt sanitation
+  const rows = dataRes.toArray().map(row => sanitizeRowValues(row.toJSON()));
 
   return {
     columns,
@@ -212,15 +243,8 @@ export async function runCustomSql(sql: string): Promise<TableQueryResult> {
     type: f.type.toString()
   }));
 
-  const rows = dataRes.toArray().map(row => {
-    const obj = row.toJSON();
-    for (const key in obj) {
-      if (typeof obj[key] === 'bigint') {
-        obj[key] = Number(obj[key]);
-      }
-    }
-    return obj;
-  });
+  // Parse Arrow records with recursive BigInt sanitation
+  const rows = dataRes.toArray().map(row => sanitizeRowValues(row.toJSON()));
 
   return {
     columns,
@@ -260,28 +284,6 @@ export async function exportToCsv(
 }
 
 /**
- * Recursively sanitize BigInt and complex values for JSON and Excel exports
- */
-function sanitizeValueForExport(val: any): any {
-  if (typeof val === 'bigint') {
-    return val <= Number.MAX_SAFE_INTEGER && val >= Number.MIN_SAFE_INTEGER
-      ? Number(val)
-      : val.toString();
-  }
-  if (val !== null && typeof val === 'object') {
-    if (Array.isArray(val)) {
-      return val.map(sanitizeValueForExport);
-    }
-    const clean: Record<string, any> = {};
-    for (const k of Object.keys(val)) {
-      clean[k] = sanitizeValueForExport(val[k]);
-    }
-    return clean;
-  }
-  return val;
-}
-
-/**
  * Export table data to native Excel (.xlsx) using SheetJS
  */
 export async function exportToExcel(
@@ -304,7 +306,16 @@ export async function exportToExcel(
   query += ` LIMIT ${limitRows};`;
 
   const dataRes = await conn.query(query);
-  const rows = dataRes.toArray().map(row => sanitizeValueForExport(row.toJSON()));
+  const rows = dataRes.toArray().map(row => {
+    const clean = sanitizeRowValues(row.toJSON());
+    // For Excel cells, ensure nested objects/arrays are serialized to clean JSON strings
+    const excelRow: Record<string, any> = {};
+    for (const k of Object.keys(clean)) {
+      const v = clean[k];
+      excelRow[k] = v !== null && typeof v === 'object' ? JSON.stringify(v) : v;
+    }
+    return excelRow;
+  });
 
   const worksheet = XLSX.utils.json_to_sheet(rows);
   const workbook = XLSX.utils.book_new();
@@ -335,7 +346,7 @@ export async function exportToJson(
 
   const query = `SELECT * FROM ${scanExpr} LIMIT ${limitRows};`;
   const dataRes = await conn.query(query);
-  const rows = dataRes.toArray().map(row => sanitizeValueForExport(row.toJSON()));
+  const rows = dataRes.toArray().map(row => sanitizeRowValues(row.toJSON()));
 
   const jsonStr = JSON.stringify(rows, null, 2);
   const blob = new Blob([jsonStr], { type: 'application/json' });
@@ -404,20 +415,20 @@ export async function summarizeTable(
   try {
     const res = await conn.query(`SUMMARIZE SELECT * FROM ${scanExpr};`);
     const rows = res.toArray().map(row => {
-      const obj = row.toJSON();
+      const obj = sanitizeRowValues(row.toJSON());
       return {
         columnName: String(obj.column_name ?? ''),
         columnType: String(obj.column_type ?? ''),
-        min: obj.min !== null && obj.min !== undefined ? String(obj.min) : '—',
-        max: obj.max !== null && obj.max !== undefined ? String(obj.max) : '—',
+        min: obj.min !== null && obj.min !== undefined ? (typeof obj.min === 'object' ? JSON.stringify(obj.min) : String(obj.min)) : '—',
+        max: obj.max !== null && obj.max !== undefined ? (typeof obj.max === 'object' ? JSON.stringify(obj.max) : String(obj.max)) : '—',
         approxUnique: obj.approx_unique !== null && obj.approx_unique !== undefined ? String(obj.approx_unique) : '—',
-        avg: obj.avg !== null && obj.avg !== undefined ? String(Number(obj.avg).toFixed(2)) : '—',
-        std: obj.std !== null && obj.std !== undefined ? String(Number(obj.std).toFixed(2)) : '—',
-        q25: obj.q25 !== null && obj.q25 !== undefined ? String(obj.q25) : '—',
-        q50: obj.q50 !== null && obj.q50 !== undefined ? String(obj.q50) : '—',
-        q75: obj.q75 !== null && obj.q75 !== undefined ? String(obj.q75) : '—',
+        avg: obj.avg !== null && obj.avg !== undefined && !isNaN(Number(obj.avg)) ? Number(obj.avg).toFixed(2) : '—',
+        std: obj.std !== null && obj.std !== undefined && !isNaN(Number(obj.std)) ? Number(obj.std).toFixed(2) : '—',
+        q25: obj.q25 !== null && obj.q25 !== undefined ? (typeof obj.q25 === 'object' ? JSON.stringify(obj.q25) : String(obj.q25)) : '—',
+        q50: obj.q50 !== null && obj.q50 !== undefined ? (typeof obj.q50 === 'object' ? JSON.stringify(obj.q50) : String(obj.q50)) : '—',
+        q75: obj.q75 !== null && obj.q75 !== undefined ? (typeof obj.q75 === 'object' ? JSON.stringify(obj.q75) : String(obj.q75)) : '—',
         count: obj.count !== null && obj.count !== undefined ? String(obj.count) : '—',
-        nullPercentage: obj.null_percentage !== null && obj.null_percentage !== undefined ? `${Number(obj.null_percentage).toFixed(1)}%` : '0.0%'
+        nullPercentage: obj.null_percentage !== null && obj.null_percentage !== undefined && !isNaN(Number(obj.null_percentage)) ? `${Number(obj.null_percentage).toFixed(1)}%` : '0.0%'
       };
     });
     return rows;
@@ -426,7 +437,7 @@ export async function summarizeTable(
     // Fallback using DESCRIBE
     const descRes = await conn.query(`DESCRIBE SELECT * FROM ${scanExpr};`);
     return descRes.toArray().map(row => {
-      const obj = row.toJSON();
+      const obj = sanitizeRowValues(row.toJSON());
       return {
         columnName: String(obj.column_name ?? ''),
         columnType: String(obj.column_type ?? ''),

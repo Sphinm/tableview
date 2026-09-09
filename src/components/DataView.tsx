@@ -39,6 +39,22 @@ interface DataViewProps {
   onReset: () => void;
 }
 
+/**
+ * Safely format cell values, converting nested BigInt, objects, and nulls without throwing
+ */
+const formatCellValue = (val: any): string => {
+  if (val === null || val === undefined) return 'null';
+  if (typeof val === 'bigint') return val.toString();
+  if (typeof val === 'object') {
+    try {
+      return JSON.stringify(val, (_, v) => (typeof v === 'bigint' ? v.toString() : v));
+    } catch {
+      return String(val);
+    }
+  }
+  return String(val);
+};
+
 export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
   const [activeTab, setActiveTab] = useState<'grid' | 'schema' | 'sql'>('grid');
   const [columns, setColumns] = useState<ColumnSchema[]>([]);
@@ -766,11 +782,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
                             {columns.map((col) => {
                               const val = row[col.name];
                               const isNull = val === null || val === undefined;
-                              const displayVal = isNull
-                                ? 'null'
-                                : typeof val === 'object'
-                                ? JSON.stringify(val)
-                                : String(val);
+                              const displayVal = formatCellValue(val);
 
                               return (
                                 <td
@@ -781,7 +793,7 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
                                   } ${
                                     isNull
                                       ? 'text-slate-400 italic'
-                                      : typeof val === 'number'
+                                      : typeof val === 'number' || typeof val === 'bigint'
                                       ? 'text-indigo-300'
                                       : typeof val === 'boolean'
                                       ? 'text-amber-400 font-semibold'
