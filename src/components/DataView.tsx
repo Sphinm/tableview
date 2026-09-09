@@ -117,12 +117,12 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
       let filterExpr: string | undefined = undefined;
       const currentCols = columnsRef.current;
       if (searchFilter.trim() && currentCols.length > 0) {
+        // Prioritize text columns, or search across first 12 columns with varchar cast
         const textCols = currentCols.filter(c => c.type.includes('VARCHAR') || c.type.includes('STRING') || c.type.includes('TEXT'));
-        if (textCols.length > 0) {
-          filterExpr = textCols
-            .map(c => `lower(cast("${c.name}" as varchar)) LIKE '%${searchFilter.toLowerCase().replace(/'/g, "''")}%'`)
-            .join(' OR ');
-        }
+        const targetCols = textCols.length > 0 ? textCols : currentCols.slice(0, 12);
+        filterExpr = targetCols
+          .map(c => `lower(cast("${c.name.replace(/"/g, '""')}" as varchar)) LIKE '%${searchFilter.toLowerCase().replace(/'/g, "''")}%'`)
+          .join(' OR ');
       }
 
       const res = await queryTable(tableName, fileType, page, pageSize, filterExpr, sortCol, sortAsc);
@@ -682,6 +682,16 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
               <Play className="size-3.5 fill-current text-emerald-400 dark:text-emerald-600" />
               {isLoading ? 'Running...' : 'Execute SQL (⌘+Enter)'}
             </button>
+          </div>
+        </div>
+      )}
+
+      {sqlError && activeTab === 'grid' && (
+        <div className="mb-4 p-4 rounded-2xl bg-red-950/60 border border-red-800 text-red-300 text-xs flex items-start gap-3">
+          <AlertCircle className="size-5 shrink-0 text-red-400 mt-0.5" />
+          <div>
+            <p className="font-semibold text-red-200">Query Error</p>
+            <p className="mt-0.5 font-mono">{sqlError}</p>
           </div>
         </div>
       )}

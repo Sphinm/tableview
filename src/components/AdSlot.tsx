@@ -40,10 +40,6 @@ export const AdSlot = ({
           data-ad-format={format}
           data-full-width-responsive="true"
         />
-        {/* Visual fallback for pre-approval / preview */}
-        <div className="text-xs text-slate-400 font-mono text-center">
-          Sponsored Data Engineering Resources
-        </div>
       </div>
     </div>
   );

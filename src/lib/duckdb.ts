@@ -203,7 +203,7 @@ export async function queryTable(
   }
 
   if (sortCol) {
-    dataQuery += ` ORDER BY "${sortCol}" ${sortAsc ? 'ASC' : 'DESC'}`;
+    dataQuery += ` ORDER BY "${sortCol.replace(/"/g, '""')}" ${sortAsc ? 'ASC' : 'DESC'}`;
   }
 
   dataQuery += ` LIMIT ${pageSize} OFFSET ${page * pageSize};`;

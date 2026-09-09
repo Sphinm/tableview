@@ -34,7 +34,10 @@ export const HeroSection = ({
         accept=".parquet,.csv,.tsv,.json,.jsonl,.ndjson,.xlsx,.xls"
         className="hidden"
         onChange={(e) => {
-          if (e.target.files?.[0]) onFileSelected(e.target.files[0]);
+          if (e.target.files?.[0]) {
+            onFileSelected(e.target.files[0]);
+            e.target.value = '';
+          }
         }}
       />
 
