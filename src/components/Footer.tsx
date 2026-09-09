@@ -208,6 +208,18 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                   Schema & Metadata
                 </a>
               </li>
+              <li>
+                <a
+                  href="/parquet-storage-calculator"
+                  onClick={(e) => handleNav(e, '/parquet-storage-calculator')}
+                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
+                >
+                  <span>Cloud Savings Estimator</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
+                    New
+                  </span>
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -215,19 +227,55 @@ export const Footer = ({ onTrySample }: FooterProps) => {
           <div>
             <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
               <Calculator className="size-3.5 text-indigo-400" />
-              Calculators
+              Calculators & FinOps
             </h4>
             <ul className="space-y-2.5">
               <li>
                 <a
-                  href="/mortgage-calculator"
-                  onClick={(e) => handleNav(e, '/mortgage-calculator')}
+                  href="/dscr-loan-calculator"
+                  onClick={(e) => handleNav(e, '/dscr-loan-calculator')}
                   className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
                 >
-                  <span>Mortgage Calculator</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 opacity-80 group-hover:opacity-100 font-mono">
-                    New
+                  <span>DSCR Loan Calculator</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
+                    High CPC
                   </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/hard-money-calculator"
+                  onClick={(e) => handleNav(e, '/hard-money-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Hard Money & Flip
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/snowflake-cost-calculator"
+                  onClick={(e) => handleNav(e, '/snowflake-cost-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Snowflake Warehouse
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/parquet-storage-calculator"
+                  onClick={(e) => handleNav(e, '/parquet-storage-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Parquet Cloud Savings
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/mortgage-calculator"
+                  onClick={(e) => handleNav(e, '/mortgage-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Mortgage Calculator
                 </a>
               </li>
               <li>
@@ -239,31 +287,13 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                   Refinance Break-Even
                 </a>
               </li>
-              <li>
-                <a
-                  href="/finance-calculator#auto-calculator"
-                  onClick={(e) => handleNav(e, '/finance-calculator#auto-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Auto Loan Calculator
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/finance-calculator#savings-calculator"
-                  onClick={(e) => handleNav(e, '/finance-calculator#savings-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Compound Savings
-                </a>
-              </li>
               <li className="pt-1">
                 <a
                   href="/finance-calculator"
                   onClick={(e) => handleNav(e, '/finance-calculator')}
                   className="text-slate-200 hover:text-slate-100 transition-colors font-medium flex items-center gap-1.5 group"
                 >
-                  <span>All 8+ Calculators</span>
+                  <span>All 10+ Calculators</span>
                   <ArrowRight className="size-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                 </a>
               </li>

@@ -8,7 +8,11 @@ import {
   ShieldCheck,
   ArrowRight,
   PiggyBank,
-  RefreshCw
+  RefreshCw,
+  Building,
+  Hammer,
+  Server,
+  Zap
 } from 'lucide-react';
 import {
   calculateAutoLoan,
@@ -141,48 +145,179 @@ export const FinanceCalculatorHub = () => {
         </div>
       </div>
 
-      {/* Featured Real Estate & Refinance Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="rounded-2xl border border-indigo-500/20 bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-slate-950 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0">
-              <Home className="size-5" />
-            </div>
-            <div>
-              <h2 className="text-sm font-bold text-slate-100">Home Mortgage Calculator</h2>
-              <p className="text-xs text-slate-400">
-                PITI payments, dynamic PMI drop-off, property taxes, and full amortization.
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={() => navigateTo('/mortgage-calculator')}
-            className="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-semibold flex items-center gap-1 shrink-0 shadow-md cursor-pointer whitespace-nowrap"
-          >
-            <span>Open</span>
-            <ArrowRight className="size-3" />
-          </button>
+      {/* Featured Flagship Real Estate, FinOps & Mortgage Calculators */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold">
+            Flagship Investment, FinOps & Mortgage Calculators
+          </span>
+          <span className="text-[10px] text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+            Excel (.xlsx) Export Supported
+          </span>
         </div>
 
-        <div className="rounded-2xl border border-emerald-500/20 bg-gradient-to-r from-emerald-950/40 via-slate-900/60 to-slate-950 p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-sm">
-          <div className="flex items-center gap-3">
-            <div className="size-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
-              <RefreshCw className="size-5" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* DSCR Loan */}
+          <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-b from-indigo-950/40 via-slate-900/60 to-slate-950 p-4.5 flex flex-col justify-between gap-3.5 shadow-sm hover:border-indigo-500/50 transition-all">
+            <div className="flex items-start gap-3">
+              <div className="size-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                <Building className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h2 className="text-sm font-bold text-slate-100 truncate">DSCR Loan Calculator</h2>
+                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    High ROI
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 leading-snug">
+                  Rental property cash flow, debt coverage ratio tiers & 30-year amortization.
+                </p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-sm font-bold text-slate-100">Refinance Break-Even Tool</h2>
-              <p className="text-xs text-slate-400">
-                Compare current vs new mortgage, discount points, tax shift, and 7-year equity.
-              </p>
-            </div>
+            <button
+              onClick={() => navigateTo('/dscr-loan-calculator')}
+              className="btn-primary w-full py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+            >
+              <span>Calculate DSCR</span>
+              <ArrowRight className="size-3" />
+            </button>
           </div>
-          <button
-            onClick={() => navigateTo('/refinance-calculator')}
-            className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center gap-1 shrink-0 shadow-md cursor-pointer whitespace-nowrap transition-all"
-          >
-            <span>Evaluate Refi</span>
-            <ArrowRight className="size-3" />
-          </button>
+
+          {/* Hard Money */}
+          <div className="rounded-2xl border border-amber-500/30 bg-gradient-to-b from-amber-950/30 via-slate-900/60 to-slate-950 p-4.5 flex flex-col justify-between gap-3.5 shadow-sm hover:border-amber-500/50 transition-all">
+            <div className="flex items-start gap-3">
+              <div className="size-10 rounded-xl bg-amber-500/10 text-amber-400 border border-amber-500/20 flex items-center justify-center shrink-0">
+                <Hammer className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h2 className="text-sm font-bold text-slate-100 truncate">Hard Money & Flip</h2>
+                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                    70% Rule
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 leading-snug">
+                  Fix & flip loan points, interest-only holding costs, MAO & net profit ROI.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigateTo('/hard-money-calculator')}
+              className="w-full py-2 rounded-xl text-xs font-semibold bg-amber-600 hover:bg-amber-500 text-slate-950 flex items-center justify-center gap-1.5 cursor-pointer shadow-md transition-all"
+            >
+              <span>Analyze Flip Deal</span>
+              <ArrowRight className="size-3" />
+            </button>
+          </div>
+
+          {/* Snowflake Cost */}
+          <div className="rounded-2xl border border-sky-500/30 bg-gradient-to-b from-sky-950/30 via-slate-900/60 to-slate-950 p-4.5 flex flex-col justify-between gap-3.5 shadow-sm hover:border-sky-500/50 transition-all">
+            <div className="flex items-start gap-3">
+              <div className="size-10 rounded-xl bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center justify-center shrink-0">
+                <Server className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h2 className="text-sm font-bold text-slate-100 truncate">Snowflake Cost Sizer</h2>
+                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-sky-500/20 text-sky-300 border border-sky-500/30">
+                    FinOps
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 leading-snug">
+                  Warehouse credit burn rate, multi-cluster autoscaling & auto-suspend savings.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigateTo('/snowflake-cost-calculator')}
+              className="w-full py-2 rounded-xl text-xs font-semibold bg-sky-600 hover:bg-sky-500 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-md transition-all"
+            >
+              <span>Size Snowflake Warehouse</span>
+              <ArrowRight className="size-3" />
+            </button>
+          </div>
+
+          {/* Parquet Storage & Query Savings */}
+          <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-b from-emerald-950/30 via-slate-900/60 to-slate-950 p-4.5 flex flex-col justify-between gap-3.5 shadow-sm hover:border-emerald-500/50 transition-all">
+            <div className="flex items-start gap-3">
+              <div className="size-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                <Zap className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h2 className="text-sm font-bold text-slate-100 truncate">Parquet Cloud Savings</h2>
+                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    S3 & Athena
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 leading-snug">
+                  S3 compressed storage cut & Athena / BigQuery columnar scan byte reduction.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigateTo('/parquet-storage-calculator')}
+              className="w-full py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-md transition-all"
+            >
+              <span>Calculate Cloud Savings</span>
+              <ArrowRight className="size-3" />
+            </button>
+          </div>
+
+          {/* Mortgage Calculator */}
+          <div className="rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900/70 to-slate-950 p-4.5 flex flex-col justify-between gap-3.5 shadow-sm hover:border-slate-700 transition-all">
+            <div className="flex items-start gap-3">
+              <div className="size-10 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 flex items-center justify-center shrink-0">
+                <Home className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h2 className="text-sm font-bold text-slate-100 truncate">Mortgage Calculator</h2>
+                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                    Popular
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 leading-snug">
+                  PITI breakdown, dynamic PMI drop-off, property taxes & annual amortization.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigateTo('/mortgage-calculator')}
+              className="w-full py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center gap-1.5 cursor-pointer transition-all border border-slate-700/80"
+            >
+              <span>Open Mortgage</span>
+              <ArrowRight className="size-3" />
+            </button>
+          </div>
+
+          {/* Refinance Break-Even */}
+          <div className="rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900/70 to-slate-950 p-4.5 flex flex-col justify-between gap-3.5 shadow-sm hover:border-slate-700 transition-all">
+            <div className="flex items-start gap-3">
+              <div className="size-10 rounded-xl bg-slate-800 text-slate-300 border border-slate-700 flex items-center justify-center shrink-0">
+                <RefreshCw className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h2 className="text-sm font-bold text-slate-100 truncate">Refinance Break-Even</h2>
+                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-slate-800 text-slate-300 border border-slate-700">
+                    Break-Even
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 leading-snug">
+                  Current vs new loan, points & closing fees, monthly savings & 7-year net equity.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigateTo('/refinance-calculator')}
+              className="w-full py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 flex items-center justify-center gap-1.5 cursor-pointer transition-all border border-slate-700/80"
+            >
+              <span>Evaluate Refinance</span>
+              <ArrowRight className="size-3" />
+            </button>
+          </div>
         </div>
       </div>
 

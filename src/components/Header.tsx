@@ -14,15 +14,17 @@ import {
   Calculator,
   Home,
   ArrowRightLeft,
-  Car,
-  TrendingUp,
   ChevronDown,
   ArrowRight,
   FileSpreadsheet,
   FileOutput,
   FileInput,
   FileCode,
-  Layers
+  Layers,
+  Building,
+  Hammer,
+  Server,
+  Zap
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 
@@ -119,7 +121,13 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
   // Active state checkers
   const isParquetSection = currentPath.startsWith('/parquet-') || currentPath.startsWith('/csv-') || currentPath.startsWith('/json-');
   const isWorkbench = !isParquetSection && (currentPath === '/' || currentPath === '');
-  const isCalculatorSection = currentPath.includes('calculator') || currentPath.includes('refinance') || currentPath.includes('mortgage');
+  const isCalculatorSection =
+    currentPath.includes('calculator') ||
+    currentPath.includes('refinance') ||
+    currentPath.includes('mortgage') ||
+    currentPath.includes('dscr') ||
+    currentPath.includes('hard-money') ||
+    currentPath.includes('snowflake');
   const isGuides = currentPath.startsWith('/guides');
   const isAbout = currentPath === '/about';
   const isContact = currentPath === '/contact';
@@ -158,6 +166,13 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
       icon: FileCode
     },
     {
+      title: 'Cloud Storage & Query Savings',
+      description: 'Calculate S3 storage cuts & Athena/BigQuery scan savings',
+      path: '/parquet-storage-calculator',
+      icon: Zap,
+      badge: 'Savings'
+    },
+    {
       title: 'Schema & Metadata Inspector',
       description: 'Inspect row groups, compression codecs, schemas & null rates',
       path: '/parquet-schema-inspector',
@@ -166,6 +181,34 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
   ];
 
   const calculatorItems = [
+    {
+      title: 'DSCR Loan Calculator',
+      description: 'Rental property cash flow, DSCR ratio & qualification tiers',
+      path: '/dscr-loan-calculator',
+      icon: Building,
+      badge: 'High ROI'
+    },
+    {
+      title: 'Hard Money & Fix-Flip',
+      description: 'Fix & flip points, holding costs, 70% rule MAO & net profit',
+      path: '/hard-money-calculator',
+      icon: Hammer,
+      badge: '70% Rule'
+    },
+    {
+      title: 'Snowflake Warehouse Cost',
+      description: 'Warehouse compute credits, autoscaling & FinOps suspend savings',
+      path: '/snowflake-cost-calculator',
+      icon: Server,
+      badge: 'FinOps'
+    },
+    {
+      title: 'Parquet Cloud Savings',
+      description: 'S3 byte reduction & Athena / BigQuery per-query scan cut',
+      path: '/parquet-storage-calculator',
+      icon: Zap,
+      badge: 'S3 & Athena'
+    },
     {
       title: 'Mortgage Calculator',
       description: 'P&I, Property Tax, PMI, HOA & Amortization schedule',
@@ -179,18 +222,6 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
       path: '/refinance-calculator',
       icon: ArrowRightLeft,
       badge: 'New'
-    },
-    {
-      title: 'Auto Loan Calculator',
-      description: 'Car financing, interest rates, down payments & trade-ins',
-      path: '/finance-calculator#auto-calculator',
-      icon: Car
-    },
-    {
-      title: 'Compound Interest & Savings',
-      description: 'Wealth growth projections, regular deposits & APY compounding',
-      path: '/finance-calculator#savings-calculator',
-      icon: TrendingUp
     }
   ];
 

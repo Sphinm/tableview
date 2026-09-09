@@ -15,6 +15,10 @@ import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
 import { MortgageCalculator } from './pages/MortgageCalculator';
 import { RefinanceCalculator } from './pages/RefinanceCalculator';
+import { DscrCalculator } from './pages/DscrCalculator';
+import { HardMoneyCalculator } from './pages/HardMoneyCalculator';
+import { SnowflakeCalculator } from './pages/SnowflakeCalculator';
+import { ParquetSavingsCalculator } from './pages/ParquetSavingsCalculator';
 import { FinanceCalculatorHub } from './pages/FinanceCalculatorHub';
 import { loadFileIntoDuckDB, generateSampleParquet } from './lib/duckdb';
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
@@ -197,6 +201,18 @@ export function App() {
 
       case '/refinance-calculator':
         return <RefinanceCalculator onTrySample={handleTrySample} />;
+
+      case '/dscr-loan-calculator':
+        return <DscrCalculator onTrySample={handleTrySample} />;
+
+      case '/hard-money-calculator':
+        return <HardMoneyCalculator onTrySample={handleTrySample} />;
+
+      case '/snowflake-cost-calculator':
+        return <SnowflakeCalculator onTrySample={handleTrySample} />;
+
+      case '/parquet-storage-calculator':
+        return <ParquetSavingsCalculator onTrySample={handleTrySample} />;
 
       case '/finance-calculator':
       case '/calculator':
