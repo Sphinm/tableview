@@ -1,22 +1,44 @@
-# TableView.dev — Fast, Private In-Browser Parquet Viewer & Converter
+# TableView.dev — In-Browser Parquet Viewer, SQL Workbench & FinOps Calculators
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-indigo.svg)](https://opensource.org/licenses/MIT)
 [![DuckDB Wasm](https://img.shields.io/badge/Engine-DuckDB--Wasm-yellow.svg)](https://duckdb.org/docs/api/wasm/overview)
 [![Deployment](https://img.shields.io/badge/Deploy-Cloudflare%20Pages-orange.svg)](https://pages.cloudflare.com)
+[![Website](https://img.shields.io/badge/Website-tableview.dev-emerald.svg)](https://tableview.dev)
 
-**TableView.dev** is a modern, lightweight, 100% client-side web workbench for opening, inspecting, querying, and converting **Apache Parquet**, **CSV**, **TSV**, and **JSON** files directly in your browser.
+> **TableView.dev** is a modern, 100% private, client-side web workbench for inspecting, querying, and converting **Apache Parquet**, **CSV**, **TSV**, and **JSON** files directly in your browser. Powered by **DuckDB-Wasm**, it executes high-performance analytical SQL locally with zero server file uploads. Also includes institutional-grade real estate and cloud data FinOps calculators.
 
-🌐 **Live URL**: [https://tableview.dev](https://tableview.dev)
+🌐 **Live Website**: [https://tableview.dev](https://tableview.dev)
 
 ---
 
-## ✨ Features
+## 🧰 Live Web Tools & Dedicated Calculators
 
-- **🔒 100% Local & Confidential**: All data decoding and SQL execution happen locally on your device CPU via WebAssembly. Zero files or rows are uploaded to any server. Works offline.
-- **📊 Native Excel (.xlsx) & CSV Export**: Convert complex columnar data directly into formatted Microsoft Excel workbooks with accurate column types.
-- **⚡ High Performance**: Powered by **DuckDB-Wasm** with columnar lazy-loading, column pruning, and pagination.
-- **💻 Interactive SQL Console**: Run arbitrary DuckDB SQL queries (`SELECT`, `WHERE`, `GROUP BY`, `ORDER BY`, aggregates) over local datasets.
-- **✨ 1-Click Sample Dataset**: Built-in 1,000-row e-commerce sample generator to test features with zero file prep.
+All tools run 100% client-side in your browser. Your sensitive files, financial deal sheets, and database metrics never leave your computer.
+
+| Tool / Calculator | Description | Live Link |
+|---|---|---|
+| **Online Parquet Viewer** | Drag-and-drop viewer for `.parquet` and `GeoParquet` with live SQL query console | [Open Viewer](https://tableview.dev/parquet-viewer) |
+| **Parquet to Excel (.xlsx)** | Convert columnar Parquet datasets directly into formatted Microsoft Excel spreadsheets | [Convert to Excel](https://tableview.dev/parquet-to-excel) |
+| **CSV to Parquet (ZSTD)** | Convert large CSV files into compressed columnar Apache Parquet with Snappy or ZSTD | [Convert to Parquet](https://tableview.dev/csv-to-parquet) |
+| **Parquet to CSV** | Stream and extract Parquet records into plain text comma-separated values | [Convert to CSV](https://tableview.dev/parquet-to-csv) |
+| **JSON to Parquet** | Convert nested JSON and JSON Lines (NDJSON) into strongly-typed Parquet | [Convert JSON](https://tableview.dev/json-to-parquet) |
+| **Schema & Metadata Inspector** | Inspect Parquet Row Groups, statistics (Min/Max), dictionary encoding, and null rates | [Inspect Metadata](https://tableview.dev/parquet-schema-inspector) |
+| **Parquet Storage & Query Savings** | Calculate exact AWS S3 storage cost cuts and Athena/BigQuery scan savings | [Estimate Cloud Savings](https://tableview.dev/parquet-storage-calculator) |
+| **Snowflake Warehouse Cost Calculator** | Model virtual warehouse T-shirt sizing credits, autoscaling, and auto-suspend FinOps savings | [Snowflake Calculator](https://tableview.dev/snowflake-cost-calculator) |
+| **DSCR Loan Calculator** | Non-QM rental property cash flow, PITIA debt coverage ratio, and amortization schedule | [DSCR Calculator](https://tableview.dev/dscr-loan-calculator) |
+| **Hard Money & Fix-Flip Calculator** | Fix & flip bridge financing, points, holding interest, 70% rule MAO, and net flip profit | [Hard Money Calculator](https://tableview.dev/hard-money-calculator) |
+| **Mortgage Payment Calculator** | Home loan P&I payment modeling, amortization schedules, and PMI payoff milestones | [Mortgage Calculator](https://tableview.dev/mortgage-calculator) |
+| **Mortgage Refinance Calculator** | Monthly payment reduction, break-even timeline, and lifetime interest analysis | [Refinance Calculator](https://tableview.dev/refinance-calculator) |
+
+---
+
+## ✨ Core Capabilities
+
+- **🔒 100% Confidential & Secure**: All data decoding and SQL execution happen locally on your device CPU via WebAssembly. Zero files or data rows are transmitted over the network. Works offline.
+- **⚡ Blazing Fast Analytical Engine**: Powered by **DuckDB-Wasm** with columnar lazy-loading, column pruning, and zero-copy Arrow memory buffers.
+- **📊 Native Spreadsheet Export**: Export analyzed tables or calculated financial deal sheets into Microsoft Excel `.xlsx` workbooks with 1 click.
+- **💻 Interactive SQL Console**: Run full SQL queries (`SELECT`, `WHERE`, `GROUP BY`, `ORDER BY`, `WINDOW`, aggregates, subqueries) directly on your local datasets.
+- **📱 Responsive Bento Grid UI**: Beautiful dark-mode interface built with Tailwind CSS v4 and Lucide icons.
 
 ---
 
