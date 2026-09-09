@@ -19,7 +19,9 @@ import {
   TableProperties,
   Sparkles,
   SlidersHorizontal,
-  Download
+  Download,
+  Braces,
+  X
 } from 'lucide-react';
 import {
   type ColumnSchema,
@@ -30,14 +32,37 @@ import {
   exportToExcel,
   exportToJson,
   exportToParquet,
-  summarizeTable
+  summarizeTable,
+  getFileContentAsText,
+  parseJsonContent
 } from '../lib/duckdb';
+import { JsonView } from './JsonView';
 
 interface DataViewProps {
   tableName: string;
   fileType: 'parquet' | 'csv' | 'json';
   onReset: () => void;
 }
+
+/**
+ * Check if a value represents a complex object or array suitable for JSON tree inspection
+ */
+const isComplexValue = (val: any): boolean => {
+  if (val === null || val === undefined) return false;
+  if (typeof val === 'object') return true;
+  if (typeof val === 'string' && val.length > 1) {
+    const trimmed = val.trim();
+    if ((trimmed.startsWith('{') && trimmed.endsWith('}')) || (trimmed.startsWith('[') && trimmed.endsWith(']'))) {
+      try {
+        const parsed = JSON.parse(trimmed);
+        return typeof parsed === 'object' && parsed !== null;
+      } catch {
+        return false;
+      }
+    }
+  }
+  return false;
+};
 
 /**
  * Safely format cell values, converting nested BigInt, objects, and nulls without throwing
@@ -75,7 +100,7 @@ const formatTypeBadge = (type: string): string => {
 };
 
 export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
-  const [activeTab, setActiveTab] = useState<'grid' | 'schema' | 'sql'>('grid');
+  const [activeTab, setActiveTab] = useState<'grid' | 'schema' | 'sql' | 'json'>('grid');
   const [columns, setColumns] = useState<ColumnSchema[]>([]);
   const [rows, setRows] = useState<Record<string, any>[]>([]);
   const [totalRows, setTotalRows] = useState<number>(0);
@@ -100,6 +125,17 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
   const [summaries, setSummaries] = useState<ColumnSummary[]>([]);
   const [isLoadingSchema, setIsLoadingSchema] = useState<boolean>(false);
   const [ddlCopied, setDdlCopied] = useState<boolean>(false);
+
+  // JSON View & Inspection state
+  const [rawJsonText, setRawJsonText] = useState<string | null>(null);
+  const [parsedJsonData, setParsedJsonData] = useState<any>(null);
+  const [isLoadingJson, setIsLoadingJson] = useState<boolean>(false);
+  const [inspectingCell, setInspectingCell] = useState<{
+    columnName: string;
+    rowIndex: number;
+    value: any;
+  } | null>(null);
+  const hasAutoSwitchedRef = useRef<boolean>(false);
 
   // Pagination state
   const [page, setPage] = useState<number>(0);
@@ -149,6 +185,14 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
       setRows(res.rows);
       setTotalRows(res.totalRows);
       setExecutionTime(res.executionTimeMs);
+
+      // Intelligent default: if hierarchical JSON (totalRows === 1), auto-switch to 'json' view
+      if (!hasAutoSwitchedRef.current) {
+        hasAutoSwitchedRef.current = true;
+        if (fileType === 'json' && res.totalRows === 1) {
+          setActiveTab('json');
+        }
+      }
     } catch (err: any) {
       console.error('Query error:', err);
       setSqlError(err.message || 'Error executing query');
@@ -160,6 +204,84 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
   useEffect(() => {
     fetchData();
   }, [fetchData]);
+
+  // Load raw JSON text when fileType is json
+  useEffect(() => {
+    if (fileType === 'json') {
+      setIsLoadingJson(true);
+      getFileContentAsText(tableName)
+        .then((text) => {
+          setRawJsonText(text);
+          try {
+            const parsed = parseJsonContent(text);
+            setParsedJsonData(parsed);
+          } catch (e) {
+            console.warn('Failed to parse full JSON:', e);
+          }
+        })
+        .catch((err) => console.error('Failed to read JSON buffer:', err))
+        .finally(() => setIsLoadingJson(false));
+    }
+  }, [tableName, fileType]);
+
+  // Keyboard shortcut: Escape to close cell inspector modal
+  useEffect(() => {
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setInspectingCell(null);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+    return () => window.removeEventListener('keydown', handleEsc);
+  }, []);
+
+  // Handle opening sub-array as relational table
+  const handleOpenSubTable = async (subPath: string, _items: any[]) => {
+    const cleanPath = subPath.replace(/^root\./, '').split('[')[0].replace(/"/g, '');
+    const matchedCol = columns.find((c) => c.name === cleanPath);
+
+    let scanExpr = `'${tableName}'`;
+    if (fileType === 'parquet') scanExpr = `parquet_scan('${tableName}')`;
+    else if (fileType === 'csv') scanExpr = `read_csv_auto('${tableName}')`;
+    else if (fileType === 'json') scanExpr = `read_json_auto('${tableName}')`;
+
+    let unnestSql: string;
+    if (matchedCol && (matchedCol.type.includes('Struct') || matchedCol.type.includes('List'))) {
+      unnestSql = `SELECT unnest("${matchedCol.name}").* FROM ${scanExpr};`;
+    } else if (matchedCol) {
+      unnestSql = `SELECT unnest("${matchedCol.name}") FROM ${scanExpr};`;
+    } else {
+      unnestSql = `SELECT unnest("${cleanPath}").* FROM ${scanExpr};`;
+    }
+
+    setCustomSql(unnestSql);
+    setIsLoading(true);
+    setSqlError(null);
+    try {
+      const res = await runCustomSql(unnestSql);
+      setColumns(res.columns);
+      setRows(res.rows);
+      setTotalRows(res.totalRows);
+      setExecutionTime(res.executionTimeMs);
+      setActiveTab('grid');
+    } catch {
+      try {
+        const fallbackSql = `SELECT unnest("${cleanPath}") FROM ${scanExpr};`;
+        setCustomSql(fallbackSql);
+        const fallbackRes = await runCustomSql(fallbackSql);
+        setColumns(fallbackRes.columns);
+        setRows(fallbackRes.rows);
+        setTotalRows(fallbackRes.totalRows);
+        setExecutionTime(fallbackRes.executionTimeMs);
+        setActiveTab('grid');
+      } catch (fallbackErr: any) {
+        setSqlError(`Could not flatten "${cleanPath}" to table: ${fallbackErr.message}`);
+        setActiveTab('sql');
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Reset scroll on page or sorting changes
   useEffect(() => {
@@ -382,6 +504,19 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
             <FileSpreadsheet className="size-4" />
             Grid View
           </button>
+          {fileType === 'json' && (
+            <button
+              onClick={() => setActiveTab('json')}
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
+                activeTab === 'json'
+                  ? 'bg-white text-slate-950 font-semibold shadow-sm border border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700'
+                  : 'text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-100'
+              }`}
+            >
+              <Braces className="size-4 text-indigo-400" />
+              JSON View
+            </button>
+          )}
           <button
             onClick={() => setActiveTab('schema')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer ${
@@ -731,6 +866,25 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
         </div>
       )}
 
+      {/* Tab: Dedicated JSON View Mode */}
+      {activeTab === 'json' && (
+        <div className="mb-6">
+          {isLoadingJson ? (
+            <div className="rounded-2xl border border-slate-800 bg-slate-900 p-20 text-center text-slate-400 shadow-2xl">
+              <RefreshCw className="size-6 text-indigo-400 animate-spin mx-auto mb-3" />
+              <p className="text-sm">Loading JSON document structure...</p>
+            </div>
+          ) : (
+            <JsonView
+              data={parsedJsonData ?? (rows.length === 1 ? rows[0] : rows)}
+              rawText={rawJsonText ?? undefined}
+              fileName={tableName}
+              onOpenTable={handleOpenSubTable}
+            />
+          )}
+        </div>
+      )}
+
       {/* Tab 1: Grid Table Container */}
       {activeTab === 'grid' && (() => {
         // Virtual Table Windowing calculation for silky 60fps scrolling under big data
@@ -830,12 +984,30 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
                             {columns.map((col) => {
                               const val = row[col.name];
                               const isNull = val === null || val === undefined;
+                              const isComplex = !isNull && isComplexValue(val);
                               const displayVal = formatCellValue(val);
 
                               return (
                                 <td
                                   key={col.name}
-                                  onClick={() => !isNull && handleCellClick(displayVal)}
+                                  onClick={() => {
+                                    if (isNull) return;
+                                    if (isComplex) {
+                                      let parsed = val;
+                                      if (typeof val === 'string') {
+                                        try {
+                                          parsed = JSON.parse(val);
+                                        } catch {}
+                                      }
+                                      setInspectingCell({
+                                        columnName: col.name,
+                                        rowIndex: actualIndex + 1,
+                                        value: parsed
+                                      });
+                                    } else {
+                                      handleCellClick(displayVal);
+                                    }
+                                  }}
                                   className={`border-r border-slate-800/50 last:border-r-0 truncate max-w-xs cursor-pointer hover:bg-slate-800/60 transition-colors ${
                                     density === 'compact' ? 'p-2 text-xs' : 'p-3 text-sm'
                                   } ${
@@ -845,11 +1017,20 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
                                       ? 'text-indigo-300'
                                       : typeof val === 'boolean'
                                       ? 'text-amber-400 font-semibold'
+                                      : isComplex
+                                      ? 'text-indigo-200'
                                       : 'text-slate-200'
                                   }`}
-                                  title={`Click to copy: ${displayVal}`}
+                                  title={isComplex ? `Click to inspect nested JSON (${col.name})` : `Click to copy: ${displayVal}`}
                                 >
-                                  {displayVal}
+                                  {isComplex ? (
+                                    <span className="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-indigo-950/70 text-indigo-300 border border-indigo-800/60 text-xs font-mono">
+                                      <Braces className="size-3 text-indigo-400 shrink-0" />
+                                      <span className="truncate max-w-[180px]">{displayVal}</span>
+                                    </span>
+                                  ) : (
+                                    displayVal
+                                  )}
                                 </td>
                               );
                             })}
@@ -942,6 +1123,57 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
           </div>
         );
       })()}
+
+      {/* Cell JSON Inspector Modal */}
+      {inspectingCell && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm animate-in fade-in duration-150"
+          onClick={() => setInspectingCell(null)}
+        >
+          <div
+            className="w-full max-w-4xl max-h-[88vh] rounded-2xl bg-slate-900 border border-slate-700 shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Modal Header */}
+            <div className="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 rounded-xl bg-indigo-950/80 border border-indigo-800/80 text-indigo-400">
+                  <Braces className="size-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-100 flex items-center gap-2">
+                    <span>Inspect Cell:</span>
+                    <span className="text-indigo-400 font-mono">"{inspectingCell.columnName}"</span>
+                    <span className="text-xs font-normal text-slate-400 px-2 py-0.5 rounded bg-slate-800 border border-slate-700">
+                      Row #{inspectingCell.rowIndex}
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-400 mt-0.5">
+                    Nested struct / list object inspector with interactive tree, search, and copy
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setInspectingCell(null)}
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 cursor-pointer transition-colors"
+                title="Close (Esc)"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            {/* Modal Body: Embedded JsonView */}
+            <div className="flex-1 overflow-auto p-4 bg-slate-900/90">
+              <JsonView
+                data={inspectingCell.value}
+                fileName={`${tableName}_${inspectingCell.columnName}_row${inspectingCell.rowIndex}.json`}
+                initialExpandedDepth={3}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

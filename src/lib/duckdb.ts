@@ -93,6 +93,39 @@ export async function loadFileIntoDuckDB(file: File): Promise<{
 }
 
 /**
+ * Read a file registered in DuckDB virtual filesystem as UTF-8 text.
+ */
+export async function getFileContentAsText(tableName: string, maxBytes?: number): Promise<string> {
+  const { db } = await getDuckDB();
+  const buffer = await db.copyFileToBuffer(tableName);
+  const slice = maxBytes && buffer.length > maxBytes ? buffer.subarray(0, maxBytes) : buffer;
+  const decoder = new TextDecoder('utf-8');
+  return decoder.decode(slice);
+}
+
+/**
+ * Safely parse JSON or JSON Lines (NDJSON) content into JavaScript object/array
+ */
+export function parseJsonContent(text: string): any {
+  const trimmed = text.trim();
+  if (!trimmed) return null;
+  try {
+    return JSON.parse(trimmed);
+  } catch (err) {
+    // If standard JSON.parse fails, attempt parsing as JSON Lines (NDJSON)
+    const lines = trimmed.split('\n').map(l => l.trim()).filter(Boolean);
+    if (lines.length > 0) {
+      try {
+        return lines.map(line => JSON.parse(line));
+      } catch {
+        throw err;
+      }
+    }
+    throw err;
+  }
+}
+
+/**
  * Generate in-browser sample parquet dataset (1000 e-commerce transactions)
  */
 export async function generateSampleParquet(): Promise<{ tableName: string; fileType: 'parquet' }> {
