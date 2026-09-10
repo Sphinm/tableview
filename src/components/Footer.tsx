@@ -1,5 +1,6 @@
 import { navigateTo } from '../lib/router';
 import { getBugReportMailto } from '../lib/feedback';
+import { openCookieSettings } from '../lib/consent';
 import {
   Table,
   ShieldCheck,
@@ -59,7 +60,7 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                 Ready to Inspect, Query & Model Your Data?
               </h3>
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                Open CSV, Excel, Apache Parquet, or JSON files up to 2GB directly in browser memory. Zero cloud uploads, zero telemetry, instantaneous DuckDB SQL queries, and free financial calculators.
+                Open CSV, Excel, Apache Parquet, or JSON files of hundreds of megabytes directly in browser memory. Zero cloud uploads, zero telemetry, instantaneous DuckDB SQL queries, and free financial calculators.
               </p>
             </div>
 
@@ -133,8 +134,8 @@ export const Footer = ({ onTrySample }: FooterProps) => {
               </span>
             </div>
             <div className="text-[11px] text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-2">
-              <span>Network Egress:</span>
-              <span className="font-mono font-medium text-slate-200">0 B (Offline Capable)</span>
+              <span>Your data egress:</span>
+              <span className="font-mono font-medium text-slate-200">0 B — files never uploaded</span>
             </div>
             <div className="text-[11px] text-slate-400 flex items-center justify-between">
               <span>Execution Target:</span>
@@ -461,6 +462,16 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                 >
                   Privacy Policy
                 </a>
+              </li>
+              <li>
+                {/* GDPR/ePrivacy requires withdrawing consent to be as easy as giving it. */}
+                <button
+                  type="button"
+                  onClick={openCookieSettings}
+                  className="hover:text-slate-100 transition-colors block text-left cursor-pointer"
+                >
+                  Cookie Settings
+                </button>
               </li>
               <li>
                 <a

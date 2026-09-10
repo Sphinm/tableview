@@ -452,7 +452,12 @@ export const JsonView: React.FC<JsonViewProps> = ({
   }, [data]);
 
   return (
-    <div className="relative rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl overflow-hidden flex flex-col min-h-[500px]">
+    // data-clarity-mask: this view renders the user's raw JSON — keys, values and
+    // the source text pane. None of it may reach session recording.
+    <div
+      data-clarity-mask="true"
+      className="relative rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl overflow-hidden flex flex-col min-h-[500px]"
+    >
       {/* Toast Notification */}
       {copiedToast && (
         <div className="absolute top-4 right-4 z-50 px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-semibold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">

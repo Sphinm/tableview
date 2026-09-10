@@ -1,34 +1,38 @@
 import { useState, useEffect } from 'react';
 import { ShieldCheck, X } from 'lucide-react';
 import { navigateTo } from '../lib/router';
+import { getConsent, setConsent } from '../lib/consent';
 
 export const CookieBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    try {
-      const consent = localStorage.getItem('tableview_cookie_consent');
-      if (!consent) {
-        // Show after a brief delay so page renders smoothly
-        const timer = setTimeout(() => setIsVisible(true), 1000);
-        return () => clearTimeout(timer);
-      }
-    } catch {
-      // LocalStorage might be restricted
+    const show = () => {
+      setIsVisible(true);
+    };
+    // Re-open the banner when the user asks to change their choice (GDPR withdrawal).
+    window.addEventListener('tableview:open-cookie-settings', show);
+
+    // Never show if the visitor has already made an explicit choice.
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    if (getConsent() === 'unset') {
+      // Show after a brief delay so page renders smoothly
+      timer = setTimeout(show, 1000);
     }
+
+    return () => {
+      window.removeEventListener('tableview:open-cookie-settings', show);
+      if (timer) clearTimeout(timer);
+    };
   }, []);
 
   const handleAccept = () => {
-    try {
-      localStorage.setItem('tableview_cookie_consent', 'accepted');
-    } catch {}
+    setConsent(true);
     setIsVisible(false);
   };
 
   const handleDecline = () => {
-    try {
-      localStorage.setItem('tableview_cookie_consent', 'essential_only');
-    } catch {}
+    setConsent(false);
     setIsVisible(false);
   };
 
