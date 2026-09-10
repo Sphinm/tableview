@@ -23,6 +23,59 @@ import {
   getMonthName
 } from '../lib/mortgageCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { ShareCalculationButton } from '../components/ShareCalculationButton';
+import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
+
+const mortgageFaqs = [
+  {
+    q: 'What is PITI in a monthly mortgage payment?',
+    a: 'PITI stands for Principal, Interest, Taxes, and Insurance. These four components make up your total housing payment. In addition, homeowner association (HOA) fees and private mortgage insurance (PMI) may be included depending on your loan structure.'
+  },
+  {
+    q: 'When does Private Mortgage Insurance (PMI) automatically cancel?',
+    a: 'Under the federal Homeowners Protection Act, conventional mortgage lenders must automatically cancel PMI once your principal balance reaches 78% of the original home value, or you can request cancellation once your balance reaches 80% LTV.'
+  },
+  {
+    q: 'How does an extra monthly principal payment save money?',
+    a: 'Extra principal payments reduce your outstanding balance faster, which reduces future compound interest. Making an extra $100-$200 monthly principal payment can shave 4 to 6 years off a 30-year mortgage and save $30,000+ in interest.'
+  },
+  {
+    q: 'What is the standard formula for a 30-year fixed mortgage?',
+    a: 'Monthly payment M = P * [r(1+r)^n] / [(1+r)^n - 1], where P is loan principal, r is monthly interest rate (annual rate / 12), and n is total number of monthly payments (360 for 30 years).'
+  }
+];
+
+const mortgageSchemas = [
+  {
+    '@type': 'WebApplication',
+    name: 'Mortgage Calculator with Amortization Schedule',
+    url: 'https://tableview.dev/mortgage-calculator',
+    description: 'Free in-browser mortgage payment calculator. Calculates monthly PITI, PMI auto-dropoff, property taxes, HOA, and amortization schedules with Excel export.',
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'All',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    }
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tableview.dev/' },
+      { '@type': 'ListItem', position: 2, name: 'Financial Calculators', item: 'https://tableview.dev/finance-calculator' },
+      { '@type': 'ListItem', position: 3, name: 'Mortgage Calculator', item: 'https://tableview.dev/mortgage-calculator' }
+    ]
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: mortgageFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a }
+    }))
+  }
+];
 
 interface MortgageCalculatorProps {
   onTrySample?: () => void;
@@ -33,22 +86,31 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
     updatePageMeta(
       'Mortgage Calculator - Real Estate Home Loan & Amortization Tool | TableView.dev',
       'Free, 100% private in-browser mortgage calculator. Calculate monthly payments with PMI, property taxes, home insurance, and HOA fees. Includes interactive amortization schedules and Excel/CSV export.',
-      '/mortgage-calculator'
+      '/mortgage-calculator',
+      mortgageSchemas
     );
   }, []);
 
-  // Form State
-  const [homeValue, setHomeValue] = useState<number>(400000);
-  const [downPayment, setDownPayment] = useState<number>(80000);
+  const getNumQuery = (name: string, fallback: number): number => {
+    try {
+      const p = new URLSearchParams(window.location.search).get(name);
+      if (p !== null && !isNaN(Number(p)) && Number(p) > 0) return Number(p);
+    } catch {}
+    return fallback;
+  };
+
+  // Form State initialized with URL search params support
+  const [homeValue, setHomeValue] = useState<number>(() => getNumQuery('homeValue', 400000));
+  const [downPayment, setDownPayment] = useState<number>(() => getNumQuery('downPayment', 80000));
   const [downPaymentType, setDownPaymentType] = useState<'money' | 'percent'>('money');
-  const [interestRate, setInterestRate] = useState<number>(6.48);
-  const [loanTermYears, setLoanTermYears] = useState<number>(30);
+  const [interestRate, setInterestRate] = useState<number>(() => getNumQuery('rate', 6.48));
+  const [loanTermYears, setLoanTermYears] = useState<number>(() => getNumQuery('term', 30));
   const [startMonth, setStartMonth] = useState<number>(9);
   const [startYear, setStartYear] = useState<number>(2026);
-  const [propertyTaxYearly, setPropertyTaxYearly] = useState<number>(3000);
+  const [propertyTaxYearly, setPropertyTaxYearly] = useState<number>(() => getNumQuery('tax', 3000));
   const [pmiRate, setPmiRate] = useState<number>(0.5);
-  const [homeInsuranceYearly, setHomeInsuranceYearly] = useState<number>(1500);
-  const [monthlyHoa, setMonthlyHoa] = useState<number>(0);
+  const [homeInsuranceYearly, setHomeInsuranceYearly] = useState<number>(() => getNumQuery('insurance', 1500));
+  const [monthlyHoa, setMonthlyHoa] = useState<number>(() => getNumQuery('hoa', 0));
   const [loanType, setLoanType] = useState<'conventional' | 'fha' | 'va' | 'usda'>('conventional');
   const buyOrRefi = 'buy' as const;
   
@@ -223,6 +285,18 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
             >
               All Calcs
             </button>
+            <ShareCalculationButton
+              params={{
+                homeValue,
+                downPayment,
+                rate: interestRate,
+                term: loanTermYears,
+                tax: propertyTaxYearly,
+                insurance: homeInsuranceYearly,
+                hoa: monthlyHoa
+              }}
+              title="Share Calculation"
+            />
           </div>
         </div>
 
@@ -984,6 +1058,8 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
           </div>
         )}
       </div>
+
+      <MethodologyDisclosure type="mortgage" />
 
       {/* Bottom Knowledge & Explainer Guide Card */}
       <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-6">

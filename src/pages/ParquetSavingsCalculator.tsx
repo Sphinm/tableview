@@ -20,6 +20,7 @@ import {
   type ParquetSavingsResult
 } from '../lib/parquetSavingsCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 
 const parquetSchemas = [
   {
@@ -133,15 +134,31 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
     );
   }, []);
 
-  // Form State
-  const [dataFormat, setDataFormat] = useState<RawDataFormat>('csv');
-  const [rawSizeAmount, setRawSizeAmount] = useState<number>(25);
-  const [rawSizeUnit, setRawSizeUnit] = useState<'GB' | 'TB' | 'PB'>('TB');
+  const getNumQuery = (name: string, fallback: number): number => {
+    try {
+      const p = new URLSearchParams(window.location.search).get(name);
+      if (p !== null && !isNaN(Number(p)) && Number(p) > 0) return Number(p);
+    } catch {}
+    return fallback;
+  };
+
+  const getStringQuery = <T extends string>(name: string, fallback: T): T => {
+    try {
+      const p = new URLSearchParams(window.location.search).get(name);
+      if (p !== null) return p as T;
+    } catch {}
+    return fallback;
+  };
+
+  // Form State initialized with URL query params
+  const [dataFormat, setDataFormat] = useState<RawDataFormat>(() => getStringQuery('format', 'csv'));
+  const [rawSizeAmount, setRawSizeAmount] = useState<number>(() => getNumQuery('size', 25));
+  const [rawSizeUnit, setRawSizeUnit] = useState<'GB' | 'TB' | 'PB'>(() => getStringQuery('unit', 'TB'));
   const [monthlyDataGrowthPercent, setMonthlyDataGrowthPercent] = useState<number>(4);
-  const [compressionCodec, setCompressionCodec] = useState<ParquetCompressionCodec>('zstd');
-  const [cloudProvider, setCloudProvider] = useState<CloudProvider>('aws_s3');
+  const [compressionCodec, setCompressionCodec] = useState<ParquetCompressionCodec>(() => getStringQuery('codec', 'zstd'));
+  const [cloudProvider, setCloudProvider] = useState<CloudProvider>(() => getStringQuery('provider', 'aws_s3'));
   const [runsAthenaOrBigQuery, setRunsAthenaOrBigQuery] = useState<boolean>(true);
-  const [queriesPerDay, setQueriesPerDay] = useState<number>(40);
+  const [queriesPerDay, setQueriesPerDay] = useState<number>(() => getNumQuery('queries', 40));
   const [avgColumnsScannedPercent, setAvgColumnsScannedPercent] = useState<number>(15);
   const [queryEngine, setQueryEngine] = useState<'athena' | 'bigquery' | 'snowflake_external'>('athena');
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
@@ -223,9 +240,24 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+    try {
+      const params = new URLSearchParams();
+      params.set('format', dataFormat);
+      params.set('size', String(rawSizeAmount));
+      params.set('unit', rawSizeUnit);
+      params.set('codec', compressionCodec);
+      params.set('provider', cloudProvider);
+      params.set('queries', String(queriesPerDay));
+      const fullUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, '', fullUrl);
+      navigator.clipboard.writeText(fullUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    } catch {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
   };
 
   return (
@@ -828,6 +860,9 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
               </div>
             </div>
           </div>
+
+          {/* Methodology & FinOps Disclosure */}
+          <MethodologyDisclosure type="cloud" />
 
           {/* Subsection 5: Related Data Engineering Tools Cross-Links */}
           <div className="pt-6 border-t border-slate-800">

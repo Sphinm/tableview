@@ -22,6 +22,7 @@ import {
   type SnowflakeResult
 } from '../lib/snowflakeCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 
 const snowflakeSchemas = [
   {
@@ -135,13 +136,29 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
     );
   }, []);
 
-  // Form State
-  const [edition, setEdition] = useState<SnowflakeEdition>('enterprise');
-  const [warehouseSize, setWarehouseSize] = useState<SnowflakeWarehouseSize>('Medium');
-  const [clusterCount, setClusterCount] = useState<number>(1);
-  const [activeHoursPerDay, setActiveHoursPerDay] = useState<number>(8);
-  const [activeDaysPerMonth, setActiveDaysPerMonth] = useState<number>(22);
-  const [storageTb, setStorageTb] = useState<number>(15);
+  const getNumQuery = (name: string, fallback: number): number => {
+    try {
+      const p = new URLSearchParams(window.location.search).get(name);
+      if (p !== null && !isNaN(Number(p)) && Number(p) > 0) return Number(p);
+    } catch {}
+    return fallback;
+  };
+
+  const getStringQuery = <T extends string>(name: string, fallback: T): T => {
+    try {
+      const p = new URLSearchParams(window.location.search).get(name);
+      if (p !== null) return p as T;
+    } catch {}
+    return fallback;
+  };
+
+  // Form State initialized with URL params
+  const [edition, setEdition] = useState<SnowflakeEdition>(() => getStringQuery('edition', 'enterprise'));
+  const [warehouseSize, setWarehouseSize] = useState<SnowflakeWarehouseSize>(() => getStringQuery('size', 'Medium'));
+  const [clusterCount, setClusterCount] = useState<number>(() => getNumQuery('clusters', 1));
+  const [activeHoursPerDay, setActiveHoursPerDay] = useState<number>(() => getNumQuery('hours', 8));
+  const [activeDaysPerMonth, setActiveDaysPerMonth] = useState<number>(() => getNumQuery('days', 22));
+  const [storageTb, setStorageTb] = useState<number>(() => getNumQuery('storage', 15));
   const [storagePricingTier, setStoragePricingTier] = useState<'capacity' | 'on_demand'>('capacity');
   const [autoSuspendEfficiency, setAutoSuspendEfficiency] = useState<number>(20);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
@@ -213,9 +230,24 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+    try {
+      const params = new URLSearchParams();
+      params.set('edition', edition);
+      params.set('size', warehouseSize);
+      params.set('clusters', String(clusterCount));
+      params.set('hours', String(activeHoursPerDay));
+      params.set('days', String(activeDaysPerMonth));
+      params.set('storage', String(storageTb));
+      const fullUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, '', fullUrl);
+      navigator.clipboard.writeText(fullUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    } catch {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
   };
 
   return (
@@ -820,6 +852,8 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
               </div>
             </div>
           </div>
+
+          <MethodologyDisclosure type="cloud" />
 
           {/* Subsection 5: Related Cloud Data Tools Cross-Links */}
           <div className="pt-6 border-t border-slate-800">

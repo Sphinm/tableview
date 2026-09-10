@@ -22,7 +22,8 @@ import { HardMoneyCalculator } from './pages/HardMoneyCalculator';
 import { SnowflakeCalculator } from './pages/SnowflakeCalculator';
 import { ParquetSavingsCalculator } from './pages/ParquetSavingsCalculator';
 import { FinanceCalculatorHub } from './pages/FinanceCalculatorHub';
-import { loadFileIntoDuckDB, generateSampleParquet } from './lib/duckdb';
+import { SamplePlayground } from './components/SamplePlayground';
+import { loadFileIntoDuckDB, generateSampleParquet, type SamplePreset } from './lib/duckdb';
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
 import { TOOLS_CONFIG } from './data/tools';
 import { getInitialTheme, applyTheme, type Theme } from './lib/theme';
@@ -98,10 +99,11 @@ export function App() {
     }
   };
 
-  const handleTrySample = async () => {
+  const handleTrySample = async (preset: SamplePreset = 'ecommerce') => {
     setIsLoading(true);
     setErrorMessage(null);
-    setLoadingStatus('Generating 1,000-row sample e-commerce dataset in memory...');
+    const label = preset === 'financial' ? 'equity trades' : preset === 'telemetry' ? 'cloud telemetry' : 'e-commerce';
+    setLoadingStatus(`Generating 1,000-row sample ${label} dataset in memory...`);
 
     // If invoked from an informational page, guide, or calculator, navigate to the workbench
     if (path !== '/') {
@@ -110,7 +112,7 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     try {
-      const res = await generateSampleParquet();
+      const res = await generateSampleParquet(preset);
       setCurrentTable(res.tableName);
       setFileType(res.fileType);
     } catch (err: any) {
@@ -171,6 +173,7 @@ export function App() {
                   loadingStatus={loadingStatus}
                 />
               )}
+              <SamplePlayground onSelectSample={handleTrySample} isLoading={isLoading} />
               <CompareSection />
             </>
           )}

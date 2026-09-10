@@ -125,13 +125,62 @@ export function parseJsonContent(text: string): any {
   }
 }
 
-/**
- * Generate in-browser sample parquet dataset (1000 e-commerce transactions)
- */
-export async function generateSampleParquet(): Promise<{ tableName: string; fileType: 'parquet' }> {
-  const { conn } = await getDuckDB();
-  const sampleName = 'sample_ecommerce_orders.parquet';
+export type SamplePreset = 'ecommerce' | 'financial' | 'telemetry';
 
+/**
+ * Generate in-browser sample parquet dataset with multiple industry scenarios
+ */
+export async function generateSampleParquet(
+  preset: SamplePreset = 'ecommerce'
+): Promise<{ tableName: string; fileType: 'parquet' }> {
+  const { conn } = await getDuckDB();
+
+  if (preset === 'financial') {
+    const sampleName = 'sample_financial_trades.parquet';
+    await conn.query(`
+      COPY (
+        SELECT
+          'TRD-' || lpad(cast(i as varchar), 6, '0') AS trade_id,
+          strftime(TIMESTAMP '2026-09-08 09:30:00' + INTERVAL (i * 12) SECOND, '%Y-%m-%d %H:%M:%S.%f') AS trade_timestamp,
+          ['NVDA', 'AAPL', 'MSFT', 'AMZN', 'GOOGL', 'TSLA', 'META', 'BRK.B'][CAST(floor(random() * 8) + 1 AS INT)] AS ticker,
+          ['BUY', 'SELL'][CAST(floor(random() * 2) + 1 AS INT)] AS side,
+          ROUND(CAST(120 + (random() * 680) AS numeric), 2) AS execution_price,
+          CAST(floor(random() * 200 + 1) * 10 AS INT) AS shares,
+          ['NASDAQ', 'NYSE', 'ARCA', 'BATS', 'IEX'][CAST(floor(random() * 5) + 1 AS INT)] AS venue,
+          ROUND(CAST(0.01 + (random() * 0.08) AS numeric), 4) AS bid_ask_spread,
+          ROUND(CAST(0.25 + (random() * 1.5) AS numeric), 2) AS commission_usd
+        FROM range(1, 1001) t(i)
+      ) TO '${sampleName}' (FORMAT PARQUET);
+    `);
+    return { tableName: sampleName, fileType: 'parquet' };
+  }
+
+  if (preset === 'telemetry') {
+    const sampleName = 'sample_server_telemetry.parquet';
+    await conn.query(`
+      COPY (
+        SELECT
+          'req_' || hex(md5(cast(i as varchar))) AS request_id,
+          strftime(TIMESTAMP '2026-09-09 00:00:00' + INTERVAL (i * 85) SECOND, '%Y-%m-%d %H:%M:%S') AS timestamp,
+          '192.168.' || CAST(floor(random() * 254) + 1 AS INT) || '.' || CAST(floor(random() * 254) + 1 AS INT) AS client_ip,
+          ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'][CAST(floor(random() * 5) + 1 AS INT)] AS http_method,
+          ['/api/v1/auth', '/api/v1/users', '/api/v2/orders', '/api/v1/reports', '/healthz', '/metrics'][CAST(floor(random() * 6) + 1 AS INT)] AS endpoint,
+          CASE 
+            WHEN i % 19 = 0 THEN 500
+            WHEN i % 13 = 0 THEN 404
+            WHEN i % 7 = 0 THEN 304
+            ELSE 200
+          END AS status_code,
+          ROUND(CAST(8 + (random() * 320) AS numeric), 1) AS latency_ms,
+          ['us-east-1', 'us-west-2', 'eu-central-1', 'ap-southeast-1'][CAST(floor(random() * 4) + 1 AS INT)] AS region
+        FROM range(1, 1001) t(i)
+      ) TO '${sampleName}' (FORMAT PARQUET);
+    `);
+    return { tableName: sampleName, fileType: 'parquet' };
+  }
+
+  // Default: E-commerce
+  const sampleName = 'sample_ecommerce_orders.parquet';
   await conn.query(`
     COPY (
       SELECT
@@ -154,6 +203,31 @@ export async function generateSampleParquet(): Promise<{ tableName: string; file
   `);
 
   return { tableName: sampleName, fileType: 'parquet' };
+}
+
+/**
+ * Export and download any virtual file from DuckDB filesystem as a native file
+ */
+export async function exportParquetFile(tableName: string, downloadName?: string): Promise<void> {
+  const { db } = await getDuckDB();
+  const buffer = await db.copyFileToBuffer(tableName);
+  const blob = new Blob([buffer as any], { type: 'application/octet-stream' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = downloadName || tableName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Generate a sample dataset in memory and trigger an immediate download for the user
+ */
+export async function downloadSampleParquet(preset: SamplePreset = 'ecommerce'): Promise<void> {
+  const res = await generateSampleParquet(preset);
+  await exportParquetFile(res.tableName);
 }
 
 /**

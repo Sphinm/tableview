@@ -21,6 +21,7 @@ import {
   type DscrInputs
 } from '../lib/dscrCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 
 const dscrSchemas = [
   {
@@ -134,17 +135,31 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
     );
   }, []);
 
-  // Form State
-  const [propertyValue, setPropertyValue] = useState<number>(450000);
-  const [downPayment, setDownPayment] = useState<number>(20);
+  const getNumQuery = (name: string, fallback: number): number => {
+    try {
+      const p = new URLSearchParams(window.location.search).get(name);
+      if (p !== null && !isNaN(Number(p)) && Number(p) > 0) return Number(p);
+    } catch {}
+    return fallback;
+  };
+
+  // Form State initialized with URL query params
+  const [propertyValue, setPropertyValue] = useState<number>(() => getNumQuery('price', 450000));
+  const [downPayment, setDownPayment] = useState<number>(() => getNumQuery('down', 20));
   const [downPaymentType, setDownPaymentType] = useState<'percent' | 'money'>('percent');
-  const [interestRate, setInterestRate] = useState<number>(7.25);
-  const [loanTermYears, setLoanTermYears] = useState<number>(30);
-  const [isInterestOnly, setIsInterestOnly] = useState<boolean>(false);
-  const [monthlyRent, setMonthlyRent] = useState<number>(3800);
-  const [annualPropertyTax, setAnnualPropertyTax] = useState<number>(5400);
-  const [annualInsurance, setAnnualInsurance] = useState<number>(1600);
-  const [monthlyHoa, setMonthlyHoa] = useState<number>(0);
+  const [interestRate, setInterestRate] = useState<number>(() => getNumQuery('rate', 7.25));
+  const [loanTermYears, setLoanTermYears] = useState<number>(() => getNumQuery('term', 30));
+  const [isInterestOnly, setIsInterestOnly] = useState<boolean>(() => {
+    try {
+      return new URLSearchParams(window.location.search).get('io') === 'true';
+    } catch {
+      return false;
+    }
+  });
+  const [monthlyRent, setMonthlyRent] = useState<number>(() => getNumQuery('rent', 3800));
+  const [annualPropertyTax, setAnnualPropertyTax] = useState<number>(() => getNumQuery('tax', 5400));
+  const [annualInsurance, setAnnualInsurance] = useState<number>(() => getNumQuery('ins', 1600));
+  const [monthlyHoa, setMonthlyHoa] = useState<number>(() => getNumQuery('hoa', 0));
   const [vacancyRate, setVacancyRate] = useState<number>(5);
   const [managementFeeRate, setManagementFeeRate] = useState<number>(8);
   const [annualMaintenanceReserve, setAnnualMaintenanceReserve] = useState<number>(2000);
@@ -286,9 +301,27 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+    try {
+      const params = new URLSearchParams();
+      params.set('price', String(propertyValue));
+      params.set('down', String(downPayment));
+      params.set('rate', String(interestRate));
+      params.set('term', String(loanTermYears));
+      params.set('rent', String(monthlyRent));
+      params.set('tax', String(annualPropertyTax));
+      params.set('ins', String(annualInsurance));
+      params.set('hoa', String(monthlyHoa));
+      if (isInterestOnly) params.set('io', 'true');
+      const fullUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, '', fullUrl);
+      navigator.clipboard.writeText(fullUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    } catch {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
   };
 
   // FAQ structured schema
@@ -1125,6 +1158,8 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               </table>
             </div>
           </div>
+
+          <MethodologyDisclosure type="dscr" />
 
           {/* Subsection 4: Comprehensive In-Depth Investor FAQ */}
           <div className="space-y-4">

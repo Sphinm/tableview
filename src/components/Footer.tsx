@@ -358,7 +358,7 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                   onClick={(e) => handleNav(e, '/guides')}
                   className="text-slate-200 hover:text-slate-100 transition-colors font-semibold flex items-center gap-1.5"
                 >
-                  <span>Browse All 6 Guides</span>
+                  <span>Browse All 9 Technical Guides</span>
                   <ArrowUpRight className="size-3.5" />
                 </a>
               </li>

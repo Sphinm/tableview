@@ -27,6 +27,59 @@ import {
   exportRefinanceToCsv
 } from '../lib/refinanceCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { ShareCalculationButton } from '../components/ShareCalculationButton';
+import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
+
+const refinanceFaqs = [
+  {
+    q: 'How is the refinance break-even point calculated?',
+    a: 'Break-even point (in months) = Total upfront closing costs and discount points divided by monthly payment savings. For example, $6,000 in closing costs with $250/month in savings reaches break-even in 24 months.'
+  },
+  {
+    q: 'Does it make sense to refinance from a 30-year to a 15-year mortgage?',
+    a: 'Yes, if your goal is long-term wealth building. While your monthly payment may increase slightly, 15-year fixed loans carry lower interest rates and pay down principal twice as fast, saving tens of thousands of dollars in lifetime interest.'
+  },
+  {
+    q: 'What is a zero-closing-cost refinance?',
+    a: 'In a zero-cost refinance, the lender pays your closing fees in exchange for a slightly higher interest rate (e.g. +0.25% to +0.375%), or the closing costs are rolled into the loan balance. Your break-even is immediate, making it ideal if you plan to move within 3-5 years.'
+  },
+  {
+    q: 'How does cash-out refinancing work?',
+    a: 'A cash-out refinance replaces your existing mortgage with a larger loan balance, providing the difference in cash. Most conventional lenders permit up to 80% Loan-to-Value (LTV) for cash-out refinancing on primary residences.'
+  }
+];
+
+const refinanceSchemas = [
+  {
+    '@type': 'WebApplication',
+    name: 'Mortgage Refinance Break-Even Calculator',
+    url: 'https://tableview.dev/refinance-calculator',
+    description: 'Free in-browser mortgage refinance calculator. Compare old vs new monthly payments, calculate break-even months, equity trajectory, and discount points with Excel export.',
+    applicationCategory: 'FinanceApplication',
+    operatingSystem: 'All',
+    offers: {
+      '@type': 'Offer',
+      price: '0',
+      priceCurrency: 'USD'
+    }
+  },
+  {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tableview.dev/' },
+      { '@type': 'ListItem', position: 2, name: 'Financial Calculators', item: 'https://tableview.dev/finance-calculator' },
+      { '@type': 'ListItem', position: 3, name: 'Refinance Calculator', item: 'https://tableview.dev/refinance-calculator' }
+    ]
+  },
+  {
+    '@type': 'FAQPage',
+    mainEntity: refinanceFaqs.map((f) => ({
+      '@type': 'Question',
+      name: f.q,
+      acceptedAnswer: { '@type': 'Answer', text: f.a }
+    }))
+  }
+];
 
 interface RefinanceCalculatorProps {
   onTrySample?: () => void;
@@ -37,29 +90,37 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
     updatePageMeta(
       'Mortgage Refinance Calculator: Break-Even, Rate Comparison & Equity Analysis | TableView.dev',
       'Free, 100% private in-browser mortgage refinance calculator. Compare your current mortgage with a new loan, calculate upfront closing costs, break-even months, income tax shift, and multi-year equity savings.',
-      '/refinance-calculator'
+      '/refinance-calculator',
+      refinanceSchemas
     );
   }, []);
 
-  // --- Form State ---
-  // Original Loan Details
-  const [homePrice, setHomePrice] = useState<number>(400000);
-  const [downPayment, setDownPayment] = useState<number>(80000);
-  const [originalLoanAmount, setOriginalLoanAmount] = useState<number>(320000);
-  const [originalTermYears, setOriginalTermYears] = useState<number>(30);
-  const [currentInterestRate, setCurrentInterestRate] = useState<number>(7.0);
-  const [monthsAlreadyPaid, setMonthsAlreadyPaid] = useState<number>(60);
+  const getNumQuery = (name: string, fallback: number): number => {
+    try {
+      const p = new URLSearchParams(window.location.search).get(name);
+      if (p !== null && !isNaN(Number(p)) && Number(p) >= 0) return Number(p);
+    } catch {}
+    return fallback;
+  };
+
+  // --- Form State initialized with URL query params support ---
+  const [homePrice, setHomePrice] = useState<number>(() => getNumQuery('homePrice', 400000));
+  const [downPayment, setDownPayment] = useState<number>(() => getNumQuery('downPayment', 80000));
+  const [originalLoanAmount, setOriginalLoanAmount] = useState<number>(() => getNumQuery('origLoan', 320000));
+  const [originalTermYears, setOriginalTermYears] = useState<number>(() => getNumQuery('origTerm', 30));
+  const [currentInterestRate, setCurrentInterestRate] = useState<number>(() => getNumQuery('curRate', 7.0));
+  const [monthsAlreadyPaid, setMonthsAlreadyPaid] = useState<number>(() => getNumQuery('monthsPaid', 60));
 
   // Refinanced Loan Details
-  const [newTermYears, setNewTermYears] = useState<number>(15);
-  const [newInterestRate, setNewInterestRate] = useState<number>(5.75);
+  const [newTermYears, setNewTermYears] = useState<number>(() => getNumQuery('newTerm', 15));
+  const [newInterestRate, setNewInterestRate] = useState<number>(() => getNumQuery('newRate', 5.75));
   const [yearsBeforeSell, setYearsBeforeSell] = useState<number>(7);
-  const [cashOutAmount, setCashOutAmount] = useState<number>(0);
+  const [cashOutAmount, setCashOutAmount] = useState<number>(() => getNumQuery('cashOut', 0));
 
   // Fees & Points
-  const [discountPoints, setDiscountPoints] = useState<number>(1.0);
+  const [discountPoints, setDiscountPoints] = useState<number>(() => getNumQuery('points', 1.0));
   const [originationPercent, setOriginationPercent] = useState<number>(0.0);
-  const [otherClosingCosts, setOtherClosingCosts] = useState<number>(1200);
+  const [otherClosingCosts, setOtherClosingCosts] = useState<number>(() => getNumQuery('otherCosts', 1200));
 
   // Taxes
   const [federalTaxRate, setFederalTaxRate] = useState<number>(25.0);
@@ -291,6 +352,21 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             <Calculator className="size-3.5" />
             <span>All Financial Calcs</span>
           </button>
+          <ShareCalculationButton
+            params={{
+              homePrice,
+              downPayment,
+              origLoan: originalLoanAmount,
+              curRate: currentInterestRate,
+              monthsPaid: monthsAlreadyPaid,
+              newRate: newInterestRate,
+              newTerm: newTermYears,
+              otherCosts: otherClosingCosts,
+              points: discountPoints,
+              cashOut: cashOutAmount
+            }}
+            title="Share Refinance Deal"
+          />
         </div>
       </div>
 
@@ -1319,6 +1395,8 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
           </div>
         )}
       </div>
+
+      <MethodologyDisclosure type="refinance" />
 
       {/* In-Depth Educational & Refinancing Strategy Guide */}
       <div className="p-6 sm:p-10 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-xl space-y-8">

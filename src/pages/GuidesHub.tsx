@@ -10,12 +10,7 @@ export const GuidesHub = () => {
 
   const categories = [
     'All',
-    'Storage Architecture',
-    'File Conversion',
-    'WebAssembly & SQL',
-    'Metadata & Schema',
-    'Benchmarks',
-    'Troubleshooting'
+    ...Array.from(new Set(guidesData.map((g) => g.category)))
   ];
 
   const filteredGuides = guidesData.filter((guide: GuideItem) => {
@@ -40,13 +35,13 @@ export const GuidesHub = () => {
       <div className="mb-10 text-center sm:text-left">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-900 border border-slate-800 text-slate-300 mb-4 shadow-sm">
           <BookOpen className="size-3.5" />
-          <span>Technical Knowledge Base</span>
+          <span>Technical & Financial Knowledge Hub</span>
         </div>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-100 tracking-tight mb-4">
-          Parquet & Columnar Data Guides
+          Engineering & Financial Analysis Guides
         </h1>
         <p className="text-sm sm:text-base text-slate-400 max-w-2xl leading-relaxed">
-          Comprehensive developer guides on Apache Parquet file internals, DuckDB in-browser execution, metadata schema inspection, and lossless format conversions.
+          Comprehensive, in-depth guides on Apache Parquet file internals, DuckDB WebAssembly analytics, cloud data warehouse FinOps, and real estate mortgage underwriting formulas.
         </p>
       </div>
 

@@ -19,6 +19,7 @@ import {
   type HardMoneyResult
 } from '../lib/hardMoneyCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 
 const hardMoneySchemas = [
   {
@@ -132,16 +133,24 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
     );
   }, []);
 
-  // Form State
-  const [purchasePrice, setPurchasePrice] = useState<number>(240000);
-  const [rehabBudget, setRehabBudget] = useState<number>(65000);
-  const [afterRepairValue, setAfterRepairValue] = useState<number>(390000); // ARV
+  const getNumQuery = (name: string, fallback: number): number => {
+    try {
+      const p = new URLSearchParams(window.location.search).get(name);
+      if (p !== null && !isNaN(Number(p)) && Number(p) > 0) return Number(p);
+    } catch {}
+    return fallback;
+  };
+
+  // Form State initialized with URL search params
+  const [purchasePrice, setPurchasePrice] = useState<number>(() => getNumQuery('purchase', 240000));
+  const [rehabBudget, setRehabBudget] = useState<number>(() => getNumQuery('rehab', 65000));
+  const [afterRepairValue, setAfterRepairValue] = useState<number>(() => getNumQuery('arv', 390000)); // ARV
   const [ltvPercent, setLtvPercent] = useState<number>(85);
   const [rehabFinancedPercent, setRehabFinancedPercent] = useState<number>(100);
-  const [interestRate, setInterestRate] = useState<number>(11.0);
-  const [originationPoints, setOriginationPoints] = useState<number>(2.0);
+  const [interestRate, setInterestRate] = useState<number>(() => getNumQuery('rate', 11.0));
+  const [originationPoints, setOriginationPoints] = useState<number>(() => getNumQuery('points', 2.0));
   const [lenderUnderwritingFees, setLenderUnderwritingFees] = useState<number>(1500);
-  const [projectDurationMonths, setProjectDurationMonths] = useState<number>(6);
+  const [projectDurationMonths, setProjectDurationMonths] = useState<number>(() => getNumQuery('duration', 6));
   const [monthlyHoldingCosts, setMonthlyHoldingCosts] = useState<number>(650);
   const [realtorCommissionPercent, setRealtorCommissionPercent] = useState<number>(5.0);
   const [exitClosingCostsPercent, setExitClosingCostsPercent] = useState<number>(1.5);
@@ -251,9 +260,24 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
   };
 
   const handleCopyLink = () => {
-    navigator.clipboard.writeText(window.location.href);
-    setCopiedLink(true);
-    setTimeout(() => setCopiedLink(false), 2000);
+    try {
+      const params = new URLSearchParams();
+      params.set('purchase', String(purchasePrice));
+      params.set('rehab', String(rehabBudget));
+      params.set('arv', String(afterRepairValue));
+      params.set('rate', String(interestRate));
+      params.set('points', String(originationPoints));
+      params.set('duration', String(projectDurationMonths));
+      const fullUrl = `${window.location.origin}${window.location.pathname}?${params.toString()}`;
+      window.history.replaceState({}, '', fullUrl);
+      navigator.clipboard.writeText(fullUrl);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2500);
+    } catch {
+      navigator.clipboard.writeText(window.location.href);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    }
   };
 
   return (
@@ -931,6 +955,8 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               </div>
             </div>
           </div>
+
+          <MethodologyDisclosure type="hardmoney" />
 
           {/* Subsection 5: Related Real Estate Calculators Cross-Links */}
           <div className="pt-6 border-t border-slate-800">
