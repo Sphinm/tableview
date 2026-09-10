@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ShoppingCart, TrendingUp, Server, Play, Download, Check, Sparkles } from 'lucide-react';
-import { downloadSampleParquet, type SamplePreset } from '../lib/duckdb';
+import type { SamplePreset } from '../lib/duckdb';
 
 interface SamplePlaygroundProps {
   onSelectSample: (preset: SamplePreset) => void;
@@ -15,6 +15,8 @@ export const SamplePlayground = ({ onSelectSample, isLoading }: SamplePlayground
     e.stopPropagation();
     setDownloadingPreset(preset);
     try {
+      // Lazy: keeps the DuckDB engine out of the initial bundle.
+      const { downloadSampleParquet } = await import('../lib/duckdb');
       await downloadSampleParquet(preset);
       setDownloadedPreset(preset);
       setTimeout(() => setDownloadedPreset(null), 2500);

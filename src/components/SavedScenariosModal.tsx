@@ -1,5 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Bookmark, X, Trash2, Check, ArrowRight, Layers, Plus, Calendar } from 'lucide-react';
+
+/**
+ * Read saved scenarios for a calculator. Corrupt or unavailable storage (private
+ * mode, quota errors) degrades to an empty list rather than crashing the modal.
+ */
+function readScenarios<T>(storageKey: string): SavedScenario<T>[] {
+  try {
+    const raw = localStorage.getItem(storageKey);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (err) {
+    console.error('Failed to load saved scenarios:', err);
+    return [];
+  }
+}
 
 export interface SavedScenario<T = any> {
   id: string;
@@ -34,25 +50,21 @@ export function SavedScenariosModal<T>({
 }: SavedScenariosModalProps<T>) {
   const storageKey = `tableview_scenarios_${calculatorId}`;
   const [scenarios, setScenarios] = useState<SavedScenario<T>[]>([]);
+  const [loadedKey, setLoadedKey] = useState<string | null>(null);
   const [newName, setNewName] = useState('');
   const [showSavedToast, setShowSavedToast] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState<string[]>([]);
 
-  // Load scenarios from localStorage
-  useEffect(() => {
-    if (isOpen) {
-      try {
-        const raw = localStorage.getItem(storageKey);
-        if (raw) {
-          setScenarios(JSON.parse(raw));
-        } else {
-          setScenarios([]);
-        }
-      } catch (err) {
-        console.error('Failed to load saved scenarios:', err);
-      }
-    }
-  }, [isOpen, storageKey]);
+  // Load scenarios from localStorage.
+  //
+  // Adjusting state during render (rather than in an effect) is React's
+  // documented pattern for reacting to a prop change: it avoids the extra
+  // render pass an effect would cause, and keeps the read synchronous with the
+  // first render that actually displays the data.
+  if (isOpen && loadedKey !== storageKey) {
+    setLoadedKey(storageKey);
+    setScenarios(readScenarios<T>(storageKey));
+  }
 
   if (!isOpen) return null;
 

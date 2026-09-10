@@ -1,5 +1,9 @@
 import * as duckdb from '@duckdb/duckdb-wasm';
-import * as XLSX from 'xlsx';
+import { EngineLoadError } from './engineError';
+// NOTE: `xlsx` (SheetJS, ~400 kB) is intentionally NOT imported at module scope.
+// It is loaded on demand inside the Excel code paths only — see loadFileIntoDuckDB
+// and exportToExcel. A top-level import here would drag it into the main bundle
+// for every visitor, including those who only use the finance calculators.
 
 let db: duckdb.AsyncDuckDB | null = null;
 let conn: duckdb.AsyncDuckDBConnection | null = null;
@@ -17,8 +21,72 @@ export interface TableQueryResult {
   executionTimeMs: number;
 }
 
+/** Give up on a slow CDN rather than leaving the user on a spinner forever. */
+const BUNDLE_FETCH_TIMEOUT_MS = 45_000;
+
+function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const timer = setTimeout(
+      () => reject(new Error(`Timed out after ${Math.round(ms / 1000)}s while loading ${label}`)),
+      ms
+    );
+    promise.then(
+      (value) => {
+        clearTimeout(timer);
+        resolve(value);
+      },
+      (error) => {
+        clearTimeout(timer);
+        reject(error);
+      }
+    );
+  });
+}
+
 /**
- * Initialize DuckDB-Wasm using jsdelivr CDN bundles
+ * Secondary CDN, used when jsDelivr is unreachable. jsDelivr is blocked on some
+ * corporate networks and is unreliable from mainland China, which is exactly
+ * where a silent failure looks like "your file is corrupted".
+ */
+function getUnpkgBundles(): duckdb.DuckDBBundles {
+  const base = 'https://unpkg.com/@duckdb/duckdb-wasm@1.29.0/dist';
+  return {
+    mvp: {
+      mainModule: `${base}/duckdb-mvp.wasm`,
+      mainWorker: `${base}/duckdb-browser-mvp.worker.js`,
+    },
+    eh: {
+      mainModule: `${base}/duckdb-eh.wasm`,
+      mainWorker: `${base}/duckdb-browser-eh.worker.js`,
+    },
+  };
+}
+
+async function instantiateFrom(bundles: duckdb.DuckDBBundles): Promise<duckdb.AsyncDuckDB> {
+  const bundle = await duckdb.selectBundle(bundles);
+
+  if (!bundle.mainWorker) {
+    throw new Error('No compatible DuckDB worker bundle for this browser');
+  }
+
+  // Blob worker avoids Cross-Origin Worker restrictions on the CDN script.
+  const workerUrl = URL.createObjectURL(
+    new Blob([`importScripts("${bundle.mainWorker}");`], { type: 'text/javascript' })
+  );
+
+  try {
+    const worker = new Worker(workerUrl);
+    const logger = new duckdb.ConsoleLogger(duckdb.LogLevel.WARNING);
+    const newDb = new duckdb.AsyncDuckDB(logger, worker);
+    await newDb.instantiate(bundle.mainModule, bundle.pthreadWorker);
+    return newDb;
+  } finally {
+    URL.revokeObjectURL(workerUrl);
+  }
+}
+
+/**
+ * Initialize DuckDB-Wasm, falling back to a second CDN if the first is blocked.
  */
 export async function getDuckDB(): Promise<{ db: duckdb.AsyncDuckDB; conn: duckdb.AsyncDuckDBConnection }> {
   if (db && conn) {
@@ -31,25 +99,36 @@ export async function getDuckDB(): Promise<{ db: duckdb.AsyncDuckDB; conn: duckd
   }
 
   initPromise = (async () => {
-    const JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();
-    const bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);
+    const sources: { name: string; bundles: duckdb.DuckDBBundles }[] = [
+      { name: 'jsDelivr', bundles: duckdb.getJsDelivrBundles() },
+      { name: 'unpkg', bundles: getUnpkgBundles() },
+    ];
 
-    // Create blob worker to avoid Cross-Origin Worker restrictions
-    const workerUrl = URL.createObjectURL(
-      new Blob([`importScripts("${bundle.mainWorker!}");`], { type: 'text/javascript' })
+    const failures: string[] = [];
+
+    for (const source of sources) {
+      try {
+        const newDb = await withTimeout(
+          instantiateFrom(source.bundles),
+          BUNDLE_FETCH_TIMEOUT_MS,
+          `the DuckDB engine from ${source.name}`
+        );
+        const newConn = await newDb.connect();
+        db = newDb;
+        conn = newConn;
+        return newConn;
+      } catch (error) {
+        failures.push(`${source.name}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+    }
+
+    // Reset so a later retry can start clean rather than awaiting a dead promise.
+    initPromise = null;
+
+    throw new EngineLoadError(
+      `Could not download the in-browser SQL engine. ${failures.join(' | ')}`,
+      failures
     );
-
-    const worker = new Worker(workerUrl);
-    const logger = new duckdb.ConsoleLogger(duckdb.LogLevel.WARNING);
-    const newDb = new duckdb.AsyncDuckDB(logger, worker);
-
-    await newDb.instantiate(bundle.mainModule, bundle.pthreadWorker);
-    URL.revokeObjectURL(workerUrl);
-
-    const newConn = await newDb.connect();
-    db = newDb;
-    conn = newConn;
-    return newConn;
   })();
 
   const activeConn = await initPromise;
@@ -59,9 +138,18 @@ export async function getDuckDB(): Promise<{ db: duckdb.AsyncDuckDB; conn: duckd
 /**
  * Register a user-selected file into the DuckDB virtual filesystem
  */
+export interface SheetTable {
+  /** Original worksheet name as it appears in the user's workbook. */
+  name: string;
+  /** Sanitized table name registered in the DuckDB virtual filesystem. */
+  tableName: string;
+}
+
 export async function loadFileIntoDuckDB(file: File): Promise<{
   tableName: string;
   fileType: 'parquet' | 'csv' | 'json';
+  /** Present for Excel workbooks: every readable worksheet, not just the first. */
+  sheets?: SheetTable[];
 }> {
   const { db } = await getDuckDB();
 
@@ -75,14 +163,34 @@ export async function loadFileIntoDuckDB(file: File): Promise<{
   let fileType: 'parquet' | 'csv' | 'json' = 'parquet';
 
   if (lowerName.endsWith('.xlsx') || lowerName.endsWith('.xls')) {
+    // Lazy-load SheetJS — only Excel users pay for this parser.
+    const XLSX = await import('xlsx');
     const workbook = XLSX.read(buffer, { type: 'array' });
-    const firstSheetName = workbook.SheetNames[0] || 'Sheet1';
-    const sheet = workbook.Sheets[firstSheetName];
-    const csvContent = sheet ? XLSX.utils.sheet_to_csv(sheet) : '';
-    const csvBuffer = new TextEncoder().encode(csvContent);
-    const csvFileName = cleanName.replace(/\.[^/.]+$/, '') + '.csv';
-    await db.registerFileBuffer(csvFileName, csvBuffer);
-    return { tableName: csvFileName, fileType: 'csv' };
+    const baseName = cleanName.replace(/\.[^/.]+$/, '');
+
+    const sheets: SheetTable[] = [];
+    const sheetNames = workbook.SheetNames || [];
+
+    for (let i = 0; i < sheetNames.length; i++) {
+      const sheetName = sheetNames[i];
+      const worksheet = workbook.Sheets[sheetName];
+      if (!worksheet) continue;
+
+      const csvContent = XLSX.utils.sheet_to_csv(worksheet);
+      // A worksheet with no cells at all would make DuckDB's CSV sniffer fail.
+      if (!csvContent.trim()) continue;
+
+      const safeSheet = sheetName.replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 40) || `sheet${i + 1}`;
+      const csvFileName = `${baseName}__${i + 1}_${safeSheet}.csv`;
+      await db.registerFileBuffer(csvFileName, new TextEncoder().encode(csvContent));
+      sheets.push({ name: sheetName, tableName: csvFileName });
+    }
+
+    if (sheets.length === 0) {
+      throw new Error('This workbook contains no readable worksheets with data');
+    }
+
+    return { tableName: sheets[0].tableName, fileType: 'csv', sheets };
   } else if (lowerName.endsWith('.csv') || lowerName.endsWith('.tsv')) {
     fileType = 'csv';
   } else if (lowerName.endsWith('.json') || lowerName.endsWith('.jsonl') || lowerName.endsWith('.ndjson')) {
@@ -424,6 +532,8 @@ export async function exportToExcel(
     return excelRow;
   });
 
+  // Lazy-load SheetJS only when the user actually exports to Excel.
+  const XLSX = await import('xlsx');
   const worksheet = XLSX.utils.json_to_sheet(rows);
   const workbook = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');

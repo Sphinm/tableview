@@ -38,12 +38,21 @@ import {
 } from '../lib/duckdb';
 import { JsonView } from './JsonView';
 import { type ToolConfig } from '../data/tools';
+import { buildSearchFilter } from '../lib/sqlUtils';
+
+export interface SheetOption {
+  name: string;
+  tableName: string;
+}
 
 interface DataViewProps {
   tableName: string;
   fileType: 'parquet' | 'csv' | 'json';
   onReset: () => void;
   toolConfig?: ToolConfig;
+  /** Worksheets of an uploaded Excel workbook; more than one renders a switcher. */
+  sheets?: SheetOption[];
+  onSelectSheet?: (tableName: string) => void;
 }
 
 /**
@@ -101,7 +110,14 @@ const formatTypeBadge = (type: string): string => {
   return type;
 };
 
-export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewProps) => {
+export const DataView = ({
+  tableName,
+  fileType,
+  onReset,
+  toolConfig,
+  sheets,
+  onSelectSheet,
+}: DataViewProps) => {
   const [activeTab, setActiveTab] = useState<'grid' | 'schema' | 'sql' | 'json'>(toolConfig?.defaultTab || 'grid');
   const [columns, setColumns] = useState<ColumnSchema[]>([]);
   const [rows, setRows] = useState<Record<string, any>[]>([]);
@@ -125,13 +141,17 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
 
   // Schema & Profiling state
   const [summaries, setSummaries] = useState<ColumnSummary[]>([]);
-  const [isLoadingSchema, setIsLoadingSchema] = useState<boolean>(false);
   const [ddlCopied, setDdlCopied] = useState<boolean>(false);
 
   // JSON View & Inspection state
   const [rawJsonText, setRawJsonText] = useState<string | null>(null);
   const [parsedJsonData, setParsedJsonData] = useState<any>(null);
-  const [isLoadingJson, setIsLoadingJson] = useState<boolean>(false);
+  // Which table's raw JSON has finished loading — drives the derived flag below.
+  const [jsonLoadedFor, setJsonLoadedFor] = useState<string | null>(null);
+
+  // Derived, not stored: no setState needed inside the loading effects.
+  const isLoadingJson = fileType === 'json' && jsonLoadedFor !== tableName;
+  const isLoadingSchema = activeTab === 'schema' && summaries.length === 0;
   const [inspectingCell, setInspectingCell] = useState<{
     columnName: string;
     rowIndex: number;
@@ -146,6 +166,11 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
   // Sorting & Filtering
   const [sortCol, setSortCol] = useState<string | undefined>(undefined);
   const [sortAsc, setSortAsc] = useState<boolean>(true);
+  // `searchInput` is the draft in the text box; `searchFilter` is the value that
+  // has actually been applied. Keeping them separate matters: the query effect
+  // depends on searchFilter, so binding the input directly to it ran a full
+  // DuckDB count + scan on every keystroke.
+  const [searchInput, setSearchInput] = useState<string>('');
   const [searchFilter, setSearchFilter] = useState<string>('');
 
   // SQL Console state
@@ -166,10 +191,20 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
   const [parquetCodec, setParquetCodec] = useState<'ZSTD' | 'SNAPPY' | 'UNCOMPRESSED'>('ZSTD');
   const [showParquetModal, setShowParquetModal] = useState<boolean>(false);
 
-  // Load initial data
-  const fetchData = useCallback(async () => {
+  /**
+   * Marks a query as in-flight.
+   *
+   * Called from event handlers only — setting state synchronously inside an
+   * effect causes a cascading render, which is why this is not invoked from the
+   * effect below. Initial mount already starts with isLoading === true.
+   */
+  const beginQuery = useCallback(() => {
     setIsLoading(true);
     setSqlError(null);
+  }, []);
+
+  // Load initial data
+  const fetchData = useCallback(async () => {
     try {
       let filterExpr: string | undefined = undefined;
       const currentCols = columnsRef.current;
@@ -177,9 +212,9 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
         // Prioritize text columns, or search across first 12 columns with varchar cast
         const textCols = currentCols.filter(c => c.type.includes('VARCHAR') || c.type.includes('STRING') || c.type.includes('TEXT'));
         const targetCols = textCols.length > 0 ? textCols : currentCols.slice(0, 12);
-        filterExpr = targetCols
-          .map(c => `lower(cast("${c.name.replace(/"/g, '""')}" as varchar)) LIKE '%${searchFilter.toLowerCase().replace(/'/g, "''")}%'`)
-          .join(' OR ');
+        // Escapes LIKE metacharacters — otherwise searching "50%" matches every
+        // row and "a_b" also matches "axb". See src/lib/sqlUtils.ts.
+        filterExpr = buildSearchFilter(searchFilter, targetCols.map((c) => c.name));
       }
 
       const res = await queryTable(tableName, fileType, page, pageSize, filterExpr, sortCol, sortAsc);
@@ -207,23 +242,32 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
     fetchData();
   }, [fetchData]);
 
-  // Load raw JSON text when fileType is json
+  // Load raw JSON text when fileType is json.
+  // Loading state is DERIVED (loaded table !== current table) rather than set
+  // synchronously here, so the effect body triggers no cascading render.
   useEffect(() => {
-    if (fileType === 'json') {
-      setIsLoadingJson(true);
-      getFileContentAsText(tableName)
-        .then((text) => {
-          setRawJsonText(text);
-          try {
-            const parsed = parseJsonContent(text);
-            setParsedJsonData(parsed);
-          } catch (e) {
-            console.warn('Failed to parse full JSON:', e);
-          }
-        })
-        .catch((err) => console.error('Failed to read JSON buffer:', err))
-        .finally(() => setIsLoadingJson(false));
-    }
+    if (fileType !== 'json') return;
+
+    let cancelled = false;
+
+    getFileContentAsText(tableName)
+      .then((text) => {
+        if (cancelled) return;
+        setRawJsonText(text);
+        try {
+          setParsedJsonData(parseJsonContent(text));
+        } catch (e) {
+          console.warn('Failed to parse full JSON:', e);
+        }
+      })
+      .catch((err) => console.error('Failed to read JSON buffer:', err))
+      .finally(() => {
+        if (!cancelled) setJsonLoadedFor(tableName);
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [tableName, fileType]);
 
   // Keyboard shortcut: Escape to close cell inspector modal
@@ -285,33 +329,33 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
     }
   };
 
-  // Reset scroll on page or sorting changes
+  // Reset scroll on page or sorting changes.
+  // Setting scrollTop fires a scroll event, which the container's onScroll
+  // handler turns into setScrollTop(0) — so no synchronous setState is needed here.
   useEffect(() => {
-    setScrollTop(0);
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = 0;
     }
   }, [page, pageSize, sortCol, sortAsc]);
 
-  // Load schema summary when tab is switched to 'schema'
-  const loadSchemaSummary = useCallback(async () => {
-    if (summaries.length > 0) return;
-    setIsLoadingSchema(true);
-    try {
-      const data = await summarizeTable(tableName, fileType);
-      setSummaries(data);
-    } catch (err) {
-      console.error('Failed to load schema summary:', err);
-    } finally {
-      setIsLoadingSchema(false);
-    }
-  }, [summaries.length, tableName, fileType]);
-
+  // Load schema summary when the schema tab is opened.
+  // Cancellation-guarded so switching tabs mid-query cannot set state on a
+  // stale render; loading is derived from summaries.length.
   useEffect(() => {
-    if (activeTab === 'schema') {
-      loadSchemaSummary();
-    }
-  }, [activeTab, loadSchemaSummary]);
+    if (activeTab !== 'schema' || summaries.length > 0) return;
+
+    let cancelled = false;
+
+    summarizeTable(tableName, fileType)
+      .then((data) => {
+        if (!cancelled) setSummaries(data);
+      })
+      .catch((err) => console.error('Failed to load schema summary:', err));
+
+    return () => {
+      cancelled = true;
+    };
+  }, [activeTab, summaries.length, tableName, fileType]);
 
   const handleExecuteSql = useCallback(async () => {
     setIsLoading(true);
@@ -345,11 +389,16 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
 
   const handleSearchSubmit = (e: FormEvent) => {
     e.preventDefault();
+    beginQuery();
+    setSearchFilter(searchInput);
     setPage(0);
-    fetchData();
+    // Applied filter and page may both be unchanged (re-submitting the same
+    // term), in which case no dependency changes and the effect will not re-run.
+    void fetchData();
   };
 
   const handleSort = (colName: string) => {
+    beginQuery();
     if (sortCol === colName) {
       if (sortAsc) {
         setSortAsc(false);
@@ -432,8 +481,15 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
 
   const totalPages = Math.ceil(totalRows / pageSize);
 
+  // Worksheets of an uploaded workbook. Selecting one swaps the active table;
+  // the effects above re-run because `tableName` changes.
+  const showSheetSwitcher = !!sheets && sheets.length > 1 && !!onSelectSheet;
+
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-6">
+    // data-clarity-mask: the SQL console, schema inspector and result grid all
+    // render the user's own data (file names, column names, cell values). None of
+    // it may reach session recording.
+    <div className="w-full max-w-7xl mx-auto px-4 py-6" data-clarity-mask="true">
       {/* Copied Cell Toast */}
       {copiedCell && (
         <div className="fixed bottom-6 right-6 z-50 px-3.5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
@@ -469,7 +525,26 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
           </div>
         </div>
 
-        <div className="flex items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Worksheet switcher — only for multi-sheet Excel workbooks */}
+          {showSheetSwitcher && (
+            <label className="flex items-center gap-2 text-xs text-slate-400">
+              <span className="hidden sm:inline font-medium">Sheet</span>
+              <select
+                value={tableName}
+                onChange={(e) => onSelectSheet?.(e.target.value)}
+                className="max-w-[12rem] px-2.5 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-xs font-medium focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                aria-label="Select worksheet"
+              >
+                {sheets!.map((sheet) => (
+                  <option key={sheet.tableName} value={sheet.tableName}>
+                    {sheet.name}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
+
           {/* Table Density Switcher */}
           {activeTab === 'grid' && (
             <button
@@ -597,16 +672,18 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
               <Search className="size-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
               <input
                 type="text"
-                value={searchFilter}
-                onChange={(e) => setSearchFilter(e.target.value)}
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
                 placeholder="Search text rows (press Enter)..."
                 className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
               />
             </div>
-            {searchFilter && (
+            {searchInput && (
               <button
                 type="button"
                 onClick={() => {
+                  beginQuery();
+                  setSearchInput('');
                   setSearchFilter('');
                   setPage(0);
                 }}
@@ -1127,6 +1204,7 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
                 <select
                   value={pageSize}
                   onChange={(e) => {
+                    beginQuery();
                     setPageSize(Number(e.target.value));
                     setPage(0);
                   }}
@@ -1145,7 +1223,10 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
               {totalPages > 1 ? (
                 <div className="flex items-center gap-2.5">
                   <button
-                    onClick={() => setPage((p) => Math.max(0, p - 1))}
+                    onClick={() => {
+                      beginQuery();
+                      setPage((p) => Math.max(0, p - 1));
+                    }}
                     disabled={page === 0 || isLoading}
                     className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-slate-100 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
                   >
@@ -1156,7 +1237,10 @@ export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewP
                     <strong className="text-slate-100">{totalPages}</strong>
                   </span>
                   <button
-                    onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                    onClick={() => {
+                      beginQuery();
+                      setPage((p) => Math.min(totalPages - 1, p + 1));
+                    }}
                     disabled={page >= totalPages - 1 || isLoading}
                     className="p-2 rounded-lg bg-slate-900 hover:bg-slate-800 border border-slate-800 text-slate-300 hover:text-slate-100 disabled:opacity-40 disabled:pointer-events-none transition-colors cursor-pointer"
                   >
