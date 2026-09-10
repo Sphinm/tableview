@@ -1,5 +1,5 @@
 import { useEffect, useState, lazy, Suspense } from 'react';
-import * as Sentry from '@sentry/react';
+
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { DropZone } from './components/DropZone';
@@ -9,7 +9,7 @@ import { SeoSection } from './components/SeoSection';
 import { CookieBanner } from './components/CookieBanner';
 import { SamplePlayground } from './components/SamplePlayground';
 import { PageSkeleton } from './components/PageSkeleton';
-import { loadFileIntoDuckDB, generateSampleParquet, loadJsonDataIntoDuckDB, type SamplePreset } from './lib/duckdb';
+import type { SamplePreset } from './lib/duckdb';
 
 // Lazy-loaded heavy components & pages for bundle optimization & instant FCP
 const DataView = lazy(() => import('./components/DataView').then(m => ({ default: m.DataView })));
@@ -32,12 +32,18 @@ import { TOOLS_CONFIG } from './data/tools';
 import { getInitialTheme, applyTheme, type Theme } from './lib/theme';
 import { AlertCircle, ArrowLeft, FileQuestion, Mail } from 'lucide-react';
 import { getBugReportMailto } from './lib/feedback';
+import { describeFile, captureException } from './lib/sentry';
+import { isEngineLoadError } from './lib/engineError';
+import { HOME_META, GUIDES_HUB_META, STATIC_PAGE_META } from './data/routeMeta';
+import { isKnownRoute } from './lib/resolveRoute';
 
 export function App() {
   const { path, slug } = useRouter();
   const [theme, setTheme] = useState<Theme>(getInitialTheme);
   const [currentTable, setCurrentTable] = useState<string | null>(null);
   const [fileType, setFileType] = useState<'parquet' | 'csv' | 'json'>('parquet');
+  // Populated only for multi-sheet Excel workbooks; drives the sheet switcher.
+  const [sheets, setSheets] = useState<{ name: string; tableName: string }[] | undefined>(undefined);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<string>('Initializing engine...');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -51,33 +57,42 @@ export function App() {
     setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
   };
 
-  // Update meta tags based on current route
+  // Update meta tags based on current route.
+  // Text lives in src/data/routeMeta.ts so the prerendered HTML and the SPA agree.
   useEffect(() => {
     if (path === '/tools/:toolSlug' && slug && TOOLS_CONFIG[slug]) {
       const cfg = TOOLS_CONFIG[slug];
       updatePageMeta(cfg.metaTitle, cfg.metaDescription, cfg.path);
-    } else if (path === '/') {
+      return;
+    }
+
+    if (path === '/') {
+      updatePageMeta(HOME_META.title, HOME_META.description, HOME_META.canonical);
+      return;
+    }
+
+    if (path === '/guides') {
+      updatePageMeta(GUIDES_HUB_META.title, GUIDES_HUB_META.description, GUIDES_HUB_META.canonical);
+      return;
+    }
+
+    const staticMeta = STATIC_PAGE_META[path];
+    if (staticMeta) {
+      updatePageMeta(staticMeta.title, staticMeta.description, staticMeta.canonical);
+      return;
+    }
+
+    // Any other path is a genuine 404. Tell crawlers not to index it — without
+    // this, Cloudflare Pages' SPA fallback would return 200 for every typo and
+    // produce soft-404 index bloat.
+    if (!isKnownRoute(path)) {
       updatePageMeta(
-        'TableView.dev — Browser Data Workspace for CSV, Excel, Parquet & JSON',
-        '100% private in-browser data workspace. View, query with SQL, and convert CSV, Excel (.xlsx), Apache Parquet, and JSON files directly in your browser with zero server uploads.',
-        '/'
+        'Page Not Found | TableView.dev',
+        'The page you are looking for does not exist.',
+        '/404',
+        [{ '@type': 'WebPage', name: 'Page Not Found' }],
+        true
       );
-    } else if (path === '/guides') {
-      updatePageMeta(
-        'Apache Parquet & DuckDB Guides | TableView.dev',
-        'In-depth technical guides, architecture comparisons, and performance benchmarks for Apache Parquet, DuckDB-Wasm, and columnar formats.',
-        '/guides'
-      );
-    } else if (path === '/about') {
-      updatePageMeta('About TableView.dev — In-Browser Data Processing', 'Learn about TableView.dev and our client-side architecture.', '/about');
-    } else if (path === '/contact') {
-      updatePageMeta('Contact & Feedback | TableView.dev', 'Contact the TableView engineering team.', '/contact');
-    } else if (path === '/privacy') {
-      updatePageMeta('Privacy Policy | TableView.dev', 'TableView privacy policy: 100% local processing with zero server file storage.', '/privacy');
-    } else if (path === '/terms') {
-      updatePageMeta('Terms of Service | TableView.dev', 'TableView terms of service.', '/terms');
-    } else if (path === '/disclaimer') {
-      updatePageMeta('Disclaimer & Disclosure | TableView.dev', 'Legal disclaimers, financial calculation disclosures, and terms of informational use for TableView.dev.', '/disclaimer');
     }
   }, [path, slug]);
 
@@ -87,17 +102,34 @@ export function App() {
     setLoadingStatus(`Reading ${file.name}...`);
 
     try {
-      setLoadingStatus('Registering file in WebAssembly virtual filesystem...');
+      setLoadingStatus('Loading the in-browser SQL engine...');
+      // Lazy: the DuckDB-Wasm engine + SheetJS are only fetched when a file is actually opened.
+      const { loadFileIntoDuckDB } = await import('./lib/duckdb');
       const res = await loadFileIntoDuckDB(file);
       setCurrentTable(res.tableName);
       setFileType(res.fileType);
+      setSheets(res.sheets);
     } catch (err: any) {
       console.error('Failed to load file:', err);
-      Sentry.captureException(err, {
+      // Privacy: never send the user's file name — only coarse, non-identifying metadata.
+      captureException(err, {
         tags: { action: 'load_file' },
-        extra: { fileName: file.name, fileSize: file.size, fileType: file.type }
+        extra: describeFile(file),
       });
-      setErrorMessage(`Failed to open ${file.name}: ${err.message || 'Unknown error'}. Make sure the file is not corrupted.`);
+
+      if (isEngineLoadError(err)) {
+        // The engine is a ~6 MB CDN download. When it is blocked, blaming the
+        // user's file sends them off debugging a perfectly good dataset.
+        setErrorMessage(
+          'Could not download the in-browser SQL engine (a one-time ~6 MB download from a CDN). ' +
+            'This usually means a firewall, proxy, or ad blocker is blocking cdn.jsdelivr.net / unpkg.com. ' +
+            'Your file was not uploaded anywhere. Please check your connection and try again.'
+        );
+      } else {
+        setErrorMessage(
+          `Failed to open ${file.name}: ${err.message || 'Unknown error'}. Make sure the file is not corrupted.`
+        );
+      }
     } finally {
       setIsLoading(false);
     }
@@ -116,12 +148,14 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     try {
+      const { generateSampleParquet } = await import('./lib/duckdb');
       const res = await generateSampleParquet(preset);
       setCurrentTable(res.tableName);
       setFileType(res.fileType);
+      setSheets(undefined);
     } catch (err: any) {
       console.error('Failed to generate sample:', err);
-      Sentry.captureException(err, { tags: { action: 'generate_sample' } });
+      captureException(err, { tags: { action: 'generate_sample' } });
       setErrorMessage(`Failed to generate sample dataset: ${err.message || 'Unknown error'}`);
     } finally {
       setIsLoading(false);
@@ -130,6 +164,7 @@ export function App() {
 
   const handleReset = () => {
     setCurrentTable(null);
+    setSheets(undefined);
     setErrorMessage(null);
   };
 
@@ -141,12 +176,14 @@ export function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 
     try {
+      const { loadJsonDataIntoDuckDB } = await import('./lib/duckdb');
       const res = await loadJsonDataIntoDuckDB(baseName, records);
       setCurrentTable(res.tableName);
       setFileType(res.fileType);
+      setSheets(undefined);
     } catch (err: any) {
       console.error('Failed to analyze schedule in DuckDB:', err);
-      Sentry.captureException(err, { tags: { action: 'analyze_schedule' } });
+      captureException(err, { tags: { action: 'analyze_schedule' } });
       setErrorMessage(`Failed to open schedule in workbench: ${err.message || 'Unknown error'}`);
     } finally {
       setIsLoading(false);
@@ -184,10 +221,19 @@ export function App() {
 
           {currentTable ? (
             <DataView
+              // Remount per table: otherwise the schema summary, applied search
+              // filter and sort from the previous file would leak into the next.
+              key={currentTable}
               tableName={currentTable}
               fileType={fileType}
               onReset={handleReset}
               toolConfig={activeToolConfig}
+              sheets={sheets}
+              onSelectSheet={(nextTable) => {
+                setCurrentTable(nextTable);
+                // Keep fileType in sync: workbooks are always materialised as CSV.
+                setFileType('csv');
+              }}
             />
           ) : (
             <>

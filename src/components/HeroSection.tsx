@@ -125,7 +125,7 @@ export const HeroSection = ({
           <div className="hidden sm:inline-block text-slate-700">·</div>
           <div className="flex items-center gap-1.5 text-slate-300 font-medium">
             <Lock className="size-3.5 shrink-0 text-slate-400" />
-            <span>Works 100% Offline</span>
+            <span>Works Offline After First Load</span>
           </div>
         </div>
       </section>

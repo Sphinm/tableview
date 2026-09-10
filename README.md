@@ -34,11 +34,12 @@ All tools run 100% client-side in your browser. Your sensitive files, financial 
 
 ## ✨ Core Capabilities
 
-- **🔒 100% Confidential & Secure**: All data decoding and SQL execution happen locally on your device CPU via WebAssembly. Zero files or data rows are transmitted over the network. Works offline.
+- **🔒 100% Confidential & Secure**: All data decoding and SQL execution happen locally on your device CPU via WebAssembly. Zero files or data rows are transmitted over the network.
 - **⚡ Blazing Fast Analytical Engine**: Powered by **DuckDB-Wasm** with columnar lazy-loading, column pruning, and zero-copy Arrow memory buffers.
 - **📊 Native Spreadsheet Export**: Export analyzed tables or calculated financial deal sheets into Microsoft Excel `.xlsx` workbooks with 1 click.
 - **💻 Interactive SQL Console**: Run full SQL queries (`SELECT`, `WHERE`, `GROUP BY`, `ORDER BY`, `WINDOW`, aggregates, subqueries) directly on your local datasets.
-- **📱 Responsive Bento Grid UI**: Beautiful dark-mode interface built with Tailwind CSS v4 and Lucide icons.
+- **📑 Multi-Sheet Workbooks**: Every worksheet in an uploaded Excel workbook is loaded and switchable, not just the first.
+- **📱 Responsive Bento Grid UI**: Dark-mode interface built with Tailwind CSS v4 and Lucide icons.
 
 ---
 
@@ -47,60 +48,86 @@ All tools run 100% client-side in your browser. Your sensitive files, financial 
 - **Framework**: React 19 + TypeScript + Vite 8
 - **Styling**: Tailwind CSS v4 (Dark Bento UI)
 - **Analytical Engine**: `@duckdb/duckdb-wasm`
-- **Spreadsheet Generation**: `xlsx` (SheetJS)
+- **Spreadsheet Generation**: `xlsx` (SheetJS, lazily loaded)
 - **Icons**: `lucide-react`
-- **Hosting**: Cloudflare Pages / Vercel (100% Static SPA)
+- **Hosting**: Cloudflare Pages (static, with build-time prerendering)
 
 ---
 
-## 🚀 Getting Started Locally
-
-### Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) (v18+) or [Bun](https://bun.sh/) installed.
+## 🏗️ Build Pipeline
 
 ```bash
-# Clone the repository
-git clone https://github.com/Sphinm/tableview.git
-cd tableview
-
-# Install dependencies
 bun install
-# or
-npm install
-
-# Start development server
-bun dev
-# or
-npm run dev
+bun run build
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+`bun run build` runs three stages:
+
+1. **`tsc -b && vite build`** — type-check and bundle to `dist/`.
+2. **`bun run scripts/prerender.ts`** — writes a real static HTML file for every
+   route (canonical pages *and* keyword aliases) with the correct `<title>`,
+   description, canonical, Open Graph/Twitter tags and JSON-LD, plus a
+   `<noscript>` summary. It also regenerates `dist/sitemap.xml` from the same
+   canonical list, so the sitemap can never contradict a page's canonical tag.
+3. Icons are pre-generated and committed; regenerate with **`bun run icons`**.
+
+Other scripts:
+
+| Script | Purpose |
+|---|---|
+| `bun run dev` | Vite dev server |
+| `bun run test` | Unit test suite (`bun test`) |
+| `bun run lint` | oxlint |
+| `bun run icons` | Regenerate PNG PWA icons from the favicon geometry |
+
+### Bundle strategy
+
+The initial JavaScript payload is deliberately small, because Core Web Vitals
+drive both ranking and ad viewability:
+
+- The **DuckDB-Wasm engine** (`~194 kB` + a `~6 MB` WASM download per session)
+  is imported only when a file is actually opened.
+- **SheetJS** (`~424 kB`) is imported only in the Excel read/write paths.
+- **Sentry** (`~144 kB`) is fetched **only after an error occurs**; errors thrown
+  before then are buffered in memory and replayed.
+
+Anything that would pull one of these onto the critical path should be treated as
+a regression.
 
 ---
 
-## 📦 Production Build
+## 🔐 Privacy & Compliance
 
-```bash
-bun run build
-# or
-npm run build
-```
+TableView's core promise is that user files never leave the device. Several
+guards exist to keep that true:
 
-The production-ready static assets will be output to the `dist/` directory.
+- **Sentry scrubbing** (`src/lib/sentry.ts`) — file names, table names, sheet
+  names, SQL text and column names are redacted before any event is sent.
+  `sendDefaultPii` is off.
+- **Session-recording masking** — `DataView` and `JsonView` are marked
+  `data-clarity-mask`, so grid contents, the SQL console and JSON trees never
+  reach Microsoft Clarity.
+- **Consent Mode v2** — `index.html` declares a *denied* default before the
+  AdSense tag loads; `src/lib/consent.ts` upgrades it only after an explicit
+  choice. Clarity is not loaded at all without consent, and consent can be
+  withdrawn from the footer's "Cookie Settings" link.
 
 ---
 
 ## ☁️ Deploy to Cloudflare Pages (with custom domain tableview.dev)
 
-1. Go to your [Cloudflare Dashboard](https://dash.cloudflare.com) -> **Workers & Pages**.
+1. Go to your Cloudflare Dashboard -> **Workers & Pages**.
 2. Click **Create Application** -> **Pages** -> **Connect to Git**.
 3. Select this repository: `Sphinm/tableview`.
 4. Configure build settings:
    - **Framework preset**: `Vite`
-   - **Build command**: `bun run build` (or `npm run build`)
+   - **Build command**: `bun run build`
    - **Build output directory**: `dist`
 5. Click **Save and Deploy**.
-6. Once deployed, go to **Custom Domains** tab in the Pages project, add `tableview.dev`, and Cloudflare will automatically route your domain with full SSL!
+6. Once deployed, go to **Custom Domains** in the Pages project, add `tableview.dev`, and Cloudflare will route the domain with full SSL.
+
+`public/_headers` sets `immutable` caching on `/assets/*`, keeps `/sw.js`
+uncached, and adds baseline security headers.
 
 ---
 
