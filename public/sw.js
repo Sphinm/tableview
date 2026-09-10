@@ -31,8 +31,12 @@ const BYPASS_HOSTS = [
   'sentry.io',
 ];
 
-/** Cross-origin hosts we are happy to serve from cache (fonts are immutable). */
-const CACHEABLE_CROSS_ORIGIN = ['fonts.gstatic.com', 'fonts.googleapis.com'];
+/**
+ * Cross-origin hosts we are happy to serve from cache.
+ * Empty today: fonts are self-hosted and therefore same-origin.
+ * (Plain JS — no type annotations allowed in a service worker script.)
+ */
+const CACHEABLE_CROSS_ORIGIN = [];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

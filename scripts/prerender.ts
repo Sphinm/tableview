@@ -370,7 +370,23 @@ function main() {
   if (!fs.existsSync(templatePath)) {
     throw new Error('dist/index.html not found — run `vite build` first.');
   }
-  const template = fs.readFileSync(templatePath, 'utf8');
+  let template = fs.readFileSync(templatePath, 'utf8');
+
+  // Preload the primary UI font. Vite hashes CSS-referenced assets, so the
+  // filename is only known after the build — which is exactly why this happens
+  // here rather than in index.html. Starting the font fetch during head parsing
+  // takes it off the render-blocking chain and avoids a swap flash.
+  const assetsDir = path.join(distDir, 'assets');
+  const interFont = fs.existsSync(assetsDir)
+    ? fs.readdirSync(assetsDir).find((f) => f.startsWith('inter-latin-var-') && f.endsWith('.woff2'))
+    : undefined;
+
+  if (interFont) {
+    template = template.replace(
+      '<link rel="stylesheet"',
+      `<link rel="preload" as="font" type="font/woff2" crossorigin href="/assets/${interFont}" />\n    <link rel="stylesheet"`
+    );
+  }
 
   const targets = listPrerenderTargets();
   const written = new Set<string>();

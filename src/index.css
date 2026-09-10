@@ -1,5 +1,44 @@
 @import "tailwindcss";
 
+/*
+ * Self-hosted fonts.
+ *
+ * Previously these came from fonts.googleapis.com. Self-hosting removes two
+ * third-party connections from the critical path (DNS + TLS to both
+ * fonts.googleapis.com and fonts.gstatic.com) and, more importantly, stops
+ * sending every visitor's IP to Google — a German court has held that loading
+ * Google Fonts from Google's CDN breaches the GDPR, which matters for a site
+ * whose whole pitch is privacy and which serves EU traffic.
+ *
+ * Google serves a VARIABLE font, so a single file per family covers every weight
+ * we use (hence the weight range rather than one @font-face per weight). Vite
+ * hashes these into /assets/, so they inherit the immutable cache header.
+ *
+ * Only the latin subset is bundled; other scripts fall through to the system
+ * font stack declared at the end of this rule set.
+ */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('./assets/fonts/inter-latin-var.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url('./assets/fonts/jetbrains-mono-latin-var.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 @theme {
   --color-slate-950: var(--color-bg-canvas);
   --color-slate-900: var(--color-bg-card);
