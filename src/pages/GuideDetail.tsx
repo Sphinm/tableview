@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { guidesData, type GuideItem } from '../data/guides';
-import { navigateTo } from '../lib/router';
+import { navigateTo, updatePageMeta } from '../lib/router';
 import {
   Clock,
   Calendar,
@@ -25,6 +25,37 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   const guide: GuideItem | undefined = guidesData.find((g) => g.slug === slug);
+
+  useEffect(() => {
+    if (guide) {
+      updatePageMeta(
+        `${guide.title} | TableView.dev`,
+        guide.excerpt,
+        `/guides/${guide.slug}`,
+        [
+          {
+            '@context': 'https://schema.org',
+            '@type': 'TechArticle',
+            headline: guide.title,
+            description: guide.excerpt,
+            author: {
+              '@type': 'Organization',
+              name: 'TableView Engineering Team',
+              url: 'https://tableview.dev/about'
+            },
+            publisher: {
+              '@type': 'Organization',
+              name: 'TableView.dev',
+              url: 'https://tableview.dev'
+            },
+            datePublished: '2026-09-01',
+            dateModified: '2026-09-10',
+            mainEntityOfPage: `https://tableview.dev/guides/${guide.slug}`
+          }
+        ]
+      );
+    }
+  }, [guide]);
 
   if (!guide) {
     return (

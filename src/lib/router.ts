@@ -6,6 +6,7 @@ export interface RouteState {
 }
 
 import { TOOLS_CONFIG } from '../data/tools';
+import { guidesData } from '../data/guides';
 
 export function updatePageMeta(
   title: string,
@@ -140,6 +141,12 @@ export function parseCurrentLocation(): RouteState {
   const guideMatch = cleanPath.match(/^\/(?:guides|guide|docs|blog|articles?)\/([a-zA-Z0-9_-]+)$/);
   if (guideMatch) {
     return { path: '/guides/:slug', slug: guideMatch[1] };
+  }
+
+  // Support direct guide slugs indexed by search engines (e.g. /what-is-apache-parquet)
+  const potentialGuideSlug = cleanPath.startsWith('/') ? cleanPath.slice(1) : cleanPath;
+  if (guidesData.some((g) => g.slug === potentialGuideSlug)) {
+    return { path: '/guides/:slug', slug: potentialGuideSlug };
   }
 
   // Aliases for guides hub: /guide, /docs, /blog, /articles
