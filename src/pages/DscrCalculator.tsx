@@ -316,7 +316,8 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
   const handleExportPdf = () => {
     const prevTitle = document.title;
-    document.title = `dscr_underwriting_statement_${propertyValue}_loan_${Math.round(result.loanAmount)}`;
+    const viewSuffix = scheduleView === 'monthly' ? 'monthly_schedule' : 'annual_summary';
+    document.title = `dscr_underwriting_statement_${propertyValue}_${viewSuffix}`;
     window.print();
     setTimeout(() => {
       document.title = prevTitle;
@@ -862,10 +863,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                 <button
                   onClick={handleExportPdf}
                   className="px-3.5 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
-                  title="Print or export DSCR underwriting report as vector PDF"
+                  title={scheduleView === 'monthly' ? "Export full monthly amortization schedule as vector PDF" : "Export annual summary amortization schedule as vector PDF"}
                 >
                   <Printer className="size-3.5" />
-                  <span>Export PDF</span>
+                  <span>Export PDF ({scheduleView === 'monthly' ? 'Monthly' : 'Annual'})</span>
                 </button>
                 <button
                   onClick={handleExportExcel}
@@ -920,10 +921,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               <button
                 onClick={handleExportPdf}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-800/80 text-xs font-semibold text-indigo-300 transition-colors cursor-pointer"
-                title="Print or export as vector PDF report"
+                title={scheduleView === 'monthly' ? "Export full monthly amortization schedule as vector PDF" : "Export annual summary amortization schedule as vector PDF"}
               >
                 <Printer className="size-3.5" />
-                <span>Export PDF</span>
+                <span>Export PDF ({scheduleView === 'monthly' ? 'Monthly' : 'Annual'})</span>
               </button>
 
               <button
@@ -1440,6 +1441,8 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
       inputs={inputs}
       result={result}
       annualSchedule={annualSchedule}
+      monthlySchedule={fullMonthlySchedule}
+      scheduleView={scheduleView}
     />
   </>
   );

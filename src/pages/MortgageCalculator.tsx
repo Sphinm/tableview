@@ -268,7 +268,8 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
 
   const handleExportPdf = () => {
     const prevTitle = document.title;
-    document.title = `mortgage_amortization_statement_${homeValue}_${loanTermYears}yr`;
+    const viewSuffix = scheduleView === 'monthly' ? 'monthly_schedule' : 'annual_summary';
+    document.title = `mortgage_amortization_statement_${homeValue}_${loanTermYears}yr_${viewSuffix}`;
     window.print();
     setTimeout(() => {
       document.title = prevTitle;
@@ -1080,7 +1081,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                 title="Print or save as bank-grade vector PDF statement"
               >
                 <Printer className="size-3.5" />
-                <span>Export PDF</span>
+                <span>Export PDF ({scheduleView === 'monthly' ? 'Monthly' : 'Annual'})</span>
               </button>
 
               <button
@@ -1378,6 +1379,8 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
       monthlyHoa={monthlyHoa}
       summary={summary}
       annualSchedule={annualSchedule}
+      monthlySchedule={monthlySchedule}
+      scheduleView={scheduleView}
       extraMonthlyPrincipal={extraMonthlyPrincipal}
     />
   </>

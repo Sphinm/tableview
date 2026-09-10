@@ -1,5 +1,5 @@
 import React from 'react';
-import { type DscrInputs, type DscrResult } from '../lib/dscrCalculator';
+import { type DscrInputs, type DscrResult, type DscrAmortizationRow } from '../lib/dscrCalculator';
 
 export interface DscrAnnualAmortizationRow {
   year: number;
@@ -14,12 +14,16 @@ interface PrintableDscrReportProps {
   inputs: DscrInputs;
   result: DscrResult;
   annualSchedule: DscrAnnualAmortizationRow[];
+  monthlySchedule?: DscrAmortizationRow[];
+  scheduleView?: 'annual' | 'monthly';
 }
 
 export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
   inputs,
   result,
   annualSchedule,
+  monthlySchedule = [],
+  scheduleView = 'annual',
 }) => {
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -28,6 +32,7 @@ export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
   });
 
   const fmt = (n: number) => `$${Math.round(n).toLocaleString()}`;
+  const isMonthly = scheduleView === 'monthly';
 
   return (
     <div className="hidden print:block font-sans text-slate-900 bg-white p-2">
@@ -47,12 +52,13 @@ export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
               DSCR Real Estate Investment Underwriting Statement
             </h1>
             <p className="text-xs text-slate-600 mt-0.5 font-medium">
-              Debt-Service Coverage Ratio (DSCR) Cash Flow Assessment & Full 30-Year Loan Amortization
+              Debt-Service Coverage Ratio (DSCR) Cash Flow Assessment & {isMonthly ? `Full ${monthlySchedule.length}-Month Payment Schedule` : '30-Year Loan Amortization Schedule'}
             </p>
           </div>
           <div className="text-right text-xs text-slate-700 space-y-0.5">
             <div><span className="font-bold text-slate-900">Date:</span> {currentDate}</div>
             <div><span className="font-bold text-slate-900">Ref ID:</span> DSCR-{Math.round(result.loanAmount % 100000).toString().padStart(5, '0')}</div>
+            <div><span className="font-bold text-slate-900">Schedule Mode:</span> {isMonthly ? 'Monthly Details' : 'Annual Summary'}</div>
             <div><span className="font-bold text-slate-900">Status:</span> {result.statusLabel}</div>
           </div>
         </div>
@@ -120,7 +126,7 @@ export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
               </tr>
               <tr className="border-b border-slate-200 py-1">
                 <td className="py-1 text-slate-700 font-medium">Amortization Term:</td>
-                <td className="py-1 font-semibold text-right text-slate-900 font-mono">{inputs.loanTermYears} Years</td>
+                <td className="py-1 font-semibold text-right text-slate-900 font-mono">{inputs.loanTermYears} Years ({inputs.loanTermYears * 12} Months)</td>
               </tr>
               <tr className="border-b border-slate-200 py-1">
                 <td className="py-1 text-slate-700 font-medium">Monthly Debt Service (P&I):</td>
@@ -196,38 +202,82 @@ export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
         </div>
       </div>
 
-      {/* 4. Complete 30-Year Loan Amortization Schedule */}
+      {/* 4. Complete Loan Amortization Schedule (Monthly or Annual) */}
       <div className="mb-6">
         <h2 className="text-xs font-black uppercase tracking-wider text-slate-900 border-b-2 border-slate-900 pb-1.5 mb-2.5 flex justify-between items-center">
-          <span>4. Complete 30-Year Loan Amortization Schedule</span>
+          <span>
+            {isMonthly
+              ? `4. Complete Monthly Loan Amortization Schedule (${monthlySchedule.length} Months)`
+              : `4. Complete 30-Year Loan Amortization Schedule (Annual Summary)`}
+          </span>
           <span className="text-[10px] font-semibold text-slate-600">
             {inputs.isInterestOnly ? 'Interest-Only' : `${inputs.loanTermYears}-Year Fixed Amortization`}
           </span>
         </h2>
-        <table className="w-full text-[10px] border border-slate-300">
-          <thead className="bg-slate-900 text-white">
-            <tr>
-              <th className="py-1.5 px-2 text-left">Period</th>
-              <th className="py-1.5 px-2 text-right">Annual Payment</th>
-              <th className="py-1.5 px-2 text-right text-emerald-300 font-bold">Principal Paid</th>
-              <th className="py-1.5 px-2 text-right text-rose-300 font-bold">Interest Paid</th>
-              <th className="py-1.5 px-2 text-right font-bold text-white">Ending Balance</th>
-              <th className="py-1.5 px-2 text-right text-slate-300">Cumulative Interest</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 font-mono">
-            {annualSchedule.map((row) => (
-              <tr key={row.year} className="even:bg-slate-50/70">
-                <td className="py-1 px-2 font-sans font-bold text-slate-950">Year {row.year}</td>
-                <td className="py-1 px-2 text-right text-slate-900">${Math.round(row.payment).toLocaleString()}</td>
-                <td className="py-1 px-2 text-right text-emerald-700 font-semibold">${Math.round(row.principal).toLocaleString()}</td>
-                <td className="py-1 px-2 text-right text-rose-700">${Math.round(row.interest).toLocaleString()}</td>
-                <td className="py-1 px-2 text-right font-bold text-slate-950">${Math.round(row.balance).toLocaleString()}</td>
-                <td className="py-1 px-2 text-right text-slate-700">${Math.round(row.accumulatedInterest ?? 0).toLocaleString()}</td>
+
+        {isMonthly ? (
+          <table className="w-full text-[10px] border border-slate-300">
+            <thead className="bg-slate-900 text-white">
+              <tr>
+                <th className="py-1.5 px-2 text-left">Period</th>
+                <th className="py-1.5 px-2 text-right">Monthly Payment</th>
+                <th className="py-1.5 px-2 text-right text-emerald-300 font-bold">Principal</th>
+                <th className="py-1.5 px-2 text-right text-rose-300 font-bold">Interest</th>
+                <th className="py-1.5 px-2 text-right font-bold text-white">Ending Balance</th>
+                <th className="py-1.5 px-2 text-right text-slate-300">Cumulative Interest</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-200 font-mono">
+              {monthlySchedule.map((row) => (
+                <tr key={row.month} className="even:bg-slate-50/70">
+                  <td className="py-1 px-2 font-sans font-bold text-slate-950">
+                    Month {row.month} <span className="text-slate-500 font-normal text-[9px]">(Yr {row.year})</span>
+                  </td>
+                  <td className="py-1 px-2 text-right text-slate-900 font-bold">
+                    ${row.payment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td className="py-1 px-2 text-right text-emerald-700 font-semibold">
+                    ${row.principal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td className="py-1 px-2 text-right text-rose-700">
+                    ${row.interest.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </td>
+                  <td className="py-1 px-2 text-right font-bold text-slate-950">
+                    ${Math.round(row.balance).toLocaleString()}
+                  </td>
+                  <td className="py-1 px-2 text-right text-slate-700">
+                    ${Math.round(row.accumulatedInterest ?? 0).toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <table className="w-full text-[10px] border border-slate-300">
+            <thead className="bg-slate-900 text-white">
+              <tr>
+                <th className="py-1.5 px-2 text-left">Period</th>
+                <th className="py-1.5 px-2 text-right">Annual Payment</th>
+                <th className="py-1.5 px-2 text-right text-emerald-300 font-bold">Principal Paid</th>
+                <th className="py-1.5 px-2 text-right text-rose-300 font-bold">Interest Paid</th>
+                <th className="py-1.5 px-2 text-right font-bold text-white">Ending Balance</th>
+                <th className="py-1.5 px-2 text-right text-slate-300">Cumulative Interest</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200 font-mono">
+              {annualSchedule.map((row) => (
+                <tr key={row.year} className="even:bg-slate-50/70">
+                  <td className="py-1 px-2 font-sans font-bold text-slate-950">Year {row.year}</td>
+                  <td className="py-1 px-2 text-right text-slate-900 font-bold">${Math.round(row.payment).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right text-emerald-700 font-semibold">${Math.round(row.principal).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right text-rose-700">${Math.round(row.interest).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right font-bold text-slate-950">${Math.round(row.balance).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right text-slate-700">${Math.round(row.accumulatedInterest ?? 0).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Compliance & Disclosure */}
@@ -238,7 +288,7 @@ export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
         </p>
         <div className="flex justify-between items-center mt-2 text-slate-400">
           <span>Generated client-side via TableView.dev Real Estate Analytics Engine</span>
-          <span>Official Statement of DSCR Underwriting</span>
+          <span>Official Statement of DSCR Underwriting ({isMonthly ? 'Complete Monthly Ledger' : 'Annual Summary Ledger'})</span>
         </div>
       </div>
     </div>

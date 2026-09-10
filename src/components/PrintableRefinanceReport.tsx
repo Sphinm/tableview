@@ -1,16 +1,20 @@
 import React from 'react';
-import { type RefinanceInputs, type RefinanceSummary, type AnnualRefinanceRow } from '../lib/refinanceCalculator';
+import { type RefinanceInputs, type RefinanceSummary, type AnnualRefinanceRow, type RefinanceScheduleRow } from '../lib/refinanceCalculator';
 
 interface PrintableRefinanceReportProps {
   inputs: RefinanceInputs;
   summary: RefinanceSummary;
   annualSchedule: AnnualRefinanceRow[];
+  monthlySchedule?: RefinanceScheduleRow[];
+  scheduleView?: 'annual' | 'monthly';
 }
 
 export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> = ({
   inputs,
   summary,
   annualSchedule,
+  monthlySchedule = [],
+  scheduleView = 'annual',
 }) => {
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -139,37 +143,84 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
         </div>
       </div>
 
-      {/* Annual Amortization Comparison Table */}
+      {/* Schedule Table: Monthly or Annual */}
       <div className="mb-6">
-        <h2 className="text-xs font-black uppercase tracking-wider text-slate-900 border-b-2 border-slate-900 pb-1.5 mb-2.5">
-          2. Complete Annual Amortization & Equity Tracking Schedule
-        </h2>
-        <table className="w-full text-[10px] border border-slate-300">
-          <thead className="bg-slate-900 text-white">
-            <tr>
-              <th className="py-1.5 px-2 text-left">Year</th>
-              <th className="py-1.5 px-2 text-right">Old Balance</th>
-              <th className="py-1.5 px-2 text-right">New Balance</th>
-              <th className="py-1.5 px-2 text-right">Old Annual Int.</th>
-              <th className="py-1.5 px-2 text-right">New Annual Int.</th>
-              <th className="py-1.5 px-2 text-right text-emerald-300 font-bold">Annual Savings</th>
-              <th className="py-1.5 px-2 text-right text-indigo-300 font-bold">Equity Gain</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-200 font-mono">
-            {annualSchedule.map((row) => (
-              <tr key={row.year} className="even:bg-slate-50/70">
-                <td className="py-1 px-2 font-sans font-bold text-slate-900">{row.year}</td>
-                <td className="py-1 px-2 text-right">${Math.round(row.oldEndingBalance).toLocaleString()}</td>
-                <td className="py-1 px-2 text-right font-semibold text-slate-900">${Math.round(row.newEndingBalance).toLocaleString()}</td>
-                <td className="py-1 px-2 text-right text-slate-600">${Math.round(row.oldAnnualInterest).toLocaleString()}</td>
-                <td className="py-1 px-2 text-right text-slate-600">${Math.round(row.newAnnualInterest).toLocaleString()}</td>
-                <td className="py-1 px-2 text-right font-semibold text-emerald-700">${Math.round(row.annualSavings).toLocaleString()}</td>
-                <td className="py-1 px-2 text-right font-bold text-indigo-700">${Math.round(row.endingEquityDiff).toLocaleString()}</td>
+        <div className="flex justify-between items-end border-b-2 border-slate-900 pb-1.5 mb-2.5">
+          <h2 className="text-xs font-black uppercase tracking-wider text-slate-900">
+            {scheduleView === 'monthly'
+              ? `2. Complete Monthly Refinance Payment Schedule (${monthlySchedule.length} Months)`
+              : `2. Complete Annual Amortization & Equity Tracking Schedule (${annualSchedule.length} Years)`}
+          </h2>
+          <span className="text-[10px] text-slate-500 font-mono">
+            {scheduleView === 'monthly' ? 'Full term monthly projection' : 'Annual rollup'}
+          </span>
+        </div>
+
+        {scheduleView === 'monthly' ? (
+          <table className="w-full text-[9px] border border-slate-300">
+            <thead className="bg-slate-900 text-white">
+              <tr>
+                <th className="py-1 px-1.5 text-left">Mo</th>
+                <th className="py-1 px-1.5 text-left">Yr</th>
+                <th className="py-1 px-1.5 text-right">Old Balance</th>
+                <th className="py-1 px-1.5 text-right">New Balance</th>
+                <th className="py-1 px-1.5 text-right">Old P&I</th>
+                <th className="py-1 px-1.5 text-right">New P&I</th>
+                <th className="py-1 px-1.5 text-right text-emerald-300 font-bold">Monthly Save</th>
+                <th className="py-1 px-1.5 text-right text-emerald-300 font-bold">Cumul. Save</th>
+                <th className="py-1 px-1.5 text-right text-indigo-300 font-bold">Equity Diff</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-slate-200 font-mono">
+              {monthlySchedule.map((row) => (
+                <tr key={row.month} className="even:bg-slate-50/70">
+                  <td className="py-0.5 px-1.5 font-sans font-bold text-slate-900">{row.month}</td>
+                  <td className="py-0.5 px-1.5 font-sans text-slate-600">Yr {row.year}</td>
+                  <td className="py-0.5 px-1.5 text-right">${Math.round(row.oldBalance).toLocaleString()}</td>
+                  <td className="py-0.5 px-1.5 text-right font-semibold text-slate-900">${Math.round(row.newBalance).toLocaleString()}</td>
+                  <td className="py-0.5 px-1.5 text-right text-slate-600">${Math.round(row.oldPayment).toLocaleString()}</td>
+                  <td className="py-0.5 px-1.5 text-right text-slate-600">${Math.round(row.newPayment).toLocaleString()}</td>
+                  <td className={`py-0.5 px-1.5 text-right font-semibold ${row.monthlySavings >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
+                    ${Math.round(row.monthlySavings).toLocaleString()}
+                  </td>
+                  <td className={`py-0.5 px-1.5 text-right font-semibold ${row.cumulativeSavings >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
+                    ${Math.round(row.cumulativeSavings).toLocaleString()}
+                  </td>
+                  <td className="py-0.5 px-1.5 text-right font-bold text-indigo-700">
+                    ${Math.round(row.equityDifference).toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <table className="w-full text-[10px] border border-slate-300">
+            <thead className="bg-slate-900 text-white">
+              <tr>
+                <th className="py-1.5 px-2 text-left">Year</th>
+                <th className="py-1.5 px-2 text-right">Old Balance</th>
+                <th className="py-1.5 px-2 text-right">New Balance</th>
+                <th className="py-1.5 px-2 text-right">Old Annual Int.</th>
+                <th className="py-1.5 px-2 text-right">New Annual Int.</th>
+                <th className="py-1.5 px-2 text-right text-emerald-300 font-bold">Annual Savings</th>
+                <th className="py-1.5 px-2 text-right text-indigo-300 font-bold">Equity Gain</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200 font-mono">
+              {annualSchedule.map((row) => (
+                <tr key={row.year} className="even:bg-slate-50/70">
+                  <td className="py-1 px-2 font-sans font-bold text-slate-900">{row.year}</td>
+                  <td className="py-1 px-2 text-right">${Math.round(row.oldEndingBalance).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right font-semibold text-slate-900">${Math.round(row.newEndingBalance).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right text-slate-600">${Math.round(row.oldAnnualInterest).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right text-slate-600">${Math.round(row.newAnnualInterest).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right font-semibold text-emerald-700">${Math.round(row.annualSavings).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right font-bold text-indigo-700">${Math.round(row.endingEquityDiff).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Compliance Notice */}

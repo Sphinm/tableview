@@ -331,7 +331,8 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
   const handleExportPdf = () => {
     const prevTitle = document.title;
-    document.title = `refinance_statement_${Math.round(summary.newLoanAmount)}`;
+    const viewSuffix = scheduleView === 'monthly' ? 'monthly_schedule' : 'annual_summary';
+    document.title = `refinance_statement_${Math.round(summary.newLoanAmount)}_${viewSuffix}`;
     window.print();
     setTimeout(() => {
       document.title = prevTitle;
@@ -1311,7 +1312,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               title="Print or export as vector PDF report"
             >
               <Printer className="size-3.5" />
-              <span>PDF Report</span>
+              <span>PDF Report ({scheduleView === 'monthly' ? 'Monthly' : 'Annual'})</span>
             </button>
             <button
               onClick={handleDownloadCsv}
@@ -1608,6 +1609,8 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
       inputs={inputs}
       summary={summary}
       annualSchedule={annualSchedule}
+      monthlySchedule={monthlySchedule}
+      scheduleView={scheduleView}
     />
   </>
   );
