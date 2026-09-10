@@ -79,6 +79,7 @@ Other scripts:
 | `bun run test` | Unit test suite (`bun test`) |
 | `bun run lint` | oxlint |
 | `bun run icons` | Regenerate PNG PWA icons from the favicon geometry |
+| `bun run adslots:check` | Print the ad placement map and flag unconfigured units |
 
 ### Bundle strategy
 
@@ -93,6 +94,49 @@ drive both ranking and ad viewability:
 
 Anything that would pull one of these onto the critical path should be treated as
 a regression.
+
+---
+
+## 💰 Advertising
+
+All ad configuration lives in **`src/data/adSlots.ts`**. Nothing else in the
+codebase knows a slot id.
+
+### Going live
+
+1. Create an ad unit in AdSense for each entry in `AD_UNITS`.
+2. Paste its `data-ad-slot` value into `src/data/adSlots.ts`.
+3. Run `bun run adslots:check` — it prints every placement and which units are
+   still unconfigured.
+
+**While a unit still holds the placeholder `0000000000`, `AdSlot` renders
+nothing and issues no ad request.** Requesting an invalid slot spams the console
+and counts as invalid traffic against the account, so this is deliberate; in
+development a labelled dashed box shows where the unit will appear.
+
+### `AdSlot` behaviour
+
+- **Lazy request** — the ad is only requested once the slot scrolls within 250px
+  of the viewport. Ads requested far below the fold are often never seen, and
+  viewability feeds directly into RPM.
+- **CLS-safe** — space is reserved before the ad arrives, so filling it cannot
+  shift the layout.
+- **Single push** — guarded by both a ref and AdSense's own
+  `data-adsbygoogle-status`, because pushing twice for one `<ins>` throws. React
+  19 StrictMode double-invokes effects in development, which makes this real.
+- **Print-safe** — every slot carries `no-print`; the calculators all have
+  print-to-PDF flows and AdSense forbids ads in printed output.
+
+### Placement principles
+
+Ads sit where commercial intent is highest and content is thickest: beneath a
+calculator's results, inside tool landing pages, and mid-article in guides.
+Deliberately excluded:
+
+- **Legal pages** (privacy, terms, disclaimer, about, contact) — thin content
+  with negligible RPM and a policy risk. A test enforces this.
+- **The data workspace** (`DataView`, `JsonView`) — never place ads next to a
+  user's own data; those views are also `data-clarity-mask`ed.
 
 ---
 
@@ -111,6 +155,10 @@ guards exist to keep that true:
   AdSense tag loads; `src/lib/consent.ts` upgrades it only after an explicit
   choice. Clarity is not loaded at all without consent, and consent can be
   withdrawn from the footer's "Cookie Settings" link.
+- **Self-hosted fonts** — Inter and JetBrains Mono are served from our own origin
+  rather than Google's CDN. This drops two third-party connections from the
+  critical path and avoids sending every visitor's IP to Google, which a German
+  court has held breaches the GDPR.
 
 ---
 
