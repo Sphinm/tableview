@@ -13,6 +13,8 @@ import { About } from './pages/About';
 import { Contact } from './pages/Contact';
 import { PrivacyPolicy } from './pages/PrivacyPolicy';
 import { TermsOfService } from './pages/TermsOfService';
+import { Disclaimer } from './pages/Disclaimer';
+import { CookieBanner } from './components/CookieBanner';
 import { MortgageCalculator } from './pages/MortgageCalculator';
 import { RefinanceCalculator } from './pages/RefinanceCalculator';
 import { DscrCalculator } from './pages/DscrCalculator';
@@ -69,6 +71,8 @@ export function App() {
       updatePageMeta('Privacy Policy | TableView.dev', 'TableView privacy policy: 100% local processing with zero server file storage.', '/privacy');
     } else if (path === '/terms') {
       updatePageMeta('Terms of Service | TableView.dev', 'TableView terms of service.', '/terms');
+    } else if (path === '/disclaimer') {
+      updatePageMeta('Disclaimer & Disclosure | TableView.dev', 'Legal disclaimers, financial calculation disclosures, and terms of informational use for TableView.dev.', '/disclaimer');
     }
   }, [path, slug]);
 
@@ -218,6 +222,9 @@ export function App() {
       case '/calculator':
         return <FinanceCalculatorHub />;
 
+      case '/disclaimer':
+        return <Disclaimer />;
+
       default:
         return (
           <div className="max-w-md mx-auto px-4 py-24 text-center">
@@ -253,6 +260,7 @@ export function App() {
       </main>
 
       <Footer onTrySample={handleTrySample} />
+      <CookieBanner />
     </div>
   );
 }

@@ -471,6 +471,15 @@ export const Footer = ({ onTrySample }: FooterProps) => {
               </li>
               <li>
                 <a
+                  href="/disclaimer"
+                  onClick={(e) => handleNav(e, '/disclaimer')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Disclaimer & Disclosure
+                </a>
+              </li>
+              <li>
+                <a
                   href="/privacy#advertising"
                   onClick={(e) => handleNav(e, '/privacy#advertising')}
                   className="hover:text-slate-100 transition-colors block"
