@@ -290,7 +290,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
       {/* Hero Header */}
       <section className="relative pt-12 pb-8 border-b border-slate-800 bg-gradient-to-b from-amber-950/20 via-slate-950 to-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -351,9 +351,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                   <input
                     type="number"
+                    inputMode="numeric"
                     value={purchasePrice || ''}
                     onChange={(e) => setPurchasePrice(Math.max(0, Number(e.target.value)))}
-                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
+                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
                   />
                 </div>
               </div>
@@ -368,9 +369,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="numeric"
                       value={rehabBudget || ''}
                       onChange={(e) => setRehabBudget(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -383,9 +385,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="numeric"
                       value={afterRepairValue || ''}
                       onChange={(e) => setAfterRepairValue(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-amber-300 font-mono font-bold focus:outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-amber-300 font-mono font-bold focus:outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -406,9 +409,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="decimal"
                       value={ltvPercent || ''}
                       onChange={(e) => setLtvPercent(Math.max(0, Math.min(100, Number(e.target.value))))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -421,9 +425,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="decimal"
                       value={rehabFinancedPercent || ''}
                       onChange={(e) => setRehabFinancedPercent(Math.max(0, Math.min(100, Number(e.target.value))))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -438,10 +443,11 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="0.25"
                       value={interestRate || ''}
                       onChange={(e) => setInterestRate(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -454,10 +460,11 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="0.5"
                       value={originationPoints || ''}
                       onChange={(e) => setOriginationPoints(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -470,10 +477,11 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="numeric"
                       step="100"
                       value={lenderUnderwritingFees || ''}
                       onChange={(e) => setLenderUnderwritingFees(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -488,7 +496,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <select
                     value={projectDurationMonths}
                     onChange={(e) => setProjectDurationMonths(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"
                   >
                     <option value={3}>3 Months (Rapid Flip)</option>
                     <option value={6}>6 Months (Standard)</option>
@@ -505,9 +513,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="numeric"
                       value={monthlyHoldingCosts || ''}
                       onChange={(e) => setMonthlyHoldingCosts(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -521,10 +530,11 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   </label>
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="0.5"
                     value={realtorCommissionPercent || ''}
                     onChange={(e) => setRealtorCommissionPercent(Math.max(0, Number(e.target.value)))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none"
                   />
                 </div>
 
@@ -534,10 +544,11 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   </label>
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="0.5"
                     value={exitClosingCostsPercent || ''}
                     onChange={(e) => setExitClosingCostsPercent(Math.max(0, Number(e.target.value)))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none"
                   />
                 </div>
               </div>
@@ -545,7 +556,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
           </div>
 
           {/* Right Column: Profit & 70% Rule Dashboard (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
+          <div id="hardmoney-results" className="lg:col-span-7 space-y-6 scroll-mt-20">
             {/* Net Profit Hero Card */}
             <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/40 border border-slate-800 shadow-2xl">
               <div className="flex flex-wrap items-start justify-between gap-4">
@@ -1107,6 +1118,36 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
           </div>
         </div>
       </section>
+
+      {/* Mobile Sticky Summary Bottom Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-4 py-2.5 shadow-2xl flex items-center justify-between gap-3">
+        <div>
+          <span className="text-[10px] uppercase font-semibold text-slate-400 block leading-tight">
+            Net Flip Profit
+          </span>
+          <div className="text-xl font-black font-mono leading-tight flex items-baseline gap-2">
+            <span className={result.netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
+              {currencyFmt(result.netProfit)}
+            </span>
+            <span className="text-xs font-semibold text-slate-400 font-sans">
+              ({result.roiPercent.toFixed(1)}% ROI)
+            </span>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            const el = document.getElementById('hardmoney-results');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+          className="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 shadow-md active:scale-95 transition-transform cursor-pointer"
+        >
+          <span>View Analysis</span>
+          <ArrowRight className="size-3.5" />
+        </button>
+      </div>
     </div>
   );
 };

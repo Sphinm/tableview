@@ -347,7 +347,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -413,9 +413,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                   <input
                     type="number"
+                    inputMode="numeric"
                     value={propertyValue || ''}
                     onChange={(e) => setPropertyValue(Math.max(0, Number(e.target.value)))}
-                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
                   />
                 </div>
               </div>
@@ -458,10 +459,11 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   )}
                   <input
                     type="number"
+                    inputMode={downPaymentType === 'percent' ? 'decimal' : 'numeric'}
                     step={downPaymentType === 'percent' ? '0.5' : '1000'}
                     value={downPayment || ''}
                     onChange={(e) => setDownPayment(Math.max(0, Number(e.target.value)))}
-                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
                   />
                 </div>
                 <p className="text-[11px] text-slate-400 mt-1 flex justify-between">
@@ -480,10 +482,11 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                     <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="0.125"
                       value={interestRate || ''}
                       onChange={(e) => setInterestRate(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -495,7 +498,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <select
                     value={loanTermYears}
                     onChange={(e) => setLoanTermYears(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer"
                   >
                     <option value={30}>30-Year Fixed</option>
                     <option value={20}>20-Year Fixed</option>
@@ -536,9 +539,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                   <input
                     type="number"
+                    inputMode="numeric"
                     value={monthlyRent || ''}
                     onChange={(e) => setMonthlyRent(Math.max(0, Number(e.target.value)))}
-                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
                   />
                 </div>
               </div>
@@ -553,9 +557,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                     <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="numeric"
                       value={annualPropertyTax || ''}
                       onChange={(e) => setAnnualPropertyTax(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -568,9 +573,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                     <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="numeric"
                       value={annualInsurance || ''}
                       onChange={(e) => setAnnualInsurance(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -586,9 +592,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                     <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="numeric"
                       value={monthlyHoa || ''}
                       onChange={(e) => setMonthlyHoa(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -601,9 +608,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                     <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="decimal"
                       value={vacancyRate || ''}
                       onChange={(e) => setVacancyRate(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -619,9 +627,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                     <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="decimal"
                       value={managementFeeRate || ''}
                       onChange={(e) => setManagementFeeRate(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-2 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                      className="w-full pl-9 pr-2 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -634,9 +643,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                     <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
                     <input
                       type="number"
+                      inputMode="numeric"
                       value={annualMaintenanceReserve || ''}
                       onChange={(e) => setAnnualMaintenanceReserve(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-2 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                      className="w-full pl-9 pr-2 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
                     />
                   </div>
                 </div>
@@ -647,10 +657,11 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   </label>
                   <input
                     type="number"
+                    inputMode="decimal"
                     step="0.05"
                     value={targetDscr || ''}
                     onChange={(e) => setTargetDscr(Math.max(0.5, Number(e.target.value)))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-indigo-300 font-mono font-bold focus:outline-none focus:border-indigo-500 transition-colors"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-indigo-300 font-mono font-bold focus:outline-none focus:border-indigo-500 transition-colors"
                   />
                 </div>
               </div>
@@ -658,7 +669,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
           </div>
 
           {/* Right Column: Key Metrics & Qualification Dashboard (7 cols) */}
-          <div className="lg:col-span-7 space-y-6">
+          <div id="dscr-results" className="lg:col-span-7 space-y-6 scroll-mt-20">
             {/* Main DSCR Ratio Hero Card */}
             <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-slate-800 shadow-2xl relative overflow-hidden">
               <div className="flex flex-wrap items-start justify-between gap-4">
@@ -1360,6 +1371,34 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
           </div>
         </div>
       </section>
+
+      {/* Mobile Sticky Summary Bottom Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-4 py-2.5 shadow-2xl flex items-center justify-between gap-3">
+        <div>
+          <span className="text-[10px] uppercase font-semibold text-slate-400 block leading-tight">
+            DSCR Coverage
+          </span>
+          <div className="text-xl font-black font-mono leading-tight flex items-baseline gap-2">
+            <span className={result.grossDscr >= 1.25 ? 'text-emerald-400' : result.grossDscr >= 1.0 ? 'text-indigo-400' : 'text-rose-400'}>
+              {result.grossDscr.toFixed(2)}x
+            </span>
+            <span className="text-xs font-semibold text-slate-400 font-sans">({result.statusLabel})</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            const el = document.getElementById('dscr-results');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+          className="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 shadow-md active:scale-95 transition-transform cursor-pointer"
+        >
+          <span>View Analysis</span>
+          <ArrowRight className="size-3.5" />
+        </button>
+      </div>
     </div>
   );
 };

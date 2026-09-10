@@ -265,7 +265,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-10">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24 lg:pb-12 space-y-10">
       {/* Top Banner & Header */}
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -349,7 +349,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                           setDownPayment(Math.round(preset * 0.2));
                         }
                       }}
-                      className="px-2 py-0.5 rounded text-[11px] font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 transition-colors cursor-pointer"
+                      className="px-2.5 py-1 sm:py-0.5 rounded text-xs sm:text-[11px] font-mono bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700/80 transition-colors cursor-pointer"
                     >
                       ${preset / 1000}k
                     </button>
@@ -363,11 +363,12 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                 <input
                   id="home-value"
                   type="number"
+                  inputMode="numeric"
                   step="1000"
                   min="0"
                   value={homeValue}
                   onChange={(e) => setHomeValue(Number(e.target.value))}
-                  className="w-full pl-8 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-sm font-semibold tracking-wide outline-none transition-colors"
+                  className="w-full pl-8 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-base sm:text-sm font-semibold tracking-wide outline-none transition-colors"
                 />
               </div>
             </div>
@@ -383,7 +384,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                   <button
                     type="button"
                     onClick={() => handleDownPaymentTypeChange('money')}
-                    className={`px-2.5 py-0.5 rounded-md transition-all cursor-pointer ${
+                    className={`px-3 py-1 sm:py-0.5 rounded-md transition-all cursor-pointer ${
                       downPaymentType === 'money'
                         ? 'bg-indigo-600 text-white shadow-sm'
                         : 'text-slate-400 hover:text-slate-200'
@@ -394,7 +395,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                   <button
                     type="button"
                     onClick={() => handleDownPaymentTypeChange('percent')}
-                    className={`px-2.5 py-0.5 rounded-md transition-all cursor-pointer ${
+                    className={`px-3 py-1 sm:py-0.5 rounded-md transition-all cursor-pointer ${
                       downPaymentType === 'percent'
                         ? 'bg-indigo-600 text-white shadow-sm'
                         : 'text-slate-400 hover:text-slate-200'
@@ -411,11 +412,12 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                 <input
                   id="down-payment"
                   type="number"
+                  inputMode="decimal"
                   step={downPaymentType === 'percent' ? '0.5' : '1000'}
                   min="0"
                   value={downPayment}
                   onChange={(e) => setDownPayment(Number(e.target.value))}
-                  className="w-full pl-8 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-sm font-semibold tracking-wide outline-none transition-colors"
+                  className="w-full pl-8 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-base sm:text-sm font-semibold tracking-wide outline-none transition-colors"
                 />
               </div>
               <div className="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
@@ -438,12 +440,13 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                   <input
                     id="interest-rate"
                     type="number"
+                    inputMode="decimal"
                     step="0.01"
                     min="0"
                     max="25"
                     value={interestRate}
                     onChange={(e) => setInterestRate(Number(e.target.value))}
-                    className="w-full pl-3.5 pr-8 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-sm font-semibold outline-none transition-colors"
+                    className="w-full pl-3.5 pr-8 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-base sm:text-sm font-semibold outline-none transition-colors"
                   />
                   <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
                     %
@@ -459,12 +462,13 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                   <input
                     id="loan-term"
                     type="number"
+                    inputMode="numeric"
                     step="1"
                     min="1"
                     max="50"
                     value={loanTermYears}
                     onChange={(e) => setLoanTermYears(Number(e.target.value))}
-                    className="w-full pl-3.5 pr-14 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-sm font-semibold outline-none transition-colors"
+                    className="w-full pl-3.5 pr-14 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-base sm:text-sm font-semibold outline-none transition-colors"
                   />
                   <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-medium">
                     years
@@ -554,11 +558,12 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                   <input
                     id="property-tax"
                     type="number"
+                    inputMode="numeric"
                     min="0"
                     step="100"
                     value={propertyTaxYearly}
                     onChange={(e) => setPropertyTaxYearly(Number(e.target.value))}
-                    className="w-full pl-7 pr-12 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                    className="w-full pl-7 pr-12 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">
                     /yr
@@ -577,7 +582,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                         key={p.s}
                         type="button"
                         onClick={() => setPropertyTaxYearly(Math.round(homeValue * (p.r / 100)))}
-                        className="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[10px] cursor-pointer transition-colors"
+                        className="px-2 py-1 sm:py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[11px] sm:text-[10px] cursor-pointer transition-colors"
                         title={`Set to ${p.s} rate (${p.r}%)`}
                       >
                         {p.s}
@@ -604,11 +609,12 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                   <input
                     id="home-insurance"
                     type="number"
+                    inputMode="numeric"
                     min="0"
                     step="50"
                     value={homeInsuranceYearly}
                     onChange={(e) => setHomeInsuranceYearly(Number(e.target.value))}
-                    className="w-full pl-7 pr-12 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                    className="w-full pl-7 pr-12 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">
                     /yr
@@ -641,13 +647,14 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                   <input
                     id="pmi-rate"
                     type="number"
+                    inputMode="decimal"
                     min="0"
                     step="0.05"
                     max="5"
                     value={summary.isPmiRequired ? pmiRate : 0}
                     onChange={(e) => setPmiRate(Number(e.target.value))}
                     disabled={!summary.isPmiRequired}
-                    className="w-full pl-3 pr-8 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none disabled:opacity-40 disabled:cursor-not-allowed"
+                    className="w-full pl-3 pr-8 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none disabled:opacity-40 disabled:cursor-not-allowed"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
                     %
@@ -672,11 +679,12 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                   <input
                     id="monthly-hoa"
                     type="number"
+                    inputMode="numeric"
                     min="0"
                     step="25"
                     value={monthlyHoa}
                     onChange={(e) => setMonthlyHoa(Number(e.target.value))}
-                    className="w-full pl-7 pr-12 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                    className="w-full pl-7 pr-12 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">
                     /mo
@@ -694,7 +702,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                 id="loan-type"
                 value={loanType}
                 onChange={(e) => setLoanType(e.target.value as any)}
-                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-xs font-medium outline-none cursor-pointer"
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-base sm:text-xs font-medium outline-none cursor-pointer"
               >
                 <option value="conventional">Conventional Loan (Standard PMI if down &lt; 20%)</option>
                 <option value="fha">FHA Loan (Federal Housing Administration)</option>
@@ -706,7 +714,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
         </div>
 
         {/* Right Column: Results & Repayment Breakdown (6 Cols) */}
-        <div className="lg:col-span-6 space-y-6">
+        <div id="results-section" className="lg:col-span-6 space-y-6 scroll-mt-20">
           {/* Main Monthly Payment Card */}
           <div className="bg-gradient-to-b from-slate-900/90 to-slate-950 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xl relative overflow-hidden">
             <div className="absolute top-0 right-0 -mt-10 -mr-10 size-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -959,12 +967,13 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                 <input
                   id="extra-monthly-principal"
                   type="number"
+                  inputMode="numeric"
                   step="50"
                   min="0"
                   value={extraMonthlyPrincipal}
                   onChange={(e) => setExtraMonthlyPrincipal(Number(e.target.value))}
                   placeholder="0"
-                  className="w-full pl-6 pr-2 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-semibold text-slate-100 outline-none"
+                  className="w-full pl-6 pr-2 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-base sm:text-xs font-semibold text-slate-100 outline-none"
                 />
               </div>
             </div>
@@ -980,12 +989,13 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                   <input
                     id="extra-lump-sum"
                     type="number"
+                    inputMode="numeric"
                     step="1000"
                     min="0"
                     value={extraLumpSumAmount}
                     onChange={(e) => setExtraLumpSumAmount(Number(e.target.value))}
                     placeholder="0"
-                    className="w-full pl-6 pr-2 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-semibold text-slate-100 outline-none"
+                    className="w-full pl-6 pr-2 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-base sm:text-xs font-semibold text-slate-100 outline-none"
                   />
                 </div>
               </div>
@@ -1023,13 +1033,13 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2.5 w-full sm:w-auto">
             {/* View Toggle */}
-            <div className="inline-flex rounded-xl border border-slate-800 bg-slate-950 p-0.5 text-xs font-semibold">
+            <div className="grid grid-cols-2 sm:inline-flex rounded-xl border border-slate-800 bg-slate-950 p-0.5 text-xs font-semibold w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => setScheduleView('annual')}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                className={`px-3 py-2 sm:py-1.5 rounded-lg transition-all cursor-pointer text-center ${
                   scheduleView === 'annual'
                     ? 'btn-primary shadow-sm'
                     : 'text-slate-400 hover:text-slate-200'
@@ -1040,34 +1050,36 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
               <button
                 type="button"
                 onClick={() => setScheduleView('monthly')}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                className={`px-3 py-2 sm:py-1.5 rounded-lg transition-all cursor-pointer text-center ${
                   scheduleView === 'monthly'
                     ? 'btn-primary shadow-sm'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                Monthly Schedule ({monthlySchedule.length})
+                Monthly ({monthlySchedule.length})
               </button>
             </div>
 
             {/* Export Buttons */}
-            <button
-              onClick={handleExportExcel}
-              className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
-              title="Download formatted Excel workbook (.xlsx)"
-            >
-              <FileSpreadsheet className="size-3.5" />
-              <span>Export Excel (.xlsx)</span>
-            </button>
+            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+              <button
+                onClick={handleExportExcel}
+                className="px-3 py-2 sm:py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                title="Download formatted Excel workbook (.xlsx)"
+              >
+                <FileSpreadsheet className="size-3.5" />
+                <span>Export Excel</span>
+              </button>
 
-            <button
-              onClick={handleExportCsv}
-              className="px-3.5 py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-slate-100 border border-slate-800 text-xs font-medium inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
-              title="Download CSV spreadsheet"
-            >
-              <Download className="size-3.5" />
-              <span>Export CSV</span>
-            </button>
+              <button
+                onClick={handleExportCsv}
+                className="px-3 py-2 sm:py-1.5 rounded-xl bg-slate-950 hover:bg-slate-800 text-slate-300 hover:text-slate-100 border border-slate-800 text-xs font-medium inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                title="Download CSV spreadsheet"
+              >
+                <Download className="size-3.5" />
+                <span>Export CSV</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -1302,6 +1314,32 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
             <ArrowRight className="size-3.5 opacity-80" />
           </button>
         </div>
+      </div>
+
+      {/* Mobile Sticky Summary Bottom Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-4 py-2.5 shadow-2xl flex items-center justify-between gap-3">
+        <div>
+          <span className="text-[10px] uppercase font-semibold text-slate-400 block leading-tight">
+            Monthly Est.
+          </span>
+          <div className="text-xl font-black text-slate-100 font-mono leading-tight">
+            {fmt(summary.totalMonthlyPayment)}
+            <span className="text-xs font-normal text-slate-400 font-sans ml-1">/mo</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            const el = document.getElementById('results-section');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+          className="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 shadow-md active:scale-95 transition-transform cursor-pointer"
+        >
+          <span>View Details</span>
+          <ArrowRight className="size-3.5" />
+        </button>
       </div>
     </div>
   );

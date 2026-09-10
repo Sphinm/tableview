@@ -1,4 +1,5 @@
 import { navigateTo } from '../lib/router';
+import { getBugReportMailto } from '../lib/feedback';
 import {
   Table,
   ShieldCheck,
@@ -444,11 +445,12 @@ export const Footer = ({ onTrySample }: FooterProps) => {
               </li>
               <li>
                 <a
-                  href="/contact"
-                  onClick={(e) => handleNav(e, '/contact')}
-                  className="hover:text-slate-100 transition-colors block"
+                  href={getBugReportMailto()}
+                  className="hover:text-slate-100 transition-colors flex items-center gap-1.5"
+                  title="Directly open email with preset feedback email, subject, and bug template"
                 >
-                  Report Bug / Issue
+                  <span>Report Bug / Issue</span>
+                  <Mail className="size-3 text-slate-500" />
                 </a>
               </li>
               <li>

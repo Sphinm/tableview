@@ -27,7 +27,8 @@ import { loadFileIntoDuckDB, generateSampleParquet, type SamplePreset } from './
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
 import { TOOLS_CONFIG } from './data/tools';
 import { getInitialTheme, applyTheme, type Theme } from './lib/theme';
-import { AlertCircle, ArrowLeft, FileQuestion } from 'lucide-react';
+import { AlertCircle, ArrowLeft, FileQuestion, Mail } from 'lucide-react';
+import { getBugReportMailto } from './lib/feedback';
 
 export function App() {
   const { path, slug } = useRouter();
@@ -141,9 +142,18 @@ export function App() {
             <div className="max-w-4xl mx-auto px-4 mt-6 w-full">
               <div className="p-4 rounded-2xl bg-red-950/60 border border-red-800 text-red-300 text-sm flex items-start gap-3">
                 <AlertCircle className="size-5 text-red-400 shrink-0 mt-0.5" />
-                <div>
+                <div className="flex-1">
                   <p className="font-semibold text-red-200">Error opening file</p>
                   <p className="text-xs text-red-300/90 mt-0.5">{errorMessage}</p>
+                  <div className="mt-2 pt-2 border-t border-red-900/60 flex items-center gap-3">
+                    <a
+                      href={getBugReportMailto({ errorMessage })}
+                      className="inline-flex items-center gap-1.5 text-xs text-red-200 hover:text-white underline font-medium cursor-pointer"
+                    >
+                      <Mail className="size-3.5" />
+                      <span>Report this issue via email</span>
+                    </a>
+                  </div>
                 </div>
               </div>
             </div>

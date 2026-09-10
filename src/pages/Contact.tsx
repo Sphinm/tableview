@@ -1,16 +1,22 @@
 import { useState } from 'react';
-import { Mail, MessageSquare, Send, CheckCircle2, HelpCircle, Copy, ExternalLink, Check } from 'lucide-react';
+import { Mail, MessageSquare, Send, CheckCircle2, HelpCircle, Copy, ExternalLink, Check, Bug, FileText } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
 import { navigateTo } from '../lib/router';
+import { getBugReportTemplate, getBugReportMailto } from '../lib/feedback';
 
 export const Contact = () => {
   const [submitted, setSubmitted] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: 'General Inquiry',
-    message: ''
+  const [formData, setFormData] = useState(() => {
+    const search = typeof window !== 'undefined' ? window.location.search.toLowerCase() : '';
+    const hash = typeof window !== 'undefined' ? window.location.hash.toLowerCase() : '';
+    const isBug = search.includes('bug') || search.includes('issue') || hash.includes('bug') || hash.includes('issue');
+    return {
+      name: '',
+      email: '',
+      subject: isBug ? 'Bug Report' : 'General Inquiry',
+      message: isBug ? getBugReportTemplate() : ''
+    };
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -110,6 +116,21 @@ export const Contact = () => {
               Explore Guides & Articles →
             </button>
           </div>
+
+          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm">
+            <div className="size-9 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center mb-3">
+              <Bug className="size-4" />
+            </div>
+            <h3 className="text-slate-100 font-semibold text-sm mb-1">Direct Bug Report</h3>
+            <p className="text-xs text-slate-400 mb-2">Launch your email app with our structured bug template:</p>
+            <a
+              href={getBugReportMailto()}
+              className="text-xs font-medium text-amber-500 hover:underline inline-flex items-center gap-1 cursor-pointer"
+              title="Open email client with preset bug template"
+            >
+              <span>Open Email with Template →</span>
+            </a>
+          </div>
         </div>
 
         {/* Contact Form */}
@@ -201,7 +222,16 @@ export const Contact = () => {
                 </label>
                 <select
                   value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                  onChange={(e) => {
+                    const nextSubject = e.target.value;
+                    setFormData(prev => ({
+                      ...prev,
+                      subject: nextSubject,
+                      message: nextSubject === 'Bug Report' && (!prev.message || prev.message.trim() === '')
+                        ? getBugReportTemplate()
+                        : prev.message
+                    }));
+                  }}
                   className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-slate-600 transition-colors"
                 >
                   <option value="General Inquiry">General Inquiry</option>
@@ -212,16 +242,33 @@ export const Contact = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                  Your Message <span className="text-red-400">*</span>
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-medium text-slate-300">
+                    Your Message <span className="text-red-400">*</span>
+                  </label>
+                  {formData.subject === 'Bug Report' && (
+                    <button
+                      type="button"
+                      onClick={() => setFormData(prev => ({ ...prev, message: getBugReportTemplate() }))}
+                      className="text-[11px] text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer transition-colors"
+                      title="Load standard bug report template"
+                    >
+                      <FileText className="size-3" />
+                      <span>Insert Bug Template</span>
+                    </button>
+                  )}
+                </div>
                 <textarea
                   required
-                  rows={5}
+                  rows={formData.subject === 'Bug Report' ? 9 : 5}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="How can we help you? Describe your question or feedback..."
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-slate-600 transition-colors resize-none"
+                  placeholder={
+                    formData.subject === 'Bug Report'
+                      ? 'Describe the bug or error message...'
+                      : 'How can we help you? Describe your question or feedback...'
+                  }
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-slate-600 transition-colors resize-none font-mono"
                 />
               </div>
 
@@ -233,9 +280,21 @@ export const Contact = () => {
                   <Send className="size-3.5" />
                   <span>Submit & Send Email</span>
                 </button>
-                <span className="text-[11px] text-slate-400">
-                  Direct dispatch to <code className="text-slate-300">feedback@tableview.dev</code>
-                </span>
+                <div className="flex items-center gap-2 text-[11px] text-slate-400">
+                  <span>Direct to <code className="text-slate-300">feedback@tableview.dev</code></span>
+                  {formData.subject === 'Bug Report' && (
+                    <>
+                      <span>·</span>
+                      <a
+                        href={getBugReportMailto()}
+                        className="text-amber-400 hover:underline"
+                        title="Open default email client"
+                      >
+                        Open in Mail Client
+                      </a>
+                    </>
+                  )}
+                </div>
               </div>
             </form>
           )}

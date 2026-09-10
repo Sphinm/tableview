@@ -388,11 +388,12 @@ export const FinanceCalculatorHub = () => {
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
                   <input
                     type="number"
+                    inputMode="numeric"
                     step="500"
                     min="0"
                     value={autoPrice}
                     onChange={(e) => setAutoPrice(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm font-semibold outline-none"
+                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-sm font-semibold outline-none"
                   />
                 </div>
               </div>
@@ -404,11 +405,12 @@ export const FinanceCalculatorHub = () => {
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
                     <input
                       type="number"
+                      inputMode="numeric"
                       step="500"
                       min="0"
                       value={autoDown}
                       onChange={(e) => setAutoDown(Number(e.target.value))}
-                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                     />
                   </div>
                 </div>
@@ -419,11 +421,12 @@ export const FinanceCalculatorHub = () => {
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
                     <input
                       type="number"
+                      inputMode="numeric"
                       step="500"
                       min="0"
                       value={autoTradeIn}
                       onChange={(e) => setAutoTradeIn(Number(e.target.value))}
-                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                     />
                   </div>
                 </div>
@@ -435,12 +438,13 @@ export const FinanceCalculatorHub = () => {
                   <div className="relative">
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="0.1"
                       min="0"
                       max="20"
                       value={autoTaxRate}
                       onChange={(e) => setAutoTaxRate(Number(e.target.value))}
-                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
                   </div>
@@ -451,12 +455,13 @@ export const FinanceCalculatorHub = () => {
                   <div className="relative">
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="0.05"
                       min="0"
                       max="30"
                       value={autoRate}
                       onChange={(e) => setAutoRate(Number(e.target.value))}
-                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
                   </div>
@@ -545,11 +550,12 @@ export const FinanceCalculatorHub = () => {
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
                   <input
                     type="number"
+                    inputMode="numeric"
                     step="500"
                     min="500"
                     value={personalAmount}
                     onChange={(e) => setPersonalAmount(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm font-semibold outline-none"
+                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-sm font-semibold outline-none"
                   />
                 </div>
               </div>
@@ -560,12 +566,13 @@ export const FinanceCalculatorHub = () => {
                   <div className="relative">
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="0.1"
                       min="0"
                       max="36"
                       value={personalRate}
                       onChange={(e) => setPersonalRate(Number(e.target.value))}
-                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
                   </div>
@@ -576,7 +583,7 @@ export const FinanceCalculatorHub = () => {
                   <select
                     value={personalTerm}
                     onChange={(e) => setPersonalTerm(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-xs font-semibold outline-none cursor-pointer"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-base sm:text-xs font-semibold outline-none cursor-pointer"
                   >
                     <option value={12}>12 Months (1 Year)</option>
                     <option value={24}>24 Months (2 Years)</option>
@@ -642,11 +649,12 @@ export const FinanceCalculatorHub = () => {
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
                   <input
                     type="number"
+                    inputMode="numeric"
                     step="500"
                     min="0"
                     value={savingsInitial}
                     onChange={(e) => setSavingsInitial(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm font-semibold outline-none"
+                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-sm font-semibold outline-none"
                   />
                 </div>
               </div>
@@ -657,11 +665,12 @@ export const FinanceCalculatorHub = () => {
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
                   <input
                     type="number"
+                    inputMode="numeric"
                     step="50"
                     min="0"
                     value={savingsMonthly}
                     onChange={(e) => setSavingsMonthly(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm font-semibold outline-none"
+                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-sm font-semibold outline-none"
                   />
                 </div>
               </div>
@@ -672,12 +681,13 @@ export const FinanceCalculatorHub = () => {
                   <div className="relative">
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="0.25"
                       min="0"
                       max="25"
                       value={savingsReturn}
                       onChange={(e) => setSavingsReturn(Number(e.target.value))}
-                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
                   </div>
@@ -687,12 +697,13 @@ export const FinanceCalculatorHub = () => {
                   <label className="text-xs font-semibold text-slate-300">Investment Horizon (Years)</label>
                   <input
                     type="number"
+                    inputMode="numeric"
                     step="1"
                     min="1"
                     max="50"
                     value={savingsYears}
                     onChange={(e) => setSavingsYears(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                   />
                 </div>
               </div>
@@ -750,11 +761,12 @@ export const FinanceCalculatorHub = () => {
                   <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
                   <input
                     type="number"
+                    inputMode="numeric"
                     step="100"
                     min="0"
                     value={ccBalance}
                     onChange={(e) => setCcBalance(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-sm font-semibold outline-none"
+                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-sm font-semibold outline-none"
                   />
                 </div>
               </div>
@@ -765,12 +777,13 @@ export const FinanceCalculatorHub = () => {
                   <div className="relative">
                     <input
                       type="number"
+                      inputMode="decimal"
                       step="0.1"
                       min="0"
                       max="40"
                       value={ccRate}
                       onChange={(e) => setCcRate(Number(e.target.value))}
-                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
                   </div>
@@ -782,11 +795,12 @@ export const FinanceCalculatorHub = () => {
                     <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
                     <input
                       type="number"
+                      inputMode="numeric"
                       step="25"
                       min="10"
                       value={ccMonthlyPayment}
                       onChange={(e) => setCcMonthlyPayment(Number(e.target.value))}
-                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none"
+                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
                     />
                   </div>
                 </div>

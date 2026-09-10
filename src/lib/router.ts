@@ -270,8 +270,12 @@ export function useRouter() {
           window.scrollTo({ top: 0, behavior: 'instant' });
         }
       } else {
-        // Hash changed on the same page
-        setTimeout(scrollToAnchor, 60);
+        // Hash changed or re-navigated on the same page
+        if (window.location.hash && !window.location.hash.startsWith('#/')) {
+          setTimeout(scrollToAnchor, 60);
+        } else {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
       }
     };
 

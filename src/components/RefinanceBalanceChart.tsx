@@ -43,6 +43,16 @@ export const RefinanceBalanceChart: React.FC<RefinanceBalanceChartProps> = ({
 
   const fmt = (v: number) => `$${Math.round(v).toLocaleString('en-US')}`;
 
+  const handleTouch = (e: React.TouchEvent<SVGSVGElement>) => {
+    if (!e.touches || e.touches.length === 0) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const touchX = ((e.touches[0].clientX - rect.left) / rect.width) * width;
+    const clampedX = Math.max(padLeft, Math.min(width - padRight, touchX));
+    const ratio = (clampedX - padLeft) / chartW;
+    const index = Math.round(ratio * (data.length - 1));
+    setHoverIndex(Math.max(0, Math.min(data.length - 1, index)));
+  };
+
   return (
     <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm space-y-3">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
@@ -65,8 +75,11 @@ export const RefinanceBalanceChart: React.FC<RefinanceBalanceChartProps> = ({
       <div className="relative w-full overflow-hidden">
         <svg
           viewBox={`0 0 ${width} ${height}`}
-          className="w-full h-auto select-none"
+          style={{ touchAction: 'pan-y' }}
+          className="w-full h-auto select-none cursor-crosshair"
           onMouseLeave={() => setHoverIndex(null)}
+          onTouchStart={handleTouch}
+          onTouchMove={handleTouch}
           onMouseMove={(e) => {
             const rect = e.currentTarget.getBoundingClientRect();
             const mouseX = ((e.clientX - rect.left) / rect.width) * width;
