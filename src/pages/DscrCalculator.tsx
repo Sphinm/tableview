@@ -748,7 +748,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block">Total Loan Amount</span>
+                <span className="text-[11px] text-slate-400 block">Loan Amount</span>
                 <span className="text-base font-bold font-mono text-slate-100 mt-0.5 block">
                   {currencyFmt(result.loanAmount)}
                 </span>
@@ -756,7 +756,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block">Max Loan at 1.25x</span>
+                <span className="text-[11px] text-slate-400 block">Max Loan (1.25x)</span>
                 <span className="text-base font-bold font-mono text-indigo-400 mt-0.5 block">
                   {currencyFmt(result.maxLoanAmountAtTargetDscr)}
                 </span>

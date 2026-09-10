@@ -564,6 +564,27 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                     /yr
                   </span>
                 </div>
+                <div className="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
+                  <span>{(homeValue > 0 ? ((propertyTaxYearly / homeValue) * 100).toFixed(2) : '0.00')}% effective</span>
+                  <div className="flex items-center gap-1">
+                    {[
+                      { s: 'CA', r: 0.73 },
+                      { s: 'TX', r: 1.68 },
+                      { s: 'FL', r: 0.86 },
+                      { s: 'Avg', r: 1.05 }
+                    ].map(p => (
+                      <button
+                        key={p.s}
+                        type="button"
+                        onClick={() => setPropertyTaxYearly(Math.round(homeValue * (p.r / 100)))}
+                        className="px-1.5 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 text-[10px] cursor-pointer transition-colors"
+                        title={`Set to ${p.s} rate (${p.r}%)`}
+                      >
+                        {p.s}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
 
               {/* Home Insurance */}
@@ -597,20 +618,22 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
 
               {/* PMI Rate */}
               <div className="space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <label htmlFor="pmi-rate" className="text-xs font-semibold text-slate-300 flex items-center gap-1">
-                    PMI Insurance
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5 min-w-0">
+                    <label htmlFor="pmi-rate" className="font-semibold text-slate-300">
+                      PMI Rate
+                    </label>
                     {summary.isPmiRequired ? (
-                      <span className="text-[10px] text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 font-normal">
-                        Active (&lt;20% down)
+                      <span className="text-[10px] text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20 font-normal whitespace-nowrap">
+                        Active (&lt;20%)
                       </span>
                     ) : (
-                      <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 font-normal">
-                        Waived (&gt;=20% down)
+                      <span className="text-[10px] text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20 font-normal whitespace-nowrap">
+                        Waived (&ge;20%)
                       </span>
                     )}
-                  </label>
-                  <span className="text-[11px] text-slate-400 font-mono">
+                  </div>
+                  <span className="text-[11px] text-slate-400 font-mono shrink-0">
                     {fmt(summary.monthlyPmi)}/mo
                   </span>
                 </div>
@@ -621,10 +644,10 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                     min="0"
                     step="0.05"
                     max="5"
-                    value={pmiRate}
+                    value={summary.isPmiRequired ? pmiRate : 0}
                     onChange={(e) => setPmiRate(Number(e.target.value))}
                     disabled={!summary.isPmiRequired}
-                    className="w-full pl-3 pr-8 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none disabled:opacity-40"
+                    className="w-full pl-3 pr-8 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-xs font-semibold outline-none disabled:opacity-40 disabled:cursor-not-allowed"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
                     %
@@ -888,7 +911,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                 <span className="text-sm font-bold text-indigo-300 font-mono">{summary.payoffDateString}</span>
               </div>
               <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
-                <span className="text-slate-400 text-[11px] block">Total of Payments</span>
+                <span className="text-slate-400 text-[11px] block">Total Payments</span>
                 <span className="text-sm font-bold text-slate-100 font-mono">{fmt(summary.totalOfAllPayments)}</span>
               </div>
             </div>

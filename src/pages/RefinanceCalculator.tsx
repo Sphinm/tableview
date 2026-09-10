@@ -886,14 +886,14 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/60">
-                  <span className="text-[11px] text-slate-400 block mb-0.5">Total Closing Costs</span>
+                  <span className="text-[11px] text-slate-400 block mb-0.5">Closing Costs</span>
                   <span className="text-sm sm:text-base font-bold font-mono text-slate-100">
                     {fmt(summary.totalClosingCosts)}
                   </span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/60">
-                  <span className="text-[11px] text-slate-400 block mb-0.5">Break-Even Horizon</span>
+                  <span className="text-[11px] text-slate-400 block mb-0.5">Break-Even</span>
                   <span className="text-sm sm:text-base font-bold font-mono text-indigo-300">
                     {summary.breakEvenMonths !== null
                       ? `${summary.breakEvenMonths} Months`
@@ -904,7 +904,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-950/60 border border-slate-800/60">
-                  <span className="text-[11px] text-slate-400 block mb-0.5">Lifetime Int. Saved</span>
+                  <span className="text-[11px] text-slate-400 block mb-0.5">Lifetime Savings</span>
                   <span className="text-sm sm:text-base font-bold font-mono text-emerald-400">
                     {fmt(summary.lifetimeInterestSaved)}
                   </span>

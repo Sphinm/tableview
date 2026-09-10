@@ -170,7 +170,7 @@ export function calculateMortgage(inputs: MortgageInputs): MortgageSummary {
   const payoffDate = schedule.length > 0 ? schedule[schedule.length - 1] : null;
   const payoffMonth = payoffDate ? payoffDate.month : inputs.startMonth;
   const payoffYear = payoffDate ? payoffDate.year : inputs.startYear + inputs.loanTermYears;
-  const payoffDateString = `${getMonthName(payoffMonth)}, ${payoffYear}`;
+  const payoffDateString = `${getMonthName(payoffMonth)} ${payoffYear}`;
 
   return {
     loanAmount,

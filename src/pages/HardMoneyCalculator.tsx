@@ -630,7 +630,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
             {/* Financial Highlights */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block">Total Loan Amount</span>
+                <span className="text-[11px] text-slate-400 block">Total Loan</span>
                 <span className="text-base font-bold font-mono text-slate-100 mt-0.5 block">
                   {currencyFmt(result.totalLoanAmount)}
                 </span>
@@ -638,7 +638,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block">Initial Cash Required</span>
+                <span className="text-[11px] text-slate-400 block">Initial Cash</span>
                 <span className="text-base font-bold font-mono text-amber-400 mt-0.5 block">
                   {currencyFmt(result.initialCashRequired)}
                 </span>
@@ -654,7 +654,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               </div>
 
               <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block">Total Project Cost</span>
+                <span className="text-[11px] text-slate-400 block">Total Cost</span>
                 <span className="text-base font-bold font-mono text-slate-100 mt-0.5 block">
                   {currencyFmt(result.totalProjectCost)}
                 </span>
