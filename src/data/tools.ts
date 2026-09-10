@@ -1,4 +1,4 @@
-export type ToolCategory = 'viewer' | 'converter' | 'sql' | 'analysis';
+export type ToolCategory = 'viewer' | 'converter' | 'sql' | 'analysis' | 'calculator';
 
 export interface ToolConfig {
   slug: string;
@@ -14,7 +14,7 @@ export interface ToolConfig {
   category: ToolCategory;
   tag?: string;
   color: 'emerald' | 'green' | 'indigo' | 'cyan' | 'amber' | 'purple';
-  iconType: 'csv' | 'excel' | 'parquet' | 'json' | 'sql' | 'schema';
+  iconType: 'csv' | 'excel' | 'parquet' | 'json' | 'sql' | 'schema' | 'calculator' | 'building' | 'hammer' | 'server' | 'savings' | 'home' | 'refinance';
   acceptExtensions: string;
   acceptLabel: string;
   primaryExport: 'excel' | 'csv' | 'parquet' | 'json' | 'schema' | 'any';
@@ -739,6 +739,297 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
       {
         q: 'Can I export the schema definition?',
         a: 'Yes, you can copy the generated SQL DDL (CREATE TABLE) statement or Python Polars/Pandas type definitions with a single click.'
+      }
+    ]
+  },
+
+  // ==========================================
+  // CALCULATORS (专业金融与云成本计算器)
+  // ==========================================
+  'dscr-loan-calculator': {
+    slug: 'dscr-loan-calculator',
+    path: '/dscr-loan-calculator',
+    badge: '100% Client-Side · Rental Property Model',
+    title: 'DSCR Loan Calculator',
+    shortTitle: 'DSCR Loan',
+    metaTitle: 'DSCR Loan Calculator — Free In-Browser Rental Property Underwriting',
+    metaDescription: 'Calculate Debt Service Coverage Ratio (DSCR), monthly PITIA, minimum qualifying rental income, and cash flow for residential & commercial non-QM loans.',
+    h1: 'DSCR Loan',
+    h1Highlight: 'Calculator',
+    subtitle: 'Institutional-grade DSCR rental property underwriting. Calculate monthly debt coverage, interest-only payments, and maximum loan amounts instantly in your browser.',
+    category: 'calculator',
+    tag: 'High ROI',
+    color: 'indigo',
+    iconType: 'building',
+    acceptExtensions: 'Interactive Loan Model',
+    acceptLabel: 'No file upload needed · Instant interactive financial underwriting',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Dual Underwriting Standards',
+        description: 'Supports residential 1–4 unit Fannie Mae style and commercial 5+ unit net operating income debt coverage formulas.'
+      },
+      {
+        icon: 'cpu',
+        title: 'Reverse Loan Amount Solver',
+        description: 'Solve for maximum loan principal allowable based on target debt service coverage ratio (1.00x, 1.20x, 1.25x).'
+      },
+      {
+        icon: 'shield',
+        title: '100% Private Deal Analysis',
+        description: 'Never transmits your property addresses, rents, or personal financials to lead brokers or lenders.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is a good DSCR ratio for investment real estate?',
+        a: 'Most non-QM lenders require a minimum DSCR of 1.20x to 1.25x. A ratio above 1.25x qualifies for prime interest rates and maximum leverage.'
+      },
+      {
+        q: 'Can I export the underwriting report to Excel?',
+        a: 'Yes, 1-click native Excel (.xlsx) export generates a full underwriting sheet with monthly PITIA and debt coverage summary.'
+      }
+    ]
+  },
+
+  'hard-money-calculator': {
+    slug: 'hard-money-calculator',
+    path: '/hard-money-calculator',
+    badge: '100% In-Browser · Fix & Flip Underwriting',
+    title: 'Hard Money & Fix-and-Flip Calculator',
+    shortTitle: 'Hard Money & Flip',
+    metaTitle: 'Hard Money Loan Calculator — Free Fix-and-Flip Profit & MAO Modeler',
+    metaDescription: 'Calculate hard money loan amounts, points, holding interest, 70% rule maximum allowable offer (MAO), and net flip ROI with zero registration.',
+    h1: 'Hard Money & Fix-and-Flip',
+    h1Highlight: 'Calculator',
+    subtitle: 'Evaluate fix-and-flip bridge loan costs, lender points, rehab holding expenses, 70% rule maximum allowable offer (MAO), and net deal ROI.',
+    category: 'calculator',
+    tag: '70% Rule',
+    color: 'amber',
+    iconType: 'hammer',
+    acceptExtensions: 'Interactive Deal Sheet',
+    acceptLabel: 'No file upload needed · Instant bridge loan and flip profitability model',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: '70% Rule & MAO Engine',
+        description: 'Computes maximum allowable purchase price based on ARV and estimated rehab costs to guarantee flip margin.'
+      },
+      {
+        icon: 'zap',
+        title: 'Interest & Points Simulator',
+        description: 'Models monthly interest-only holding costs, upfront points, and Dutch interest vs standard draw schedules.'
+      },
+      {
+        icon: 'shield',
+        title: 'Zero Lead Forms or Spam',
+        description: 'Run private fix-and-flip valuations without broker calls or paywalled property report limits.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is the 70% rule in house flipping?',
+        a: 'The 70% rule states an investor should pay no more than 70% of the After Repair Value (ARV) minus estimated repair costs.'
+      },
+      {
+        q: 'How are hard money loan points calculated?',
+        a: '1 point equals 1% of the total loan amount, paid upfront at closing as lender compensation for short-term risk.'
+      }
+    ]
+  },
+
+  'snowflake-cost-calculator': {
+    slug: 'snowflake-cost-calculator',
+    path: '/snowflake-cost-calculator',
+    badge: 'Cloud FinOps · Virtual Warehouse Modeler',
+    title: 'Snowflake Warehouse Cost Calculator',
+    shortTitle: 'Snowflake FinOps',
+    metaTitle: 'Snowflake Warehouse Cost Calculator — Compute Credits & Storage Modeler',
+    metaDescription: 'Estimate Snowflake compute credits, multi-cluster autoscaling costs, auto-suspend idle savings, and compressed cloud storage costs.',
+    h1: 'Snowflake Warehouse Cost',
+    h1Highlight: 'Calculator',
+    subtitle: 'Model Snowflake virtual warehouse compute credits, cluster autoscaling, auto-suspend FinOps savings, and compressed cloud storage economics.',
+    category: 'calculator',
+    tag: 'Cloud FinOps',
+    color: 'cyan',
+    iconType: 'server',
+    acceptExtensions: 'Interactive FinOps Model',
+    acceptLabel: 'No file upload needed · Instant warehouse sizing & credit cost estimator',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'cpu',
+        title: 'T-Shirt Sizing & Cluster Matrix',
+        description: 'Full credit consumption matrix from X-Small (1 credit/hr) up to 6X-Large (512 credits/hr).'
+      },
+      {
+        icon: 'zap',
+        title: 'Auto-Suspend FinOps Simulator',
+        description: 'Calculates exact dollar waste from idle warehouses and demonstrates savings from 60-second auto-suspend.'
+      },
+      {
+        icon: 'download',
+        title: 'Excel Budget Export',
+        description: 'Download executive cloud compute budget breakdowns directly into Microsoft Excel (.xlsx).'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How much does 1 Snowflake compute credit cost?',
+        a: 'Standard Edition is approximately $2.00/credit, Enterprise Edition is $3.00/credit, and Business Critical is $4.00/credit.'
+      },
+      {
+        q: 'How does auto-suspend reduce Snowflake bills?',
+        a: 'Setting auto-suspend to 1 minute prevents warehouses from billing credits while waiting for queries during idle periods.'
+      }
+    ]
+  },
+
+  'parquet-storage-calculator': {
+    slug: 'parquet-storage-calculator',
+    path: '/parquet-storage-calculator',
+    badge: 'Data Lake FinOps · Storage & Scan Savings',
+    title: 'Parquet Storage & Query Savings Calculator',
+    shortTitle: 'Cloud Storage Savings',
+    metaTitle: 'Parquet Storage & Query Savings Calculator — AWS S3 & Athena Cost Reduction',
+    metaDescription: 'Calculate exact cloud storage byte reduction, AWS S3 monthly cost cuts, and Athena/BigQuery columnar projection scan savings when migrating from CSV/JSON to Parquet.',
+    h1: 'Parquet Cloud Storage &',
+    h1Highlight: 'Scan Savings',
+    subtitle: 'Calculate AWS S3 byte reduction, monthly storage savings, and Amazon Athena / Google BigQuery query scan cost cuts achieved by migrating to Apache Parquet.',
+    category: 'calculator',
+    tag: 'S3 & Athena',
+    color: 'emerald',
+    iconType: 'savings',
+    acceptExtensions: 'Interactive Lakehouse Model',
+    acceptLabel: 'No file upload needed · Instant cloud storage & query scan cost estimator',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'download',
+        title: '5x–10x Storage Compression Factor',
+        description: 'Calculates exact S3 standard storage dollar savings when moving away from bulky uncompressed CSV/JSON.'
+      },
+      {
+        icon: 'zap',
+        title: 'Athena & BigQuery Scan Cuts',
+        description: 'Models columnar projection pushdown where queries only scan 10%–20% of dataset bytes, reducing per-TB query bills.'
+      },
+      {
+        icon: 'shield',
+        title: '100% Private In-Browser Math',
+        description: 'Estimate enterprise petabyte storage migrations without uploading architecture details.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Why does Parquet save 80%+ on Athena and BigQuery?',
+        a: 'Because Parquet is columnar, analytical queries only scan columns in the SELECT and WHERE clauses instead of full row scans.'
+      },
+      {
+        q: 'How much does Snappy/ZSTD compress CSV data?',
+        a: 'Typical enterprise tabular data achieves 75% to 85% byte compression when converted from CSV to Parquet.'
+      }
+    ]
+  },
+
+  'mortgage-calculator': {
+    slug: 'mortgage-calculator',
+    path: '/mortgage-calculator',
+    badge: '100% In-Browser · Real Estate Home Loan',
+    title: 'Mortgage Payment & Amortization Calculator',
+    shortTitle: 'Mortgage Calculator',
+    metaTitle: 'Mortgage Calculator with Extra Payments & Biweekly Amortization Schedule',
+    metaDescription: 'Calculate monthly mortgage payments with PMI, property taxes, home insurance, and HOA fees. Includes interactive amortization schedules and Excel export.',
+    h1: 'Mortgage Payment &',
+    h1Highlight: 'Amortization Calculator',
+    subtitle: 'Accurately model P&I monthly payments, dynamic PMI auto-cancellation, property taxes, extra monthly principal acceleration, and biweekly payoffs.',
+    category: 'calculator',
+    tag: 'Popular',
+    color: 'green',
+    iconType: 'home',
+    acceptExtensions: 'Interactive Loan Model',
+    acceptLabel: 'No file upload needed · Instant PITI payment & amortization schedule',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Full PITI & PMI Breakdown',
+        description: 'Includes Principal, Interest, dynamic property tax, home insurance, HOA dues, and automated 80% LTV PMI removal.'
+      },
+      {
+        icon: 'zap',
+        title: 'Extra Payment & Biweekly Payoff',
+        description: 'Simulate extra monthly principal and biweekly schedules to see exact interest dollars saved and years shaved off debt.'
+      },
+      {
+        icon: 'shield',
+        title: 'Ad-Free Bankrate Alternative',
+        description: 'No ads, no spam phone calls from mortgage brokers, and zero data tracking.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is PITI in a monthly mortgage payment?',
+        a: 'PITI stands for Principal, Interest, Taxes, and Insurance. HOA dues and PMI can also be added depending on loan terms.'
+      },
+      {
+        q: 'When does PMI cancel automatically?',
+        a: 'Under federal law, conventional lenders must cancel PMI once the loan principal reaches 78% of the original home value.'
+      }
+    ]
+  },
+
+  'refinance-calculator': {
+    slug: 'refinance-calculator',
+    path: '/refinance-calculator',
+    badge: '100% In-Browser · Refinance Break-Even Analysis',
+    title: 'Mortgage Refinance Break-Even Calculator',
+    shortTitle: 'Refinance Calculator',
+    metaTitle: 'Mortgage Refinance Calculator — Break-Even Month & Lifetime Savings',
+    metaDescription: 'Compare your current mortgage to a new refinanced loan. Calculate monthly payment savings, closing cost break-even timeline, and 30-year reset warnings.',
+    h1: 'Mortgage Refinance',
+    h1Highlight: 'Break-Even Calculator',
+    subtitle: 'Compare existing vs new mortgage terms, compute exact break-even timeline against closing costs, cash-out distributions, and lifetime interest changes.',
+    category: 'calculator',
+    tag: 'New',
+    color: 'purple',
+    iconType: 'refinance',
+    acceptExtensions: 'Interactive Refi Model',
+    acceptLabel: 'No file upload needed · Instant mortgage comparison & break-even timeline',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Exact Break-Even Timeline',
+        description: 'Calculates the exact month when cumulative monthly payment savings surpass total upfront closing costs.'
+      },
+      {
+        icon: 'shield',
+        title: '30-Year Reset Clock Warning',
+        description: 'Alerts you if refinancing into a new 30-year term increases lifetime interest despite lowering your monthly payment.'
+      },
+      {
+        icon: 'download',
+        title: 'Instant Excel Deal Sheet',
+        description: 'Export the complete monthly comparison schedule directly to Microsoft Excel with 1 click.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'When does refinancing a mortgage make financial sense?',
+        a: 'Refinancing usually makes sense if you can lower your interest rate by 0.75% to 1.00% and plan to stay in the home past the break-even point.'
+      },
+      {
+        q: 'What is the 30-year clock reset trap?',
+        a: 'If you have paid 7 years into a 30-year loan and refinance into a brand-new 30-year loan, you restart interest amortization and may pay thousands more overall.'
       }
     ]
   }

@@ -16,6 +16,17 @@ if (typeof (BigInt.prototype as any).toJSON !== 'function') {
 // Initialize Sentry error monitoring & lightweight tracing
 initSentry();
 
+// Register PWA service worker for offline app capability
+if ('serviceWorker' in navigator && import.meta.env.PROD) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .catch((err) => {
+        console.warn('PWA ServiceWorker registration failed:', err);
+      });
+  });
+}
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />

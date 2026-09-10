@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import * as XLSX from 'xlsx';
 import {
   Calculator,
   DollarSign,
@@ -18,7 +17,9 @@ import {
   Percent,
   RefreshCw,
   Home,
-  Printer
+  Printer,
+  Bookmark,
+  Terminal
 } from 'lucide-react';
 import {
   type RefinanceInputs,
@@ -33,6 +34,7 @@ import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RefinanceBalanceChart } from '../components/RefinanceBalanceChart';
 import { PrintableRefinanceReport } from '../components/PrintableRefinanceReport';
+import { SavedScenariosModal } from '../components/SavedScenariosModal';
 
 const refinanceFaqs = [
   {
@@ -95,9 +97,12 @@ const refinanceSchemas = [
 
 interface RefinanceCalculatorProps {
   onTrySample?: () => void;
+  onAnalyzeInWorkbench?: (tableName: string, data: Record<string, any>[]) => Promise<void>;
 }
 
-export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalculatorProps) => {
+export const RefinanceCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWorkbench }: RefinanceCalculatorProps) => {
+  const [showScenariosModal, setShowScenariosModal] = useState(false);
+
   useEffect(() => {
     updatePageMeta(
       'Mortgage Refinance Break-Even Calculator - SmartAsset & Bankrate Alternative | TableView.dev',
@@ -288,7 +293,8 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
     URL.revokeObjectURL(url);
   };
 
-  const handleDownloadExcel = () => {
+  const handleDownloadExcel = async () => {
+    const XLSX = await import('xlsx');
     const wb = XLSX.utils.book_new();
 
     // Summary Sheet
@@ -400,6 +406,15 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             }}
             title="Share Refinance Deal"
           />
+          <button
+            type="button"
+            onClick={() => setShowScenariosModal(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-slate-100 text-xs font-medium border border-slate-700 shadow-sm transition-all active:scale-95 cursor-pointer"
+            title="Save or compare refinance deal scenarios locally in your browser"
+          >
+            <Bookmark className="size-3.5 text-indigo-400" />
+            <span>Saved Scenarios</span>
+          </button>
         </div>
       </div>
 
@@ -1330,6 +1345,30 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               <FileSpreadsheet className="size-3.5 text-emerald-400" />
               <span>Excel (.xlsx)</span>
             </button>
+
+            {onAnalyzeInWorkbench && (
+              <button
+                onClick={() => {
+                  const rows = monthlySchedule.map((r) => ({
+                    month: r.month,
+                    year: r.year,
+                    old_payment: Number(r.oldPayment.toFixed(2)),
+                    old_balance: Number(r.oldBalance.toFixed(2)),
+                    new_payment: Number(r.newPayment.toFixed(2)),
+                    new_balance: Number(r.newBalance.toFixed(2)),
+                    monthly_savings: Number(r.monthlySavings.toFixed(2)),
+                    cumulative_savings: Number(r.cumulativeSavings.toFixed(2)),
+                    equity_diff: Number(r.equityDifference.toFixed(2))
+                  }));
+                  onAnalyzeInWorkbench(`refinance_${Math.round(summary.newLoanAmount)}`, rows);
+                }}
+                className="px-3 py-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-xs font-semibold text-purple-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+                title="Query complete refinance amortization schedule with TableView SQL Workbench"
+              >
+                <Terminal className="size-3.5 text-purple-400" />
+                <span>Analyze in SQL</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -1604,6 +1643,46 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
         </div>
       </div>
     </div>
+
+    <SavedScenariosModal
+      isOpen={showScenariosModal}
+      onClose={() => setShowScenariosModal(false)}
+      calculatorId="refinance"
+      currentData={{
+        homePrice,
+        downPayment,
+        originalLoanAmount,
+        currentInterestRate,
+        monthsAlreadyPaid,
+        newTermYears,
+        newInterestRate,
+        yearsBeforeSell,
+        discountPoints,
+        originationPercent,
+        otherClosingCosts,
+        cashOutAmount,
+        rollCostsIntoLoan
+      }}
+      currentMetrics={{
+        headline: summary.monthlyPaymentSavings >= 0 ? `Save $${Math.round(summary.monthlyPaymentSavings).toLocaleString()}/mo` : `+$${Math.round(Math.abs(summary.monthlyPaymentSavings)).toLocaleString()}/mo`,
+        subline: summary.breakEvenMonths !== null ? `Break-even in ${summary.breakEvenMonths} mos · Net Benefit: $${Math.round(summary.totalNetBenefit).toLocaleString()}` : `Clock Reset Warning`
+      }}
+      onLoadScenario={(data) => {
+        if (data.homePrice) setHomePrice(data.homePrice);
+        if (data.downPayment) setDownPayment(data.downPayment);
+        if (data.originalLoanAmount) setOriginalLoanAmount(data.originalLoanAmount);
+        if (data.currentInterestRate) setCurrentInterestRate(data.currentInterestRate);
+        if (data.monthsAlreadyPaid !== undefined) setMonthsAlreadyPaid(data.monthsAlreadyPaid);
+        if (data.newTermYears) setNewTermYears(data.newTermYears);
+        if (data.newInterestRate) setNewInterestRate(data.newInterestRate);
+        if (data.yearsBeforeSell) setYearsBeforeSell(data.yearsBeforeSell);
+        if (data.discountPoints !== undefined) setDiscountPoints(data.discountPoints);
+        if (data.originationPercent !== undefined) setOriginationPercent(data.originationPercent);
+        if (data.otherClosingCosts !== undefined) setOtherClosingCosts(data.otherClosingCosts);
+        if (data.cashOutAmount !== undefined) setCashOutAmount(data.cashOutAmount);
+        if (data.rollCostsIntoLoan !== undefined) setRollCostsIntoLoan(data.rollCostsIntoLoan);
+      }}
+    />
 
     <PrintableRefinanceReport
       inputs={inputs}

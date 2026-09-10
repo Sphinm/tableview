@@ -33,7 +33,8 @@ export const DropZone = ({
     { slug: 'parquet-to-csv', name: 'Parquet to CSV', path: '/parquet-to-csv' },
     { slug: 'csv-to-parquet', name: 'CSV to Parquet', path: '/csv-to-parquet' },
     { slug: 'excel-to-csv', name: 'Excel to CSV', path: '/excel-to-csv' },
-    { slug: 'sql-workbench', name: 'SQL Workbench', path: '/sql-workbench' }
+    { slug: 'sql-workbench', name: 'SQL Workbench', path: '/sql-workbench' },
+    { slug: 'finance-calculator', name: 'Calculators', path: '/finance-calculator' }
   ];
 
   const handleDragOver = (e: DragEvent) => {
@@ -90,14 +91,14 @@ export const DropZone = ({
             </>
           ) : (
             <>
-              The In-Browser <span className="text-indigo-400">Parquet Workbench</span>
+              The In-Browser <span className="text-indigo-400">Data Workspace</span>
             </>
           )}
         </h1>
 
         <p className="text-lg sm:text-xl text-slate-400 leading-relaxed max-w-2xl mx-auto">
           {toolConfig?.subtitle ||
-            'Open, inspect schemas, query with DuckDB SQL, and convert Parquet, CSV & JSON to Excel. Runs entirely in your local browser memory with zero server uploads.'}
+            'Open, inspect schemas, query with DuckDB SQL, and convert Parquet, CSV, Excel & JSON. Runs entirely in your local browser memory with zero server uploads.'}
         </p>
       </div>
 

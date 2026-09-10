@@ -1,29 +1,32 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, lazy, Suspense } from 'react';
 import * as Sentry from '@sentry/react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { DropZone } from './components/DropZone';
 import { HeroSection } from './components/HeroSection';
 import { CompareSection } from './components/CompareSection';
-import { DataView } from './components/DataView';
 import { SeoSection } from './components/SeoSection';
-import { GuidesHub } from './pages/GuidesHub';
-import { GuideDetail } from './pages/GuideDetail';
-import { About } from './pages/About';
-import { Contact } from './pages/Contact';
-import { PrivacyPolicy } from './pages/PrivacyPolicy';
-import { TermsOfService } from './pages/TermsOfService';
-import { Disclaimer } from './pages/Disclaimer';
 import { CookieBanner } from './components/CookieBanner';
-import { MortgageCalculator } from './pages/MortgageCalculator';
-import { RefinanceCalculator } from './pages/RefinanceCalculator';
-import { DscrCalculator } from './pages/DscrCalculator';
-import { HardMoneyCalculator } from './pages/HardMoneyCalculator';
-import { SnowflakeCalculator } from './pages/SnowflakeCalculator';
-import { ParquetSavingsCalculator } from './pages/ParquetSavingsCalculator';
-import { FinanceCalculatorHub } from './pages/FinanceCalculatorHub';
 import { SamplePlayground } from './components/SamplePlayground';
-import { loadFileIntoDuckDB, generateSampleParquet, type SamplePreset } from './lib/duckdb';
+import { PageSkeleton } from './components/PageSkeleton';
+import { loadFileIntoDuckDB, generateSampleParquet, loadJsonDataIntoDuckDB, type SamplePreset } from './lib/duckdb';
+
+// Lazy-loaded heavy components & pages for bundle optimization & instant FCP
+const DataView = lazy(() => import('./components/DataView').then(m => ({ default: m.DataView })));
+const GuidesHub = lazy(() => import('./pages/GuidesHub').then(m => ({ default: m.GuidesHub })));
+const GuideDetail = lazy(() => import('./pages/GuideDetail').then(m => ({ default: m.GuideDetail })));
+const About = lazy(() => import('./pages/About').then(m => ({ default: m.About })));
+const Contact = lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
+const TermsOfService = lazy(() => import('./pages/TermsOfService').then(m => ({ default: m.TermsOfService })));
+const Disclaimer = lazy(() => import('./pages/Disclaimer').then(m => ({ default: m.Disclaimer })));
+const MortgageCalculator = lazy(() => import('./pages/MortgageCalculator').then(m => ({ default: m.MortgageCalculator })));
+const RefinanceCalculator = lazy(() => import('./pages/RefinanceCalculator').then(m => ({ default: m.RefinanceCalculator })));
+const DscrCalculator = lazy(() => import('./pages/DscrCalculator').then(m => ({ default: m.DscrCalculator })));
+const HardMoneyCalculator = lazy(() => import('./pages/HardMoneyCalculator').then(m => ({ default: m.HardMoneyCalculator })));
+const SnowflakeCalculator = lazy(() => import('./pages/SnowflakeCalculator').then(m => ({ default: m.SnowflakeCalculator })));
+const ParquetSavingsCalculator = lazy(() => import('./pages/ParquetSavingsCalculator').then(m => ({ default: m.ParquetSavingsCalculator })));
+const FinanceCalculatorHub = lazy(() => import('./pages/FinanceCalculatorHub').then(m => ({ default: m.FinanceCalculatorHub })));
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
 import { TOOLS_CONFIG } from './data/tools';
 import { getInitialTheme, applyTheme, type Theme } from './lib/theme';
@@ -130,6 +133,26 @@ export function App() {
     setErrorMessage(null);
   };
 
+  const handleAnalyzeScheduleInWorkbench = async (baseName: string, records: Record<string, any>[]) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    setLoadingStatus(`Loading ${records.length} schedule rows into DuckDB virtual workspace...`);
+    navigateTo('/');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    try {
+      const res = await loadJsonDataIntoDuckDB(baseName, records);
+      setCurrentTable(res.tableName);
+      setFileType(res.fileType);
+    } catch (err: any) {
+      console.error('Failed to analyze schedule in DuckDB:', err);
+      Sentry.captureException(err, { tags: { action: 'analyze_schedule' } });
+      setErrorMessage(`Failed to open schedule in workbench: ${err.message || 'Unknown error'}`);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // Render current view based on route path
   const renderCurrentView = () => {
     // Check if on dedicated tool landing page
@@ -215,13 +238,28 @@ export function App() {
         return <TermsOfService />;
 
       case '/mortgage-calculator':
-        return <MortgageCalculator onTrySample={handleTrySample} />;
+        return (
+          <MortgageCalculator
+            onTrySample={handleTrySample}
+            onAnalyzeInWorkbench={handleAnalyzeScheduleInWorkbench}
+          />
+        );
 
       case '/refinance-calculator':
-        return <RefinanceCalculator onTrySample={handleTrySample} />;
+        return (
+          <RefinanceCalculator
+            onTrySample={handleTrySample}
+            onAnalyzeInWorkbench={handleAnalyzeScheduleInWorkbench}
+          />
+        );
 
       case '/dscr-loan-calculator':
-        return <DscrCalculator onTrySample={handleTrySample} />;
+        return (
+          <DscrCalculator
+            onTrySample={handleTrySample}
+            onAnalyzeInWorkbench={handleAnalyzeScheduleInWorkbench}
+          />
+        );
 
       case '/hard-money-calculator':
         return <HardMoneyCalculator onTrySample={handleTrySample} />;
@@ -272,7 +310,9 @@ export function App() {
       </div>
 
       <main className="flex-1 flex flex-col">
-        {renderCurrentView()}
+        <Suspense fallback={<PageSkeleton />}>
+          {renderCurrentView()}
+        </Suspense>
       </main>
 
       <div className="print:hidden">

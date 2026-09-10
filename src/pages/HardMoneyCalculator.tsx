@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import * as XLSX from 'xlsx';
 import {
   Hammer,
   DollarSign,
@@ -224,7 +223,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
     });
 
   // Export Deal Sheet to Excel
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     const summaryData = [
       { Parameter: 'Purchase Price', Value: purchasePrice },
       { Parameter: 'Rehab / Renovation Budget', Value: rehabBudget },
@@ -242,6 +241,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
       { Parameter: 'Annualized ROI %', Value: `${result.annualizedRoiPercent}%` }
     ];
 
+    const XLSX = await import('xlsx');
     const worksheet = XLSX.utils.json_to_sheet(summaryData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Fix & Flip Analysis');

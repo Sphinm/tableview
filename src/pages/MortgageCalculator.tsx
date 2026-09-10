@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import * as XLSX from 'xlsx';
 import {
   Calculator,
   DollarSign,
@@ -11,7 +10,9 @@ import {
   HelpCircle,
   Sparkles,
   ArrowRight,
-  Printer
+  Printer,
+  Bookmark,
+  Terminal
 } from 'lucide-react';
 import {
   type MortgageInputs,
@@ -23,6 +24,7 @@ import {
   exportAmortizationToCsv,
   getMonthName
 } from '../lib/mortgageCalculator';
+import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
@@ -83,9 +85,12 @@ const mortgageSchemas = [
 
 interface MortgageCalculatorProps {
   onTrySample?: () => void;
+  onAnalyzeInWorkbench?: (tableName: string, data: Record<string, any>[]) => Promise<void>;
 }
 
-export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => {
+export const MortgageCalculator = ({ onTrySample, onAnalyzeInWorkbench }: MortgageCalculatorProps) => {
+  const [showScenariosModal, setShowScenariosModal] = useState(false);
+
   useEffect(() => {
     updatePageMeta(
       'Mortgage Calculator - Real Estate Home Loan & Amortization Tool | TableView.dev',
@@ -243,8 +248,8 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
     URL.revokeObjectURL(url);
   };
 
-  const handleExportExcel = () => {
-    const data = monthlySchedule.map(row => ({
+  const handleExportExcel = async () => {
+    const data = monthlySchedule.map((row) => ({
       'Month #': row.monthIndex,
       'Year': row.year,
       'Month': row.monthName,
@@ -260,6 +265,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
       'Cumulative Interest ($)': Number(row.totalInterestToDate.toFixed(2))
     }));
 
+    const XLSX = await import('xlsx');
     const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, 'Amortization Schedule');
@@ -317,8 +323,17 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                 insurance: homeInsuranceYearly,
                 hoa: monthlyHoa
               }}
-              title="Share Calculation"
+              title="Share Deal"
             />
+            <button
+              type="button"
+              onClick={() => setShowScenariosModal(true)}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-slate-100 text-xs font-medium border border-slate-700 shadow-sm transition-all active:scale-95 cursor-pointer"
+              title="Save or compare deal scenarios locally in your browser"
+            >
+              <Bookmark className="size-3.5 text-indigo-400" />
+              <span>Saved Scenarios</span>
+            </button>
           </div>
         </div>
 
@@ -1101,6 +1116,31 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                 <Download className="size-3.5" />
                 <span>Export CSV</span>
               </button>
+
+              {onAnalyzeInWorkbench && (
+                <button
+                  onClick={() => {
+                    const rows = monthlySchedule.map((r) => ({
+                      month: r.monthIndex,
+                      year: r.year,
+                      payment: Number(r.totalPayment.toFixed(2)),
+                      principal: Number(r.principalPaid.toFixed(2)),
+                      interest: Number(r.interestPaid.toFixed(2)),
+                      tax: Number(r.propertyTax.toFixed(2)),
+                      insurance: Number(r.homeInsurance.toFixed(2)),
+                      pmi: Number(r.pmi.toFixed(2)),
+                      balance: Number(r.endingBalance.toFixed(2)),
+                      cumulative_interest: Number(r.totalInterestToDate.toFixed(2))
+                    }));
+                    onAnalyzeInWorkbench(`mortgage_${homeValue}`, rows);
+                  }}
+                  className="px-3 py-2 sm:py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                  title="Query complete 360-month amortization schedule using DuckDB SQL Workbench"
+                >
+                  <Terminal className="size-3.5 text-purple-400" />
+                  <span>Analyze in SQL</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -1364,6 +1404,36 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
         </button>
       </div>
     </div>
+
+    <SavedScenariosModal
+      isOpen={showScenariosModal}
+      onClose={() => setShowScenariosModal(false)}
+      calculatorId="mortgage"
+      currentData={{
+        homeValue,
+        downPayment,
+        downPaymentType,
+        interestRate,
+        loanTermYears,
+        propertyTaxYearly,
+        homeInsuranceYearly,
+        monthlyHoa
+      }}
+      currentMetrics={{
+        headline: `$${Math.round(summary.totalMonthlyPayment).toLocaleString()}/mo`,
+        subline: `${loanTermYears}yr Fixed @ ${interestRate}% ($${Math.round(summary.loanAmount).toLocaleString()} Loan)`
+      }}
+      onLoadScenario={(data) => {
+        if (data.homeValue) setHomeValue(data.homeValue);
+        if (data.downPayment) setDownPayment(data.downPayment);
+        if (data.downPaymentType) setDownPaymentType(data.downPaymentType);
+        if (data.interestRate) setInterestRate(data.interestRate);
+        if (data.loanTermYears) setLoanTermYears(data.loanTermYears);
+        if (data.propertyTaxYearly !== undefined) setPropertyTaxYearly(data.propertyTaxYearly);
+        if (data.homeInsuranceYearly !== undefined) setHomeInsuranceYearly(data.homeInsuranceYearly);
+        if (data.monthlyHoa !== undefined) setMonthlyHoa(data.monthlyHoa);
+      }}
+    />
 
     <PrintableMortgageReport
       homeValue={homeValue}

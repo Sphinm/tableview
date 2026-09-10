@@ -12,12 +12,12 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
 
   const defaultFaqs = [
     {
-      q: 'Do my Parquet, CSV, or JSON files leave my computer?',
-      a: 'No, absolutely not. TableView executes 100% of its data ingestion, query compilation, and export serialization locally using DuckDB WebAssembly (Wasm). Your files and row values never touch external cloud servers. You can even disconnect your internet after the page loads and continue working completely offline.'
+      q: 'Do my CSV, Excel, Parquet, or JSON files leave my computer?',
+      a: 'No, absolutely not. TableView executes 100% of its data ingestion, SQL query execution, format conversions, and financial calculations locally using DuckDB WebAssembly (Wasm) and client-side JavaScript. Your datasets, row values, and deal parameters never touch external cloud servers. You can even disconnect your internet after the page loads and continue working completely offline.'
     },
     {
-      q: 'How do I convert an Apache Parquet file to Excel (.xlsx)?',
-      a: 'Simply drag and drop your .parquet file onto TableView, wait a moment for the in-browser schema detection, and click "Export Excel (.xlsx)". The application converts the columnar Arrow buffers into a native Microsoft Excel workbook with correct headers and cell formats.'
+      q: 'How do I convert an Apache Parquet or CSV file to Excel (.xlsx)?',
+      a: 'Simply drag and drop your .parquet or .csv file onto TableView, wait a moment for the in-browser schema detection, and click "Export Excel (.xlsx)". The application converts the tabular and Arrow buffers into a native Microsoft Excel workbook with preserved data types and cell formats.'
     },
     {
       q: 'Can I convert CSV or JSON files into compressed Apache Parquet (.parquet)?',
@@ -30,6 +30,10 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
     {
       q: 'Can I execute custom SQL queries against my local files?',
       a: 'Yes. Switch to the "SQL Console" tab in the workbench to run standard analytical SQL queries—including WHERE filters, GROUP BY aggregations, window functions, and JOINs—directly over your local dataset.'
+    },
+    {
+      q: 'Are the financial and FinOps calculators free and private?',
+      a: 'Yes! All financial models (DSCR rental loans, hard money & fix-and-flip, Snowflake warehouse sizing, cloud storage savings, mortgages, and refinance break-even) run 100% client-side with zero lead forms, no broker spam calls, no paywalls, and instant Excel (.xlsx) downloads.'
     }
   ];
 
@@ -63,7 +67,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
       <div className="mb-20">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-100 tracking-tight mb-3">
-            Engineered for Modern Data Engineering
+            Engineered for Modern Data & Financial Workflows
           </h2>
           <p className="text-base sm:text-lg text-slate-400">
             No heavy desktop installations, no Python dependencies, and zero security compromises.
@@ -153,19 +157,21 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
               </div>
 
               <h3 className="text-xl font-bold text-slate-100 mb-2">
-                Two-Way Conversion
+                Multi-Format Conversion
               </h3>
               <p className="text-sm text-slate-400 leading-relaxed mb-4">
-                Export Parquet to native Microsoft Excel (.xlsx) or CSV, or compress bulky text CSV/JSON files into high-ratio ZSTD Parquet.
+                Convert seamlessly between CSV, Microsoft Excel (.xlsx), Apache Parquet, and JSON—or compress bulky flat files into high-ratio ZSTD Parquet directly in your browser.
               </p>
             </div>
 
-            <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-mono text-slate-400 flex items-center justify-center gap-2.5">
+            <div className="p-3 rounded-xl bg-slate-950/80 border border-slate-800 text-xs font-mono text-slate-400 flex items-center justify-center gap-2 flex-wrap">
+              <span className="text-emerald-400 font-semibold">.csv</span>
+              <span>⇄</span>
+              <span className="text-green-400 font-semibold">.xlsx</span>
+              <span>⇄</span>
               <span className="text-indigo-400 font-semibold">.parquet</span>
               <span>⇄</span>
-              <span className="text-emerald-400 font-semibold">.xlsx</span>
-              <span>⇄</span>
-              <span className="text-slate-300 font-semibold">.csv</span>
+              <span className="text-amber-400 font-semibold">.json</span>
             </div>
           </div>
 

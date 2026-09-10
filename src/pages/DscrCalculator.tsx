@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import * as XLSX from 'xlsx';
 import {
   Calculator,
   DollarSign,
@@ -14,7 +13,9 @@ import {
   ArrowRight,
   BookOpen,
   ShieldCheck,
-  Printer
+  Printer,
+  Bookmark,
+  Terminal
 } from 'lucide-react';
 import {
   calculateDscr,
@@ -24,6 +25,7 @@ import {
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { PrintableDscrReport } from '../components/PrintableDscrReport';
+import { SavedScenariosModal } from '../components/SavedScenariosModal';
 
 const dscrSchemas = [
   {
@@ -133,9 +135,12 @@ const dscrSchemas = [
 
 interface DscrCalculatorProps {
   onTrySample?: () => void;
+  onAnalyzeInWorkbench?: (tableName: string, data: Record<string, any>[]) => Promise<void>;
 }
 
-export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProps) => {
+export const DscrCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWorkbench }: DscrCalculatorProps) => {
+  const [showScenariosModal, setShowScenariosModal] = useState(false);
+
   useEffect(() => {
     updatePageMeta(
       'DSCR Loan Calculator — Free BiggerPockets Alternative & Investor Tool | TableView.dev',
@@ -279,7 +284,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
     });
 
   // Export Amortization Table to Excel (.xlsx)
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     const rows = fullMonthlySchedule.map((r) => ({
       Year: r.year,
       Month: r.month,
@@ -291,6 +296,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
       'Accumulated Principal': r.accumulatedPrincipal
     }));
 
+    const XLSX = await import('xlsx');
     const worksheet = XLSX.utils.json_to_sheet(rows);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'DSCR Amortization');
@@ -853,12 +859,21 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   Qualify using this exact cash flow model without tax returns or personal W-2 forms.
                 </p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <button
                   onClick={handleCopyLink}
                   className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 cursor-pointer transition-colors"
                 >
                   {copiedLink ? 'Link Copied!' : 'Share Deal'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowScenariosModal(true)}
+                  className="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 border border-slate-700 inline-flex items-center gap-1.5 cursor-pointer transition-colors"
+                  title="Save or compare DSCR scenarios locally in your browser"
+                >
+                  <Bookmark className="size-3.5 text-indigo-400" />
+                  <span>Saved Scenarios</span>
                 </button>
                 <button
                   onClick={handleExportPdf}
@@ -876,6 +891,28 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <FileSpreadsheet className="size-3.5" />
                   <span>Export Excel</span>
                 </button>
+                {onAnalyzeInWorkbench && (
+                  <button
+                    onClick={() => {
+                      const rows = fullMonthlySchedule.map((r) => ({
+                        year: r.year,
+                        month: r.month,
+                        payment: Number(r.payment.toFixed(2)),
+                        principal: Number(r.principal.toFixed(2)),
+                        interest: Number(r.interest.toFixed(2)),
+                        balance: Number(r.balance.toFixed(2)),
+                        accumulated_interest: Number(r.accumulatedInterest.toFixed(2)),
+                        accumulated_principal: Number(r.accumulatedPrincipal.toFixed(2))
+                      }));
+                      onAnalyzeInWorkbench(`dscr_schedule_${propertyValue}`, rows);
+                    }}
+                    className="px-3.5 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                    title="Query complete DSCR amortization schedule with TableView SQL Workbench"
+                  >
+                    <Terminal className="size-3.5 text-purple-400" />
+                    <span>Analyze in SQL</span>
+                  </button>
+                )}
               </div>
             </div>
           </div>
@@ -944,6 +981,29 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                 <Download className="size-3.5" />
                 <span>CSV</span>
               </button>
+
+              {onAnalyzeInWorkbench && (
+                <button
+                  onClick={() => {
+                    const rows = fullMonthlySchedule.map((r) => ({
+                      year: r.year,
+                      month: r.month,
+                      payment: Number(r.payment.toFixed(2)),
+                      principal: Number(r.principal.toFixed(2)),
+                      interest: Number(r.interest.toFixed(2)),
+                      balance: Number(r.balance.toFixed(2)),
+                      accumulated_interest: Number(r.accumulatedInterest.toFixed(2)),
+                      accumulated_principal: Number(r.accumulatedPrincipal.toFixed(2))
+                    }));
+                    onAnalyzeInWorkbench(`dscr_schedule_${propertyValue}`, rows);
+                  }}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-950/70 hover:bg-purple-900 border border-purple-800/80 text-xs font-semibold text-purple-300 transition-colors cursor-pointer"
+                  title="Query complete DSCR amortization schedule with TableView SQL Workbench"
+                >
+                  <Terminal className="size-3.5 text-purple-400" />
+                  <span>Analyze in SQL</span>
+                </button>
+              )}
             </div>
           </div>
 
@@ -1436,6 +1496,38 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
         </button>
       </div>
     </div>
+
+    <SavedScenariosModal
+      isOpen={showScenariosModal}
+      onClose={() => setShowScenariosModal(false)}
+      calculatorId="dscr"
+      currentData={{
+        propertyValue,
+        downPayment,
+        interestRate,
+        loanTermYears,
+        isInterestOnly,
+        monthlyRent,
+        annualPropertyTax,
+        annualInsurance,
+        monthlyHoa
+      }}
+      currentMetrics={{
+        headline: `${result.grossDscr.toFixed(2)}x DSCR (${result.statusLabel})`,
+        subline: `${currencyFmt(propertyValue)} Property · Net Cash Flow: ${currencyFmt(result.monthlyNetCashFlow)}/mo`
+      }}
+      onLoadScenario={(data) => {
+        if (data.propertyValue) setPropertyValue(data.propertyValue);
+        if (data.downPayment) setDownPayment(data.downPayment);
+        if (data.interestRate) setInterestRate(data.interestRate);
+        if (data.loanTermYears) setLoanTermYears(data.loanTermYears);
+        if (data.isInterestOnly !== undefined) setIsInterestOnly(data.isInterestOnly);
+        if (data.monthlyRent) setMonthlyRent(data.monthlyRent);
+        if (data.annualPropertyTax !== undefined) setAnnualPropertyTax(data.annualPropertyTax);
+        if (data.annualInsurance !== undefined) setAnnualInsurance(data.annualInsurance);
+        if (data.monthlyHoa !== undefined) setMonthlyHoa(data.monthlyHoa);
+      }}
+    />
 
     <PrintableDscrReport
       inputs={inputs}

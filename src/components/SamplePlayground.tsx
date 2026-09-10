@@ -75,10 +75,10 @@ export const SamplePlayground = ({ onSelectSample, isLoading }: SamplePlayground
           <span>Interactive Data Playground</span>
         </div>
         <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-100 tracking-tight">
-          Explore Free Sample Parquet Datasets
+          Explore Free Sample Datasets (Parquet, CSV & SQL)
         </h2>
         <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto mt-2 leading-relaxed">
-          Don't have a <code className="text-slate-200">.parquet</code> file ready? Launch realistic industry datasets directly into the DuckDB-Wasm engine or download them to test your local data pipelines.
+          Don't have a dataset file ready? Launch realistic industry datasets directly into the DuckDB-Wasm engine to test SQL queries, schema inspection, and Excel export—or download them to test your local pipelines.
         </p>
       </div>
 

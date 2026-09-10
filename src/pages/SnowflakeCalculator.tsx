@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import * as XLSX from 'xlsx';
 import {
   Server,
   FileSpreadsheet,
@@ -204,7 +203,7 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
       maximumFractionDigits: 2
     });
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     const summaryData = [
       { Parameter: 'Snowflake Edition', Value: EDITION_DEFAULTS[edition].name },
       { Parameter: 'Warehouse Size', Value: warehouseSize },
@@ -223,6 +222,7 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
       { Parameter: 'Annual Pre-Commit Savings Potential', Value: result.annualCommittedDiscountSavings }
     ];
 
+    const XLSX = await import('xlsx');
     const worksheet = XLSX.utils.json_to_sheet(summaryData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Snowflake Estimate');

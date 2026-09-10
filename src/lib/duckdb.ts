@@ -572,3 +572,34 @@ function triggerDownload(blob: Blob, filename: string) {
   document.body.removeChild(link);
   setTimeout(() => URL.revokeObjectURL(link.href), 1000);
 }
+
+/**
+ * Register an arbitrary array of JS objects into DuckDB as a queryable Parquet table.
+ * Enables seamless one-click transition from financial/data calculators into the TableView SQL workbench.
+ */
+export async function loadJsonDataIntoDuckDB(
+  baseName: string,
+  records: Record<string, any>[]
+): Promise<{ tableName: string; fileType: 'parquet' }> {
+  const { db, conn } = await getDuckDB();
+
+  const cleanName = baseName.replace(/[^a-zA-Z0-9_-]/g, '_');
+  const jsonFileName = `${cleanName}_data.json`;
+  const parquetFileName = `${cleanName}.parquet`;
+
+  // Write newline-delimited JSON (NDJSON)
+  const jsonStr = records.map(r => JSON.stringify(r)).join('\n');
+  const buffer = new TextEncoder().encode(jsonStr);
+
+  await db.registerFileBuffer(jsonFileName, buffer);
+
+  // Convert to high-performance Parquet format in virtual filesystem
+  await conn.query(`
+    COPY (
+      SELECT * FROM read_json_auto('${jsonFileName}')
+    ) TO '${parquetFileName}' (FORMAT 'PARQUET');
+  `);
+
+  return { tableName: parquetFileName, fileType: 'parquet' };
+}
+

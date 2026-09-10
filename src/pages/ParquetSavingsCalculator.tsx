@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import * as XLSX from 'xlsx';
 import {
   FileSpreadsheet,
   Sparkles,
@@ -216,7 +215,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
       maximumFractionDigits: 2
     });
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     const summaryData = [
       { Metric: 'Raw Data Format', Value: dataFormat.toUpperCase() },
       { Metric: 'Raw Data Size', Value: result.rawSizeFormatted },
@@ -233,6 +232,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
       { Metric: '3-Year Compounded Savings', Value: result.totalThreeYearSavings }
     ];
 
+    const XLSX = await import('xlsx');
     const worksheet = XLSX.utils.json_to_sheet(summaryData);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Parquet ROI Analysis');

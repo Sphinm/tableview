@@ -96,6 +96,10 @@ export function updatePageMeta(
 }
 
 export function parseCurrentLocation(): RouteState {
+  if (typeof window === 'undefined') {
+    return { path: '/' };
+  }
+
   // Check if restored from a static 404 fallback redirect
   try {
     const redirected = sessionStorage.getItem('redirect_path');
@@ -163,6 +167,41 @@ export function parseCurrentLocation(): RouteState {
     'jsonl-viewer': 'json-viewer'
   };
 
+  // Dedicated Mortgage Calculator route & aliases
+  if (/^\/(?:tools\/)?(?:mortgage-calculator|mortgage)$/.test(cleanPath)) {
+    return { path: '/mortgage-calculator' };
+  }
+
+  // Dedicated Refinance Calculator route & aliases (including should-i-refinance.php)
+  if (/^\/(?:tools\/)?(?:refinance-calculator|refinance|calculators\/should-i-refinance(?:\.php)?|should-i-refinance)$/.test(cleanPath)) {
+    return { path: '/refinance-calculator' };
+  }
+
+  // Dedicated DSCR Loan Calculator route & aliases
+  if (/^\/(?:tools\/)?(?:dscr-loan-calculator|dscr-calculator|dscr)$/.test(cleanPath)) {
+    return { path: '/dscr-loan-calculator' };
+  }
+
+  // Dedicated Hard Money & Fix-and-Flip Calculator route & aliases
+  if (/^\/(?:tools\/)?(?:hard-money-calculator|hard-money-loan-calculator|fix-and-flip-calculator|hard-money)$/.test(cleanPath)) {
+    return { path: '/hard-money-calculator' };
+  }
+
+  // Dedicated Snowflake Cost Calculator route & aliases
+  if (/^\/(?:tools\/)?(?:snowflake-cost-calculator|snowflake-calculator|snowflake-warehouse-calculator)$/.test(cleanPath)) {
+    return { path: '/snowflake-cost-calculator' };
+  }
+
+  // Dedicated Parquet Storage & Query Savings Calculator route & aliases
+  if (/^\/(?:tools\/)?(?:parquet-storage-calculator|parquet-savings-calculator|parquet-cost-calculator)$/.test(cleanPath)) {
+    return { path: '/parquet-storage-calculator' };
+  }
+
+  // Financial Calculators Hub route & aliases
+  if (/^\/(?:finance-calculator|calculators|financial-calculators|calculator)$/.test(cleanPath)) {
+    return { path: '/finance-calculator' };
+  }
+
   const resolvedToolSlug = TOOL_ALIASES[potentialToolSlug] || potentialToolSlug;
 
   if (resolvedToolSlug && TOOLS_CONFIG[resolvedToolSlug]) {
@@ -206,41 +245,6 @@ export function parseCurrentLocation(): RouteState {
   // Workbench aliases: /tools, /converters, /viewers
   if (/^\/(?:tools|converters|viewers)$/.test(cleanPath)) {
     return { path: '/' };
-  }
-
-  // Dedicated Mortgage Calculator route & aliases
-  if (/^\/(?:tools\/)?(?:mortgage-calculator|mortgage)$/.test(cleanPath)) {
-    return { path: '/mortgage-calculator' };
-  }
-
-  // Dedicated Refinance Calculator route & aliases (including should-i-refinance.php)
-  if (/^\/(?:tools\/)?(?:refinance-calculator|refinance|calculators\/should-i-refinance(?:\.php)?|should-i-refinance)$/.test(cleanPath)) {
-    return { path: '/refinance-calculator' };
-  }
-
-  // Dedicated DSCR Loan Calculator route & aliases
-  if (/^\/(?:tools\/)?(?:dscr-loan-calculator|dscr-calculator|dscr)$/.test(cleanPath)) {
-    return { path: '/dscr-loan-calculator' };
-  }
-
-  // Dedicated Hard Money & Fix-and-Flip Calculator route & aliases
-  if (/^\/(?:tools\/)?(?:hard-money-calculator|hard-money-loan-calculator|fix-and-flip-calculator|hard-money)$/.test(cleanPath)) {
-    return { path: '/hard-money-calculator' };
-  }
-
-  // Dedicated Snowflake Cost Calculator route & aliases
-  if (/^\/(?:tools\/)?(?:snowflake-cost-calculator|snowflake-calculator|snowflake-warehouse-calculator)$/.test(cleanPath)) {
-    return { path: '/snowflake-cost-calculator' };
-  }
-
-  // Dedicated Parquet Storage & Query Savings Calculator route & aliases
-  if (/^\/(?:tools\/)?(?:parquet-storage-calculator|parquet-savings-calculator|parquet-cost-calculator)$/.test(cleanPath)) {
-    return { path: '/parquet-storage-calculator' };
-  }
-
-  // Financial Calculators Hub route & aliases
-  if (/^\/(?:finance-calculator|calculators|financial-calculators|calculator)$/.test(cleanPath)) {
-    return { path: '/finance-calculator' };
   }
 
   return { path: cleanPath };

@@ -11,7 +11,14 @@ import {
   Search,
   X,
   SlidersHorizontal,
-  Table
+  Table,
+  Building,
+  Hammer,
+  Server,
+  PiggyBank,
+  Home,
+  ArrowRightLeft,
+  Calculator
 } from 'lucide-react';
 import { type ToolConfig, type ToolCategory, TOOLS_CONFIG } from '../data/tools';
 import { navigateTo } from '../lib/router';
@@ -33,7 +40,11 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
   // Filter tools based on category and search query
   const filteredTools = toolsList.filter((tool) => {
     const matchesCategory =
-      activeCategory === 'all' ? true : tool.category === activeCategory;
+      activeCategory === 'all'
+        ? true
+        : activeCategory === 'sql'
+        ? tool.category === 'sql' || tool.category === 'analysis'
+        : tool.category === activeCategory;
 
     const q = searchQuery.toLowerCase().trim();
     if (!q) return matchesCategory;
@@ -63,6 +74,20 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
         return <Terminal className={iconSize} />;
       case 'schema':
         return <Layers className={iconSize} />;
+      case 'calculator':
+        return <Calculator className={iconSize} />;
+      case 'building':
+        return <Building className={iconSize} />;
+      case 'hammer':
+        return <Hammer className={iconSize} />;
+      case 'server':
+        return <Server className={iconSize} />;
+      case 'savings':
+        return <PiggyBank className={iconSize} />;
+      case 'home':
+        return <Home className={iconSize} />;
+      case 'refinance':
+        return <ArrowRightLeft className={iconSize} />;
       default:
         return <Table className={iconSize} />;
     }
@@ -122,10 +147,12 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
     }
   };
 
-  const handleCardDragOver = (e: DragEvent, slug: string) => {
+  const handleCardDragOver = (e: DragEvent, tool: ToolConfig) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragOverSlug(slug);
+    if (tool.category !== 'calculator') {
+      setDragOverSlug(tool.slug);
+    }
   };
 
   const handleCardDragLeave = (e: DragEvent) => {
@@ -138,6 +165,11 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
     e.preventDefault();
     e.stopPropagation();
     setDragOverSlug(null);
+
+    if (tool.category === 'calculator') {
+      navigateTo(tool.path);
+      return;
+    }
 
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
       // Set the path to the tool then process file
@@ -159,6 +191,11 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
       id: 'sql',
       label: 'SQL & Analytics',
       count: toolsList.filter((t) => t.category === 'sql' || t.category === 'analysis').length
+    },
+    {
+      id: 'calculator',
+      label: 'Calculators',
+      count: toolsList.filter((t) => t.category === 'calculator').length
     }
   ];
 
@@ -216,7 +253,7 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search tools (e.g. CSV, Excel, Parquet)..."
+            placeholder="Search tools & calculators..."
             className="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 focus:border-indigo-500 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
           />
           {searchQuery && (
@@ -235,7 +272,7 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
         <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-slate-800 bg-slate-950/40">
           <SlidersHorizontal className="size-10 text-slate-500 mx-auto mb-3" />
           <h3 className="text-base font-semibold text-slate-200">No tools found matching "{searchQuery}"</h3>
-          <p className="text-xs text-slate-400 mt-1 mb-4">Try searching for "CSV", "Excel", "Parquet", or "SQL".</p>
+          <p className="text-xs text-slate-400 mt-1 mb-4">Try searching for "CSV", "Excel", "Parquet", "SQL", or "Calculator".</p>
           <button
             onClick={() => {
               setSearchQuery('');
@@ -258,7 +295,7 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
             <div
               key={tool.slug}
               onClick={() => handleCardClick(tool)}
-              onDragOver={(e) => handleCardDragOver(e, tool.slug)}
+              onDragOver={(e) => handleCardDragOver(e, tool)}
               onDragLeave={handleCardDragLeave}
               onDrop={(e) => handleCardDrop(e, tool)}
               className={`group relative rounded-2xl p-5 transition-all duration-200 cursor-pointer flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl ${
@@ -298,22 +335,36 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
               </div>
 
               {/* Card Footer: Accepted Exts & Hover Action Prompt */}
-              <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-300">
-                <span className="font-mono text-[11px] text-slate-400">
-                  {tool.acceptExtensions.split(',')[0]}
-                  {tool.acceptExtensions.split(',').length > 1 && (
-                    <span className="text-slate-400"> +{tool.acceptExtensions.split(',').length - 1}</span>
-                  )}
-                </span>
+              {tool.category === 'calculator' ? (
+                <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-300">
+                  <span className="text-[11px] text-slate-400 flex items-center gap-1.5 truncate pr-2">
+                    <span className="inline-block size-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                    <span className="truncate">{tool.acceptExtensions}</span>
+                  </span>
 
-                <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-400 group-hover:translate-x-0.5 transition-transform">
-                  <span>Open</span>
-                  <ArrowRight className="size-3" />
-                </span>
-              </div>
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-400 group-hover:text-indigo-300 group-hover:translate-x-0.5 transition-transform shrink-0">
+                    <span>Launch</span>
+                    <ArrowRight className="size-3" />
+                  </span>
+                </div>
+              ) : (
+                <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-300">
+                  <span className="font-mono text-[11px] text-slate-400">
+                    {tool.acceptExtensions.split(',')[0]}
+                    {tool.acceptExtensions.split(',').length > 1 && (
+                      <span className="text-slate-400"> +{tool.acceptExtensions.split(',').length - 1}</span>
+                    )}
+                  </span>
 
-              {/* Drag over overlay hint */}
-              {isDraggingThis && (
+                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-400 group-hover:text-indigo-300 group-hover:translate-x-0.5 transition-transform">
+                    <span>Open</span>
+                    <ArrowRight className="size-3" />
+                  </span>
+                </div>
+              )}
+
+              {/* Drag over overlay hint (only for file tools) */}
+              {isDraggingThis && tool.category !== 'calculator' && (
                 <div className="absolute inset-0 bg-indigo-950/90 backdrop-blur-xs flex flex-col items-center justify-center p-4 text-center z-10 animate-fade-in">
                   <Sparkles className="size-8 text-amber-400 mb-2 animate-bounce" />
                   <p className="text-sm font-bold text-slate-100">Drop file to open in</p>

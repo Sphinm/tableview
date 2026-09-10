@@ -56,10 +56,10 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                 <span>Zero Data Egress · Pure Client WebAssembly Sandbox</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight">
-                Ready to Inspect & Query Your Datasets?
+                Ready to Inspect, Query & Model Your Data?
               </h3>
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                Open Apache Parquet, GeoParquet, CSV, or Excel files up to 2GB in memory. Zero cloud uploads, zero telemetry, and instantaneous DuckDB SQL queries.
+                Open CSV, Excel, Apache Parquet, or JSON files up to 2GB directly in browser memory. Zero cloud uploads, zero telemetry, instantaneous DuckDB SQL queries, and free financial calculators.
               </p>
             </div>
 
@@ -103,7 +103,7 @@ export const Footer = ({ onTrySample }: FooterProps) => {
             </div>
 
             <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
-              Fast, 100% private in-browser Apache Parquet inspector, SQL query workbench, and native Excel converter powered by DuckDB-Wasm.
+              100% private in-browser data workspace for CSV, Excel, Parquet, and JSON with SQL analytics, two-way format conversion, and institutional-grade financial calculators powered by DuckDB-Wasm.
             </p>
 
             {/* Architecture Highlights */}

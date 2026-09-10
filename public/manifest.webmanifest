@@ -1,0 +1,50 @@
+{
+  "name": "TableView.dev — In-Browser Data & Finance Workspace",
+  "short_name": "TableView",
+  "description": "100% private in-browser data workspace and bank-grade real estate loan calculators. Zero server uploads.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#050608",
+  "theme_color": "#050608",
+  "categories": ["finance", "productivity", "utilities", "developer"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Mortgage Calculator",
+      "short_name": "Mortgage",
+      "description": "Calculate monthly home loan payment with PITI & PMI",
+      "url": "/mortgage-calculator",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "DSCR Loan Calculator",
+      "short_name": "DSCR",
+      "description": "Underwrite rental property debt-service coverage ratio",
+      "url": "/dscr-loan-calculator",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Refinance Calculator",
+      "short_name": "Refinance",
+      "description": "Mortgage refinance break-even and savings calculator",
+      "url": "/refinance-calculator",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    },
+    {
+      "name": "Parquet Inspector",
+      "short_name": "Parquet",
+      "description": "Inspect and query Apache Parquet files locally",
+      "url": "/parquet-viewer",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+    }
+  ]
+}

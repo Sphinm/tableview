@@ -15,7 +15,7 @@ export const About = () => {
           About TableView.dev
         </h1>
         <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl">
-          TableView.dev was engineered to solve a common developer pain point: inspecting and querying large Apache Parquet datasets without launching heavy Python notebooks or uploading sensitive data to remote cloud servers.
+          TableView.dev is a private, client-side data workspace built for data engineers, analysts, and operators: inspect, query with SQL, and convert CSV, Excel (.xlsx), Apache Parquet, and JSON files directly in your browser tab—plus run institutional-grade financial and FinOps calculations—with zero cloud uploads.
         </p>
       </div>
 
@@ -24,14 +24,14 @@ export const About = () => {
         <div className="p-6 rounded-2xl bg-red-950/20 border border-red-900/40">
           <h3 className="text-base font-semibold text-red-300 mb-2">The Old Way: High Friction & Privacy Risk</h3>
           <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            Data engineers and analysts had two painful choices: spin up a local Python virtualenv with Pandas and PyArrow, or upload internal production logs to generic "online converter" websites where confidential customer data is exposed to third-party servers.
+            Data practitioners had two painful choices: install bloated desktop software or configure Python virtual environments with Pandas and PyArrow, or upload sensitive financial files, customer records, and internal logs to generic "online converter" websites where confidential data is exposed to remote servers.
           </p>
         </div>
 
         <div className="p-6 rounded-2xl bg-emerald-950/20 border border-emerald-800/50">
           <h3 className="text-base font-semibold text-emerald-300 mb-2">The TableView Way: 100% In-Browser & Instant</h3>
           <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-            By compiling DuckDB to WebAssembly, TableView executes an entire vectorized SQL analytical database inside your browser tab. Files are decoded in local RAM at near-native CPU speeds. Zero uploads, zero telemetry, and zero installation required.
+            By compiling DuckDB to WebAssembly and combining client-side financial engines, TableView brings an analytical workstation straight to your browser tab. Datasets are parsed in local RAM at near-native CPU speeds. Zero server uploads, zero telemetry, and zero installation required.
           </p>
         </div>
       </div>

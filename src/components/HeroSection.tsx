@@ -22,8 +22,8 @@ export const HeroSection = ({
     'Excel (.xlsx / .xls)',
     'Apache Parquet',
     'JSON & NDJSON',
-    'GeoParquet',
-    'DuckDB SQL'
+    'DuckDB SQL',
+    'Calculators & FinOps'
   ];
 
   return (

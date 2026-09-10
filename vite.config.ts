@@ -10,5 +10,22 @@ export default defineConfig({
   ],
   optimizeDeps: {
     exclude: ['@duckdb/duckdb-wasm']
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules/@sentry')) {
+            return 'vendor-sentry';
+          }
+          if (id.includes('node_modules/@duckdb/duckdb-wasm')) {
+            return 'vendor-duckdb';
+          }
+          if (id.includes('node_modules/lucide-react')) {
+            return 'vendor-lucide';
+          }
+        }
+      }
+    }
   }
 })
