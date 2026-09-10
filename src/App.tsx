@@ -7,6 +7,7 @@ import { HeroSection } from './components/HeroSection';
 import { CompareSection } from './components/CompareSection';
 import { SeoSection } from './components/SeoSection';
 import { CookieBanner } from './components/CookieBanner';
+import { AdSlot } from './components/AdSlot';
 import { SamplePlayground } from './components/SamplePlayground';
 import { PageSkeleton } from './components/PageSkeleton';
 import type { SamplePreset } from './lib/duckdb';
@@ -253,6 +254,11 @@ export function App() {
                   loadingStatus={loadingStatus}
                 />
               )}
+              {/* Below the drop zone, above the fold-line content people scroll past next. */}
+              <div className="max-w-4xl mx-auto px-4">
+                <AdSlot unit="workbenchLeaderboard" format="horizontal" />
+              </div>
+
               <SamplePlayground onSelectSample={handleTrySample} isLoading={isLoading} />
               <CompareSection />
             </>

@@ -23,6 +23,7 @@ import {
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
+import { AdSlot } from '../components/AdSlot';
 
 const snowflakeSchemas = [
   {
@@ -803,6 +804,9 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
             </div>
           </div>
 
+          {/* Highest-intent placement: the reader has just seen their own numbers. */}
+          <AdSlot unit="calculatorResult" className="my-8" />
+
           {/* Subsection 4: Comprehensive In-Depth FinOps FAQs */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
@@ -853,6 +857,9 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
               </div>
             </div>
           </div>
+
+          {/* Closing unit at the end of the editorial content. */}
+          <AdSlot unit="calculatorFaq" format="horizontal" />
 
           <MethodologyDisclosure type="cloud" />
 

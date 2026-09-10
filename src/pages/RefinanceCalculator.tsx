@@ -33,6 +33,7 @@ import { updatePageMeta, navigateTo } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
+import { AdSlot } from '../components/AdSlot';
 import { RefinanceBalanceChart } from '../components/RefinanceBalanceChart';
 import { PrintableRefinanceReport } from '../components/PrintableRefinanceReport';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
@@ -69,7 +70,7 @@ const refinanceSchemas = [
     '@type': 'WebApplication',
     name: 'Mortgage Refinance Break-Even Calculator',
     url: 'https://tableview.dev/refinance-calculator',
-    description: 'Free in-browser mortgage refinance calculator. Compare old vs new monthly payments, calculate break-even months, equity trajectory, and discount points with Excel export. Best ad-free alternative to Bankrate and SmartAsset.',
+    description: 'Free in-browser mortgage refinance calculator. Compare old vs new monthly payments, calculate break-even months, equity trajectory, and discount points with Excel export. A private, no-lead-form alternative to Bankrate and SmartAsset.',
     applicationCategory: 'FinanceApplication',
     operatingSystem: 'All',
     offers: {
@@ -1503,6 +1504,9 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWork
         )}
       </div>
 
+      {/* Highest-intent placement: the reader has just seen their own numbers. */}
+      <AdSlot unit="calculatorResult" className="my-8" />
+
       <MethodologyDisclosure type="refinance" />
 
       {/* Competitor Comparison Section */}
@@ -1538,8 +1542,8 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWork
                 <td className="py-3 px-4 text-slate-400">No (Lead Capture)</td>
               </tr>
               <tr className="hover:bg-slate-800/30">
-                <td className="py-3 px-4 font-semibold text-slate-200">Ad-Free (No Broker Spam Calls)</td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (No Lead Generation)</td>
+                <td className="py-3 px-4 font-semibold text-slate-200">No Lead Generation / Spam Calls</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (No Lead Forms)</td>
                 <td className="py-3 px-4 text-rose-400">No (Aggressive Loan Offers)</td>
                 <td className="py-3 px-4 text-rose-400">No (Advisor Lead Capture)</td>
               </tr>
@@ -1684,6 +1688,9 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWork
         if (data.rollCostsIntoLoan !== undefined) setRollCostsIntoLoan(data.rollCostsIntoLoan);
       }}
     />
+
+    {/* Closing unit at the end of the editorial content. */}
+    <AdSlot unit="calculatorFaq" format="horizontal" />
 
     <PrintableRefinanceReport
       inputs={inputs}

@@ -21,6 +21,7 @@ import {
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
+import { AdSlot } from '../components/AdSlot';
 
 const parquetSchemas = [
   {
@@ -811,6 +812,9 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
             </div>
           </div>
 
+          {/* Highest-intent placement: the reader has just seen their own numbers. */}
+          <AdSlot unit="calculatorResult" className="my-8" />
+
           {/* Subsection 4: Comprehensive In-Depth Parquet FAQs */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
@@ -863,6 +867,9 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
           </div>
 
           {/* Methodology & FinOps Disclosure */}
+          {/* Closing unit at the end of the editorial content. */}
+          <AdSlot unit="calculatorFaq" format="horizontal" />
+
           <MethodologyDisclosure type="cloud" />
 
           {/* Subsection 5: Related Data Engineering Tools Cross-Links */}

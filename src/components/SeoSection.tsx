@@ -1,7 +1,15 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { ChevronDown, ShieldCheck, Cpu, HardDriveDownload, Table, CheckCircle2, ArrowRight } from 'lucide-react';
 import { type ToolConfig, TOOLS_CONFIG } from '../data/tools';
 import { navigateTo } from '../lib/router';
+import { AdSlot } from './AdSlot';
+
+/**
+ * How many tool cards to show before the in-feed ad. Six fills two rows on the
+ * 3-column desktop grid, so the ad sits on a natural boundary rather than
+ * splitting a row.
+ */
+const IN_FEED_AD_AFTER_INDEX = 5;
 
 interface SeoSectionProps {
   toolConfig?: ToolConfig;
@@ -225,9 +233,9 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {toolsList.map((tool) => (
+          {toolsList.map((tool, index) => (
+            <Fragment key={tool.slug}>
             <div
-              key={tool.slug}
               onClick={() => navigateTo(tool.path)}
               className="p-5 sm:p-6 rounded-2xl bg-slate-900/40 hover:bg-slate-900/80 border border-slate-800/80 hover:border-indigo-500/40 transition-all cursor-pointer group flex flex-col justify-between"
             >
@@ -251,6 +259,14 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 <span>→</span>
               </div>
             </div>
+
+            {/* In-feed ad. Spans the full grid width so it never looks like a tool card. */}
+            {index === IN_FEED_AD_AFTER_INDEX && (
+              <div className="sm:col-span-2 lg:col-span-3">
+                <AdSlot unit="toolInArticle" format="horizontal" className="my-2" />
+              </div>
+            )}
+            </Fragment>
           ))}
         </div>
       </div>
@@ -289,6 +305,11 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
             );
           })}
         </div>
+      </div>
+
+      {/* Closing unit after the FAQ, where the reader has finished the page. */}
+      <div className="max-w-3xl mx-auto">
+        <AdSlot unit="toolInArticle" />
       </div>
     </section>
   );

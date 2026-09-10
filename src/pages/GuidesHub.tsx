@@ -144,7 +144,7 @@ export const GuidesHub = () => {
         </div>
       )}
 
-      <AdSlot className="mt-16" />
+      <AdSlot unit="guideInArticle" className="mt-16" />
     </div>
   );
 };

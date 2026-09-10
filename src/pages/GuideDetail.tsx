@@ -268,8 +268,8 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
           </section>
         ))}
 
-        {/* Mid-Article AdSlot */}
-        <AdSlot />
+        {/* Mid-article unit, placed after the body copy and before the FAQ. */}
+        <AdSlot unit="guideInArticle" layout="in-article" />
 
         {/* FAQ Section */}
         {guide.faqs && guide.faqs.length > 0 && (

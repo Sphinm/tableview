@@ -8,6 +8,7 @@
     "build": "tsc -b && vite build && bun run scripts/prerender.ts",
     "prerender": "bun run scripts/prerender.ts",
     "icons": "bun run scripts/generate-icons.ts",
+    "adslots:check": "bun run scripts/check-ads.ts",
     "test": "bun test",
     "lint": "oxlint",
     "preview": "vite preview"

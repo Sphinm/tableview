@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Mail, MessageSquare, Send, CheckCircle2, HelpCircle, Copy, ExternalLink, Check, Bug, FileText } from 'lucide-react';
-import { AdSlot } from '../components/AdSlot';
 import { navigateTo } from '../lib/router';
 import { getBugReportTemplate, getBugReportMailto } from '../lib/feedback';
 
@@ -301,7 +300,6 @@ export const Contact = () => {
         </div>
       </div>
 
-      <AdSlot className="mt-8" />
     </div>
   );
 };

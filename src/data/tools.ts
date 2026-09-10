@@ -970,8 +970,8 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
       },
       {
         icon: 'shield',
-        title: 'Ad-Free Bankrate Alternative',
-        description: 'No ads, no spam phone calls from mortgage brokers, and zero data tracking.'
+        title: 'No-Lead-Form Bankrate Alternative',
+        description: 'No broker phone calls, no lead forms, and zero data tracking — your figures stay in your browser.'
       }
     ],
     faqs: [

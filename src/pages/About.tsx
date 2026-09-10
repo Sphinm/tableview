@@ -1,5 +1,4 @@
 import { Cpu, ShieldCheck, Zap, Layers, Lock, Sparkles, ArrowRight } from 'lucide-react';
-import { AdSlot } from '../components/AdSlot';
 import { navigateTo } from '../lib/router';
 
 export const About = () => {
@@ -134,7 +133,6 @@ export const About = () => {
         </a>
       </div>
 
-      <AdSlot className="mt-12" />
     </div>
   );
 };

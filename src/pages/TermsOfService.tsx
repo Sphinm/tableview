@@ -1,5 +1,4 @@
 import { Scale, CheckCircle2 } from 'lucide-react';
-import { AdSlot } from '../components/AdSlot';
 
 export const TermsOfService = () => {
   return (
@@ -124,7 +123,6 @@ export const TermsOfService = () => {
         </section>
       </div>
 
-      <AdSlot className="mt-12" />
     </div>
   );
 };

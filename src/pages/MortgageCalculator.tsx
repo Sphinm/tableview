@@ -29,6 +29,7 @@ import { updatePageMeta, navigateTo } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
+import { AdSlot } from '../components/AdSlot';
 import { PaymentDonutChart } from '../components/PaymentDonutChart';
 import { AmortizationChart } from '../components/AmortizationChart';
 import { PrintableMortgageReport } from '../components/PrintableMortgageReport';
@@ -1232,6 +1233,9 @@ export const MortgageCalculator = ({ onTrySample, onAnalyzeInWorkbench }: Mortga
         )}
       </div>
 
+      {/* Highest-intent placement: the reader has just seen their own numbers. */}
+      <AdSlot unit="calculatorResult" className="my-8" />
+
       <MethodologyDisclosure type="mortgage" />
 
       {/* Competitor Comparison Section */}
@@ -1269,11 +1273,11 @@ export const MortgageCalculator = ({ onTrySample, onAnalyzeInWorkbench }: Mortga
                 <td className="py-3 px-4 text-emerald-400">Yes</td>
               </tr>
               <tr className="hover:bg-slate-800/30">
-                <td className="py-3 px-4 font-semibold text-slate-200">Ad-Free (No Broker Spam)</td>
-                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (No Lead Capture)</td>
-                <td className="py-3 px-4 text-rose-400">No (Heavy Ads &amp; Popups)</td>
+                <td className="py-3 px-4 font-semibold text-slate-200">No Lead Capture / Broker Spam</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (Never Sells Your Data)</td>
+                <td className="py-3 px-4 text-rose-400">No (Sells Phone Leads)</td>
                 <td className="py-3 px-4 text-rose-400">No (Lender Lead Forms)</td>
-                <td className="py-3 px-4 text-amber-400">Banner Ads</td>
+                <td className="py-3 px-4 text-amber-400">No (Lead Forms)</td>
               </tr>
               <tr className="hover:bg-slate-800/30">
                 <td className="py-3 px-4 font-semibold text-slate-200">Monthly + Lump-Sum Extra Payments</td>
@@ -1435,6 +1439,9 @@ export const MortgageCalculator = ({ onTrySample, onAnalyzeInWorkbench }: Mortga
         if (data.monthlyHoa !== undefined) setMonthlyHoa(data.monthlyHoa);
       }}
     />
+
+    {/* Closing unit at the end of the editorial content. */}
+    <AdSlot unit="calculatorFaq" format="horizontal" />
 
     <PrintableMortgageReport
       homeValue={homeValue}

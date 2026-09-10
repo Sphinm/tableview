@@ -1,5 +1,4 @@
 import { AlertTriangle, CheckCircle2, Scale } from 'lucide-react';
-import { AdSlot } from '../components/AdSlot';
 import { updatePageMeta } from '../lib/router';
 import { useEffect } from 'react';
 
@@ -106,7 +105,6 @@ export const Disclaimer = () => {
         </section>
       </div>
 
-      <AdSlot className="mt-12" />
     </div>
   );
 };

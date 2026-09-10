@@ -25,6 +25,7 @@ import {
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
+import { AdSlot } from '../components/AdSlot';
 import { PrintableDscrReport } from '../components/PrintableDscrReport';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
 
@@ -1350,6 +1351,9 @@ export const DscrCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWorkbench
 
           <MethodologyDisclosure type="dscr" />
 
+          {/* Highest-intent placement: the reader has just seen their own numbers. */}
+          <AdSlot unit="calculatorResult" className="my-8" />
+
           {/* Subsection 4: Comprehensive In-Depth Investor FAQ */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
@@ -1529,6 +1533,9 @@ export const DscrCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWorkbench
         if (data.monthlyHoa !== undefined) setMonthlyHoa(data.monthlyHoa);
       }}
     />
+
+    {/* Closing unit at the end of the editorial content. */}
+    <AdSlot unit="calculatorFaq" format="horizontal" />
 
     <PrintableDscrReport
       inputs={inputs}

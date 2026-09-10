@@ -1,5 +1,4 @@
 import { Shield, Lock, Eye, FileText, CheckCircle2 } from 'lucide-react';
-import { AdSlot } from '../components/AdSlot';
 import { navigateTo } from '../lib/router';
 
 export const PrivacyPolicy = () => {
@@ -173,7 +172,6 @@ export const PrivacyPolicy = () => {
         </section>
       </div>
 
-      <AdSlot className="mt-12" />
     </div>
   );
 };
