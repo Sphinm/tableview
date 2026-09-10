@@ -37,11 +37,13 @@ import {
   parseJsonContent
 } from '../lib/duckdb';
 import { JsonView } from './JsonView';
+import { type ToolConfig } from '../data/tools';
 
 interface DataViewProps {
   tableName: string;
   fileType: 'parquet' | 'csv' | 'json';
   onReset: () => void;
+  toolConfig?: ToolConfig;
 }
 
 /**
@@ -99,8 +101,8 @@ const formatTypeBadge = (type: string): string => {
   return type;
 };
 
-export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
-  const [activeTab, setActiveTab] = useState<'grid' | 'schema' | 'sql' | 'json'>('grid');
+export const DataView = ({ tableName, fileType, onReset, toolConfig }: DataViewProps) => {
+  const [activeTab, setActiveTab] = useState<'grid' | 'schema' | 'sql' | 'json'>(toolConfig?.defaultTab || 'grid');
   const [columns, setColumns] = useState<ColumnSchema[]>([]);
   const [rows, setRows] = useState<Record<string, any>[]>([]);
   const [totalRows, setTotalRows] = useState<number>(0);
@@ -488,6 +490,53 @@ export const DataView = ({ tableName, fileType, onReset }: DataViewProps) => {
           </button>
         </div>
       </div>
+
+      {/* Quick Convert Intent Banner (when loaded via converter tool) */}
+      {toolConfig && toolConfig.primaryExport !== 'any' && toolConfig.primaryExport !== 'schema' && (
+        <div className="flex flex-wrap items-center justify-between gap-4 p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-950/80 via-slate-900 to-indigo-950/60 border border-indigo-500/40 shadow-xl mb-6">
+          <div className="flex items-center gap-3.5">
+            <div className="size-11 rounded-xl bg-indigo-500/20 border border-indigo-500/40 flex items-center justify-center text-indigo-400 shrink-0">
+              <Download className="size-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">
+                  Ready to Convert
+                </span>
+                <span className="text-sm sm:text-base font-bold text-slate-100">{toolConfig.title}</span>
+              </div>
+              <p className="text-xs text-slate-300 mt-1">
+                Parsed <span className="font-semibold text-white">{totalRows.toLocaleString()}</span> rows and <span className="font-semibold text-white">{columns.length}</span> columns. 1-click download your converted file:
+              </p>
+            </div>
+          </div>
+
+          <button
+            onClick={() => handleExport(toolConfig.primaryExport as any)}
+            disabled={isExporting !== null}
+            className="btn-primary w-full sm:w-auto px-6 py-3 rounded-xl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50 whitespace-nowrap"
+          >
+            {isExporting === toolConfig.primaryExport ? (
+              <>
+                <RefreshCw className="size-4 animate-spin" />
+                <span>Exporting {toolConfig.primaryExport.toUpperCase()}...</span>
+              </>
+            ) : (
+              <>
+                <Sparkles className="size-4 text-amber-400" />
+                <span>
+                  Download{' '}
+                  {toolConfig.primaryExport === 'excel'
+                    ? 'Excel (.xlsx)'
+                    : toolConfig.primaryExport === 'parquet'
+                    ? 'Parquet (ZSTD)'
+                    : toolConfig.primaryExport.toUpperCase()}
+                </span>
+              </>
+            )}
+          </button>
+        </div>
+      )}
 
       {/* Main Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-5">

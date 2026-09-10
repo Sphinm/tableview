@@ -28,7 +28,7 @@ const dscrSchemas = [
     '@type': 'WebApplication',
     name: 'DSCR Loan Calculator for Rental Properties',
     url: 'https://tableview.dev/dscr-loan-calculator',
-    description: 'Free in-browser DSCR loan calculator for real estate investors. Accurately calculate Debt-Service Coverage Ratio, monthly PITIA, net cash flow, and maximum loan amounts.',
+    description: 'Free in-browser DSCR loan calculator and BiggerPockets Pro alternative. Accurately calculate Debt-Service Coverage Ratio, monthly PITIA, net cash flow, and maximum loan amounts without paywalls.',
     applicationCategory: 'FinanceApplication',
     operatingSystem: 'All',
     offers: {
@@ -69,6 +69,14 @@ const dscrSchemas = [
   {
     '@type': 'FAQPage',
     mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Why use TableView DSCR Calculator instead of BiggerPockets Pro or Visio Lending?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Unlike BiggerPockets which limits free users to 5 property reports before requiring a $39/month Pro subscription, and broker sites like Visio Lending that require phone/email lead forms, TableView.dev is 100% free with unlimited calculations, zero account registration, dual residential/commercial underwriting formulas, reverse loan amount solving, and instant Excel export.'
+        }
+      },
       {
         '@type': 'Question',
         name: 'What is a DSCR loan and how does it work?',
@@ -128,8 +136,8 @@ interface DscrCalculatorProps {
 export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProps) => {
   useEffect(() => {
     updatePageMeta(
-      'DSCR Loan Calculator — Real Estate Investor Cash Flow & Debt Coverage Tool | TableView.dev',
-      'Free, 100% private in-browser DSCR loan calculator for rental property investors. Calculate debt-service coverage ratio, cash flow, maximum loan amount, and cash-on-cash return with Excel export.',
+      'DSCR Loan Calculator — Free BiggerPockets Alternative & Investor Tool | TableView.dev',
+      'Free in-browser DSCR loan calculator and BiggerPockets Pro alternative without paywalls. Calculate debt service coverage ratio, maximum qualifying loan amount, cash flow, and amortization with Excel export.',
       '/dscr-loan-calculator',
       dscrSchemas
     );
@@ -1159,6 +1167,79 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
             </div>
           </div>
 
+          {/* Competitor Comparison: TableView vs BiggerPockets vs Visio Lending */}
+          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-2">
+                <Sparkles className="size-3.5" />
+                <span>Investor Tool Comparison</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl font-bold text-slate-100">
+                Why TableView DSCR Calculator vs BiggerPockets &amp; Visio Lending?
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed">
+                Evaluating DSCR rental deals shouldn't require paying $39/month subscriptions or submitting your phone number to aggressive mortgage brokers. Here is how TableView compares against leading alternatives:
+              </p>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-300">
+                <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+                  <tr>
+                    <th className="py-3 px-4">Feature / Capability</th>
+                    <th className="py-3 px-4 text-indigo-400 font-bold">TableView.dev</th>
+                    <th className="py-3 px-4">BiggerPockets Pro</th>
+                    <th className="py-3 px-4">Visio Lending</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60">
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Pricing &amp; Usage Limits</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">100% Free Forever (Unlimited)</td>
+                    <td className="py-3 px-4 text-rose-400">5 Reports Free, then $39/mo Pro</td>
+                    <td className="py-3 px-4 text-slate-400">Free but Gated by Broker Contact</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Account / Sign-Up Requirement</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">None (Instant In-Browser)</td>
+                    <td className="py-3 px-4 text-rose-400">Mandatory Registration</td>
+                    <td className="py-3 px-4 text-rose-400">Mandatory Lead Form</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Residential &amp; Commercial DSCR Standards</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">Both (Gross Rent &amp; Net NOI)</td>
+                    <td className="py-3 px-4 text-slate-400">Residential Rental Only</td>
+                    <td className="py-3 px-4 text-slate-400">Residential 1-4 Units</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Reverse Max Loan Solver (Target 1.25x)</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">Built-In Automatic Solver</td>
+                    <td className="py-3 px-4 text-slate-400">Manual Guess &amp; Check</td>
+                    <td className="py-3 px-4 text-rose-400">Not Available</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Full Amortization &amp; Cash-Flow Table</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">Yes + 1-Click Excel Export</td>
+                    <td className="py-3 px-4 text-amber-400">PDF Report (Requires Pro)</td>
+                    <td className="py-3 px-4 text-rose-400">Summary Only</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Shareable Pre-filled URL</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">Instant 1-Click Link</td>
+                    <td className="py-3 px-4 text-slate-400">Saved in User Account</td>
+                    <td className="py-3 px-4 text-rose-400">Not Supported</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Data Privacy (Zero Data Egress)</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">100% Client-Side Private</td>
+                    <td className="py-3 px-4 text-slate-400">Saved to Cloud Account</td>
+                    <td className="py-3 px-4 text-rose-400">Captured for Sales Outreach</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           <MethodologyDisclosure type="dscr" />
 
           {/* Subsection 4: Comprehensive In-Depth Investor FAQ */}
@@ -1168,6 +1249,13 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               Frequently Asked Questions About DSCR Loans
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">Why use TableView DSCR Calculator instead of BiggerPockets Pro?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Unlike BiggerPockets which limits free accounts to 5 property calculations before requiring a $39/month Pro subscription, TableView.dev is 100% free with unlimited calculations, zero sign-up requirements, dual residential and commercial underwriting standards, reverse loan amount solving, and instant Excel exports.
+                </p>
+              </div>
+
               <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
                 <h4 className="font-semibold text-slate-200 text-sm">What is a DSCR loan and how does it work?</h4>
                 <p className="text-xs text-slate-400 leading-relaxed">

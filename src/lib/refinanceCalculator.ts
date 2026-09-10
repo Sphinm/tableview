@@ -27,6 +27,9 @@ export interface RefinanceInputs {
   // Tax rates
   federalTaxRate: number; // e.g. 25 (%)
   stateTaxRate: number; // e.g. 5 (%)
+
+  // Refinance options
+  rollCostsIntoLoan?: boolean; // roll closing costs into the new loan balance ($0 out of pocket)
 }
 
 export interface RefinanceSummary {
@@ -39,6 +42,12 @@ export interface RefinanceSummary {
   newLoanAmount: number;
   newMonthlyPayment: number;
   monthlyPaymentSavings: number; // old - new (positive = save monthly, negative = pay more)
+
+  // Options & Warnings
+  rollCostsIntoLoan: boolean;
+  isResettingClock: boolean;
+  extraMonthsAdded: number;
+  clockResetWarning?: string;
 
   // Closing Costs
   discountPointsCost: number;
@@ -179,15 +188,17 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
   const totalOldMonths = originalTermYears * 12;
   const monthsRemainingOld = Math.max(0, totalOldMonths - monthsAlreadyPaid);
 
-  // 2. New refinanced loan amount & payment
-  const newLoanAmount = currentBalance + (cashOutAmount > 0 ? cashOutAmount : 0);
+  // 2. Upfront closing costs calculation
+  const baseLoan = currentBalance + (cashOutAmount > 0 ? cashOutAmount : 0);
+  const discountPointsCost = baseLoan * (Math.max(0, discountPoints) / 100);
+  const originationFeeCost = baseLoan * (Math.max(0, originationPercent) / 100);
+  const totalClosingCosts = discountPointsCost + originationFeeCost + Math.max(0, otherClosingCosts);
+
+  // 3. New refinanced loan amount & payment (with optional rolled-in closing costs)
+  const rollCosts = !!inputs.rollCostsIntoLoan;
+  const newLoanAmount = baseLoan + (rollCosts ? totalClosingCosts : 0);
   const newMonthlyPayment = calculateMonthlyPayment(newLoanAmount, newInterestRate, newTermYears);
   const monthlyPaymentSavings = currentMonthlyPayment - newMonthlyPayment;
-
-  // 3. Upfront closing costs
-  const discountPointsCost = newLoanAmount * (Math.max(0, discountPoints) / 100);
-  const originationFeeCost = newLoanAmount * (Math.max(0, originationPercent) / 100);
-  const totalClosingCosts = discountPointsCost + originationFeeCost + Math.max(0, otherClosingCosts);
 
   // 4. Break-even in months (Monthly payment savings vs closing costs)
   let breakEvenMonths: number | null = null;
@@ -293,6 +304,19 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
 
   const lifetimeInterestSaved = lifetimeInterestOldRemaining - lifetimeInterestNew;
 
+  // 7. Check 30-Year Reset Clock Warning
+  const totalNewTermMonths = newTermYears * 12;
+  const totalLifespanMonths = monthsAlreadyPaid + totalNewTermMonths;
+  const isResettingClock = totalLifespanMonths > totalOldMonths;
+  const extraMonthsAdded = Math.max(0, totalLifespanMonths - totalOldMonths);
+
+  let clockResetWarning: string | undefined;
+  if (isResettingClock && lifetimeInterestSaved < 0) {
+    const extraYears = (extraMonthsAdded / 12).toFixed(1).replace('.0', '');
+    const addedCost = Math.round(Math.abs(lifetimeInterestSaved)).toLocaleString();
+    clockResetWarning = `Resetting your loan term adds ${extraYears} year(s) to your total debt payoff horizon, which increases lifetime interest by $${addedCost} despite the lower monthly payments. Consider making extra principal payments to avoid paying more overall.`;
+  }
+
   return {
     currentMonthlyPayment,
     currentBalance,
@@ -300,6 +324,10 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
     newLoanAmount,
     newMonthlyPayment,
     monthlyPaymentSavings,
+    rollCostsIntoLoan: rollCosts,
+    isResettingClock,
+    extraMonthsAdded,
+    clockResetWarning,
     discountPointsCost,
     originationFeeCost,
     otherClosingCosts: Math.max(0, otherClosingCosts),
@@ -326,6 +354,46 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
     lifetimeInterestNew,
     lifetimeInterestSaved
   };
+}
+
+export interface RefinanceChartPoint {
+  label: string;
+  year: number;
+  month: number;
+  oldBalance: number;
+  newBalance: number;
+  cumulativeSavings: number;
+}
+
+export function getRefinanceChartData(schedule: RefinanceScheduleRow[]): RefinanceChartPoint[] {
+  if (schedule.length === 0) return [];
+  const points: RefinanceChartPoint[] = [];
+
+  const first = schedule[0];
+  points.push({
+    label: 'Start (Yr 0)',
+    year: 0,
+    month: 0,
+    oldBalance: Math.round(first.oldBalance + first.oldPrincipal),
+    newBalance: Math.round(first.newBalance + first.newPrincipal),
+    cumulativeSavings: Math.round(first.cumulativeSavings)
+  });
+
+  for (let i = 0; i < schedule.length; i++) {
+    const row = schedule[i];
+    if (row.month % 12 === 0 || i === schedule.length - 1) {
+      points.push({
+        label: `Yr ${row.year}`,
+        year: row.year,
+        month: row.month,
+        oldBalance: Math.round(row.oldBalance),
+        newBalance: Math.round(row.newBalance),
+        cumulativeSavings: Math.round(row.cumulativeSavings)
+      });
+    }
+  }
+
+  return points;
 }
 
 /**

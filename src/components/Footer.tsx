@@ -148,9 +148,39 @@ export const Footer = ({ onTrySample }: FooterProps) => {
           <div>
             <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
               <Table className="size-3.5 text-slate-400" />
-              Parquet & Data
+              Data Tools
             </h4>
             <ul className="space-y-2.5">
+              <li>
+                <a
+                  href="/csv-viewer"
+                  onClick={(e) => handleNav(e, '/csv-viewer')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  CSV Viewer
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/csv-to-excel"
+                  onClick={(e) => handleNav(e, '/csv-to-excel')}
+                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
+                >
+                  <span>CSV to Excel</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
+                    Popular
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/excel-viewer"
+                  onClick={(e) => handleNav(e, '/excel-viewer')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Excel Viewer (.xlsx)
+                </a>
+              </li>
               <li>
                 <a
                   href="/parquet-viewer"
@@ -164,59 +194,29 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                 <a
                   href="/parquet-to-excel"
                   onClick={(e) => handleNav(e, '/parquet-to-excel')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Parquet to Excel
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/excel-to-csv"
+                  onClick={(e) => handleNav(e, '/excel-to-csv')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Excel to CSV
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/sql-workbench"
+                  onClick={(e) => handleNav(e, '/sql-workbench')}
                   className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
                 >
-                  <span>Parquet to Excel</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 opacity-80 group-hover:opacity-100 font-mono">
-                    Popular
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/parquet-to-csv"
-                  onClick={(e) => handleNav(e, '/parquet-to-csv')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Parquet to CSV
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/csv-to-parquet"
-                  onClick={(e) => handleNav(e, '/csv-to-parquet')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  CSV to Parquet
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/json-to-parquet"
-                  onClick={(e) => handleNav(e, '/json-to-parquet')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  JSON to Parquet
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/parquet-schema-inspector"
-                  onClick={(e) => handleNav(e, '/parquet-schema-inspector')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Schema & Metadata
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/parquet-storage-calculator"
-                  onClick={(e) => handleNav(e, '/parquet-storage-calculator')}
-                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
-                >
-                  <span>Cloud Savings Estimator</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
-                    New
+                  <span>SQL Workbench</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">
+                    DuckDB
                   </span>
                 </a>
               </li>

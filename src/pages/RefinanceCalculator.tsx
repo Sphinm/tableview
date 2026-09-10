@@ -24,16 +24,26 @@ import {
   calculateRefinance,
   generateRefinanceSchedule,
   getAnnualRefinanceSchedule,
+  getRefinanceChartData,
   exportRefinanceToCsv
 } from '../lib/refinanceCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
+import { RefinanceBalanceChart } from '../components/RefinanceBalanceChart';
 
 const refinanceFaqs = [
   {
     q: 'How is the refinance break-even point calculated?',
     a: 'Break-even point (in months) = Total upfront closing costs and discount points divided by monthly payment savings. For example, $6,000 in closing costs with $250/month in savings reaches break-even in 24 months.'
+  },
+  {
+    q: 'How does TableView compare to Bankrate or SmartAsset refinance calculators?',
+    a: 'Unlike Bankrate or SmartAsset, TableView operates 100% in your browser with zero lead forms, ads, or broker phone spam. Furthermore, TableView provides exclusive net equity break-even analysis (accounting for lost tax deductions), a 30-year reset clock warning to prevent overpaying lifetime interest, and instant Excel downloads.'
+  },
+  {
+    q: 'What is the "30-Year Reset Clock" trap in mortgage refinancing?',
+    a: 'When you refinance an existing mortgage that is already partially paid off into a brand new 30-year mortgage, you reset the amortization clock back to year one. While your monthly payment might decrease, you may end up paying significantly more in total lifetime interest. TableView automatically detects and flags this trap with an amber alert.'
   },
   {
     q: 'Does it make sense to refinance from a 30-year to a 15-year mortgage?',
@@ -54,7 +64,7 @@ const refinanceSchemas = [
     '@type': 'WebApplication',
     name: 'Mortgage Refinance Break-Even Calculator',
     url: 'https://tableview.dev/refinance-calculator',
-    description: 'Free in-browser mortgage refinance calculator. Compare old vs new monthly payments, calculate break-even months, equity trajectory, and discount points with Excel export.',
+    description: 'Free in-browser mortgage refinance calculator. Compare old vs new monthly payments, calculate break-even months, equity trajectory, and discount points with Excel export. Best ad-free alternative to Bankrate and SmartAsset.',
     applicationCategory: 'FinanceApplication',
     operatingSystem: 'All',
     offers: {
@@ -68,7 +78,7 @@ const refinanceSchemas = [
     itemListElement: [
       { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://tableview.dev/' },
       { '@type': 'ListItem', position: 2, name: 'Financial Calculators', item: 'https://tableview.dev/finance-calculator' },
-      { '@type': 'ListItem', position: 3, name: 'Refinance Calculator', item: 'https://tableview.dev/refinance-calculator' }
+      { '@type': 'ListItem', position: 3, name: 'Mortgage Refinance Calculator', item: 'https://tableview.dev/refinance-calculator' }
     ]
   },
   {
@@ -88,8 +98,8 @@ interface RefinanceCalculatorProps {
 export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalculatorProps) => {
   useEffect(() => {
     updatePageMeta(
-      'Mortgage Refinance Calculator: Break-Even, Rate Comparison & Equity Analysis | TableView.dev',
-      'Free, 100% private in-browser mortgage refinance calculator. Compare your current mortgage with a new loan, calculate upfront closing costs, break-even months, income tax shift, and multi-year equity savings.',
+      'Mortgage Refinance Break-Even Calculator - SmartAsset & Bankrate Alternative | TableView.dev',
+      'Free, 100% private in-browser mortgage refinance break-even calculator. Compare monthly savings, net equity break-even, roll-in closing costs, and 30-year reset clock warnings without broker ads or lead forms.',
       '/refinance-calculator',
       refinanceSchemas
     );
@@ -126,6 +136,9 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
   const [federalTaxRate, setFederalTaxRate] = useState<number>(25.0);
   const [stateTaxRate, setStateTaxRate] = useState<number>(5.0);
 
+  // Refinance Options
+  const [rollCostsIntoLoan, setRollCostsIntoLoan] = useState<boolean>(false);
+
   // View presentation state
   const [viewMode, setViewMode] = useState<'analysis' | 'plainEnglish'>('analysis');
   const [scheduleView, setScheduleView] = useState<'annual' | 'monthly'>('annual');
@@ -154,6 +167,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
       setOtherClosingCosts(1200);
       setCashOutAmount(0);
       setYearsBeforeSell(7);
+      setRollCostsIntoLoan(false);
     } else if (type === 'rateDrop') {
       setOriginalTermYears(30);
       setCurrentInterestRate(7.25);
@@ -164,6 +178,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
       setOtherClosingCosts(1500);
       setCashOutAmount(0);
       setYearsBeforeSell(7);
+      setRollCostsIntoLoan(false);
     } else if (type === 'cashOut') {
       setOriginalTermYears(30);
       setCurrentInterestRate(6.5);
@@ -174,6 +189,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
       setOtherClosingCosts(2000);
       setCashOutAmount(40000);
       setYearsBeforeSell(10);
+      setRollCostsIntoLoan(false);
     } else if (type === 'zeroCost') {
       setOriginalTermYears(30);
       setCurrentInterestRate(7.125);
@@ -182,9 +198,10 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
       setNewInterestRate(6.375);
       setDiscountPoints(0.0);
       setOriginationPercent(0.0);
-      setOtherClosingCosts(0);
+      setOtherClosingCosts(2500);
       setCashOutAmount(0);
       setYearsBeforeSell(5);
+      setRollCostsIntoLoan(true);
     }
   };
 
@@ -205,7 +222,8 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
       otherClosingCosts,
       cashOutAmount,
       federalTaxRate,
-      stateTaxRate
+      stateTaxRate,
+      rollCostsIntoLoan
     }),
     [
       homePrice,
@@ -222,13 +240,15 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
       otherClosingCosts,
       cashOutAmount,
       federalTaxRate,
-      stateTaxRate
+      stateTaxRate,
+      rollCostsIntoLoan
     ]
   );
 
   const summary = useMemo(() => calculateRefinance(inputs), [inputs]);
   const monthlySchedule = useMemo(() => generateRefinanceSchedule(inputs, summary), [inputs, summary]);
   const annualSchedule = useMemo(() => getAnnualRefinanceSchedule(monthlySchedule), [monthlySchedule]);
+  const chartData = useMemo(() => getRefinanceChartData(monthlySchedule), [monthlySchedule]);
 
   // Format currency
   const fmt = (val: number, includeSign = false) => {
@@ -707,6 +727,18 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                   />
                 </div>
               </div>
+
+              <div className="sm:col-span-3 pt-1">
+                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-300">
+                  <input
+                    type="checkbox"
+                    checked={rollCostsIntoLoan}
+                    onChange={(e) => setRollCostsIntoLoan(e.target.checked)}
+                    className="size-4 rounded accent-indigo-500 bg-slate-950 border-slate-800"
+                  />
+                  <span>Roll closing costs into new loan balance ($0 out-of-pocket cash)</span>
+                </label>
+              </div>
             </div>
 
             {/* Income Tax Row */}
@@ -808,6 +840,17 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                   </button>
                 </div>
               </div>
+
+              {/* 30-Year Reset Clock Warning Alert */}
+              {summary.clockResetWarning && (
+                <div className="p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-start gap-3">
+                  <AlertTriangle className="size-5 text-amber-400 shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="font-bold text-amber-200 text-sm">30-Year Loan Term Extension Risk</h4>
+                    <p className="mt-1 leading-relaxed text-amber-300/90">{summary.clockResetWarning}</p>
+                  </div>
+                </div>
+              )}
 
               {/* Main Net Benefit Number */}
               <div>
@@ -1208,6 +1251,9 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
         </div>
       </div>
 
+      {/* Visual Payoff Trajectory Chart */}
+      <RefinanceBalanceChart data={chartData} />
+
       {/* Amortization Schedule Toggle Section */}
       <div className="p-6 rounded-2xl bg-slate-900/70 border border-slate-800/80 shadow-lg space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-800">
@@ -1397,6 +1443,85 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
       </div>
 
       <MethodologyDisclosure type="refinance" />
+
+      {/* Competitor Comparison Section */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-2">
+            <Sparkles className="size-3.5" />
+            <span>Independent Comparison</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-100">
+            Why TableView vs Bankrate &amp; SmartAsset Refinance Calculator?
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed">
+            Most commercial refinance calculators oversimplify break-even math to push lender referrals. Here is how TableView compares on financial depth, tax modeling, and borrower privacy:
+          </p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs text-slate-300">
+            <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+              <tr>
+                <th className="py-3 px-4">Feature / Capability</th>
+                <th className="py-3 px-4 text-indigo-400 font-bold">TableView.dev</th>
+                <th className="py-3 px-4">Bankrate</th>
+                <th className="py-3 px-4">SmartAsset</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60">
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">100% Client-Side Privacy</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (Zero Data Egress)</td>
+                <td className="py-3 px-4 text-slate-400">No (Server-Tracked)</td>
+                <td className="py-3 px-4 text-slate-400">No (Lead Capture)</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Ad-Free (No Broker Spam Calls)</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (No Lead Generation)</td>
+                <td className="py-3 px-4 text-rose-400">No (Aggressive Loan Offers)</td>
+                <td className="py-3 px-4 text-rose-400">No (Advisor Lead Capture)</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">30-Year Reset Clock Warning</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Automated Risk Alert</td>
+                <td className="py-3 px-4 text-rose-400">Not Supported</td>
+                <td className="py-3 px-4 text-rose-400">Not Supported</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Net Equity Break-Even (Tax Adjusted)</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Dual Break-Even Engine</td>
+                <td className="py-3 px-4 text-slate-400">Cash Flow Only</td>
+                <td className="py-3 px-4 text-slate-400">Cash Flow Only</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Roll Closing Costs into Loan ($0 Out of Pocket)</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">1-Click Toggle</td>
+                <td className="py-3 px-4 text-slate-200">Manual adjustments</td>
+                <td className="py-3 px-4 text-slate-200">Yes</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Visual Balance Payoff Chart</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (Zero-Bloat SVG)</td>
+                <td className="py-3 px-4 text-slate-200">Yes</td>
+                <td className="py-3 px-4 text-slate-400">Basic Bar Only</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Full Amortization Excel Export</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">1-Click Full Schedule</td>
+                <td className="py-3 px-4 text-slate-400">CSV Only</td>
+                <td className="py-3 px-4 text-rose-400">Not Supported</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Shareable Pre-filled URL</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Instant 1-Click Link</td>
+                <td className="py-3 px-4 text-rose-400">Not Supported</td>
+                <td className="py-3 px-4 text-rose-400">Not Supported</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* In-Depth Educational & Refinancing Strategy Guide */}
       <div className="p-6 sm:p-10 rounded-2xl bg-slate-900/60 border border-slate-800/80 shadow-xl space-y-8">

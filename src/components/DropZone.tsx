@@ -1,5 +1,5 @@
 import { useState, useRef, type DragEvent, type ChangeEvent } from 'react';
-import { UploadCloud, Sparkles, FolderOpen, ShieldCheck } from 'lucide-react';
+import { UploadCloud, Sparkles, FolderOpen, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { type ToolConfig } from '../data/tools';
 import { navigateTo } from '../lib/router';
 
@@ -24,12 +24,16 @@ export const DropZone = ({
   const activeToolSlug = toolConfig?.slug;
 
   const quickTools = [
-    { slug: '', name: 'All-in-One', path: '/' },
+    { slug: '', name: 'All Tools', path: '/' },
+    { slug: 'csv-viewer', name: 'CSV Viewer', path: '/csv-viewer' },
+    { slug: 'csv-to-excel', name: 'CSV to Excel', path: '/csv-to-excel' },
+    { slug: 'excel-viewer', name: 'Excel Viewer', path: '/excel-viewer' },
     { slug: 'parquet-viewer', name: 'Parquet Viewer', path: '/parquet-viewer' },
     { slug: 'parquet-to-excel', name: 'Parquet to Excel', path: '/parquet-to-excel' },
     { slug: 'parquet-to-csv', name: 'Parquet to CSV', path: '/parquet-to-csv' },
     { slug: 'csv-to-parquet', name: 'CSV to Parquet', path: '/csv-to-parquet' },
-    { slug: 'parquet-schema-inspector', name: 'Schema Inspector', path: '/parquet-schema-inspector' }
+    { slug: 'excel-to-csv', name: 'Excel to CSV', path: '/excel-to-csv' },
+    { slug: 'sql-workbench', name: 'SQL Workbench', path: '/sql-workbench' }
   ];
 
   const handleDragOver = (e: DragEvent) => {
@@ -64,6 +68,16 @@ export const DropZone = ({
 
       {/* Hero Header */}
       <div className="text-center max-w-3xl mx-auto mb-10">
+        <div className="flex items-center justify-center mb-4">
+          <button
+            onClick={() => navigateTo('/')}
+            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition-colors cursor-pointer px-3 py-1 rounded-lg hover:bg-slate-800/60"
+          >
+            <ArrowLeft className="size-3.5" />
+            <span>← Back to All Tools</span>
+          </button>
+        </div>
+
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-900/90 border border-slate-800 text-slate-300 text-xs sm:text-sm font-medium mb-5 shadow-sm">
           <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>{toolConfig?.badge || 'In-Browser DuckDB-Wasm · 100% Client-Side Privacy'}</span>
@@ -196,12 +210,12 @@ export const DropZone = ({
 
                 {/* Supported Format Badges */}
                 <div className="pt-3 flex items-center justify-center gap-2 flex-wrap">
-                  {['.parquet', '.geoparquet', '.csv', '.tsv', '.json', '.xlsx'].map(ext => (
+                  {(toolConfig?.acceptExtensions.split(',') || ['.parquet', '.geoparquet', '.csv', '.tsv', '.json', '.xlsx']).map(ext => (
                     <span
                       key={ext}
                       className="px-2.5 py-1 rounded-md text-xs font-mono font-medium bg-slate-900/80 text-slate-300 border border-slate-800"
                     >
-                      {ext}
+                      {ext.trim()}
                     </span>
                   ))}
                 </div>

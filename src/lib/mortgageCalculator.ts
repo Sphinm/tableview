@@ -13,6 +13,8 @@ export interface MortgageInputs {
   loanType: 'conventional' | 'fha' | 'va' | 'usda';
   buyOrRefi: 'buy' | 'refi';
   extraMonthlyPrincipal?: number;
+  extraLumpSumAmount?: number;
+  extraLumpSumMonth?: number;
 }
 
 export interface MortgageSummary {
@@ -54,6 +56,7 @@ export interface AmortizationRow {
   totalPayment: number;
   endingBalance: number;
   totalInterestToDate: number;
+  totalPrincipalToDate: number;
 }
 
 export interface AnnualAmortizationRow {
@@ -68,6 +71,16 @@ export interface AnnualAmortizationRow {
   totalPayment: number;
   endingBalance: number;
   totalInterestToDate: number;
+  totalPrincipalToDate: number;
+}
+
+export interface AmortizationChartPoint {
+  label: string;
+  year: number;
+  monthIndex: number;
+  endingBalance: number;
+  totalInterestToDate: number;
+  totalPrincipalToDate: number;
 }
 
 export interface BiweeklyComparison {
@@ -189,7 +202,9 @@ export function calculateMortgage(inputs: MortgageInputs): MortgageSummary {
  */
 export function generateAmortizationSchedule(
   inputs: MortgageInputs,
-  extraMonthlyPrincipal: number = 0
+  extraMonthlyPrincipal: number = 0,
+  extraLumpSumAmount: number = 0,
+  extraLumpSumMonth: number = 0
 ): AmortizationRow[] {
   const homeValue = Math.max(0, inputs.homeValue);
   let downPaymentAmount = 0;
@@ -219,6 +234,10 @@ export function generateAmortizationSchedule(
   const monthlyInsurance = Math.max(0, inputs.homeInsuranceYearly) / 12;
   const monthlyHoa = Math.max(0, inputs.monthlyHoa);
 
+  const monthlyExtra = extraMonthlyPrincipal || inputs.extraMonthlyPrincipal || 0;
+  const lumpSum = extraLumpSumAmount || inputs.extraLumpSumAmount || 0;
+  const lumpSumMonth = extraLumpSumMonth || inputs.extraLumpSumMonth || 0;
+
   // PMI threshold: 80% of original home value
   const pmiThreshold = homeValue * 0.8;
   const initialPmiRequired = inputs.loanType === 'conventional' && (downPaymentAmount / (homeValue || 1)) < 0.2;
@@ -229,6 +248,7 @@ export function generateAmortizationSchedule(
   let currentMonth = inputs.startMonth;
   let currentYear = inputs.startYear;
   let cumulativeInterest = 0;
+  let cumulativePrincipal = 0;
 
   let monthIndex = 1;
   const maxSafetyIterations = 1200; // 100 years cap
@@ -238,7 +258,12 @@ export function generateAmortizationSchedule(
     const interestPayment = balance * monthlyRate;
     cumulativeInterest += interestPayment;
 
-    let principalPayment = baseMonthlyPI - interestPayment + extraMonthlyPrincipal;
+    let additionalPrincipal = monthlyExtra;
+    if (lumpSum > 0 && monthIndex === lumpSumMonth) {
+      additionalPrincipal += lumpSum;
+    }
+
+    let principalPayment = baseMonthlyPI - interestPayment + additionalPrincipal;
 
     // Handle last month balance cutoff
     if (principalPayment >= balance) {
@@ -247,6 +272,8 @@ export function generateAmortizationSchedule(
     } else {
       balance = balance - principalPayment;
     }
+
+    cumulativePrincipal += principalPayment;
 
     // Dynamic PMI: cancels once balance is <= 80% of initial home value
     const pmiPayment = (initialPmiRequired && startingBalance > pmiThreshold) ? initialPmiAmount : 0;
@@ -266,7 +293,8 @@ export function generateAmortizationSchedule(
       hoa: monthlyHoa,
       totalPayment,
       endingBalance: Math.max(0, balance),
-      totalInterestToDate: cumulativeInterest
+      totalInterestToDate: cumulativeInterest,
+      totalPrincipalToDate: cumulativePrincipal
     });
 
     monthIndex++;
@@ -299,7 +327,8 @@ export function getAnnualAmortizationSchedule(monthlySchedule: AmortizationRow[]
         hoa: 0,
         totalPayment: 0,
         endingBalance: row.endingBalance,
-        totalInterestToDate: row.totalInterestToDate
+        totalInterestToDate: row.totalInterestToDate,
+        totalPrincipalToDate: row.totalPrincipalToDate
       });
     }
 
@@ -313,9 +342,44 @@ export function getAnnualAmortizationSchedule(monthlySchedule: AmortizationRow[]
     annual.totalPayment += row.totalPayment;
     annual.endingBalance = row.endingBalance;
     annual.totalInterestToDate = row.totalInterestToDate;
+    annual.totalPrincipalToDate = row.totalPrincipalToDate;
   }
 
   return Array.from(annualMap.values());
+}
+
+/**
+ * Extracts annual checkpoints for responsive SVG charts
+ */
+export function getAmortizationChartData(schedule: AmortizationRow[]): AmortizationChartPoint[] {
+  if (schedule.length === 0) return [];
+  const points: AmortizationChartPoint[] = [];
+
+  const first = schedule[0];
+  points.push({
+    label: `Start (${first.year})`,
+    year: first.year,
+    monthIndex: 0,
+    endingBalance: Math.round(first.startingBalance),
+    totalInterestToDate: 0,
+    totalPrincipalToDate: 0
+  });
+
+  for (let i = 0; i < schedule.length; i++) {
+    const row = schedule[i];
+    if (row.monthIndex % 12 === 0 || i === schedule.length - 1) {
+      points.push({
+        label: `Yr ${Math.round(row.monthIndex / 12)} (${row.year})`,
+        year: row.year,
+        monthIndex: row.monthIndex,
+        endingBalance: Math.round(row.endingBalance),
+        totalInterestToDate: Math.round(row.totalInterestToDate),
+        totalPrincipalToDate: Math.round(row.totalPrincipalToDate)
+      });
+    }
+  }
+
+  return points;
 }
 
 /**

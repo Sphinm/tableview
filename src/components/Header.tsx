@@ -24,7 +24,10 @@ import {
   Building,
   Hammer,
   Server,
-  Zap
+  Zap,
+  FileText,
+  Terminal,
+  Database
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 
@@ -119,8 +122,14 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
   };
 
   // Active state checkers
-  const isParquetSection = currentPath.startsWith('/parquet-') || currentPath.startsWith('/csv-') || currentPath.startsWith('/json-');
-  const isWorkbench = !isParquetSection && (currentPath === '/' || currentPath === '');
+  const isToolsSection =
+    currentPath.startsWith('/csv-') ||
+    currentPath.startsWith('/excel-') ||
+    currentPath.startsWith('/parquet-') ||
+    currentPath.startsWith('/json-') ||
+    currentPath.startsWith('/sql-') ||
+    currentPath.startsWith('/tools');
+  const isWorkbench = !isToolsSection && (currentPath === '/' || currentPath === '');
   const isCalculatorSection =
     currentPath.includes('calculator') ||
     currentPath.includes('refinance') ||
@@ -132,51 +141,110 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
   const isAbout = currentPath === '/about';
   const isContact = currentPath === '/contact';
 
-  const parquetItems = [
+  const viewerItems = [
     {
-      title: 'Parquet Viewer Online',
-      description: 'Instant in-browser viewer & SQL explorer for .parquet & GeoParquet',
-      path: '/parquet-viewer',
-      icon: Table,
-      badge: 'Instant'
+      title: 'CSV Viewer',
+      description: 'Open & search CSV without Excel',
+      path: '/csv-viewer',
+      icon: FileText,
+      badge: 'Popular'
     },
     {
-      title: 'Parquet to Excel (.xlsx)',
-      description: 'Convert Parquet directly to Microsoft Excel spreadsheets',
+      title: 'Excel Viewer',
+      description: 'View .xlsx/.xls spreadsheets online',
+      path: '/excel-viewer',
+      icon: FileSpreadsheet,
+      badge: 'Popular'
+    },
+    {
+      title: 'Parquet Viewer',
+      description: 'Instant Wasm viewer & SQL explorer',
+      path: '/parquet-viewer',
+      icon: Table,
+      badge: 'Core'
+    },
+    {
+      title: 'JSON & NDJSON Viewer',
+      description: 'Collapsible tree & table grid',
+      path: '/json-viewer',
+      icon: FileCode
+    }
+  ];
+
+  const converterItems = [
+    {
+      title: 'CSV to Excel (.xlsx)',
+      description: 'Direct native Excel workbook generator',
+      path: '/csv-to-excel',
+      icon: FileSpreadsheet,
+      badge: 'Popular'
+    },
+    {
+      title: 'Parquet to Excel',
+      description: 'Columnar tables to formatted Excel',
       path: '/parquet-to-excel',
       icon: FileSpreadsheet,
       badge: 'Popular'
     },
     {
       title: 'Parquet to CSV',
-      description: 'Extract and stream Parquet datasets into plain text CSV files',
+      description: 'Extract and stream Parquet to CSV',
       path: '/parquet-to-csv',
       icon: FileOutput
     },
     {
-      title: 'CSV to Parquet (ZSTD)',
-      description: 'Convert large CSV tables into compressed columnar Parquet',
+      title: 'CSV to Parquet',
+      description: 'Compress CSV into high-speed Parquet',
       path: '/csv-to-parquet',
-      icon: FileInput
+      icon: FileInput,
+      badge: 'ZSTD'
     },
     {
-      title: 'JSON to Parquet',
-      description: 'Transform newline-delimited or nested JSON into typed Parquet',
-      path: '/json-to-parquet',
+      title: 'Excel to CSV',
+      description: 'Extract Excel sheets to clean CSV',
+      path: '/excel-to-csv',
+      icon: FileOutput
+    },
+    {
+      title: 'Excel to Parquet',
+      description: 'Excel spreadsheets to columnar Parquet',
+      path: '/excel-to-parquet',
+      icon: Database
+    },
+    {
+      title: 'CSV to JSON',
+      description: 'Convert CSV into JSON arrays/NDJSON',
+      path: '/csv-to-json',
       icon: FileCode
     },
     {
-      title: 'Cloud Storage & Query Savings',
-      description: 'Calculate S3 storage cuts & Athena/BigQuery scan savings',
+      title: 'JSON to Parquet',
+      description: 'JSON/NDJSON to columnar Parquet',
+      path: '/json-to-parquet',
+      icon: FileCode
+    }
+  ];
+
+  const analyticsItems = [
+    {
+      title: 'SQL on CSV / Parquet',
+      description: 'Run DuckDB SQL queries in browser',
+      path: '/sql-workbench',
+      icon: Terminal,
+      badge: 'SQL'
+    },
+    {
+      title: 'Schema & Profiling',
+      description: 'Inspect schemas, null rates & DDL',
+      path: '/parquet-schema-inspector',
+      icon: Layers
+    },
+    {
+      title: 'Storage & Query Savings',
+      description: 'Calculate S3 & Athena cost cuts',
       path: '/parquet-storage-calculator',
       icon: Zap,
       badge: 'Savings'
-    },
-    {
-      title: 'Schema & Metadata Inspector',
-      description: 'Inspect row groups, compression codecs, schemas & null rates',
-      path: '/parquet-schema-inspector',
-      icon: Layers
     }
   ];
 
@@ -254,14 +322,14 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                 type="button"
                 onClick={toggleParquetDropdown}
                 className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
-                  isParquetSection || parquetDropdownOpen
+                  isToolsSection || parquetDropdownOpen
                     ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
                     : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
                 }`}
                 aria-expanded={parquetDropdownOpen}
               >
                 <Table className="size-4 text-emerald-400" />
-                <span>Parquet Tools</span>
+                <span>All Tools</span>
                 <ChevronDown
                   className={`size-3.5 transition-transform duration-200 opacity-70 ${
                     parquetDropdownOpen ? 'rotate-180' : ''
@@ -269,66 +337,138 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                 />
               </button>
 
-              {/* Parquet Tools Flyout Panel */}
+              {/* Data Tools Mega Dropdown Panel (iLovePDF Style) */}
               {parquetDropdownOpen && (
-                <div className="absolute left-0 top-full pt-1.5 w-[390px] z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-2">
-                    <div className="px-3 pt-2 pb-1.5 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
-                        Parquet & Data Tools
+                <div className="absolute left-0 top-full pt-1.5 w-[760px] z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-slate-900/98 text-slate-900 dark:text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-3">
+                    <div className="px-3 pt-2 pb-2.5 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80">
+                      <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
+                        All In-Browser Data Tools
                       </span>
                       <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                        DuckDB-Wasm
+                        DuckDB-Wasm SIMD · 100% Client-Side
                       </span>
                     </div>
 
-                    <div className="py-1 space-y-0.5">
-                      {parquetItems.map((tool) => (
-                        <a
-                          key={tool.path}
-                          href={tool.path}
-                          onClick={(e) => handleNav(e, tool.path)}
-                          className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
-                        >
-                          <div className="size-8 rounded-lg bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-slate-700/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                            <tool.icon className="size-4" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                                {tool.title}
-                              </span>
-                              {tool.badge && (
-                                <span className={`text-[9px] font-semibold px-1.5 py-0.2 rounded border ${
-                                  tool.badge === 'Popular'
-                                    ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30'
-                                    : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                                }`}>
-                                  {tool.badge}
-                                </span>
-                              )}
+                    <div className="grid grid-cols-3 gap-3 py-2">
+                      {/* Column 1: Viewers */}
+                      <div className="space-y-1">
+                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                          Viewers
+                        </p>
+                        {viewerItems.map((tool) => (
+                          <a
+                            key={tool.path}
+                            href={tool.path}
+                            onClick={(e) => handleNav(e, tool.path)}
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                          >
+                            <div className="size-7 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                              <tool.icon className="size-3.5" />
                             </div>
-                            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug truncate mt-0.5">
-                              {tool.description}
-                            </p>
-                          </div>
-                        </a>
-                      ))}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-400 transition-colors">
+                                  {tool.title}
+                                </span>
+                                {tool.badge && (
+                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    {tool.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                                {tool.description}
+                              </p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+
+                      {/* Column 2: Converters */}
+                      <div className="space-y-1 border-x border-slate-100 dark:border-slate-800/60 px-2">
+                        <p className="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                          Converters
+                        </p>
+                        {converterItems.slice(0, 5).map((tool) => (
+                          <a
+                            key={tool.path}
+                            href={tool.path}
+                            onClick={(e) => handleNav(e, tool.path)}
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                          >
+                            <div className="size-7 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                              <tool.icon className="size-3.5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-400 transition-colors">
+                                  {tool.title}
+                                </span>
+                                {tool.badge && (
+                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                                    {tool.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                                {tool.description}
+                              </p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+
+                      {/* Column 3: SQL & Analytics */}
+                      <div className="space-y-1">
+                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
+                          SQL & Analytics
+                        </p>
+                        {analyticsItems.map((tool) => (
+                          <a
+                            key={tool.path}
+                            href={tool.path}
+                            onClick={(e) => handleNav(e, tool.path)}
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                          >
+                            <div className="size-7 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                              <tool.icon className="size-3.5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-cyan-400 transition-colors">
+                                  {tool.title}
+                                </span>
+                                {tool.badge && (
+                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                    {tool.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                                {tool.description}
+                              </p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
                     </div>
 
                     {/* Bottom Link: Main Workbench */}
-                    <div className="mt-1 pt-1.5 border-t border-slate-100 dark:border-slate-800/80">
+                    <div className="mt-1 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between px-3">
                       <a
                         href="/"
                         onClick={(e) => handleNav(e, '/')}
-                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors"
+                        className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 transition-colors"
                       >
-                        <span className="flex items-center gap-1.5">
-                          <Table className="size-3.5" />
-                          <span>Open Main Workbench Studio</span>
-                        </span>
-                        <ArrowRight className="size-3.5" />
+                        <Sparkles className="size-3.5" />
+                        <span>View All 15+ Data Tools on Homepage</span>
+                        <ArrowRight className="size-3" />
                       </a>
+
+                      <span className="text-[11px] text-slate-500 font-mono">
+                        Zero server telemetry
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -521,7 +661,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             <span>Workbench (Studio)</span>
           </a>
 
-          {/* Parquet & Data Tools Accordion */}
+          {/* Data Tools Accordion */}
           <div className="border border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-900/40">
             <button
               onClick={() => setMobileParquetExpanded(!mobileParquetExpanded)}
@@ -529,14 +669,14 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             >
               <span className="flex items-center gap-2.5">
                 <Table className="size-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Parquet & Data Tools</span>
+                <span>All Data Tools (15 Tools)</span>
               </span>
               <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileParquetExpanded ? 'rotate-180' : ''}`} />
             </button>
 
             {mobileParquetExpanded && (
-              <div className="px-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-800/60 pt-1.5">
-                {parquetItems.map((p) => (
+              <div className="px-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-800/60 pt-1.5 max-h-72 overflow-y-auto">
+                {[...viewerItems, ...converterItems, ...analyticsItems].map((p) => (
                   <a
                     key={p.path}
                     href={p.path}
@@ -544,15 +684,11 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                     className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <p.icon className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <p.icon className="size-3.5 text-indigo-400" />
                       <span>{p.title}</span>
                     </div>
                     {p.badge && (
-                      <span className={`text-[9px] font-semibold px-1.5 py-0.2 rounded border ${
-                        p.badge === 'Popular'
-                          ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/30'
-                          : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30'
-                      }`}>
+                      <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded border bg-indigo-500/10 text-indigo-400 border-indigo-500/20">
                         {p.badge}
                       </span>
                     )}

@@ -6,7 +6,6 @@ import {
   Calendar,
   ShieldCheck,
   PiggyBank,
-  TrendingDown,
   Download,
   FileSpreadsheet,
   HelpCircle,
@@ -18,6 +17,7 @@ import {
   calculateMortgage,
   generateAmortizationSchedule,
   getAnnualAmortizationSchedule,
+  getAmortizationChartData,
   calculateBiweeklyComparison,
   exportAmortizationToCsv,
   getMonthName
@@ -25,6 +25,8 @@ import {
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
+import { PaymentDonutChart } from '../components/PaymentDonutChart';
+import { AmortizationChart } from '../components/AmortizationChart';
 
 const mortgageFaqs = [
   {
@@ -116,6 +118,8 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
   
   // Extra Principal Input for Simulator
   const [extraMonthlyPrincipal, setExtraMonthlyPrincipal] = useState<number>(0);
+  const [extraLumpSumAmount, setExtraLumpSumAmount] = useState<number>(0);
+  const [extraLumpSumMonth, setExtraLumpSumMonth] = useState<number>(24);
 
   // View state for Amortization table
   const [scheduleView, setScheduleView] = useState<'annual' | 'monthly'>('annual');
@@ -154,7 +158,9 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
       monthlyHoa,
       loanType,
       buyOrRefi,
-      extraMonthlyPrincipal
+      extraMonthlyPrincipal,
+      extraLumpSumAmount,
+      extraLumpSumMonth
     }),
     [
       homeValue,
@@ -170,15 +176,18 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
       monthlyHoa,
       loanType,
       buyOrRefi,
-      extraMonthlyPrincipal
+      extraMonthlyPrincipal,
+      extraLumpSumAmount,
+      extraLumpSumMonth
     ]
   );
 
   const summary = useMemo(() => calculateMortgage(inputs), [inputs]);
   const monthlySchedule = useMemo(
-    () => generateAmortizationSchedule(inputs, extraMonthlyPrincipal),
-    [inputs, extraMonthlyPrincipal]
+    () => generateAmortizationSchedule(inputs, extraMonthlyPrincipal, extraLumpSumAmount, extraLumpSumMonth),
+    [inputs, extraMonthlyPrincipal, extraLumpSumAmount, extraLumpSumMonth]
   );
+  const chartData = useMemo(() => getAmortizationChartData(monthlySchedule), [monthlySchedule]);
   const annualSchedule = useMemo(
     () => getAnnualAmortizationSchedule(monthlySchedule),
     [monthlySchedule]
@@ -853,22 +862,50 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                 </span>
               </div>
             </div>
+
+            {/* Visual Donut Chart Breakdown */}
+            <PaymentDonutChart
+              principalAndInterest={summary.monthlyPrincipalAndInterest}
+              propertyTax={summary.monthlyPropertyTax}
+              homeInsurance={summary.monthlyHomeInsurance}
+              hoa={summary.monthlyHoa}
+              pmi={summary.monthlyPmi}
+              totalMonthly={summary.totalMonthlyPayment}
+            />
+
+            {/* Quick Metrics Grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+              <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                <span className="text-slate-400 text-[11px] block">Loan Amount</span>
+                <span className="text-sm font-bold text-slate-100 font-mono">{fmt(summary.loanAmount)}</span>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                <span className="text-slate-400 text-[11px] block">Total Interest</span>
+                <span className="text-sm font-bold text-rose-400 font-mono">{fmt(summary.totalInterestPaid)}</span>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                <span className="text-slate-400 text-[11px] block">Payoff Date</span>
+                <span className="text-sm font-bold text-indigo-300 font-mono">{summary.payoffDateString}</span>
+              </div>
+              <div className="p-3 rounded-xl bg-slate-950/70 border border-slate-800">
+                <span className="text-slate-400 text-[11px] block">Total of Payments</span>
+                <span className="text-sm font-bold text-slate-100 font-mono">{fmt(summary.totalOfAllPayments)}</span>
+              </div>
+            </div>
           </div>
 
           {/* Bi-Weekly Accelerated Savings Optimizer */}
-          <div className="bg-gradient-to-r from-indigo-950/30 to-emerald-950/30 border border-indigo-500/20 rounded-2xl p-5 sm:p-6 space-y-4">
-            <div className="flex items-center justify-between gap-2">
+          <div className="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-800/80 pb-3">
               <div className="flex items-center gap-2">
-                <div className="size-7 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center">
-                  <TrendingDown className="size-4" />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-slate-100">Bi-Weekly Payment Optimizer</h4>
-                  <p className="text-[11px] text-slate-400">
-                    Pay every 2 weeks (26 half-payments = 13 full payments/year)
-                  </p>
-                </div>
+                <Sparkles className="size-4 text-emerald-400" />
+                <h3 className="text-sm font-bold text-slate-100">
+                  Bi-Weekly Mortgage & Early Payoff Acceleration
+                </h3>
               </div>
+              <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+                26 half-payments/yr
+              </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
@@ -892,7 +929,7 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
             {/* Extra Monthly Payment simulator */}
             <div className="pt-2 border-t border-slate-800/80 flex items-center justify-between gap-3">
               <label htmlFor="extra-monthly-principal" className="text-xs text-slate-300 font-medium">
-                Add Extra Principal Monthly:
+                Add Extra Monthly Principal:
               </label>
               <div className="relative w-36">
                 <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
@@ -908,9 +945,47 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
                 />
               </div>
             </div>
+
+            {/* One-Time Lump Sum Simulator */}
+            <div className="pt-2 border-t border-slate-800/80 space-y-2">
+              <div className="flex items-center justify-between gap-3">
+                <label htmlFor="extra-lump-sum" className="text-xs text-slate-300 font-medium">
+                  One-time Lump Sum Principal:
+                </label>
+                <div className="relative w-36">
+                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
+                  <input
+                    id="extra-lump-sum"
+                    type="number"
+                    step="1000"
+                    min="0"
+                    value={extraLumpSumAmount}
+                    onChange={(e) => setExtraLumpSumAmount(Number(e.target.value))}
+                    placeholder="0"
+                    className="w-full pl-6 pr-2 py-1 rounded-lg bg-slate-950 border border-slate-800 text-xs font-semibold text-slate-100 outline-none"
+                  />
+                </div>
+              </div>
+              {extraLumpSumAmount > 0 && (
+                <div className="flex items-center justify-between text-[11px] text-slate-400 pl-1">
+                  <span>Pay at Month #{extraLumpSumMonth} (Yr {(extraLumpSumMonth / 12).toFixed(1)}):</span>
+                  <input
+                    type="range"
+                    min="1"
+                    max={Math.min(360, loanTermYears * 12)}
+                    value={extraLumpSumMonth}
+                    onChange={(e) => setExtraLumpSumMonth(Number(e.target.value))}
+                    className="w-32 accent-indigo-500 cursor-pointer"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* Interactive Visual Amortization Chart */}
+      <AmortizationChart data={chartData} />
 
       {/* Full Amortization Schedule Section */}
       <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
@@ -1060,6 +1135,87 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
       </div>
 
       <MethodologyDisclosure type="mortgage" />
+
+      {/* Competitor Comparison Section */}
+      <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+        <div className="space-y-1">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-2">
+            <Sparkles className="size-3.5" />
+            <span>Independent Comparison</span>
+          </div>
+          <h2 className="text-xl sm:text-2xl font-bold text-slate-100">
+            Why TableView vs Bankrate, Zillow &amp; Karl's Mortgage Calculator?
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed">
+            Many major online mortgage calculators serve primarily as lead-generation funnels that collect your phone number and sell it to dozens of competing loan officers. Here is how TableView compares on privacy, features, and analytical depth:
+          </p>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full text-left text-xs text-slate-300">
+            <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+              <tr>
+                <th className="py-3 px-4">Feature / Capability</th>
+                <th className="py-3 px-4 text-indigo-400 font-bold">TableView.dev</th>
+                <th className="py-3 px-4">Bankrate</th>
+                <th className="py-3 px-4">Zillow</th>
+                <th className="py-3 px-4">Karl's Mortgage</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60">
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">100% Client-Side Privacy</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (Zero Data Egress)</td>
+                <td className="py-3 px-4 text-slate-400">No (Server-Tracked)</td>
+                <td className="py-3 px-4 text-slate-400">No (Account / Cloud Tracking)</td>
+                <td className="py-3 px-4 text-emerald-400">Yes</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Ad-Free (No Broker Spam)</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (No Lead Capture)</td>
+                <td className="py-3 px-4 text-rose-400">No (Heavy Ads &amp; Popups)</td>
+                <td className="py-3 px-4 text-rose-400">No (Lender Lead Forms)</td>
+                <td className="py-3 px-4 text-amber-400">Banner Ads</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Monthly + Lump-Sum Extra Payments</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (Both Supported)</td>
+                <td className="py-3 px-4 text-slate-200">Yes</td>
+                <td className="py-3 px-4 text-slate-400">Monthly Only</td>
+                <td className="py-3 px-4 text-slate-200">Yes</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Bi-Weekly Accelerated Schedule</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Built-In Comparison</td>
+                <td className="py-3 px-4 text-slate-400">Hidden in Sub-menu</td>
+                <td className="py-3 px-4 text-rose-400">Not Supported</td>
+                <td className="py-3 px-4 text-slate-200">Yes</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Interactive SVG Visual Payoff Chart</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Yes (Zero Bloat SVG)</td>
+                <td className="py-3 px-4 text-slate-200">Yes</td>
+                <td className="py-3 px-4 text-slate-400">Basic Donut Only</td>
+                <td className="py-3 px-4 text-slate-200">Yes</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Excel / CSV Spreadsheet Export</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">1-Click Full Schedule</td>
+                <td className="py-3 px-4 text-slate-400">CSV Only</td>
+                <td className="py-3 px-4 text-rose-400">Not Supported</td>
+                <td className="py-3 px-4 text-slate-400">Basic Text / CSV</td>
+              </tr>
+              <tr className="hover:bg-slate-800/30">
+                <td className="py-3 px-4 font-semibold text-slate-200">Shareable Pre-filled URL</td>
+                <td className="py-3 px-4 text-emerald-400 font-bold">Instant 1-Click Link</td>
+                <td className="py-3 px-4 text-rose-400">Not Supported</td>
+                <td className="py-3 px-4 text-rose-400">Not Supported</td>
+                <td className="py-3 px-4 text-slate-400">Query string only</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Bottom Knowledge & Explainer Guide Card */}
       <div className="bg-slate-900/40 border border-slate-800/80 rounded-2xl p-6 sm:p-8 space-y-6">

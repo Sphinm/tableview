@@ -133,8 +133,29 @@ export function parseCurrentLocation(): RouteState {
     ? cleanPath.replace('/tools/', '')
     : cleanPath.slice(1);
 
-  if (potentialToolSlug && TOOLS_CONFIG[potentialToolSlug]) {
-    return { path: '/tools/:toolSlug', slug: potentialToolSlug };
+  // Keyword aliases for high-intent search URLs
+  const TOOL_ALIASES: Record<string, string> = {
+    'open-csv': 'csv-viewer',
+    'csv': 'csv-viewer',
+    'view-csv': 'csv-viewer',
+    'open-excel': 'excel-viewer',
+    'xlsx-viewer': 'excel-viewer',
+    'xls-viewer': 'excel-viewer',
+    'excel': 'excel-viewer',
+    'open-parquet': 'parquet-viewer',
+    'sql': 'sql-workbench',
+    'sql-runner': 'sql-workbench',
+    'sql-on-csv-parquet': 'sql-workbench',
+    'duckdb': 'sql-workbench',
+    'sql-console': 'sql-workbench',
+    'ndjson-viewer': 'json-viewer',
+    'jsonl-viewer': 'json-viewer'
+  };
+
+  const resolvedToolSlug = TOOL_ALIASES[potentialToolSlug] || potentialToolSlug;
+
+  if (resolvedToolSlug && TOOLS_CONFIG[resolvedToolSlug]) {
+    return { path: '/tools/:toolSlug', slug: resolvedToolSlug };
   }
 
   // Match /guides/:slug or /guide/:slug or /articles/:slug or /blog/:slug

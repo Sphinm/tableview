@@ -154,6 +154,7 @@ export function App() {
               tableName={currentTable}
               fileType={fileType}
               onReset={handleReset}
+              toolConfig={activeToolConfig}
             />
           ) : (
             <>

@@ -130,4 +130,65 @@ describe('Refinance Calculator Engine', () => {
     expect(annual[0].year).toBe(1);
     expect(annual[6].year).toBe(7);
   });
+
+  it('supports rolling closing costs into new loan balance (zero out of pocket)', () => {
+    const inputsWithoutRoll: RefinanceInputs = {
+      homePrice: 400000,
+      downPayment: 80000,
+      originalLoanAmount: 320000,
+      originalTermYears: 30,
+      currentInterestRate: 7.0,
+      monthsAlreadyPaid: 48,
+      newTermYears: 30,
+      newInterestRate: 6.0,
+      yearsBeforeSell: 5,
+      discountPoints: 1.0,
+      originationPercent: 0.0,
+      otherClosingCosts: 2500,
+      federalTaxRate: 0,
+      stateTaxRate: 0,
+      rollCostsIntoLoan: false
+    };
+
+    const inputsWithRoll: RefinanceInputs = {
+      ...inputsWithoutRoll,
+      rollCostsIntoLoan: true
+    };
+
+    const resWithout = calculateRefinance(inputsWithoutRoll);
+    const resWith = calculateRefinance(inputsWithRoll);
+
+    expect(resWith.newLoanAmount).toBeGreaterThan(resWithout.newLoanAmount);
+    expect(resWith.newLoanAmount).toBe(resWithout.newLoanAmount + resWithout.totalClosingCosts);
+    expect(resWith.newMonthlyPayment).toBeGreaterThan(resWithout.newMonthlyPayment);
+  });
+
+  it('detects 30-year clock reset warning when refi extends debt horizon and costs more lifetime interest', () => {
+    // Borrower already paid 96 months (8 years) on 30-yr loan at 6.0%, refis to another 30-yr loan at 5.75%
+    const inputs: RefinanceInputs = {
+      homePrice: 400000,
+      downPayment: 80000,
+      originalLoanAmount: 320000,
+      originalTermYears: 30,
+      currentInterestRate: 6.0,
+      monthsAlreadyPaid: 96,
+      newTermYears: 30,
+      newInterestRate: 5.75,
+      yearsBeforeSell: 10,
+      discountPoints: 0.5,
+      originationPercent: 0,
+      otherClosingCosts: 2000,
+      federalTaxRate: 0,
+      stateTaxRate: 0
+    };
+
+    const res = calculateRefinance(inputs);
+    expect(res.isResettingClock).toBe(true);
+    expect(res.extraMonthsAdded).toBe(96); // 8 extra years
+    // Even though monthly payment savings > 0, lifetime interest is higher
+    expect(res.monthlyPaymentSavings).toBeGreaterThan(0);
+    expect(res.lifetimeInterestSaved).toBeLessThan(0);
+    expect(res.clockResetWarning).toBeDefined();
+    expect(res.clockResetWarning).toContain('Resetting your loan term adds');
+  });
 });

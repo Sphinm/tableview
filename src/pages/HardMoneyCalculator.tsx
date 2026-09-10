@@ -11,7 +11,8 @@ import {
   CheckCircle2,
   ArrowRight,
   BookOpen,
-  HelpCircle
+  HelpCircle,
+  Sparkles
 } from 'lucide-react';
 import {
   calculateHardMoney,
@@ -26,7 +27,7 @@ const hardMoneySchemas = [
     '@type': 'WebApplication',
     name: 'Hard Money Loan & Fix-and-Flip Profit Calculator',
     url: 'https://tableview.dev/hard-money-calculator',
-    description: 'Calculate hard money loan costs, points, interest-only monthly payments, 70% rule Maximum Allowable Offer (MAO), and net flip profit margins.',
+    description: 'Free in-browser Hard Money Loan calculator and DealCheck alternative. Calculate hard money loan costs, points, interest-only monthly payments, 70% rule Maximum Allowable Offer (MAO), and net flip profit margins without subscription fees.',
     applicationCategory: 'FinanceApplication',
     operatingSystem: 'All',
     offers: {
@@ -67,6 +68,14 @@ const hardMoneySchemas = [
   {
     '@type': 'FAQPage',
     mainEntity: [
+      {
+        '@type': 'Question',
+        name: 'Why use TableView Hard Money Calculator instead of DealCheck or Rehab Financial?',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Unlike DealCheck which caps free users to 15 property analyses and locks full PDF exports behind a monthly subscription, TableView.dev provides 100% free and unlimited deal evaluations, zero account sign-up, selectable Dutch vs as-incurred interest calculations, 70% rule MAO analysis, and instant Excel exports with complete client-side data privacy.'
+        }
+      },
       {
         '@type': 'Question',
         name: 'What is a hard money loan and how does it work for house flipping?',
@@ -126,8 +135,8 @@ interface HardMoneyCalculatorProps {
 export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalculatorProps) => {
   useEffect(() => {
     updatePageMeta(
-      'Hard Money Loan Calculator — Fix & Flip Profit, Points & 70% Rule Tool | TableView.dev',
-      'Free in-browser Hard Money Loan calculator for real estate flippers. Calculate points, interest-only holding costs, 70% rule Maximum Allowable Offer (MAO), net flip profit, and annualized ROI.',
+      'Hard Money Loan Calculator — Free DealCheck Alternative & Fix-Flip ROI Tool | TableView.dev',
+      'Free in-browser Hard Money Loan calculator and DealCheck alternative. Calculate points, interest-only holding costs, 70% rule Maximum Allowable Offer (MAO), net flip profit, and annualized ROI without subscriptions.',
       '/hard-money-calculator',
       hardMoneySchemas
     );
@@ -905,6 +914,79 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
             </div>
           </div>
 
+          {/* Competitor Comparison: TableView vs DealCheck vs Rehab Financial */}
+          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+            <div className="space-y-1">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-2">
+                <Sparkles className="size-3.5" />
+                <span>Fix &amp; Flip Tool Comparison</span>
+              </div>
+              <h3 className="text-lg sm:text-2xl font-bold text-slate-100">
+                Why TableView Hard Money Calculator vs DealCheck &amp; Rehab Financial?
+              </h3>
+              <p className="text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed">
+                Analyzing fix-and-flip profitability shouldn't come with property report limits or persistent sales calls from mortgage brokers. Here is how TableView compares against leading alternatives:
+              </p>
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-300">
+                <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+                  <tr>
+                    <th className="py-3 px-4">Feature / Capability</th>
+                    <th className="py-3 px-4 text-indigo-400 font-bold">TableView.dev</th>
+                    <th className="py-3 px-4">DealCheck</th>
+                    <th className="py-3 px-4">Rehab Financial / Kiavi</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60">
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Pricing &amp; Property Limits</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">100% Free (Unlimited Deals)</td>
+                    <td className="py-3 px-4 text-rose-400">Limited to 15, then $14-$29/mo</td>
+                    <td className="py-3 px-4 text-slate-400">Free (Lead Gen Funnel)</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Account Registration Required</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">None (Instant In-Browser)</td>
+                    <td className="py-3 px-4 text-rose-400">Mandatory Account</td>
+                    <td className="py-3 px-4 text-rose-400">Mandatory Contact Form</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">70% Rule MAO + Live ROI Analysis</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">Instant Dynamic Calculation</td>
+                    <td className="py-3 px-4 text-slate-200">Yes (Under Account Limits)</td>
+                    <td className="py-3 px-4 text-slate-400">Basic Payment Only</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Dutch vs As-Incurred Interest Mode</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">Selectable Toggle</td>
+                    <td className="py-3 px-4 text-slate-400">Fixed Baseline</td>
+                    <td className="py-3 px-4 text-slate-400">Lender Default Only</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Full Excel / CSV Workbook Export</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">1-Click Full Model Export</td>
+                    <td className="py-3 px-4 text-amber-400">PDF Report (Paid Plan Only)</td>
+                    <td className="py-3 px-4 text-rose-400">Not Supported</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">Shareable Pre-filled URL</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">Instant 1-Click Link</td>
+                    <td className="py-3 px-4 text-slate-400">Paid Tier Feature</td>
+                    <td className="py-3 px-4 text-rose-400">Not Supported</td>
+                  </tr>
+                  <tr className="hover:bg-slate-800/30">
+                    <td className="py-3 px-4 font-semibold text-slate-200">100% Client-Side Privacy</td>
+                    <td className="py-3 px-4 text-emerald-400 font-bold">Yes (Zero Data Egress)</td>
+                    <td className="py-3 px-4 text-slate-400">Stored in Cloud Database</td>
+                    <td className="py-3 px-4 text-rose-400">Lender Sales Call List</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
           {/* Subsection 4: Comprehensive In-Depth Flipping FAQs */}
           <div className="space-y-4">
             <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
@@ -912,6 +994,13 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               Frequently Asked Questions About Hard Money Loans
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+                <h4 className="font-semibold text-slate-200 text-sm">Why use TableView Hard Money Calculator instead of DealCheck or Rehab Financial?</h4>
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Unlike DealCheck which caps free accounts to 15 property analyses and locks full PDF exports behind a monthly subscription, TableView.dev provides 100% free and unlimited deal evaluations, zero account sign-up, selectable Dutch vs as-incurred interest calculations, 70% rule MAO analysis, and instant Excel exports with complete client-side data privacy.
+                </p>
+              </div>
+
               <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
                 <h4 className="font-semibold text-slate-200 text-sm">What is a hard money loan and how does it work for house flipping?</h4>
                 <p className="text-xs text-slate-400 leading-relaxed">
