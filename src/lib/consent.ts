@@ -30,7 +30,7 @@ const CLARITY_PROJECT_ID = 'yeyf0hxgk6';
  * modelled estimates. To switch to advanced mode, load this script
  * unconditionally in index.html instead (see README, "Analytics").
  */
-export const GA4_MEASUREMENT_ID = 'G-Z3WN77F6G8';
+export const GA4_MEASUREMENT_ID = 'G-JJBNH56W95';
 
 declare global {
   interface Window {

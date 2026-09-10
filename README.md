@@ -142,7 +142,7 @@ Deliberately excluded:
 
 ## 📊 Analytics
 
-**Google Analytics 4** (`G-Z3WN77F6G8`) and **Microsoft Clarity** are both loaded
+**Google Analytics 4** (`G-JJBNH56W95`) and **Microsoft Clarity** are both loaded
 from `src/lib/consent.ts`, and only after the visitor grants analytics consent.
 
 This is **basic consent mode**, deliberately *not* the snippet the GA4 dashboard
