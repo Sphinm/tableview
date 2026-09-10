@@ -1,3 +1,18 @@
+# Long-lived immutable caching for Vite's content-hashed build output.
+# These filenames change whenever their contents change, so they can be cached
+# forever. Without this, every page view re-validates ~400 kB of JavaScript.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The service worker must never be cached, or clients get stuck on an old one.
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+  Service-Worker-Allowed: /
+
+/manifest.webmanifest
+  Content-Type: application/manifest+json
+  Cache-Control: public, max-age=3600
+
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8
   Cache-Control: public, max-age=3600
@@ -7,7 +22,12 @@
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=3600
 
+# HTML must always be revalidated so a deploy is picked up immediately.
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
 /*
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
   Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=()

@@ -1,20 +1,31 @@
 {
   "name": "TableView.dev — In-Browser Data & Finance Workspace",
   "short_name": "TableView",
-  "description": "100% private in-browser data workspace and bank-grade real estate loan calculators. Zero server uploads.",
+  "description": "100% private in-browser data workspace and bank-grade real estate loan calculators. Files are never uploaded.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "orientation": "portrait-primary",
   "background_color": "#050608",
   "theme_color": "#050608",
   "categories": ["finance", "productivity", "utilities", "developer"],
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
   "shortcuts": [
@@ -23,28 +34,28 @@
       "short_name": "Mortgage",
       "description": "Calculate monthly home loan payment with PITI & PMI",
       "url": "/mortgage-calculator",
-      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "DSCR Loan Calculator",
       "short_name": "DSCR",
       "description": "Underwrite rental property debt-service coverage ratio",
       "url": "/dscr-loan-calculator",
-      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Refinance Calculator",
       "short_name": "Refinance",
       "description": "Mortgage refinance break-even and savings calculator",
       "url": "/refinance-calculator",
-      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
       "name": "Parquet Inspector",
       "short_name": "Parquet",
       "description": "Inspect and query Apache Parquet files locally",
       "url": "/parquet-viewer",
-      "icons": [{ "src": "/favicon.svg", "sizes": "any" }]
+      "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]
 }
