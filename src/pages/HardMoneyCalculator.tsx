@@ -12,7 +12,8 @@ import {
   ArrowRight,
   BookOpen,
   HelpCircle,
-  Sparkles
+  Sparkles,
+  Printer
 } from 'lucide-react';
 import {
   calculateHardMoney,
@@ -21,6 +22,7 @@ import {
 } from '../lib/hardMoneyCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
+import { PrintableHardMoneyReport } from '../components/PrintableHardMoneyReport';
 
 const hardMoneySchemas = [
   {
@@ -268,6 +270,15 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
     URL.revokeObjectURL(link.href);
   };
 
+  const handleExportPdf = () => {
+    const prevTitle = document.title;
+    document.title = `hard_money_deal_sheet_${purchasePrice}_arv_${afterRepairValue}`;
+    window.print();
+    setTimeout(() => {
+      document.title = prevTitle;
+    }, 1000);
+  };
+
   const handleCopyLink = () => {
     try {
       const params = new URLSearchParams();
@@ -290,7 +301,8 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
+    <>
+      <div className="print:hidden min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
       {/* Hero Header */}
       <section className="relative pt-12 pb-8 border-b border-slate-800 bg-gradient-to-b from-amber-950/20 via-slate-950 to-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -726,6 +738,14 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
             <div className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900 border border-slate-800">
               <div className="flex items-center gap-2">
                 <button
+                  onClick={handleExportPdf}
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-semibold text-amber-400 cursor-pointer transition-colors shadow-sm"
+                  title="Print or export Deal Sheet as vector PDF"
+                >
+                  <Printer className="size-4" />
+                  <span>Export PDF</span>
+                </button>
+                <button
                   onClick={handleExportExcel}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-800 text-xs font-semibold text-emerald-300 cursor-pointer transition-colors"
                 >
@@ -1149,5 +1169,11 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
         </button>
       </div>
     </div>
+
+    <PrintableHardMoneyReport
+      inputs={inputs}
+      result={result}
+    />
+  </>
   );
 };

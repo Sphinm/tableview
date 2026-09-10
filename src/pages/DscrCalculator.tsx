@@ -13,7 +13,8 @@ import {
   CheckCircle2,
   ArrowRight,
   BookOpen,
-  ShieldCheck
+  ShieldCheck,
+  Printer
 } from 'lucide-react';
 import {
   calculateDscr,
@@ -22,6 +23,7 @@ import {
 } from '../lib/dscrCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
+import { PrintableDscrReport } from '../components/PrintableDscrReport';
 
 const dscrSchemas = [
   {
@@ -308,6 +310,15 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
     URL.revokeObjectURL(link.href);
   };
 
+  const handleExportPdf = () => {
+    const prevTitle = document.title;
+    document.title = `dscr_underwriting_statement_${propertyValue}_loan_${Math.round(result.loanAmount)}`;
+    window.print();
+    setTimeout(() => {
+      document.title = prevTitle;
+    }, 1000);
+  };
+
   const handleCopyLink = () => {
     try {
       const params = new URLSearchParams();
@@ -347,7 +358,8 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
+    <>
+      <div className="print:hidden min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -844,10 +856,20 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   {copiedLink ? 'Link Copied!' : 'Share Deal'}
                 </button>
                 <button
-                  onClick={handleExportExcel}
-                  className="btn-primary px-4 py-1.5 rounded-xl text-xs font-semibold shadow-sm cursor-pointer"
+                  onClick={handleExportPdf}
+                  className="px-3.5 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                  title="Print or export DSCR underwriting report as vector PDF"
                 >
-                  Export PDF/Excel
+                  <Printer className="size-3.5" />
+                  <span>Export PDF</span>
+                </button>
+                <button
+                  onClick={handleExportExcel}
+                  className="px-3.5 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                  title="Download complete Excel financial model"
+                >
+                  <FileSpreadsheet className="size-3.5" />
+                  <span>Export Excel</span>
                 </button>
               </div>
             </div>
@@ -890,6 +912,15 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   Monthly Details
                 </button>
               </div>
+
+              <button
+                onClick={handleExportPdf}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-950/70 hover:bg-indigo-900 border border-indigo-800/80 text-xs font-semibold text-indigo-300 transition-colors cursor-pointer"
+                title="Print or export as vector PDF report"
+              >
+                <Printer className="size-3.5" />
+                <span>Export PDF</span>
+              </button>
 
               <button
                 onClick={handleExportExcel}
@@ -1400,5 +1431,11 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
         </button>
       </div>
     </div>
+
+    <PrintableDscrReport
+      inputs={inputs}
+      result={result}
+    />
+  </>
   );
 };

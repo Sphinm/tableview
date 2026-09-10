@@ -261,20 +261,24 @@ export function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
-      <Header
-        onTrySample={handleTrySample}
-        isLoading={isLoading}
-        currentPath={path}
-        theme={theme}
-        onToggleTheme={handleToggleTheme}
-      />
+      <div className="print:hidden">
+        <Header
+          onTrySample={handleTrySample}
+          isLoading={isLoading}
+          currentPath={path}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
+        />
+      </div>
 
       <main className="flex-1 flex flex-col">
         {renderCurrentView()}
       </main>
 
-      <Footer onTrySample={handleTrySample} />
-      <CookieBanner />
+      <div className="print:hidden">
+        <Footer onTrySample={handleTrySample} />
+        <CookieBanner />
+      </div>
     </div>
   );
 }

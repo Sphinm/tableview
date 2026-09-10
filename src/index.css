@@ -365,3 +365,61 @@ html.light ::-webkit-scrollbar-thumb {
 html.light ::-webkit-scrollbar-thumb:hover {
   background: rgba(148, 163, 184, 1);
 }
+
+/* Print Stylesheet for High-Quality Vector PDF Export */
+@media print {
+  @page {
+    size: letter portrait;
+    margin: 12mm 10mm;
+  }
+
+  /* Force color printing and clean background */
+  html, body {
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+  }
+
+  /* Global hidden elements during PDF print */
+  header,
+  footer,
+  nav,
+  aside,
+  .no-print,
+  #header-nav,
+  .ad-slot,
+  .sticky,
+  .fixed,
+  button,
+  .workbench-cta {
+    display: none !important;
+  }
+
+  /* Avoid awkward page cuts in PDF */
+  .print-avoid-break {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  table {
+    border-collapse: collapse !important;
+    width: 100% !important;
+  }
+
+  thead {
+    display: table-header-group !important;
+  }
+
+  tr {
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  /* Allow links to display naturally without auto-printing URL hrefs */
+  a[href]:after {
+    content: none !important;
+  }
+}

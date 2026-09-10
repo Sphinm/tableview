@@ -17,7 +17,8 @@ import {
   Calendar,
   Percent,
   RefreshCw,
-  Home
+  Home,
+  Printer
 } from 'lucide-react';
 import {
   type RefinanceInputs,
@@ -31,6 +32,7 @@ import { updatePageMeta, navigateTo } from '../lib/router';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RefinanceBalanceChart } from '../components/RefinanceBalanceChart';
+import { PrintableRefinanceReport } from '../components/PrintableRefinanceReport';
 
 const refinanceFaqs = [
   {
@@ -327,8 +329,18 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
     XLSX.writeFile(wb, `tableview-refinance-analysis-${summary.horizonYears}yr.xlsx`);
   };
 
+  const handleExportPdf = () => {
+    const prevTitle = document.title;
+    document.title = `refinance_statement_${Math.round(summary.newLoanAmount)}`;
+    window.print();
+    setTimeout(() => {
+      document.title = prevTitle;
+    }, 1000);
+  };
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
+    <>
+      <div className="print:hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
       {/* Sub-Navigation Bar */}
       <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800/80">
         <div className="flex items-center gap-2 text-xs text-slate-400">
@@ -1294,6 +1306,14 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
             {/* Export Buttons */}
             <button
+              onClick={handleExportPdf}
+              className="px-3 py-1.5 rounded-lg bg-indigo-500/10 hover:bg-indigo-500/20 border border-indigo-500/30 text-xs font-semibold text-indigo-400 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
+              title="Print or export as vector PDF report"
+            >
+              <Printer className="size-3.5" />
+              <span>PDF Report</span>
+            </button>
+            <button
               onClick={handleDownloadCsv}
               className="px-3 py-1.5 rounded-lg bg-slate-950 hover:bg-slate-800 border border-slate-800 text-xs font-semibold text-slate-300 hover:text-slate-100 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
               title="Export to CSV"
@@ -1583,5 +1603,12 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
         </div>
       </div>
     </div>
+
+    <PrintableRefinanceReport
+      inputs={inputs}
+      summary={summary}
+      annualSchedule={annualSchedule}
+    />
+  </>
   );
 };

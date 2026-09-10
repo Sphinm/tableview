@@ -10,7 +10,8 @@ import {
   FileSpreadsheet,
   HelpCircle,
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Printer
 } from 'lucide-react';
 import {
   type MortgageInputs,
@@ -27,6 +28,7 @@ import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { PaymentDonutChart } from '../components/PaymentDonutChart';
 import { AmortizationChart } from '../components/AmortizationChart';
+import { PrintableMortgageReport } from '../components/PrintableMortgageReport';
 
 const mortgageFaqs = [
   {
@@ -264,8 +266,18 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
     XLSX.writeFile(wb, `mortgage_schedule_${homeValue}.xlsx`);
   };
 
+  const handleExportPdf = () => {
+    const prevTitle = document.title;
+    document.title = `mortgage_amortization_statement_${homeValue}_${loanTermYears}yr`;
+    window.print();
+    setTimeout(() => {
+      document.title = prevTitle;
+    }, 1000);
+  };
+
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24 lg:pb-12 space-y-10">
+    <>
+      <div className="print:hidden max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24 lg:pb-12 space-y-10">
       {/* Top Banner & Header */}
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -1061,7 +1073,16 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
             </div>
 
             {/* Export Buttons */}
-            <div className="grid grid-cols-2 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+            <div className="grid grid-cols-3 sm:flex sm:items-center gap-2 w-full sm:w-auto">
+              <button
+                onClick={handleExportPdf}
+                className="px-3 py-2 sm:py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                title="Print or save as bank-grade vector PDF statement"
+              >
+                <Printer className="size-3.5" />
+                <span>Export PDF</span>
+              </button>
+
               <button
                 onClick={handleExportExcel}
                 className="px-3 py-2 sm:py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
@@ -1342,5 +1363,23 @@ export const MortgageCalculator = ({ onTrySample }: MortgageCalculatorProps) => 
         </button>
       </div>
     </div>
+
+    <PrintableMortgageReport
+      homeValue={homeValue}
+      downPayment={summary.downPaymentAmount}
+      loanAmount={summary.loanAmount}
+      interestRate={interestRate}
+      loanTermYears={loanTermYears}
+      loanType={loanType}
+      startMonth={startMonth}
+      startYear={startYear}
+      propertyTaxYearly={propertyTaxYearly}
+      homeInsuranceYearly={homeInsuranceYearly}
+      monthlyHoa={monthlyHoa}
+      summary={summary}
+      annualSchedule={annualSchedule}
+      extraMonthlyPrincipal={extraMonthlyPrincipal}
+    />
+  </>
   );
 };
