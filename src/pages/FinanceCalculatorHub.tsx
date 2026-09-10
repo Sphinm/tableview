@@ -25,13 +25,14 @@ import {
   type CreditCardPayoffInputs
 } from '../lib/financeCalculators';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { CALCULATOR_META } from '../data/routeMeta';
 
 export const FinanceCalculatorHub = () => {
   useEffect(() => {
     updatePageMeta(
-      'Financial Calculators Hub - Free Personal Finance & Loan Tools | TableView.dev',
-      'Free, 100% private in-browser financial planning calculators. Calculate auto loans, personal loans, compound savings interest, and credit card payoff strategies.',
-      '/finance-calculator'
+      CALCULATOR_META['/finance-calculator'].title,
+      CALCULATOR_META['/finance-calculator'].description,
+      CALCULATOR_META['/finance-calculator'].canonical
     );
   }, []);
 

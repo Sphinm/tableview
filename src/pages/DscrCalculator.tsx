@@ -23,6 +23,7 @@ import {
   type DscrInputs
 } from '../lib/dscrCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { PrintableDscrReport } from '../components/PrintableDscrReport';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
@@ -143,9 +144,9 @@ export const DscrCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWorkbench
 
   useEffect(() => {
     updatePageMeta(
-      'DSCR Loan Calculator — Free BiggerPockets Alternative & Investor Tool | TableView.dev',
-      'Free in-browser DSCR loan calculator and BiggerPockets Pro alternative without paywalls. Calculate debt service coverage ratio, maximum qualifying loan amount, cash flow, and amortization with Excel export.',
-      '/dscr-loan-calculator',
+      CALCULATOR_META['/dscr-loan-calculator'].title,
+      CALCULATOR_META['/dscr-loan-calculator'].description,
+      CALCULATOR_META['/dscr-loan-calculator'].canonical,
       dscrSchemas
     );
   }, []);

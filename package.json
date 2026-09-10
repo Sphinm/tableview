@@ -5,7 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc -b && vite build && bun run scripts/prerender.ts",
+    "prerender": "bun run scripts/prerender.ts",
+    "icons": "bun run scripts/generate-icons.ts",
+    "test": "bun test",
     "lint": "oxlint",
     "preview": "vite preview"
   },

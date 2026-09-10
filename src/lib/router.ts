@@ -1,20 +1,29 @@
 import { useState, useEffect } from 'react';
+import { resolveRoutePath, type RouteState } from './resolveRoute';
 
-export interface RouteState {
-  path: string;
-  slug?: string;
-}
-
-import { TOOLS_CONFIG } from '../data/tools';
-import { guidesData } from '../data/guides';
+export type { RouteState };
 
 export function updatePageMeta(
   title: string,
   description: string,
   canonicalPath: string = '/',
-  schemas?: Record<string, any>[]
+  schemas?: Record<string, any>[],
+  noindex: boolean = false
 ) {
   document.title = title;
+
+  // The SPA fallback answers unknown paths with HTTP 200, so a 404 view must
+  // declare noindex itself or search engines will index every typo.
+  let robots = document.querySelector('meta[name="robots"]');
+  if (!robots) {
+    robots = document.createElement('meta');
+    robots.setAttribute('name', 'robots');
+    document.head.appendChild(robots);
+  }
+  robots.setAttribute(
+    'content',
+    noindex ? 'noindex, nofollow' : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1'
+  );
 
   let metaDesc = document.querySelector('meta[name="description"]');
   if (!metaDesc) {
@@ -132,122 +141,9 @@ export function parseCurrentLocation(): RouteState {
     cleanPath = cleanPath.slice(0, -1);
   }
 
-  // Check if matches a dedicated tool landing page (e.g. /parquet-viewer or /tools/parquet-viewer)
-  const potentialToolSlug = cleanPath.startsWith('/tools/')
-    ? cleanPath.replace('/tools/', '')
-    : cleanPath.slice(1);
-
-  // Keyword aliases for high-intent search URLs
-  const TOOL_ALIASES: Record<string, string> = {
-    'open-csv': 'csv-viewer',
-    'csv': 'csv-viewer',
-    'view-csv': 'csv-viewer',
-    'csv-reader': 'csv-viewer',
-    'open-excel': 'excel-viewer',
-    'xlsx-viewer': 'excel-viewer',
-    'xls-viewer': 'excel-viewer',
-    'excel': 'excel-viewer',
-    'open-parquet': 'parquet-viewer',
-    'parquet-reader': 'parquet-viewer',
-    'sql': 'sql-workbench',
-    'sql-on-csv': 'sql-workbench',
-    'sql-on-parquet': 'sql-workbench',
-    'query-csv': 'sql-workbench',
-    'query-parquet': 'sql-workbench',
-    'csv-sql': 'sql-workbench',
-    'sql-runner': 'sql-workbench',
-    'sql-on-csv-parquet': 'sql-workbench',
-    'duckdb': 'sql-workbench',
-    'sql-console': 'sql-workbench',
-    'convert-parquet-to-csv': 'parquet-to-csv',
-    'convert-csv-to-parquet': 'csv-to-parquet',
-    'convert-csv-to-excel': 'csv-to-excel',
-    'convert-excel-to-csv': 'excel-to-csv',
-    'ndjson-viewer': 'json-viewer',
-    'jsonl-viewer': 'json-viewer'
-  };
-
-  // Dedicated Mortgage Calculator route & aliases
-  if (/^\/(?:tools\/)?(?:mortgage-calculator|mortgage)$/.test(cleanPath)) {
-    return { path: '/mortgage-calculator' };
-  }
-
-  // Dedicated Refinance Calculator route & aliases (including should-i-refinance.php)
-  if (/^\/(?:tools\/)?(?:refinance-calculator|refinance|calculators\/should-i-refinance(?:\.php)?|should-i-refinance)$/.test(cleanPath)) {
-    return { path: '/refinance-calculator' };
-  }
-
-  // Dedicated DSCR Loan Calculator route & aliases
-  if (/^\/(?:tools\/)?(?:dscr-loan-calculator|dscr-calculator|dscr)$/.test(cleanPath)) {
-    return { path: '/dscr-loan-calculator' };
-  }
-
-  // Dedicated Hard Money & Fix-and-Flip Calculator route & aliases
-  if (/^\/(?:tools\/)?(?:hard-money-calculator|hard-money-loan-calculator|fix-and-flip-calculator|hard-money)$/.test(cleanPath)) {
-    return { path: '/hard-money-calculator' };
-  }
-
-  // Dedicated Snowflake Cost Calculator route & aliases
-  if (/^\/(?:tools\/)?(?:snowflake-cost-calculator|snowflake-calculator|snowflake-warehouse-calculator)$/.test(cleanPath)) {
-    return { path: '/snowflake-cost-calculator' };
-  }
-
-  // Dedicated Parquet Storage & Query Savings Calculator route & aliases
-  if (/^\/(?:tools\/)?(?:parquet-storage-calculator|parquet-savings-calculator|parquet-cost-calculator)$/.test(cleanPath)) {
-    return { path: '/parquet-storage-calculator' };
-  }
-
-  // Financial Calculators Hub route & aliases
-  if (/^\/(?:finance-calculator|calculators|financial-calculators|calculator)$/.test(cleanPath)) {
-    return { path: '/finance-calculator' };
-  }
-
-  const resolvedToolSlug = TOOL_ALIASES[potentialToolSlug] || potentialToolSlug;
-
-  if (resolvedToolSlug && TOOLS_CONFIG[resolvedToolSlug]) {
-    return { path: '/tools/:toolSlug', slug: resolvedToolSlug };
-  }
-
-  // Match /guides/:slug or /guide/:slug or /articles/:slug or /blog/:slug
-  const guideMatch = cleanPath.match(/^\/(?:guides|guide|docs|blog|articles?)\/([a-zA-Z0-9_-]+)$/);
-  if (guideMatch) {
-    return { path: '/guides/:slug', slug: guideMatch[1] };
-  }
-
-  // Support direct guide slugs indexed by search engines (e.g. /what-is-apache-parquet)
-  const potentialGuideSlug = cleanPath.startsWith('/') ? cleanPath.slice(1) : cleanPath;
-  if (guidesData.some((g) => g.slug === potentialGuideSlug)) {
-    return { path: '/guides/:slug', slug: potentialGuideSlug };
-  }
-
-  // Aliases for guides hub: /guide, /docs, /blog, /articles
-  if (/^\/(?:guides|guide|docs|blog|articles?)$/.test(cleanPath)) {
-    return { path: '/guides' };
-  }
-
-  // Canonical aliases for standard informational pages to avoid 404s
-  if (/^\/(?:privacy|privacy-policy)$/.test(cleanPath)) {
-    return { path: '/privacy' };
-  }
-
-  if (/^\/(?:terms|terms-of-service|tos)$/.test(cleanPath)) {
-    return { path: '/terms' };
-  }
-
-  if (/^\/(?:about|about-us)$/.test(cleanPath)) {
-    return { path: '/about' };
-  }
-
-  if (/^\/(?:contact|contact-us|support)$/.test(cleanPath)) {
-    return { path: '/contact' };
-  }
-
-  // Workbench aliases: /tools, /converters, /viewers
-  if (/^\/(?:tools|converters|viewers)$/.test(cleanPath)) {
-    return { path: '/' };
-  }
-
-  return { path: cleanPath };
+  // The remaining resolution logic is shared with the build-time prerenderer
+  // so that aliases can never diverge between the two.
+  return resolveRoutePath(cleanPath);
 }
 
 export function navigateTo(to: string) {

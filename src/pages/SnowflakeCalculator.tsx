@@ -21,6 +21,7 @@ import {
   type SnowflakeResult
 } from '../lib/snowflakeCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 
 const snowflakeSchemas = [
@@ -128,9 +129,9 @@ interface SnowflakeCalculatorProps {
 export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalculatorProps) => {
   useEffect(() => {
     updatePageMeta(
-      'Snowflake Cost Calculator — Warehouse Sizing, Credits & FinOps Estimator | TableView.dev',
-      'Free in-browser Snowflake cost and credit calculator. Estimate monthly compute, multi-cluster warehouse autoscaling, storage, and auto-suspend FinOps savings.',
-      '/snowflake-cost-calculator',
+      CALCULATOR_META['/snowflake-cost-calculator'].title,
+      CALCULATOR_META['/snowflake-cost-calculator'].description,
+      CALCULATOR_META['/snowflake-cost-calculator'].canonical,
       snowflakeSchemas
     );
   }, []);

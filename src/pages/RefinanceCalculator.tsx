@@ -30,6 +30,7 @@ import {
   exportRefinanceToCsv
 } from '../lib/refinanceCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { CALCULATOR_META } from '../data/routeMeta';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RefinanceBalanceChart } from '../components/RefinanceBalanceChart';
@@ -105,9 +106,9 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWork
 
   useEffect(() => {
     updatePageMeta(
-      'Mortgage Refinance Break-Even Calculator - SmartAsset & Bankrate Alternative | TableView.dev',
-      'Free, 100% private in-browser mortgage refinance break-even calculator. Compare monthly savings, net equity break-even, roll-in closing costs, and 30-year reset clock warnings without broker ads or lead forms.',
-      '/refinance-calculator',
+      CALCULATOR_META['/refinance-calculator'].title,
+      CALCULATOR_META['/refinance-calculator'].description,
+      CALCULATOR_META['/refinance-calculator'].canonical,
       refinanceSchemas
     );
   }, []);

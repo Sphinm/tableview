@@ -26,6 +26,7 @@ import {
 } from '../lib/mortgageCalculator';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { CALCULATOR_META } from '../data/routeMeta';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { PaymentDonutChart } from '../components/PaymentDonutChart';
@@ -93,9 +94,9 @@ export const MortgageCalculator = ({ onTrySample, onAnalyzeInWorkbench }: Mortga
 
   useEffect(() => {
     updatePageMeta(
-      'Mortgage Calculator - Real Estate Home Loan & Amortization Tool | TableView.dev',
-      'Free, 100% private in-browser mortgage calculator. Calculate monthly payments with PMI, property taxes, home insurance, and HOA fees. Includes interactive amortization schedules and Excel/CSV export.',
-      '/mortgage-calculator',
+      CALCULATOR_META['/mortgage-calculator'].title,
+      CALCULATOR_META['/mortgage-calculator'].description,
+      CALCULATOR_META['/mortgage-calculator'].canonical,
       mortgageSchemas
     );
   }, []);

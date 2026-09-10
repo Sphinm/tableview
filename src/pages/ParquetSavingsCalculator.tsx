@@ -19,6 +19,7 @@ import {
   type ParquetSavingsResult
 } from '../lib/parquetSavingsCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 
 const parquetSchemas = [
@@ -126,9 +127,9 @@ interface ParquetSavingsCalculatorProps {
 export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetSavingsCalculatorProps) => {
   useEffect(() => {
     updatePageMeta(
-      'Parquet Cloud Storage & Query Savings Calculator — AWS S3 & Athena Cost Tool | TableView.dev',
-      'Calculate exact cloud bill savings by converting CSV, JSON, or text logs to Apache Parquet. Estimate AWS S3 storage reduction and Athena/BigQuery scan savings.',
-      '/parquet-storage-calculator',
+      CALCULATOR_META['/parquet-storage-calculator'].title,
+      CALCULATOR_META['/parquet-storage-calculator'].description,
+      CALCULATOR_META['/parquet-storage-calculator'].canonical,
       parquetSchemas
     );
   }, []);

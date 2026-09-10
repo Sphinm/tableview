@@ -20,6 +20,7 @@ import {
   type HardMoneyResult
 } from '../lib/hardMoneyCalculator';
 import { updatePageMeta, navigateTo } from '../lib/router';
+import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { PrintableHardMoneyReport } from '../components/PrintableHardMoneyReport';
 
@@ -136,9 +137,9 @@ interface HardMoneyCalculatorProps {
 export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalculatorProps) => {
   useEffect(() => {
     updatePageMeta(
-      'Hard Money Loan Calculator — Free DealCheck Alternative & Fix-Flip ROI Tool | TableView.dev',
-      'Free in-browser Hard Money Loan calculator and DealCheck alternative. Calculate points, interest-only holding costs, 70% rule Maximum Allowable Offer (MAO), net flip profit, and annualized ROI without subscriptions.',
-      '/hard-money-calculator',
+      CALCULATOR_META['/hard-money-calculator'].title,
+      CALCULATOR_META['/hard-money-calculator'].description,
+      CALCULATOR_META['/hard-money-calculator'].canonical,
       hardMoneySchemas
     );
   }, []);
