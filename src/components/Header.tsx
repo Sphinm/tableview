@@ -307,6 +307,9 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               <Table className="size-4.5" />
             </div>
             <span className="text-base font-bold text-slate-100 tracking-tight">TableView</span>
+            <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              Workspace
+            </span>
           </a>
 
           {/* Desktop Nav */}

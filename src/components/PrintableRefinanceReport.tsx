@@ -141,11 +141,11 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
 
       {/* Annual Amortization Comparison Table */}
       <div className="mb-6">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-slate-800 mb-2">
-          2. Annual Amortization & Equity Tracking (First 10 Years)
+        <h2 className="text-xs font-black uppercase tracking-wider text-slate-900 border-b-2 border-slate-900 pb-1.5 mb-2.5">
+          2. Complete Annual Amortization & Equity Tracking Schedule
         </h2>
         <table className="w-full text-[10px] border border-slate-300">
-          <thead className="bg-slate-800 text-white">
+          <thead className="bg-slate-900 text-white">
             <tr>
               <th className="py-1.5 px-2 text-left">Year</th>
               <th className="py-1.5 px-2 text-right">Old Balance</th>
@@ -157,7 +157,7 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 font-mono">
-            {annualSchedule.slice(0, 10).map((row) => (
+            {annualSchedule.map((row) => (
               <tr key={row.year} className="even:bg-slate-50/70">
                 <td className="py-1 px-2 font-sans font-bold text-slate-900">{row.year}</td>
                 <td className="py-1 px-2 text-right">${Math.round(row.oldEndingBalance).toLocaleString()}</td>

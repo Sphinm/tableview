@@ -239,20 +239,24 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
   const annualSchedule = useMemo(() => {
     const map = new Map<
       number,
-      { year: number; payment: number; principal: number; interest: number; balance: number }
+      { year: number; payment: number; principal: number; interest: number; balance: number; accumulatedInterest: number }
     >();
+    let cumInt = 0;
     for (const row of fullMonthlySchedule) {
+      cumInt += row.interest;
       const current = map.get(row.year) || {
         year: row.year,
         payment: 0,
         principal: 0,
         interest: 0,
-        balance: row.balance
+        balance: row.balance,
+        accumulatedInterest: 0
       };
       current.payment += row.payment;
       current.principal += row.principal;
       current.interest += row.interest;
       current.balance = row.balance;
+      current.accumulatedInterest = cumInt;
       map.set(row.year, current);
     }
     return Array.from(map.values());
@@ -1435,6 +1439,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
     <PrintableDscrReport
       inputs={inputs}
       result={result}
+      annualSchedule={annualSchedule}
     />
   </>
   );

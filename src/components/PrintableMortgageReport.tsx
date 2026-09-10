@@ -75,45 +75,45 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
       {/* Overview Grid: Loan Specs & Key Summary */}
       <div className="grid grid-cols-2 gap-4 mb-6">
         {/* Loan Specs */}
-        <div className="border border-slate-300 rounded-lg p-4 bg-slate-50/50">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700 border-b border-slate-200 pb-1.5 mb-2.5">
+        <div className="border-2 border-slate-300 rounded-lg p-4 bg-slate-50/70">
+          <h2 className="text-xs font-black uppercase tracking-wider text-slate-950 border-b-2 border-slate-300 pb-1.5 mb-2.5">
             1. Property & Financing Specifications
           </h2>
           <table className="w-full text-xs">
             <tbody>
-              <tr className="border-b border-slate-100 py-1">
-                <td className="py-1 text-slate-600">Property / Home Value:</td>
-                <td className="py-1 font-semibold text-right text-slate-900">${homeValue.toLocaleString()}</td>
+              <tr className="border-b border-slate-200 py-1">
+                <td className="py-1 text-slate-700 font-medium">Property / Home Value:</td>
+                <td className="py-1 font-bold text-right text-slate-900 font-mono">${homeValue.toLocaleString()}</td>
               </tr>
-              <tr className="border-b border-slate-100 py-1">
-                <td className="py-1 text-slate-600">Down Payment:</td>
-                <td className="py-1 font-semibold text-right text-slate-900">${downPayment.toLocaleString()} ({downPaymentPct}%)</td>
+              <tr className="border-b border-slate-200 py-1">
+                <td className="py-1 text-slate-700 font-medium">Down Payment:</td>
+                <td className="py-1 font-semibold text-right text-slate-900 font-mono">${downPayment.toLocaleString()} ({downPaymentPct}%)</td>
               </tr>
-              <tr className="border-b border-slate-100 py-1">
-                <td className="py-1 text-slate-600">Initial Principal Loan Amount:</td>
-                <td className="py-1 font-bold text-right text-indigo-700">${loanAmount.toLocaleString()}</td>
+              <tr className="border-b border-slate-200 py-1">
+                <td className="py-1 text-slate-700 font-medium">Initial Principal Loan Amount:</td>
+                <td className="py-1 font-black text-right text-indigo-700 font-mono">${loanAmount.toLocaleString()}</td>
               </tr>
-              <tr className="border-b border-slate-100 py-1">
-                <td className="py-1 text-slate-600">Note Interest Rate:</td>
-                <td className="py-1 font-bold text-right text-slate-900">{interestRate.toFixed(2)}% Fixed</td>
+              <tr className="border-b border-slate-200 py-1">
+                <td className="py-1 text-slate-700 font-medium">Note Interest Rate:</td>
+                <td className="py-1 font-bold text-right text-slate-900 font-mono">{interestRate.toFixed(2)}% Fixed</td>
               </tr>
-              <tr className="border-b border-slate-100 py-1">
-                <td className="py-1 text-slate-600">Loan Term & Type:</td>
-                <td className="py-1 font-semibold text-right text-slate-900">{loanTermYears} Years ({loanTermYears * 12} mo) · {loanType.toUpperCase()}</td>
+              <tr className="border-b border-slate-200 py-1">
+                <td className="py-1 text-slate-700 font-medium">Loan Term & Type:</td>
+                <td className="py-1 font-semibold text-right text-slate-900 font-mono">{loanTermYears} Years ({loanTermYears * 12} mo) · {loanType.toUpperCase()}</td>
               </tr>
               <tr>
-                <td className="py-1 text-slate-600">First Payment Date:</td>
-                <td className="py-1 font-semibold text-right text-slate-900">{startMonth}/{startYear}</td>
+                <td className="py-1 text-slate-700 font-medium">First Payment Date:</td>
+                <td className="py-1 font-semibold text-right text-slate-900 font-mono">{startMonth}/{startYear}</td>
               </tr>
             </tbody>
           </table>
         </div>
 
         {/* Monthly Payment Structure (PITI) */}
-        <div className="border border-slate-300 rounded-lg p-4 bg-slate-50/50">
-          <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700 border-b border-slate-200 pb-1.5 mb-2.5 flex justify-between">
+        <div className="border-2 border-slate-300 rounded-lg p-4 bg-slate-50/70">
+          <h2 className="text-xs font-black uppercase tracking-wider text-slate-950 border-b-2 border-slate-300 pb-1.5 mb-2.5 flex justify-between">
             <span>2. Monthly Payment (PITI Breakdown)</span>
-            <span className="text-indigo-700 font-bold">${Math.round(totalMonthly).toLocaleString()}/mo</span>
+            <span className="text-indigo-700 font-black">${Math.round(totalMonthly).toLocaleString()}/mo</span>
           </h2>
           <table className="w-full text-xs">
             <tbody>

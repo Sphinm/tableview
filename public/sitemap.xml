@@ -3,137 +3,205 @@
   <!-- Core Workbench -->
   <url>
     <loc>https://tableview.dev/</loc>
-    <lastmod>2026-09-08</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
 
-  <!-- Dedicated Tool Landing Pages -->
+  <!-- High-Intent Viewers -->
   <url>
-    <loc>https://tableview.dev/parquet-viewer</loc>
-    <lastmod>2026-09-08</lastmod>
+    <loc>https://tableview.dev/csv-viewer</loc>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
-    <loc>https://tableview.dev/parquet-to-excel</loc>
-    <lastmod>2026-09-08</lastmod>
+    <loc>https://tableview.dev/excel-viewer</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://tableview.dev/parquet-viewer</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://tableview.dev/json-viewer</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+
+  <!-- High-Intent Converters -->
+  <url>
+    <loc>https://tableview.dev/csv-to-excel</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://tableview.dev/excel-to-csv</loc>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.95</priority>
   </url>
   <url>
     <loc>https://tableview.dev/parquet-to-csv</loc>
-    <lastmod>2026-09-08</lastmod>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://tableview.dev/csv-to-parquet</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://tableview.dev/parquet-to-excel</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://tableview.dev/excel-to-parquet</loc>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://tableview.dev/csv-to-parquet</loc>
-    <lastmod>2026-09-08</lastmod>
+    <loc>https://tableview.dev/csv-to-json</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://tableview.dev/parquet-to-json</loc>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
     <loc>https://tableview.dev/json-to-parquet</loc>
-    <lastmod>2026-09-08</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
+  </url>
+
+  <!-- SQL & Advanced Data Analytics -->
+  <url>
+    <loc>https://tableview.dev/sql-workbench</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://tableview.dev/sql-on-csv</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
+    <loc>https://tableview.dev/sql-on-parquet</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://tableview.dev/parquet-schema-inspector</loc>
-    <lastmod>2026-09-08</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
-  <!-- High-Value Financial & Cloud Cost Calculators -->
+  <!-- Calculators Hub & Calculators -->
+  <url>
+    <loc>https://tableview.dev/finance-calculator</loc>
+    <lastmod>2026-09-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
   <url>
     <loc>https://tableview.dev/dscr-loan-calculator</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://tableview.dev/hard-money-calculator</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://tableview.dev/snowflake-cost-calculator</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://tableview.dev/parquet-storage-calculator</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.95</priority>
+    <priority>0.90</priority>
   </url>
   <url>
     <loc>https://tableview.dev/mortgage-calculator</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
+    <priority>0.85</priority>
   </url>
   <url>
     <loc>https://tableview.dev/refinance-calculator</loc>
-    <lastmod>2026-09-09</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.90</priority>
-  </url>
-  <url>
-    <loc>https://tableview.dev/finance-calculator</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
 
-  <!-- Knowledge Hub -->
+  <!-- Guides & Technical Articles -->
   <url>
     <loc>https://tableview.dev/guides</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>0.90</priority>
   </url>
-
-  <!-- Technical Articles -->
   <url>
     <loc>https://tableview.dev/guides/what-is-apache-parquet</loc>
     <lastmod>2026-09-05</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://tableview.dev/guides/convert-parquet-to-excel</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://tableview.dev/guides/duckdb-wasm-in-browser-olap</loc>
     <lastmod>2026-09-03</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://tableview.dev/guides/inspect-parquet-metadata-and-schema</loc>
     <lastmod>2026-09-02</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://tableview.dev/guides/parquet-vs-csv-vs-json-benchmark</loc>
     <lastmod>2026-09-01</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://tableview.dev/guides/troubleshooting-corrupted-parquet-files</loc>
     <lastmod>2026-08-30</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <priority>0.80</priority>
   </url>
   <url>
     <loc>https://tableview.dev/guides/dscr-loans-complete-investor-guide</loc>
@@ -157,32 +225,32 @@
   <!-- Legal & Company -->
   <url>
     <loc>https://tableview.dev/about</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.70</priority>
   </url>
   <url>
     <loc>https://tableview.dev/contact</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <priority>0.70</priority>
   </url>
   <url>
     <loc>https://tableview.dev/privacy</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.60</priority>
   </url>
   <url>
     <loc>https://tableview.dev/terms</loc>
-    <lastmod>2026-09-07</lastmod>
+    <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.60</priority>
   </url>
   <url>
     <loc>https://tableview.dev/disclaimer</loc>
     <lastmod>2026-09-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <priority>0.60</priority>
   </url>
 </urlset>

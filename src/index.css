@@ -373,14 +373,26 @@ html.light ::-webkit-scrollbar-thumb:hover {
     margin: 12mm 10mm;
   }
 
-  /* Force color printing and clean background */
-  html, body {
+  /* Force light color scheme and clean background across entire DOM tree */
+  *,
+  *::before,
+  *::after {
+    color-scheme: light !important;
+  }
+
+  html,
+  body,
+  #root,
+  .min-h-screen,
+  main,
+  [class*="bg-slate-950"],
+  [class*="bg-slate-900"],
+  [class*="bg-slate-800"] {
     background-color: #ffffff !important;
+    background: #ffffff !important;
     color: #0f172a !important;
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
-    font-size: 11pt !important;
-    line-height: 1.4 !important;
+    min-height: auto !important;
+    height: auto !important;
   }
 
   /* Global hidden elements during PDF print */

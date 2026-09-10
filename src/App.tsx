@@ -55,8 +55,8 @@ export function App() {
       updatePageMeta(cfg.metaTitle, cfg.metaDescription, cfg.path);
     } else if (path === '/') {
       updatePageMeta(
-        'TableView.dev — Fast, Private In-Browser Parquet Viewer, SQL Workbench & Excel Converter',
-        'Fast, 100% private in-browser Apache Parquet inspector, SQL query workbench, and native Excel converter powered by DuckDB-Wasm. Zero server file uploads.',
+        'TableView.dev — Browser Data Workspace for CSV, Excel, Parquet & JSON',
+        '100% private in-browser data workspace. View, query with SQL, and convert CSV, Excel (.xlsx), Apache Parquet, and JSON files directly in your browser with zero server uploads.',
         '/'
       );
     } else if (path === '/guides') {
