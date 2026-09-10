@@ -98,8 +98,12 @@
       crossorigin="anonymous"></script>
 
     <!--
-      Microsoft Clarity is loaded from src/lib/consent.ts ONLY after the user
-      grants analytics consent (GDPR/ePrivacy). It is intentionally NOT loaded here.
+      Google Analytics 4 and Microsoft Clarity are loaded from src/lib/consent.ts
+      ONLY after the user grants analytics consent (GDPR/ePrivacy). They are
+      intentionally NOT loaded here: this is BASIC consent mode, so no request
+      reaches googletagmanager.com or clarity.ms before an explicit opt-in.
+      The gtag shim above exists purely so Consent Mode defaults are registered
+      in the right order relative to the AdSense tag.
     -->
 
     <!-- Structured Data: WebApplication -->

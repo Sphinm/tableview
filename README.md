@@ -140,6 +140,29 @@ Deliberately excluded:
 
 ---
 
+## 📊 Analytics
+
+**Google Analytics 4** (`G-Z3WN77F6G8`) and **Microsoft Clarity** are both loaded
+from `src/lib/consent.ts`, and only after the visitor grants analytics consent.
+
+This is **basic consent mode**, deliberately *not* the snippet the GA4 dashboard
+hands out. That snippet loads `gtag.js` on every visit and relies on Consent
+Mode's *advanced* mode to suppress cookies before consent — which still sends
+cookieless pings to Google beforehand. Here, **no request reaches
+`googletagmanager.com` until the visitor opts in**, which matches what the site
+tells users about their data.
+
+Trade-off: EEA visitors who decline produce no data at all, rather than Google's
+modelled estimates. To switch to advanced mode, inline Google's standard snippet
+in `index.html` and delete the `loadAnalytics()` call from `consent.ts`.
+
+The GA4 property is configured with `allow_google_signals: false` and
+`allow_ad_personalization_signals: false`, so analytics consent never silently
+doubles as advertising consent — those are governed separately by
+`ad_storage` / `ad_personalization`.
+
+---
+
 ## 🔐 Privacy & Compliance
 
 TableView's core promise is that user files never leave the device. Several

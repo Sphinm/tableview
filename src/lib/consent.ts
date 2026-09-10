@@ -5,8 +5,8 @@
  * - The *default* consent state is written inline in index.html <head> so that it
  *   is guaranteed to run before the AdSense tag. This module only ever *upgrades*
  *   that state after an explicit user action.
- * - Microsoft Clarity (session recording) is treated as analytics and is therefore
- *   never loaded until the user grants consent.
+ * - Microsoft Clarity (session recording) and Google Analytics 4 both count as
+ *   analytics, so neither is loaded until the user grants consent.
  * - No cookies are set by this module; the choice is stored in localStorage.
  */
 
@@ -14,6 +14,23 @@ export type ConsentState = 'granted' | 'denied' | 'unset';
 
 const STORAGE_KEY = 'tableview_cookie_consent';
 const CLARITY_PROJECT_ID = 'yeyf0hxgk6';
+
+/**
+ * Google Analytics 4 measurement ID.
+ *
+ * GA4 is loaded LAZILY, only after analytics consent, rather than with the
+ * unconditional snippet Google's dashboard hands out. That snippet loads
+ * gtag.js on every visit and relies on Consent Mode's *advanced* mode to
+ * suppress cookies before consent — which still sends cookieless pings to
+ * Google beforehand. This site's whole promise is that nothing leaves the
+ * device without a reason, so we use BASIC consent mode instead: no request to
+ * googletagmanager.com is made at all until the visitor opts in.
+ *
+ * Trade-off: EEA visitors who decline produce no data whatsoever, rather than
+ * modelled estimates. To switch to advanced mode, load this script
+ * unconditionally in index.html instead (see README, "Analytics").
+ */
+export const GA4_MEASUREMENT_ID = 'G-Z3WN77F6G8';
 
 declare global {
   interface Window {
@@ -23,6 +40,51 @@ declare global {
 }
 
 let clarityLoaded = false;
+let analyticsLoaded = false;
+
+/**
+ * Load Google Analytics 4, once, after consent.
+ *
+ * Safe to call repeatedly. The inline <head> script already defines
+ * window.gtag / window.dataLayer for Consent Mode, so we reuse that queue
+ * instead of defining a second one (two gtag shims would double-count).
+ */
+export function loadAnalytics() {
+  if (analyticsLoaded || typeof document === 'undefined') return;
+
+  // Someone may have loaded it already (manual paste, tag manager); don't double up.
+  if (document.querySelector('script[data-tableview-ga4]') || document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
+    analyticsLoaded = true;
+    return;
+  }
+  analyticsLoaded = true;
+
+  // Reuse the existing shim when present, otherwise create one.
+  const w = window as Window;
+  if (typeof w.gtag !== 'function') {
+    w.dataLayer = w.dataLayer || [];
+    w.gtag = function gtagShim() {
+      // eslint-disable-next-line prefer-rest-params
+      w.dataLayer!.push(arguments);
+    };
+  }
+
+  w.gtag!('js', new Date());
+  w.gtag!('config', GA4_MEASUREMENT_ID, {
+    // GA4 anonymises IPs by default, but be explicit about what we do not want.
+    anonymize_ip: true,
+    // No advertising identifiers from the analytics product; ads consent is
+    // tracked separately via ad_storage / ad_personalization.
+    allow_google_signals: false,
+    allow_ad_personalization_signals: false,
+  });
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.dataset.tableviewGa4 = 'true';
+  script.src = `https://www.googletagmanager.com/gtag/js?id=${GA4_MEASUREMENT_ID}`;
+  document.head.appendChild(script);
+}
 
 /** Read the persisted choice. Returns 'unset' when the user has not decided yet. */
 export function getConsent(): ConsentState {
@@ -88,6 +150,9 @@ export function setConsent(granted: boolean) {
   pushConsentUpdate(granted);
 
   if (granted) {
+    // Consent update is pushed before the tags load, so both start in the
+    // granted state rather than being corrected afterwards.
+    loadAnalytics();
     loadClarity();
     return;
   }
@@ -109,6 +174,16 @@ export function openCookieSettings() {
 export function initConsent() {
   if (getConsent() === 'granted') {
     pushConsentUpdate(true);
+    loadAnalytics();
     loadClarity();
   }
+}
+
+/**
+ * Test-only: clears the "already loaded" latches so each test starts from a
+ * clean slate. Never called by application code.
+ */
+export function __resetLoadLatchesForTests() {
+  clarityLoaded = false;
+  analyticsLoaded = false;
 }
