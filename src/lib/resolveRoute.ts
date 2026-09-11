@@ -63,6 +63,13 @@ const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
     pattern: /^\/(?:tools\/)?(?:parquet-storage-calculator|parquet-savings-calculator|parquet-cost-calculator)$/,
     path: '/parquet-storage-calculator',
   },
+  {
+    // 1031 / like-kind exchange. "1031" alone is a real search term, and
+    // "like-kind-exchange" is the statutory phrasing.
+    pattern:
+      /^\/(?:tools\/)?(?:section-1031-exchange-calculator|1031-exchange-calculator|1031-calculator|like-kind-exchange-calculator|1031-exchange|1031)$/,
+    path: '/section-1031-exchange-calculator',
+  },
   { pattern: /^\/(?:finance-calculator|calculators|financial-calculators|calculator)$/, path: '/finance-calculator' },
 ];
 
@@ -148,6 +155,7 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/hard-money-calculator',
   '/snowflake-cost-calculator',
   '/parquet-storage-calculator',
+  '/section-1031-exchange-calculator',
   '/about',
   '/contact',
   '/privacy',
@@ -198,6 +206,13 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
     '/snowflake-cost-calculator': ['/snowflake-calculator', '/snowflake-warehouse-calculator'],
     '/parquet-storage-calculator': ['/parquet-savings-calculator', '/parquet-cost-calculator'],
     '/finance-calculator': ['/calculators', '/financial-calculators', '/calculator'],
+    '/section-1031-exchange-calculator': [
+      '/1031',
+      '/1031-exchange',
+      '/1031-calculator',
+      '/1031-exchange-calculator',
+      '/like-kind-exchange-calculator',
+    ],
   };
   for (const [canonical, aliases] of Object.entries(calculatorAliases)) {
     // The canonical itself must exist too — /finance-calculator is not in

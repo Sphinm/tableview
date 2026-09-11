@@ -938,6 +938,58 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
     ]
   },
 
+  'section-1031-exchange-calculator': {
+    slug: 'section-1031-exchange-calculator',
+    path: '/section-1031-exchange-calculator',
+    badge: '100% In-Browser · IRC §1031 Exchange',
+    title: '1031 Exchange Calculator',
+    shortTitle: '1031 Exchange',
+    metaTitle: '1031 Exchange Calculator — Boot, Deferred Gain & 45/180-Day Deadlines',
+    metaDescription: 'Free in-browser 1031 exchange calculator. Compute realized gain, cash and mortgage boot, deferred gain, and the tax you actually owe — plus the 45-day identification and 180-day exchange deadlines.',
+    h1: '1031 Exchange',
+    h1Highlight: 'Calculator',
+    subtitle: 'Model a like-kind exchange end to end: realized gain, cash and mortgage boot, §1250 recapture, deferred tax, and the statutory deadlines that decide whether the exchange qualifies.',
+    category: 'calculator',
+    tag: 'New',
+    color: 'purple',
+    iconType: 'building',
+    acceptExtensions: 'Interactive Exchange Model',
+    acceptLabel: 'No file upload needed · Instant boot, deferred gain and deadline analysis',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Both Sides of the Boot Calculation',
+        description: 'Cash boot is measured against the cash actually required at closing, so new financing correctly increases it. Mortgage boot nets debt relief against cash you contribute beyond your proceeds.'
+      },
+      {
+        icon: 'zap',
+        title: '45-Day and 180-Day Deadlines Modelled Exactly',
+        description: 'Includes the rule most calculators miss: the exchange period ends on the earlier of day 180 or the due date of that year\'s tax return, so a December closing can lose months.'
+      },
+      {
+        icon: 'shield',
+        title: 'Private Deal Analysis',
+        description: 'Your basis, depreciation history and projected gain stay in your browser. No account, no upload, no server-side record of your holdings.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is boot in a 1031 exchange?',
+        a: 'Boot is any value taken out of the exchange rather than rolled into the replacement property. Cash boot is un-reinvested sale proceeds; mortgage boot is debt paid off on the relinquished property that you do not replace. You are taxed on the lesser of total boot or realized gain.'
+      },
+      {
+        q: 'Can the 45-day identification period be extended?',
+        a: 'No. The 45-day identification and 180-day exchange periods are set by statute and cannot be extended for any reason, including hardship. There is no grace period.'
+      },
+      {
+        q: 'Why might my 180-day deadline be shorter than 180 days?',
+        a: 'The exchange period ends on the earlier of 180 days after closing or the due date of your tax return for that year, including extensions. Closing in December without filing an extension can leave you well under 180 days.'
+      }
+    ]
+  },
+
   'mortgage-calculator': {
     slug: 'mortgage-calculator',
     path: '/mortgage-calculator',

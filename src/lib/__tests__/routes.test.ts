@@ -18,6 +18,7 @@ const APP_ROUTES = new Set([
   '/hard-money-calculator',
   '/snowflake-cost-calculator',
   '/parquet-storage-calculator',
+  '/section-1031-exchange-calculator',
   '/about',
   '/contact',
   '/privacy',
@@ -108,6 +109,22 @@ describe('Prerender target manifest', () => {
     for (const { url, canonical } of targets) {
       expect(byUrl.has(url) && byUrl.get(url) !== canonical).toBe(false);
       byUrl.set(url, canonical);
+    }
+  });
+
+  it('registers the 1031 exchange calculator and its aliases', () => {
+    const byUrl = new Map(targets.map((t) => [t.url, t.canonical]));
+    const canonical = '/section-1031-exchange-calculator';
+
+    expect(byUrl.get(canonical)).toBe(canonical);
+    for (const alias of ['/1031', '/1031-calculator', '/1031-exchange-calculator', '/like-kind-exchange-calculator']) {
+      expect(byUrl.get(alias)).toBe(canonical);
+    }
+  });
+
+  it('resolves every 1031 alias to the calculator, not a 404', () => {
+    for (const alias of ['/1031', '/1031-calculator', '/1031-exchange', '/like-kind-exchange-calculator']) {
+      expect(resolveRoutePath(alias).path).toBe('/section-1031-exchange-calculator');
     }
   });
 

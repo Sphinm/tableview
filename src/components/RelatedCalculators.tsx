@@ -6,6 +6,7 @@ import {
   Server,
   PiggyBank,
   Sparkles,
+  Scale,
   ArrowRight
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
@@ -28,6 +29,15 @@ interface CalcItem {
 }
 
 const ALL_CALCULATORS: CalcItem[] = [
+  {
+    slug: 'section-1031-exchange-calculator',
+    path: '/section-1031-exchange-calculator',
+    title: '1031 Exchange Calculator',
+    description: 'Realized gain, cash & mortgage boot, deferred tax, and the 45/180-day deadlines.',
+    badge: '1031 Exchange',
+    icon: Scale,
+    category: 'real-estate'
+  },
   {
     slug: 'dscr-loan-calculator',
     path: '/dscr-loan-calculator',

@@ -1,7 +1,7 @@
-import { ShieldCheck, BookOpen, Lock, Scale } from 'lucide-react';
+import { ShieldCheck, BookOpen, Lock, Scale, Clock } from 'lucide-react';
 
 interface MethodologyDisclosureProps {
-  type?: 'mortgage' | 'dscr' | 'refinance' | 'hardmoney' | 'cloud';
+  type?: 'mortgage' | 'dscr' | 'refinance' | 'hardmoney' | 'cloud' | 'section1031';
 }
 
 export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosureProps) => {
@@ -69,6 +69,33 @@ export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosu
               icon: Lock,
               title: '100% Private Real Estate Workbench',
               desc: 'Run deal underwriting safely without exposing proprietary flip opportunities to external databases.'
+            }
+          ]
+        };
+
+      case 'section1031':
+        return {
+          title: 'IRC §1031 Exchange Methodology',
+          standards: [
+            {
+              icon: Scale,
+              title: 'Boot Computed on Both Sides',
+              desc: 'Cash boot is measured against the cash actually required at closing, so new financing on the replacement increases it. Mortgage boot is debt relief on the relinquished property, netted against cash contributed beyond your sale proceeds. Recognized gain is the lesser of total boot or realized gain.'
+            },
+            {
+              icon: Clock,
+              title: 'Statutory Deadlines Modelled Exactly',
+              desc: 'The 45-day identification and 180-day exchange periods run from the closing date. The exchange period ends on the earlier of day 180 or the due date of that year\'s return, including extensions — a rule that shortens many December closings well below 180 days.'
+            },
+            {
+              icon: BookOpen,
+              title: 'Identification Safe Harbours',
+              desc: 'Applies the three-property rule, the 200% rule, and the 95% rule to each identification, and reports which safe harbour the exchange relies on.'
+            },
+            {
+              icon: Lock,
+              title: '100% Private Deal Analysis',
+              desc: 'Your basis, depreciation history, and projected gains never leave your device. No account, no upload, no server-side record of your holdings.'
             }
           ]
         };

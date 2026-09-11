@@ -28,6 +28,7 @@ const HardMoneyCalculator = lazy(() => import('./pages/HardMoneyCalculator').the
 const SnowflakeCalculator = lazy(() => import('./pages/SnowflakeCalculator').then(m => ({ default: m.SnowflakeCalculator })));
 const ParquetSavingsCalculator = lazy(() => import('./pages/ParquetSavingsCalculator').then(m => ({ default: m.ParquetSavingsCalculator })));
 const FinanceCalculatorHub = lazy(() => import('./pages/FinanceCalculatorHub').then(m => ({ default: m.FinanceCalculatorHub })));
+const Section1031Calculator = lazy(() => import('./pages/Section1031Calculator').then(m => ({ default: m.Section1031Calculator })));
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
 import { TOOLS_CONFIG } from './data/tools';
 import { getInitialTheme, applyTheme, type Theme } from './lib/theme';
@@ -284,6 +285,9 @@ export function App() {
 
       case '/parquet-storage-calculator':
         return <ParquetSavingsCalculator onTrySample={handleTrySample} />;
+
+      case '/section-1031-exchange-calculator':
+        return <Section1031Calculator />;
 
       case '/finance-calculator':
       case '/calculator':

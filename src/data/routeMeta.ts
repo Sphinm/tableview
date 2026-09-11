@@ -64,6 +64,12 @@ export const CALCULATOR_META: Record<string, PageMeta> = {
       'Calculate exact cloud bill savings by converting CSV, JSON, or text logs to Apache Parquet. Estimate AWS S3 storage reduction and Athena/BigQuery scan savings.',
     canonical: '/parquet-storage-calculator',
   },
+  '/section-1031-exchange-calculator': {
+    title: '1031 Exchange Calculator — Boot, Deferred Gain & 45/180-Day Deadlines | TableView.dev',
+    description:
+      'Free in-browser 1031 exchange calculator. Compute realized gain, cash and mortgage boot, deferred gain and the tax you actually owe, plus the 45-day identification and 180-day exchange deadlines. Nothing is uploaded.',
+    canonical: '/section-1031-exchange-calculator',
+  },
   '/finance-calculator': {
     title: 'Financial Calculators Hub - Free Personal Finance & Loan Tools | TableView.dev',
     description:
