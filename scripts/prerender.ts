@@ -31,6 +31,7 @@ import {
   STATIC_PAGE_META,
   type PageMeta,
 } from '../src/data/routeMeta';
+import { getCalculatorFaqs } from '../src/data/calculatorFaqs';
 
 const rootDir = fileURLToPath(new URL('..', import.meta.url));
 const distDir = path.join(rootDir, 'dist');
@@ -156,23 +157,43 @@ function resolvePage(url: string, canonical: string): ResolvedPage {
   // --- Calculators with their own hand-written meta -------------------------
   const calc = CALCULATOR_META[canonical];
   if (calc) {
+    // FAQs come from the registry the PAGE ITSELF renders, never from a
+    // separate copy. Emitting FAQ copy a visitor cannot see would be cloaking;
+    // a calculator that still inlines its own FAQ is simply not registered yet.
+    const faqs = getCalculatorFaqs(calc.canonical);
+    const label = calc.title.split('|')[0].trim();
+
     return {
       ...calc,
       route,
-      faqs: [],
+      faqs,
+      h1: label,
+      intro: calc.description,
       jsonLd: [
         {
           '@type': 'WebApplication',
-          name: calc.title.split('|')[0].trim(),
+          name: label,
           url: `${SITE}${calc.canonical}`,
           description: calc.description,
           applicationCategory: 'FinanceApplication',
           operatingSystem: 'All',
           offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
         },
+        ...(faqs.length
+          ? [
+              {
+                '@type': 'FAQPage',
+                mainEntity: faqs.map((f) => ({
+                  '@type': 'Question',
+                  name: f.q,
+                  acceptedAnswer: { '@type': 'Answer', text: f.a },
+                })),
+              },
+            ]
+          : []),
         breadcrumb([
           { name: 'Home', url: '/' },
-          { name: calc.title.split('|')[0].trim(), url: calc.canonical },
+          { name: label, url: calc.canonical },
         ]),
       ],
     };
