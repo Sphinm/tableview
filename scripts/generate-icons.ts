@@ -145,10 +145,10 @@ function chunk(type: string, data: Buffer): Buffer {
   return Buffer.concat([length, typeAndData, crc]);
 }
 
-function encodePng(rgba: Buffer, size: number): Buffer {
+function encodePng(rgba: Buffer, size: number, height: number = size): Buffer {
   const ihdr = Buffer.alloc(13);
   ihdr.writeUInt32BE(size, 0);
-  ihdr.writeUInt32BE(size, 4);
+  ihdr.writeUInt32BE(height, 4);
   ihdr[8] = 8; // bit depth
   ihdr[9] = 6; // colour type: RGBA
   ihdr[10] = 0; // deflate
@@ -156,8 +156,8 @@ function encodePng(rgba: Buffer, size: number): Buffer {
   ihdr[12] = 0; // no interlace
 
   const stride = size * 4;
-  const raw = Buffer.alloc((stride + 1) * size);
-  for (let y = 0; y < size; y++) {
+  const raw = Buffer.alloc((stride + 1) * height);
+  for (let y = 0; y < height; y++) {
     raw[y * (stride + 1)] = 0; // filter type: none
     rgba.copy(raw, y * (stride + 1) + 1, y * stride, (y + 1) * stride);
   }
@@ -168,6 +168,98 @@ function encodePng(rgba: Buffer, size: number): Buffer {
     chunk('IDAT', zlib.deflateSync(raw, { level: 9 })),
     chunk('IEND', Buffer.alloc(0)),
   ]);
+}
+
+/**
+ * A 1200x630 social card.
+ *
+ * Needed for two separate reasons:
+ *   1. The site declared `twitter:card = summary_large_image` but shipped no
+ *      og:image, so every share rendered a blank preview.
+ *   2. Google's Article rich result wants an image; the guides' TechArticle
+ *      markup had none, making them ineligible.
+ *
+ * Drawn with the same rasteriser as the icons — geometric only, no text, because
+ * rasterising type would mean bundling a font engine for a decorative asset.
+ */
+function rasterizeOgCard(width: number, height: number, samples = 3): Buffer {
+  const rgba = Buffer.alloc(width * height * 4);
+  const step = 1 / samples;
+  const total = samples * samples;
+
+  // Brand palette, matching src/index.css.
+  const BG = { r: 0x05, g: 0x06, b: 0x08 };
+  const INDIGO = { r: 0x4f, g: 0x46, b: 0xe5 };
+  const ACCENT = { r: 0x81, g: 0x8c, b: 0xf8 };
+
+  // Logo mark, centred: a rounded square with the 3x3 grid motif.
+  const markSize = 190;
+  const markX = (width - markSize) / 2;
+  const markY = (height - markSize) / 2 - 20;
+  const markRadius = markSize * 0.22;
+  const gridInset = markSize * 0.24;
+  const strokeHalf = markSize * 0.022;
+
+  const gridLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
+  for (let i = 0; i < 3; i++) {
+    const offset = gridInset + ((markSize - gridInset * 2) / 2) * i;
+    gridLines.push({ x1: markX + offset, y1: markY + gridInset, x2: markX + offset, y2: markY + markSize - gridInset });
+    gridLines.push({ x1: markX + gridInset, y1: markY + offset, x2: markX + markSize - gridInset, y2: markY + offset });
+  }
+
+  for (let y = 0; y < height; y++) {
+    for (let x = 0; x < width; x++) {
+      let markHits = 0;
+      let strokeHits = 0;
+
+      for (let sy = 0; sy < samples; sy++) {
+        for (let sx = 0; sx < samples; sx++) {
+          const px = x + (sx + 0.5) * step;
+          const py = y + (sy + 0.5) * step;
+
+          if (!insideRoundedRect(px - markX, py - markY, markSize, markRadius)) continue;
+          markHits++;
+
+          for (const l of gridLines) {
+            if (distanceToSegment(px, py, l.x1, l.y1, l.x2, l.y2) <= strokeHalf) {
+              strokeHits++;
+              break;
+            }
+          }
+        }
+      }
+
+      const i = (y * width + x) * 4;
+
+      // Subtle radial lift behind the mark so the card is not flat black.
+      const dx = (x - width / 2) / (width / 2);
+      const dy = (y - height / 2) / (height / 2);
+      const dist = Math.min(1, Math.sqrt(dx * dx + dy * dy));
+      const lift = (1 - dist) * 0.16;
+
+      let r = BG.r + (INDIGO.r - BG.r) * lift;
+      let g = BG.g + (INDIGO.g - BG.g) * lift;
+      let b = BG.b + (INDIGO.b - BG.b) * lift;
+
+      if (markHits > 0) {
+        const ratio = strokeHits / markHits;
+        const t = markHits / total;
+        const mr = INDIGO.r * (1 - ratio) + ACCENT.r * ratio;
+        const mg = INDIGO.g * (1 - ratio) + ACCENT.g * ratio;
+        const mb = INDIGO.b * (1 - ratio) + ACCENT.b * ratio;
+        r = r * (1 - t) + mr * t;
+        g = g * (1 - t) + mg * t;
+        b = b * (1 - t) + mb * t;
+      }
+
+      rgba[i] = Math.round(r);
+      rgba[i + 1] = Math.round(g);
+      rgba[i + 2] = Math.round(b);
+      rgba[i + 3] = 255;
+    }
+  }
+
+  return rgba;
 }
 
 const TARGETS: { file: string; size: number; maskable?: boolean }[] = [
@@ -182,3 +274,12 @@ for (const { file, size, maskable } of TARGETS) {
   fs.writeFileSync(path.join(publicDir, file), png);
   console.log(`[icons] wrote public/${file} (${size}x${size}, ${(png.length / 1024).toFixed(1)} kB)`);
 }
+
+// Social card. 1200x630 is the size Open Graph consumers expect.
+const OG_WIDTH = 1200;
+const OG_HEIGHT = 630;
+const ogPng = encodePng(rasterizeOgCard(OG_WIDTH, OG_HEIGHT), OG_WIDTH, OG_HEIGHT);
+fs.writeFileSync(path.join(publicDir, 'og-image.png'), ogPng);
+console.log(
+  `[icons] wrote public/og-image.png (${OG_WIDTH}x${OG_HEIGHT}, ${(ogPng.length / 1024).toFixed(1)} kB)`
+);

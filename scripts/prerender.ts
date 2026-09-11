@@ -32,6 +32,7 @@ import {
   type PageMeta,
 } from '../src/data/routeMeta';
 import { getCalculatorFaqs } from '../src/data/calculatorFaqs';
+import { toIsoDate } from '../src/lib/isoDate';
 
 const rootDir = fileURLToPath(new URL('..', import.meta.url));
 const distDir = path.join(rootDir, 'dist');
@@ -49,7 +50,22 @@ interface ResolvedPage extends PageMeta {
 /** TOOLS_CONFIG keyed by canonical path, for calculator + tool lookups. */
 const TOOLS_BY_PATH = new Map(Object.values(TOOLS_CONFIG).map((cfg) => [cfg.path, cfg]));
 
-const GUIDES_BY_SLUG = new Map(guidesData.map((g) => [g.slug, g]));
+/**
+ * Guides carry a human-readable date for display. Structured data needs ISO
+ * 8601, so derive it once here and fail the build if any guide is unparseable —
+ * shipping an invalid date is worse than failing loudly.
+ */
+const GUIDES_BY_SLUG = new Map(
+  guidesData.map((guide) => {
+    const isoDate = toIsoDate(guide.date);
+    if (!isoDate) {
+      throw new Error(
+        `Guide "${guide.slug}" has an unparseable date: ${JSON.stringify(guide.date)}`
+      );
+    }
+    return [guide.slug, { ...guide, isoDate }];
+  })
+);
 
 function escapeHtml(value: string): string {
   return value
@@ -58,6 +74,40 @@ function escapeHtml(value: string): string {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
+}
+
+/**
+ * Publisher identity, attached to every page.
+ *
+ * Google uses Organization markup to understand who publishes a site, which
+ * matters for a YMYL-adjacent finance/data property where trust signals are
+ * weighted heavily. `WebSite` establishes the site as an entity in its own
+ * right.
+ */
+function publisherNodes() {
+  return [
+    {
+      '@type': 'Organization',
+      '@id': `${SITE}/#organization`,
+      name: 'TableView.dev',
+      url: SITE,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${SITE}/icon-512.png`,
+        width: 512,
+        height: 512,
+      },
+      description:
+        'Private, in-browser data workspace for inspecting, querying and converting CSV, Excel, Apache Parquet and JSON files, plus real estate and cloud FinOps calculators. Files are never uploaded.',
+    },
+    {
+      '@type': 'WebSite',
+      '@id': `${SITE}/#website`,
+      name: 'TableView.dev',
+      url: SITE,
+      publisher: { '@id': `${SITE}/#organization` },
+    },
+  ];
 }
 
 function breadcrumb(items: { name: string; url: string }[]) {
@@ -122,13 +172,27 @@ function resolvePage(url: string, canonical: string): ResolvedPage {
         intro: guide.excerpt,
         jsonLd: [
           {
-            '@type': 'TechArticle',
+            // Both types: TechArticle is the accurate schema.org type, and the
+            // bare Article is what Google's Article rich result documents.
+            '@type': ['TechArticle', 'Article'],
             headline: guide.title,
             description: guide.excerpt,
             articleSection: guide.category,
-            datePublished: guide.date,
-            author: { '@type': 'Organization', name: guide.author },
-            publisher: { '@type': 'Organization', name: 'TableView.dev', url: SITE },
+            // Must be ISO 8601. The previous value was the display string
+            // ("September 5, 2026"), which Google cannot parse — that silently
+            // made every guide ineligible. toIsoDate throws loudly on failure
+            // rather than letting an invalid date ship again.
+            datePublished: guide.isoDate,
+            dateModified: guide.isoDate,
+            author: { '@type': 'Organization', name: guide.author, url: SITE },
+            publisher: {
+              '@type': 'Organization',
+              name: 'TableView.dev',
+              url: SITE,
+              logo: { '@type': 'ImageObject', url: `${SITE}/icon-512.png` },
+            },
+            // Required by Google for the Article rich result to render.
+            image: [`${SITE}/og-image.png`],
             mainEntityOfPage: `${SITE}${canonical}`,
             url: `${SITE}${canonical}`,
           },
@@ -311,10 +375,23 @@ function renderHtml(template: string, page: ResolvedPage): string {
   html = html.replace(
     /<script type="application\/ld\+json">[\s\S]*?<\/script>/,
     `<script type="application/ld+json">\n${JSON.stringify(
-      { '@context': 'https://schema.org', '@graph': page.jsonLd },
+      { '@context': 'https://schema.org', '@graph': [...publisherNodes(), ...page.jsonLd] },
       null,
       2
     )}\n    </script>`
+  );
+
+  // Social preview image. index.html declared twitter:card = summary_large_image
+  // but shipped no og:image, so every share rendered a blank card.
+  html = html.replace(
+    /<meta property="og:url" content="[^"]*" \/>/,
+    (match) =>
+      `${match}\n    <meta property="og:image" content="${SITE}/og-image.png" />\n    <meta property="og:image:width" content="1200" />\n    <meta property="og:image:height" content="630" />\n    <meta property="og:image:alt" content="TableView.dev — private in-browser data workspace" />`
+  );
+
+  html = html.replace(
+    /<meta property="twitter:url" content="[^"]*" \/>/,
+    (match) => `${match}\n    <meta property="twitter:image" content="${SITE}/og-image.png" />`
   );
 
   // Static, crawlable summary. Mirrors content that is visible after hydration,
