@@ -110,11 +110,18 @@ export const PrivacyPolicy = () => {
               consent is never treated as advertising consent.
             </p>
             <p>
-              • <strong>Sentry</strong> records technical faults and, only when an error occurs, a
-              session recording that reproduces it. Recordings mask all text, all form field values
-              and all images by default. In addition, the data workspace and every calculator are
-              explicitly masked, because their contents are your own files and financial figures.
-              Request and response bodies are never captured.
+              • <strong>Sentry</strong> records technical faults, and produces session recordings —
+              a replay of on-screen activity such as scrolling, clicking and navigation. Recordings
+              mask all text, all form field values and all images by default. In addition, the data
+              workspace and every calculator are explicitly masked, because their contents are your
+              own files and financial figures. Request and response bodies are never captured.
+            </p>
+            <p>
+              • <strong>Which sessions are recorded.</strong> Recordings are sampled rather than
+              continuous: <strong>50% of consenting sessions</strong> are recorded, plus every
+              session in which an error occurs. Sampling keeps the volume manageable and is why the
+              majority of visitors are never recorded at all. Even where a recording is made, the
+              masked regions above remain masked for its entire duration.
             </p>
             <p>
               • <strong>What we never collect.</strong> We do not record your file names, table or

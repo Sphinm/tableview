@@ -61,9 +61,24 @@ describe('Session replay privacy', () => {
     expect(sentrySource).toContain('networkDetailAllowUrls: []');
   });
 
-  it('does not record every session, only buffered ones', () => {
-    // replaysSessionSampleRate > 0 would upload healthy sessions too.
-    expect(sentrySource).toContain('replaysSessionSampleRate: 0');
+  it('keeps the session sample rate a named, deliberate constant', () => {
+    // The rate trades replay coverage against the Sentry quota (50 replays/month
+    // on the free plan), so it must be a single obvious dial rather than a bare
+    // number buried in init().
+    expect(sentrySource).toContain('export const REPLAY_SESSION_SAMPLE_RATE');
+    expect(sentrySource).toContain('replaysSessionSampleRate: REPLAY_SESSION_SAMPLE_RATE');
+  });
+
+  it('keeps the sample rate within 0..1', async () => {
+    const { REPLAY_SESSION_SAMPLE_RATE } = await import('../sentry');
+    expect(REPLAY_SESSION_SAMPLE_RATE).toBeGreaterThanOrEqual(0);
+    expect(REPLAY_SESSION_SAMPLE_RATE).toBeLessThanOrEqual(1);
+  });
+
+  it('always samples sessions that raise an error', () => {
+    // Lowering this would mean errors go unrecorded whenever their session
+    // missed the sampling roll.
+    expect(sentrySource).toContain('replaysOnErrorSampleRate: 1.0');
   });
 
   it('gates the replay bundle behind consent', () => {

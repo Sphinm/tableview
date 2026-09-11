@@ -182,6 +182,16 @@ guards exist to keep that true:
   otherwise download the recorder. Verified against a cold browser profile:
   without consent the replay chunk is never requested; with consent, both chunks
   load. A test asserts the guard stays in place.
+- **Replay is sampled** — `REPLAY_SESSION_SAMPLE_RATE` (currently `0.5`) in
+  `src/lib/sentry.ts` controls how much of a consenting visitor's session is
+  uploaded. `replaysOnErrorSampleRate` stays at `1.0` so an error is never
+  missed because its session lost the sampling coin flip.
+
+  **Quota check before raising this.** Sentry's free Developer plan includes
+  **50 replays per month** (new accounts get 5,000/mo for three months). At 0.5
+  that is roughly 100 recorded sessions/month before the quota is spent, after
+  which Sentry silently stops accepting replays until the period resets. Watch
+  the Replays usage graph in Sentry after deploying.
 - **Consent Mode v2** — `index.html` declares a *denied* default before the
   AdSense tag loads; `src/lib/consent.ts` upgrades it only after an explicit
   choice. Nothing third-party loads before then, and consent can be withdrawn

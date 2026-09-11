@@ -52,6 +52,15 @@ const SENSITIVE_KEY_PATTERN =
 const REDACTED = '[redacted]';
 
 /**
+ * Fraction of consenting sessions recorded end-to-end.
+ *
+ * Kept as a named constant because it is the dial that trades replay coverage
+ * against the Sentry replay quota — currently 50 replays/month on the free
+ * Developer plan. See the note at the top of the init block.
+ */
+export const REPLAY_SESSION_SAMPLE_RATE = 0.5;
+
+/**
  * Deep-scrub a Sentry payload, replacing any value stored under a sensitive key.
  * Depth is capped so a pathological object cannot hang error reporting.
  */
@@ -138,9 +147,22 @@ function loadSentry(): Promise<void> {
       tracePropagationTargets: ['localhost', /^https:\/\/tableview\.dev/],
       environment: import.meta.env.MODE,
 
-      // Replay stays off unless the visitor consents; see startReplay().
-      // Healthy sessions produce no replay traffic at all.
-      replaysSessionSampleRate: 0,
+      // Session replay is still gated on consent (see startReplay); these rates
+      // decide how much of a CONSENTING visitor's session is uploaded.
+      //
+      //   sessionSampleRate  0.5 -> half of all sessions are recorded and sent,
+      //                             whether or not anything goes wrong.
+      //   onErrorSampleRate  1.0 -> every session that hits an error is sent
+      //                             regardless, via the in-memory buffer. So an
+      //                             error is never missed just because its
+      //                             session lost the 50% coin flip.
+      //
+      // QUOTA: Sentry's free Developer plan includes 50 replays per MONTH (new
+      // accounts get 5,000/mo for the first 3 months). At 50% sampling that is
+      // roughly 100 recorded sessions per month before the quota is spent; after
+      // that Sentry silently stops accepting replays until the period resets.
+      // Lower REPLAY_SESSION_SAMPLE_RATE if sessions grow, or raise the plan.
+      replaysSessionSampleRate: REPLAY_SESSION_SAMPLE_RATE,
       replaysOnErrorSampleRate: 1.0,
 
       // Privacy: never attach IP address, cookies, or request bodies to an event.
