@@ -29,7 +29,7 @@ All tools run 100% client-side in your browser. Your sensitive files, financial 
 | **Hard Money & Fix-Flip Calculator** | Fix & flip bridge financing, points, holding interest, 70% rule MAO, and net flip profit | [Hard Money Calculator](https://tableview.dev/hard-money-calculator) |
 | **Mortgage Payment Calculator** | Home loan P&I payment modeling, amortization schedules, and PMI payoff milestones | [Mortgage Calculator](https://tableview.dev/mortgage-calculator) |
 | **Mortgage Refinance Calculator** | Monthly payment reduction, break-even timeline, and lifetime interest analysis | [Refinance Calculator](https://tableview.dev/refinance-calculator) |
-| **1031 Exchange Calculator** | Realized gain, cash & mortgage boot, §1250 recapture, deferred tax, and the 45-day / 180-day statutory deadlines | [1031 Calculator](https://tableview.dev/section-1031-exchange-calculator) |
+| **1031 Exchange Calculator** | Realized gain, cash & mortgage boot, §1250 recapture, deferred tax, the 45-day / 180-day statutory deadlines, and side-by-side comparison of candidate replacement properties | [1031 Calculator](https://tableview.dev/section-1031-exchange-calculator) |
 
 ---
 

@@ -402,6 +402,75 @@ export function calculateSection1031(
   };
 }
 
+/** A candidate replacement property the investor is considering. */
+export interface ReplacementCandidate {
+  id: string;
+  label: string;
+  purchasePrice: number;
+  acquisitionCosts: number;
+  newMortgage: number;
+}
+
+export interface CandidateComparison {
+  candidate: ReplacementCandidate;
+  result: Section1031Result;
+  /** Dense rank by total tax due; 1 is the best candidate. */
+  rank: number;
+  isBest: boolean;
+  /** Extra tax this candidate costs versus the best one. */
+  taxVsBest: number;
+  /** Boot this candidate leaves on the table. */
+  totalBoot: number;
+}
+
+/**
+ * Compare several candidate replacement properties against one relinquished
+ * sale.
+ *
+ * This is the real §1031 workflow: an investor typically identifies two or
+ * three properties and has to decide which combination of price and financing
+ * leaves the least boot. Every candidate is evaluated with the same relinquished
+ * figures, so only the replacement side varies.
+ *
+ * Candidates are ranked by total tax due (dense ranking, so ties share a rank),
+ * which is the number the investor actually cares about.
+ */
+export function compareReplacementCandidates(
+  base: Section1031Inputs,
+  candidates: ReplacementCandidate[],
+  today: IsoDate = todayIso()
+): CandidateComparison[] {
+  if (candidates.length === 0) return [];
+
+  const evaluated = candidates.map((candidate) => ({
+    candidate,
+    result: calculateSection1031(
+      {
+        ...base,
+        replacementPurchasePrice: Math.max(0, candidate.purchasePrice),
+        acquisitionCosts: Math.max(0, candidate.acquisitionCosts),
+        newMortgage: Math.max(0, candidate.newMortgage),
+      },
+      today
+    ),
+  }));
+
+  // Dense rank on tax due.
+  const sortedTaxes = [...new Set(evaluated.map((e) => e.result.totalTaxDue))].sort((a, b) => a - b);
+  const bestTax = sortedTaxes[0];
+
+  return evaluated.map((entry) => {
+    const rank = sortedTaxes.indexOf(entry.result.totalTaxDue) + 1;
+    return {
+      ...entry,
+      rank,
+      isBest: rank === 1,
+      taxVsBest: round2(entry.result.totalTaxDue - bestTax),
+      totalBoot: entry.result.totalBoot,
+    };
+  });
+}
+
 function round2(value: number): number {
   return Math.round(value * 100) / 100;
 }

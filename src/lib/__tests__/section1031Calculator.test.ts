@@ -5,6 +5,7 @@ import {
   taxReturnDueDate,
   addDays,
   daysBetween,
+  compareReplacementCandidates,
   type Section1031Inputs,
 } from '../section1031Calculator';
 
@@ -421,6 +422,107 @@ describe('1031 exchange — defensive handling', () => {
     const r = calculateSection1031(baseInputs({ salePrice: 0 }));
     expect(Number.isFinite(r.realizedGain)).toBe(true);
     expect(Number.isFinite(r.taxIfSoldOutright)).toBe(true);
+  });
+});
+
+describe('1031 exchange — replacement candidate comparison', () => {
+  const candidate = (
+    id: string,
+    purchasePrice: number,
+    newMortgage: number,
+    acquisitionCosts = 0
+  ) => ({ id, label: id, purchasePrice, acquisitionCosts, newMortgage });
+
+  it('returns an empty list when there is nothing to compare', () => {
+    expect(compareReplacementCandidates(baseInputs(), [])).toEqual([]);
+  });
+
+  it('evaluates every candidate against the same relinquished figures', () => {
+    const results = compareReplacementCandidates(baseInputs(), [
+      candidate('a', 600_000, 150_000),
+      candidate('b', 400_000, 150_000),
+    ]);
+
+    expect(results.length).toBe(2);
+    // Both share the same realized gain; only the replacement side differs.
+    expect(results[0].result.realizedGain).toBe(results[1].result.realizedGain);
+    expect(results[0].result.cashFromSale).toBe(results[1].result.cashFromSale);
+  });
+
+  it('ranks the fully-deferred candidate best', () => {
+    // 470,000 of net proceeds with 150,000 of debt to replace: buying at
+    // 600,000 with 150,000 of new debt absorbs everything. Buying at 400,000
+    // only absorbs 250,000, leaving 70,000 of boot.
+    const results = compareReplacementCandidates(baseInputs(), [
+      candidate('full', 600_000, 150_000),
+      candidate('partial', 400_000, 150_000),
+    ]);
+
+    const full = results.find((r) => r.candidate.id === 'full')!;
+    const partial = results.find((r) => r.candidate.id === 'partial')!;
+
+    expect(full.isBest).toBe(true);
+    expect(full.rank).toBe(1);
+    expect(full.result.totalTaxDue).toBe(0);
+    expect(full.taxVsBest).toBe(0);
+
+    expect(partial.isBest).toBe(false);
+    expect(partial.rank).toBe(2);
+    expect(partial.result.cashBoot).toBe(70_000);
+    expect(partial.taxVsBest).toBeGreaterThan(0);
+  });
+
+  it('quantifies exactly how much more a worse candidate costs', () => {
+    const results = compareReplacementCandidates(baseInputs(), [
+      candidate('best', 600_000, 150_000),
+      candidate('worse', 400_000, 150_000),
+    ]);
+
+    const best = results.find((r) => r.candidate.id === 'best')!;
+    const worse = results.find((r) => r.candidate.id === 'worse')!;
+
+    // 70,000 of boot at 25% recapture (60,000 is depreciation) + 20% capital.
+    expect(worse.taxVsBest).toBe(worse.result.totalTaxDue - best.result.totalTaxDue);
+    expect(worse.taxVsBest).toBe(17_000);
+  });
+
+  it('shares a rank between equally good candidates', () => {
+    const results = compareReplacementCandidates(baseInputs(), [
+      candidate('a', 600_000, 150_000),
+      candidate('b', 600_000, 150_000),
+      candidate('c', 300_000, 0),
+    ]);
+
+    const a = results.find((r) => r.candidate.id === 'a')!;
+    const b = results.find((r) => r.candidate.id === 'b')!;
+    const c = results.find((r) => r.candidate.id === 'c')!;
+
+    expect(a.rank).toBe(1);
+    expect(b.rank).toBe(1);
+    expect(a.isBest).toBe(true);
+    expect(b.isBest).toBe(true);
+    // Dense ranking: the next distinct value is 2, not 3.
+    expect(c.rank).toBe(2);
+  });
+
+  it('accounts for acquisition costs when judging absorption of proceeds', () => {
+    const results = compareReplacementCandidates(baseInputs(), [
+      candidate('no-costs', 470_000, 150_000, 0),
+      candidate('with-costs', 450_000, 150_000, 20_000),
+    ]);
+
+    // Both absorb 470,000 in total, so both fully defer.
+    expect(results[0].result.totalBoot).toBe(0);
+    expect(results[1].result.totalBoot).toBe(0);
+    expect(results[0].rank).toBe(results[1].rank);
+  });
+
+  it('clamps negative candidate figures', () => {
+    const results = compareReplacementCandidates(baseInputs(), [
+      candidate('negative', -100, -50, -10),
+    ]);
+    expect(results[0].result.totalReplacementCost).toBe(0);
+    expect(Number.isFinite(results[0].result.totalTaxDue)).toBe(true);
   });
 });
 

@@ -10,13 +10,18 @@ import {
   Printer,
   ChevronDown,
   Scale,
+  ArrowLeftRight,
+  Plus,
+  Trash2,
   Building,
   Landmark,
   RefreshCw,
 } from 'lucide-react';
 import {
   calculateSection1031,
+  compareReplacementCandidates,
   todayIso,
+  type ReplacementCandidate,
   type Section1031Inputs,
 } from '../lib/section1031Calculator';
 import { updatePageMeta } from '../lib/router';
@@ -184,6 +189,15 @@ export const Section1031Calculator = () => {
   const [acquisitionCosts, setAcquisitionCosts] = useState(() => getNumQuery('acq', 0));
   const [newMortgage, setNewMortgage] = useState(() => getNumQuery('newdebt', 150_000));
 
+  // Multi-candidate mode: §1031 practitioners routinely compare two or three
+  // replacement properties to see which combination of price and financing
+  // leaves the least boot, so this is the common workflow rather than an extra.
+  const [compareMode, setCompareMode] = useState(() => getBoolQuery('compare', false));
+  const [candidates, setCandidates] = useState<ReplacementCandidate[]>(() => [
+    { id: 'a', label: 'Candidate A', purchasePrice: 600_000, acquisitionCosts: 0, newMortgage: 150_000 },
+    { id: 'b', label: 'Candidate B', purchasePrice: 470_000, acquisitionCosts: 0, newMortgage: 150_000 },
+  ]);
+
   // ---- Timeline ----
   const [closingDate, setClosingDate] = useState(() => getDateQuery('closing', todayIso()));
   const [filingExtension, setFilingExtension] = useState(() => getBoolQuery('ext', false));
@@ -246,6 +260,37 @@ export const Section1031Calculator = () => {
 
   const result = useMemo(() => calculateSection1031(inputs), [inputs]);
 
+  const comparison = useMemo(
+    () => (compareMode ? compareReplacementCandidates(inputs, candidates) : []),
+    [compareMode, inputs, candidates]
+  );
+
+  const updateCandidate = (id: string, patch: Partial<ReplacementCandidate>) => {
+    setCandidates((prev) => prev.map((c) => (c.id === id ? { ...c, ...patch } : c)));
+  };
+
+  const addCandidate = () => {
+    setCandidates((prev) => {
+      // Reuse the lowest unused letter so labels stay readable after removals.
+      const used = new Set(prev.map((c) => c.label));
+      const letter = 'ABCDEFGH'.split('').find((l) => !used.has(`Candidate ${l}`)) ?? String(prev.length + 1);
+      return [
+        ...prev,
+        {
+          id: `c${Date.now()}`,
+          label: `Candidate ${letter}`,
+          purchasePrice: 500_000,
+          acquisitionCosts: 0,
+          newMortgage: 150_000,
+        },
+      ];
+    });
+  };
+
+  const removeCandidate = (id: string) => {
+    setCandidates((prev) => (prev.length <= 2 ? prev : prev.filter((c) => c.id !== id)));
+  };
+
   const shareParams = {
     sale: salePrice,
     costs: sellingCostsPercent,
@@ -263,6 +308,7 @@ export const Section1031Calculator = () => {
     recap: depreciationRecaptureRatePercent,
     state: stateTaxRatePercent,
     niit: applyNiit ? 1 : 0,
+    compare: compareMode ? 1 : 0,
   };
 
   const handleExportExcel = async () => {
@@ -437,10 +483,124 @@ export const Section1031Calculator = () => {
 
           {/* Replacement */}
           <section className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6">
-            <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800/80 pb-3 mb-5">
-              <Landmark className="size-4 text-emerald-400" />
-              Replacement Property (what you are buying)
-            </h2>
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3 mb-5">
+              <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-200">
+                <Landmark className="size-4 text-emerald-400" />
+                {compareMode ? 'Replacement Candidates' : 'Replacement Property (what you are buying)'}
+              </h2>
+              <button
+                type="button"
+                onClick={() => setCompareMode((v) => !v)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-colors cursor-pointer"
+              >
+                <ArrowLeftRight className="size-3.5" />
+                {compareMode ? 'Single property' : 'Compare candidates'}
+              </button>
+            </div>
+
+            {compareMode && (
+              <div className="space-y-4">
+                <p className="text-xs text-slate-400 leading-relaxed">
+                  Enter each replacement property you are considering. Every candidate is measured
+                  against the same relinquished sale, so only the replacement side varies.
+                </p>
+
+                {candidates.map((candidate) => {
+                  const row = comparison.find((c) => c.candidate.id === candidate.id);
+                  const tax = row?.result.totalTaxDue ?? 0;
+                  return (
+                    <div
+                      key={candidate.id}
+                      className={`p-4 rounded-xl border ${
+                        row?.isBest
+                          ? 'bg-emerald-500/5 border-emerald-500/40'
+                          : 'bg-slate-950 border-slate-800'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-3 mb-3">
+                        <input
+                          type="text"
+                          value={candidate.label}
+                          onChange={(e) => updateCandidate(candidate.id, { label: e.target.value })}
+                          aria-label="Candidate name"
+                          className="bg-transparent text-sm font-semibold text-slate-100 border-b border-transparent hover:border-slate-700 focus:border-indigo-500 focus:outline-none py-0.5 min-w-0 flex-1"
+                        />
+                        <div className="flex items-center gap-2 shrink-0">
+                          {row?.isBest && (
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-500/15 border border-emerald-500/40 text-emerald-400">
+                              <CheckCircle2 className="size-3" />
+                              Best
+                            </span>
+                          )}
+                          {candidates.length > 2 && (
+                            <button
+                              type="button"
+                              onClick={() => removeCandidate(candidate.id)}
+                              aria-label={`Remove ${candidate.label}`}
+                              className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer"
+                            >
+                              <Trash2 className="size-3.5" />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <Field
+                          label="Purchase Price"
+                          value={candidate.purchasePrice}
+                          onChange={(v) => updateCandidate(candidate.id, { purchasePrice: v })}
+                          prefix="$"
+                          step={1000}
+                        />
+                        <Field
+                          label="Acquisition Costs"
+                          value={candidate.acquisitionCosts}
+                          onChange={(v) => updateCandidate(candidate.id, { acquisitionCosts: v })}
+                          prefix="$"
+                          step={500}
+                        />
+                        <Field
+                          label="New Financing"
+                          value={candidate.newMortgage}
+                          onChange={(v) => updateCandidate(candidate.id, { newMortgage: v })}
+                          prefix="$"
+                          step={1000}
+                        />
+                      </div>
+
+                      <div
+                        className={`mt-3 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs ${
+                          row?.isBest ? 'text-emerald-300' : 'text-slate-400'
+                        }`}
+                      >
+                        <span>
+                          Boot: <span className="font-mono">{fmt(tax === 0 ? 0 : row?.totalBoot ?? 0)}</span>
+                        </span>
+                        <span>
+                          Tax due: <span className="font-mono font-bold">{fmt(tax)}</span>
+                          {row && row.taxVsBest > 0 && (
+                            <span className="text-rose-400 ml-1">(+{fmt(row.taxVsBest)})</span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  );
+                })}
+
+                <button
+                  type="button"
+                  onClick={addCandidate}
+                  disabled={candidates.length >= 5}
+                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-dashed border-slate-700 text-xs font-semibold text-slate-300 hover:border-indigo-500/60 hover:text-indigo-300 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                >
+                  <Plus className="size-3.5" />
+                  {candidates.length >= 5 ? 'Maximum 5 candidates' : 'Add candidate property'}
+                </button>
+              </div>
+            )}
+
+            {!compareMode && (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Field
                 label="Purchase Price"
@@ -466,6 +626,7 @@ export const Section1031Calculator = () => {
                 hint="New debt on the replacement property"
               />
             </div>
+            )}
           </section>
 
           {/* Timeline */}
@@ -725,6 +886,50 @@ export const Section1031Calculator = () => {
                 </div>
               </div>
             </section>
+
+            {/* Side-by-side ranking, only in compare mode. */}
+            {compareMode && comparison.length > 0 && (
+              <section className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6">
+                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800/80 pb-3 mb-3">
+                  Candidate Comparison
+                </h2>
+                <div className="space-y-2">
+                  {[...comparison]
+                    .sort((a, b) => a.rank - b.rank)
+                    .map((row) => (
+                      <div
+                        key={row.candidate.id}
+                        className={`flex items-center justify-between gap-3 py-2 border-b border-slate-800/60 last:border-0 ${
+                          row.isBest ? 'text-emerald-300' : 'text-slate-300'
+                        }`}
+                      >
+                        <span className="flex items-center gap-2 min-w-0">
+                          <span
+                            className={`size-5 shrink-0 rounded-md text-[11px] font-bold flex items-center justify-center ${
+                              row.isBest
+                                ? 'bg-emerald-500/20 text-emerald-300'
+                                : 'bg-slate-800 text-slate-400'
+                            }`}
+                          >
+                            {row.rank}
+                          </span>
+                          <span className="text-xs truncate">{row.candidate.label}</span>
+                        </span>
+                        <span className="text-xs font-mono shrink-0">
+                          {fmt(row.result.totalTaxDue)}
+                          {row.taxVsBest > 0 && (
+                            <span className="text-rose-400 ml-1">+{fmt(row.taxVsBest)}</span>
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                </div>
+                <p className="text-[11px] text-slate-500 mt-3 leading-relaxed">
+                  Ranked by tax due. Adding cash or financing to a candidate reduces boot; a fully
+                  deferred candidate reaches $0.
+                </p>
+              </section>
+            )}
 
             <section className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6">
               <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800/80 pb-3 mb-3">
