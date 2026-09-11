@@ -7,7 +7,6 @@ import {
   ArrowRight,
   Database,
   BookOpen,
-  HelpCircle,
   ShieldCheck
 } from 'lucide-react';
 import {
@@ -22,6 +21,7 @@ import { updatePageMeta, navigateTo } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
+import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 
 const parquetSchemas = [
@@ -816,56 +816,11 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
           {/* Highest-intent placement: the reader has just seen their own numbers. */}
           <AdSlot unit="calculatorResult" className="my-8" />
 
-          {/* Subsection 4: Comprehensive In-Depth Parquet FAQs */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-              <HelpCircle className="size-5 text-emerald-400" />
-              Frequently Asked Questions About Parquet Cloud Savings
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">Why does Apache Parquet reduce AWS S3 storage bills by 80% to 90%?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Unlike row-based text files (CSV or JSON) where repetitive text strings are duplicated row by row, Apache Parquet organizes data in columns. Similar data types are grouped together, enabling ultra-efficient dictionary encoding, run-length encoding (RLE), bit-packing, and high-ratio compression codecs like ZSTD or Snappy.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">How does Parquet cut Amazon Athena and Google BigQuery scanning costs?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Serverless query engines like AWS Athena bill $5.00 per TB of data scanned from S3. Because Parquet is columnar, a query selecting only 3 columns from a 50-column dataset reads ONLY those 3 columns from disk (column projection), skipping 90%+ of the file bytes. Combined with min/max predicate pushdown, Athena scan bills routinely fall by 90% to 99%.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">Which Parquet compression codec is best: Snappy, ZSTD, or GZIP?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Snappy is the cloud default: it offers blazing fast decompression speeds with ~75% size reduction, ideal for real-time streaming queries. ZSTD (level 3) is the modern gold standard: it achieves 85% to 90% compression ratios while maintaining decomp speed close to Snappy. GZIP provides maximum compression but suffers from significantly slower decompression CPU overhead.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">What is Predicate Pushdown and Row Group Pruning?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Parquet files divide tables into Row Groups (typically 128 MB to 512 MB) and store min/max statistics for every column in the file footer metadata. When you run a query like "WHERE event_date &gt;= '2025-01-01'", the query engine reads the footer and skips reading entire row groups that don't match the criteria, avoiding millions of bytes of I/O.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">Can I convert large CSV or JSON files to Parquet directly in the browser?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Yes! Using TableView's DuckDB-Wasm in-browser converter, you can convert gigabyte-sized CSV, JSON, and NDJSON files into Snappy or ZSTD Parquet files directly inside your browser without uploading any confidential data to third-party servers.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">How does Parquet compare to Apache ORC or Avro?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Avro is a row-oriented format optimized for write-heavy streaming message queues (Kafka). Parquet and ORC are both columnar formats optimized for analytical read queries (OLAP). Parquet has achieved universal cross-platform dominance across Spark, DuckDB, Trino, Snowflake, Databricks, ClickHouse, and AWS Athena.
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* FAQ rendered from the shared registry so the prerendered markup matches. */}
+          <CalculatorFaqSection
+            path="/parquet-storage-calculator"
+            title="Frequently Asked Questions About Parquet Cloud Savings"
+          />
 
           {/* Methodology & FinOps Disclosure */}
           {/* Closing unit at the end of the editorial content. */}

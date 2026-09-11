@@ -6,7 +6,6 @@ import {
   TrendingUp,
   Download,
   FileSpreadsheet,
-  HelpCircle,
   Sparkles,
   Percent,
   CheckCircle2,
@@ -25,6 +24,7 @@ import { updatePageMeta } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
+import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { PrintableDscrReport } from '../components/PrintableDscrReport';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import { RelatedCalculators } from '../components/RelatedCalculators';
@@ -1308,63 +1308,11 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
           {/* Highest-intent placement: the reader has just seen their own numbers. */}
           <AdSlot unit="calculatorResult" className="my-8" />
 
-          {/* Subsection 4: Comprehensive In-Depth Investor FAQ */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-              <HelpCircle className="size-5 text-indigo-400" />
-              Frequently Asked Questions About DSCR Loans
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">Why use TableView DSCR Calculator instead of BiggerPockets Pro?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Unlike BiggerPockets which limits free accounts to 5 property calculations before requiring a $39/month Pro subscription, TableView.dev is 100% free with unlimited calculations, zero sign-up requirements, dual residential and commercial underwriting standards, reverse loan amount solving, and instant Excel exports.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">What is a DSCR loan and how does it work?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  A DSCR (Debt-Service Coverage Ratio) loan is a non-QM mortgage for real estate investors. Rather than verifying personal W-2 tax returns or personal debt-to-income (DTI) ratios, lenders qualify the loan based solely on the property's expected or actual rental income compared to its monthly PITIA (Principal, Interest, Taxes, Insurance, HOA).
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">What is the minimum DSCR required to qualify?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Most non-QM lenders seek a DSCR of 1.20x to 1.25x for competitive rates and up to 80% LTV. However, many lenders offer sub-1.0 or no-ratio DSCR loans down to 0.75x or even 0.0x for properties in high-appreciation markets or short-term rentals, typically requiring a 25% to 30% down payment.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">How is the DSCR ratio calculated?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  DSCR = Gross Monthly Rental Income / Monthly PITIA. For example, if a rental property generates $3,000 per month in gross rent and the total monthly payment (PITIA) is $2,400, the DSCR is $3,000 / $2,400 = 1.25x.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">Can I use an LLC or corporate entity for a DSCR loan?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Yes. In fact, most DSCR lenders encourage or mandate that properties close in the name of an LLC, LP, or corporation to shield personal assets and facilitate multi-partner syndications.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">Are short-term rentals (Airbnb and VRBO) eligible for DSCR financing?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Yes. Many modern DSCR lenders allow projected or historical short-term rental revenue verified through AirDNA Rentalizer or 12-month platform operating statements to underwrite debt service.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">What is the difference between Interest-Only and 30-Year Fixed DSCR loans?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  An interest-only (I/O) DSCR loan lowers your mandatory monthly payment during the initial 5 to 10 year period by eliminating principal payments. This significantly boosts your monthly DSCR ratio and maximizes immediate cash flow.
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* FAQ rendered from the shared registry so the prerendered markup matches. */}
+          <CalculatorFaqSection
+            path="/dscr-loan-calculator"
+            title="Frequently Asked Questions About DSCR Loans"
+          />
 
           <RelatedCalculators currentSlug="dscr-loan-calculator" category="real-estate" />
         </div>

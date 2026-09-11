@@ -33,37 +33,15 @@ import { CALCULATOR_META } from '../data/routeMeta';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
+import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
+import { getCalculatorFaqs } from '../data/calculatorFaqs';
 import { RefinanceBalanceChart } from '../components/RefinanceBalanceChart';
 import { PrintableRefinanceReport } from '../components/PrintableRefinanceReport';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 
-const refinanceFaqs = [
-  {
-    q: 'How is the refinance break-even point calculated?',
-    a: 'Break-even point (in months) = Total upfront closing costs and discount points divided by monthly payment savings. For example, $6,000 in closing costs with $250/month in savings reaches break-even in 24 months.'
-  },
-  {
-    q: 'How does TableView compare to Bankrate or SmartAsset refinance calculators?',
-    a: 'Unlike Bankrate or SmartAsset, TableView operates 100% in your browser with zero lead forms, ads, or broker phone spam. Furthermore, TableView provides exclusive net equity break-even analysis (accounting for lost tax deductions), a 30-year reset clock warning to prevent overpaying lifetime interest, and instant Excel downloads.'
-  },
-  {
-    q: 'What is the "30-Year Reset Clock" trap in mortgage refinancing?',
-    a: 'When you refinance an existing mortgage that is already partially paid off into a brand new 30-year mortgage, you reset the amortization clock back to year one. While your monthly payment might decrease, you may end up paying significantly more in total lifetime interest. TableView automatically detects and flags this trap with an amber alert.'
-  },
-  {
-    q: 'Does it make sense to refinance from a 30-year to a 15-year mortgage?',
-    a: 'Yes, if your goal is long-term wealth building. While your monthly payment may increase slightly, 15-year fixed loans carry lower interest rates and pay down principal twice as fast, saving tens of thousands of dollars in lifetime interest.'
-  },
-  {
-    q: 'What is a zero-closing-cost refinance?',
-    a: 'In a zero-cost refinance, the lender pays your closing fees in exchange for a slightly higher interest rate (e.g. +0.25% to +0.375%), or the closing costs are rolled into the loan balance. Your break-even is immediate, making it ideal if you plan to move within 3-5 years.'
-  },
-  {
-    q: 'How does cash-out refinancing work?',
-    a: 'A cash-out refinance replaces your existing mortgage with a larger loan balance, providing the difference in cash. Most conventional lenders permit up to 80% Loan-to-Value (LTV) for cash-out refinancing on primary residences.'
-  }
-];
+// Sourced from the shared registry — see the note in MortgageCalculator.tsx.
+const refinanceFaqs = getCalculatorFaqs('/refinance-calculator');
 
 const refinanceSchemas = [
   {
@@ -1665,6 +1643,12 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
         if (data.cashOutAmount !== undefined) setCashOutAmount(data.cashOutAmount);
         if (data.rollCostsIntoLoan !== undefined) setRollCostsIntoLoan(data.rollCostsIntoLoan);
       }}
+    />
+
+    {/* Rendered so the FAQPage structured data above has visible content behind it. */}
+    <CalculatorFaqSection
+      path="/refinance-calculator"
+      title="Frequently Asked Questions About Refinancing"
     />
 
     {/* Closing unit at the end of the editorial content. */}

@@ -10,7 +10,6 @@ import {
   CheckCircle2,
   ArrowRight,
   BookOpen,
-  HelpCircle,
   Sparkles,
   Printer
 } from 'lucide-react';
@@ -23,6 +22,7 @@ import { updatePageMeta } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
+import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { PrintableHardMoneyReport } from '../components/PrintableHardMoneyReport';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 
@@ -1024,63 +1024,11 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
           {/* Highest-intent placement: the reader has just seen their own numbers. */}
           <AdSlot unit="calculatorResult" className="my-8" />
 
-          {/* Subsection 4: Comprehensive In-Depth Flipping FAQs */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-              <HelpCircle className="size-5 text-indigo-400" />
-              Frequently Asked Questions About Hard Money Loans
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">Why use TableView Hard Money Calculator instead of DealCheck or Rehab Financial?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Unlike DealCheck which caps free accounts to 15 property analyses and locks full PDF exports behind a monthly subscription, TableView.dev provides 100% free and unlimited deal evaluations, zero account sign-up, selectable Dutch vs as-incurred interest calculations, 70% rule MAO analysis, and instant Excel exports with complete client-side data privacy.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">What is a hard money loan and how does it work for house flipping?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  A hard money loan is an asset-based, short-term bridge loan provided by private investors or specialized lending companies to fund the purchase and renovation of real estate. Underwriting is primarily collateral-driven—focusing on the property's After Repair Value (ARV) and renovation scope—rather than personal W-2 income.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">What is the 70% Rule in real estate flipping?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  The 70% rule states that an investor should pay no more than 70% of the After Repair Value (ARV) of a home minus estimated repair and rehab costs: Maximum Allowable Offer (MAO) = (ARV × 70%) - Rehab Costs. The remaining 30% margin covers lender points, holding interest, acquisition/exit closing fees, and developer net profit.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">How do hard money points and interest work?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Points are upfront lender origination fees expressed as a percentage of the total loan amount (e.g., 2 points on a $200,000 loan = $4,000). Interest rates typically range from 9.5% to 13.5% annualized, serviced monthly as interest-only payments throughout the 6 to 12 month project duration.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">How does the rehab escrow draw process work?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Lenders do not hand over the entire rehab budget upfront. Instead, funds are held in an escrow account and released in "draws" or disbursements as construction milestones (e.g., framing, rough plumbing, drywall, finishes) are completed and confirmed via third-party site inspections.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">What is Dutch interest vs as-incurred interest in hard money lending?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  In "Dutch interest", the borrower pays monthly interest on the entire total approved loan amount (purchase loan plus undrawn rehab escrow) from day one. In "as-incurred interest", the borrower only pays interest on the drawn balance, saving thousands of dollars in carrying costs during early construction.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">What credit score and down payment are needed for a hard money loan?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Most hard money lenders require a minimum credit score of 620 to 660. Down payments typically range from 10% to 20% of the purchase price (80% to 90% Purchase LTV), while 100% of verified renovation costs are financed in the escrow facility.
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* FAQ rendered from the shared registry so the prerendered markup matches. */}
+          <CalculatorFaqSection
+            path="/hard-money-calculator"
+            title="Frequently Asked Questions About Hard Money Loans"
+          />
 
           <MethodologyDisclosure type="hardmoney" />
 

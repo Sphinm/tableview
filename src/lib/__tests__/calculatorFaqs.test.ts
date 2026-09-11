@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'bun:test';
 import { CALCULATOR_FAQS, getCalculatorFaqs } from '../../data/calculatorFaqs';
+import { isKnownRoute, resolveRoutePath } from '../resolveRoute';
 
 /**
  * The FAQ registry feeds the prerenderer, which writes text into the static HTML
@@ -48,6 +49,61 @@ describe('Calculator FAQ registry', () => {
   it('returns an empty list for an unregistered path', () => {
     expect(getCalculatorFaqs('/not-a-calculator')).toEqual([]);
     expect(getCalculatorFaqs('')).toEqual([]);
+  });
+
+  it('registers every calculator that used to ship no crawlable content', () => {
+    // These six previously had zero static words. A missing key would silently
+    // revert them to invisible-without-JavaScript.
+    const required = [
+      '/mortgage-calculator',
+      '/refinance-calculator',
+      '/dscr-loan-calculator',
+      '/hard-money-calculator',
+      '/snowflake-cost-calculator',
+      '/parquet-storage-calculator',
+      '/section-1031-exchange-calculator',
+    ];
+    for (const path of required) {
+      expect(`${path} has ${getCalculatorFaqs(path).length > 0}`).toBe(`${path} has true`);
+    }
+  });
+
+  it('maps every registered path to a real, indexable route', () => {
+    // A typo'd key would register FAQ copy that no page ever renders, and the
+    // prerenderer would either skip it or emit cloaked content.
+    for (const path of Object.keys(CALCULATOR_FAQS)) {
+      expect(isKnownRoute(resolveRoutePath(path).path), `${path} is not a known route`).toBe(true);
+    }
+  });
+
+  it('never ships a page whose FAQ markup is invisible', () => {
+    // The mortgage and refinance pages previously declared FAQPage structured
+    // data for questions that appeared nowhere on the rendered page. Google
+    // treats markup for invisible content as a guidelines violation, so the
+    // registry must be the source the pages render FROM.
+    const pagesUsingRegistry = [
+      'pages/MortgageCalculator.tsx',
+      'pages/RefinanceCalculator.tsx',
+      'pages/DscrCalculator.tsx',
+      'pages/HardMoneyCalculator.tsx',
+      'pages/SnowflakeCalculator.tsx',
+      'pages/ParquetSavingsCalculator.tsx',
+      'pages/Section1031Calculator.tsx',
+    ];
+
+    const fs = require('node:fs');
+    const path = require('node:path');
+    const root = path.join(import.meta.dir, '..', '..');
+
+    const missing: string[] = [];
+    for (const rel of pagesUsingRegistry) {
+      const source = fs.readFileSync(path.join(root, rel), 'utf8');
+      const rendersRegistry =
+        source.includes('CalculatorFaqSection') || source.includes('getCalculatorFaqs');
+      if (!rendersRegistry) missing.push(rel);
+    }
+
+    expect(missing).toEqual([]);
   });
 
   it('registers the 1031 exchange calculator', () => {

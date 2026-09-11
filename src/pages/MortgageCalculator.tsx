@@ -29,29 +29,18 @@ import { CALCULATOR_META } from '../data/routeMeta';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
+import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
+import { getCalculatorFaqs } from '../data/calculatorFaqs';
 import { PaymentDonutChart } from '../components/PaymentDonutChart';
 import { AmortizationChart } from '../components/AmortizationChart';
 import { PrintableMortgageReport } from '../components/PrintableMortgageReport';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 
-const mortgageFaqs = [
-  {
-    q: 'What is PITI in a monthly mortgage payment?',
-    a: 'PITI stands for Principal, Interest, Taxes, and Insurance. These four components make up your total housing payment. In addition, homeowner association (HOA) fees and private mortgage insurance (PMI) may be included depending on your loan structure.'
-  },
-  {
-    q: 'When does Private Mortgage Insurance (PMI) automatically cancel?',
-    a: 'Under the federal Homeowners Protection Act, conventional mortgage lenders must automatically cancel PMI once your principal balance reaches 78% of the original home value, or you can request cancellation once your balance reaches 80% LTV.'
-  },
-  {
-    q: 'How does an extra monthly principal payment save money?',
-    a: 'Extra principal payments reduce your outstanding balance faster, which reduces future compound interest. Making an extra $100-$200 monthly principal payment can shave 4 to 6 years off a 30-year mortgage and save $30,000+ in interest.'
-  },
-  {
-    q: 'What is the standard formula for a 30-year fixed mortgage?',
-    a: 'Monthly payment M = P * [r(1+r)^n] / [(1+r)^n - 1], where P is loan principal, r is monthly interest rate (annual rate / 12), and n is total number of monthly payments (360 for 30 years).'
-  }
-];
+// Sourced from the shared registry so the rendered page, the JSON-LD and the
+// prerendered HTML can never disagree. This page previously declared FAQPage
+// schema for questions that appeared nowhere on the page, which violates
+// Google's structured data guidelines.
+const mortgageFaqs = getCalculatorFaqs('/mortgage-calculator');
 
 const mortgageSchemas = [
   {
@@ -1389,6 +1378,12 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
         if (data.homeInsuranceYearly !== undefined) setHomeInsuranceYearly(data.homeInsuranceYearly);
         if (data.monthlyHoa !== undefined) setMonthlyHoa(data.monthlyHoa);
       }}
+    />
+
+    {/* Rendered so the FAQPage structured data above has visible content behind it. */}
+    <CalculatorFaqSection
+      path="/mortgage-calculator"
+      title="Frequently Asked Questions About Mortgage Payments"
     />
 
     {/* Closing unit at the end of the editorial content. */}

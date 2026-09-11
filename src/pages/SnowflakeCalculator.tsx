@@ -6,7 +6,6 @@ import {
   TrendingDown,
   HardDrive,
   CheckCircle2,
-  HelpCircle,
   Layers,
   ShieldCheck
 } from 'lucide-react';
@@ -23,6 +22,7 @@ import { updatePageMeta } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
+import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 
 const snowflakeSchemas = [
@@ -807,56 +807,11 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
           {/* Highest-intent placement: the reader has just seen their own numbers. */}
           <AdSlot unit="calculatorResult" className="my-8" />
 
-          {/* Subsection 4: Comprehensive In-Depth FinOps FAQs */}
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-              <HelpCircle className="size-5 text-cyan-400" />
-              Frequently Asked Questions About Snowflake Costs
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">How does Snowflake calculate virtual warehouse credit consumption?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Snowflake compute is billed in credits per second, with a 60-second minimum charge every time a warehouse starts or resizes. T-shirt sizes scale exponentially in powers of 2: X-Small consumes 1 credit/hour, Small consumes 2 credits/hour, Medium consumes 4, Large consumes 8, X-Large consumes 16, and up to 6X-Large at 512 credits/hour.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">What is the price per Snowflake credit across editions?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  On-demand list prices are typically $2.00 per credit for Standard Edition, $3.00 for Enterprise Edition (which includes multi-cluster warehouses and 90-day Time Travel), and $4.00 for Business Critical Edition (which includes HIPAA/PCI compliance, Tri-Secret Secure customer-managed keys, and private networking links).
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">How does Multi-Cluster Warehouse (MCW) autoscaling affect cost?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Multi-cluster warehouses (available on Enterprise and above) scale horizontally by spinning up identical warehouse clusters (e.g., Min: 1, Max: 4) to eliminate query queue times during peak dashboard spikes. Cost is strictly additive: 3 active Medium clusters running for 1 hour consume 3 × 4 = 12 credits.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">What is the recommended Auto-Suspend setting for Snowflake warehouses?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  For interactive BI dashboards and ad-hoc analytics, set AUTO_SUSPEND = 60 (1 minute). Because Snowflake bills by the second after the initial 60 seconds, reducing the auto-suspend window from the default 10 minutes down to 1 minute frequently slashes idle compute spend by 25% to 50%.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">How much does Snowflake storage cost per TB?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  On-demand capacity storage is billed at $40 per TB per month, while committed pre-purchased capacity contracts discount storage down to approximately $23 per TB per month. Snowflake automatically compresses data upon ingestion (typically achieving a 3x to 5x compression factor).
-                </p>
-              </div>
-
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <h4 className="font-semibold text-slate-200 text-sm">Should I scale up (larger warehouse) or scale out (multi-cluster)?</h4>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Scale up (e.g. Medium to Large) when you need to speed up a single heavy ETL job, large aggregation, or memory-intensive query. Scale out (multi-cluster) when hundreds of concurrent users or BI tools like Tableau/Looker are experiencing query queuing delays.
-                </p>
-              </div>
-            </div>
-          </div>
+          {/* FAQ rendered from the shared registry so the prerendered markup matches. */}
+          <CalculatorFaqSection
+            path="/snowflake-cost-calculator"
+            title="Frequently Asked Questions About Snowflake Costs"
+          />
 
           {/* Closing unit at the end of the editorial content. */}
           <AdSlot unit="calculatorFaq" format="horizontal" />
