@@ -486,10 +486,10 @@ export const DataView = ({
   const showSheetSwitcher = !!sheets && sheets.length > 1 && !!onSelectSheet;
 
   return (
-    // data-clarity-mask: the SQL console, schema inspector and result grid all
+    // data-sentry-mask: the SQL console, schema inspector and result grid all
     // render the user's own data (file names, column names, cell values). None of
     // it may reach session recording.
-    <div className="w-full max-w-7xl mx-auto px-4 py-6" data-clarity-mask="true">
+    <div className="w-full max-w-7xl mx-auto px-4 py-6" data-sentry-mask="true">
       {/* Copied Cell Toast */}
       {copiedCell && (
         <div className="fixed bottom-6 right-6 z-50 px-3.5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2 duration-200">
@@ -1075,7 +1075,7 @@ export const DataView = ({
                   </tr>
                 </thead>
 
-                <tbody data-clarity-mask="true" className="divide-y divide-slate-800/60 bg-slate-900/50">
+                <tbody data-sentry-mask="true" className="divide-y divide-slate-800/60 bg-slate-900/50">
                   {isLoading ? (
                     <tr>
                       <td colSpan={columns.length + 1} className="py-20 text-center text-slate-400">

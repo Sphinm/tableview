@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { ShieldCheck, X } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 import { getConsent, setConsent } from '../lib/consent';
+import { analytics } from '../lib/analytics';
 
 export const CookieBanner = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -28,11 +29,13 @@ export const CookieBanner = () => {
 
   const handleAccept = () => {
     setConsent(true);
+    analytics.consentDecision(true);
     setIsVisible(false);
   };
 
   const handleDecline = () => {
     setConsent(false);
+    analytics.consentDecision(false);
     setIsVisible(false);
   };
 

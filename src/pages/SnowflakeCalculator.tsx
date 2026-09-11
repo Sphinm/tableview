@@ -253,7 +253,8 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    // data-sentry-mask: warehouse sizes and spend figures are the user's own cloud bill.
+    <div data-sentry-mask="true" className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
       {/* Hero Header */}
       <section className="relative pt-12 pb-8 border-b border-slate-800 bg-gradient-to-b from-cyan-950/20 via-slate-950 to-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -63,7 +63,7 @@
     <!--
       Google Consent Mode v2 — MUST execute before any Google/ads/analytics tag.
       Default is DENIED (GDPR/ePrivacy safe); src/lib/consent.ts upgrades this to
-      granted only after explicit user consent, and gates Clarity behind it.
+      granted only after explicit user consent.
     -->
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -98,10 +98,11 @@
       crossorigin="anonymous"></script>
 
     <!--
-      Google Analytics 4 and Microsoft Clarity are loaded from src/lib/consent.ts
-      ONLY after the user grants analytics consent (GDPR/ePrivacy). They are
-      intentionally NOT loaded here: this is BASIC consent mode, so no request
-      reaches googletagmanager.com or clarity.ms before an explicit opt-in.
+      Google Analytics 4 and Sentry session replay are loaded from
+      src/lib/consent.ts ONLY after the user grants analytics consent
+      (GDPR/ePrivacy). They are intentionally NOT loaded here: this is BASIC
+      consent mode, so no request reaches googletagmanager.com before an
+      explicit opt-in, and the replay bundle is never even downloaded.
       The gtag shim above exists purely so Consent Mode defaults are registered
       in the right order relative to the AdSense tag.
     -->

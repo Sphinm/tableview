@@ -371,7 +371,8 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
   return (
     <>
-      <div className="print:hidden min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
+      {/* data-sentry-mask: rental income, loan terms and PITIA are the user's own deal. */}
+      <div data-sentry-mask="true" className="print:hidden min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

@@ -50,9 +50,15 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id: string) {
-          if (id.includes('node_modules/@sentry')) {
-            return 'vendor-sentry';
-          }
+          // NOTE: @sentry is deliberately NOT pinned to a single chunk.
+          //
+          // Sentry is split across two very different loading strategies:
+          //   - @sentry/react  loads on idle for every visitor (error reporting)
+          //   - @sentry/replay loads ONLY after analytics consent
+          // Forcing them into one "vendor-sentry" chunk merged the replay bundle
+          // into the always-loaded chunk, so every visitor downloaded the
+          // recorder even without consent — contradicting the privacy guarantee.
+          // Letting the bundler decide keeps replay in its own lazily-fetched chunk.
           if (id.includes('node_modules/@duckdb/duckdb-wasm')) {
             return 'vendor-duckdb';
           }

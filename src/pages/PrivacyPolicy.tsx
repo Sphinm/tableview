@@ -92,17 +92,63 @@ export const PrivacyPolicy = () => {
           </p>
         </section>
 
+        <section id="analytics" className="scroll-mt-24">
+          <h2 className="text-xl font-bold text-slate-100 mb-3 flex items-center gap-2">
+            <FileText className="size-5 text-indigo-400" />
+            3. Analytics and Error Monitoring
+          </h2>
+          <p className="mb-3 text-slate-400">
+            We use two Google and Sentry services to understand how the site is used and to
+            diagnose faults. <strong>Neither is loaded until you grant analytics consent</strong> —
+            until then, no request is made to either provider and no script is downloaded.
+          </p>
+          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3 text-xs sm:text-sm text-slate-400 mb-4">
+            <p>
+              • <strong>Google Analytics 4</strong> records aggregate usage: pages viewed, referring
+              source, approximate country, device type, and the product events listed below. We
+              disable Google signals and ad-personalization signals on this property, so analytics
+              consent is never treated as advertising consent.
+            </p>
+            <p>
+              • <strong>Sentry</strong> records technical faults and, only when an error occurs, a
+              session recording that reproduces it. Recordings mask all text, all form field values
+              and all images by default. In addition, the data workspace and every calculator are
+              explicitly masked, because their contents are your own files and financial figures.
+              Request and response bodies are never captured.
+            </p>
+            <p>
+              • <strong>What we never collect.</strong> We do not record your file names, table or
+              column names, SQL statements, cell values, or any figure you type into a calculator.
+              File sizes are recorded only as coarse ranges, never exact byte counts.
+            </p>
+          </div>
+          <p className="mb-3 text-slate-400">
+            The product events we record are limited to a fixed list: whether a file was selected
+            and with which extension and size range, whether the in-browser SQL engine loaded
+            successfully, whether a file opened or failed, whether a query ran and how long it took,
+            which export format was chosen, and which calculator was exported or printed.
+          </p>
+          <p className="text-slate-400">
+            You can withdraw analytics consent at any time using the{' '}
+            <strong>Cookie Settings</strong> link in the footer. Withdrawing reloads the page and
+            stops all further recording; recordings already transmitted cannot be recalled, but they
+            contain none of the masked content described above.
+          </p>
+        </section>
+
         <section>
           <h2 className="text-xl font-bold text-slate-100 mb-3 flex items-center gap-2">
             <FileText className="size-5 text-indigo-400" />
-            3. Cookies and Web Storage
+            4. Cookies and Web Storage
           </h2>
           <p className="mb-3 text-slate-400">
             Cookies are small files stored on your computer. TableView.dev uses cookies and browser local storage strictly for:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-slate-400">
             <li>Remembering your UI preferences (e.g., table page size, SQL console layout).</li>
+            <li>Remembering your cookie consent choice.</li>
             <li>Ad delivery and frequency capping governed by Google AdSense policies.</li>
+            <li>Aggregate analytics and error diagnostics, as described in section 3.</li>
             <li>Security filtering and DDoS prevention managed by Cloudflare CDN.</li>
           </ul>
           <p className="mt-3 text-slate-400">
@@ -112,7 +158,7 @@ export const PrivacyPolicy = () => {
 
         <section>
           <h2 className="text-xl font-bold text-slate-100 mb-3">
-            4. General Data Protection Regulation (GDPR) Rights
+            5. General Data Protection Regulation (GDPR) Rights
           </h2>
           <p className="mb-3 text-slate-400">
             If you are a resident of the European Economic Area (EEA), you have certain data protection rights under the GDPR:
@@ -127,7 +173,7 @@ export const PrivacyPolicy = () => {
 
         <section>
           <h2 className="text-xl font-bold text-slate-100 mb-3">
-            5. California Consumer Privacy Act (CCPA / CPRA)
+            6. California Consumer Privacy Act (CCPA / CPRA)
           </h2>
           <p className="mb-3 text-slate-400">
             Under the California Consumer Privacy Act (CCPA), California consumers have the right to:
@@ -141,7 +187,7 @@ export const PrivacyPolicy = () => {
 
         <section>
           <h2 className="text-xl font-bold text-slate-100 mb-3">
-            6. Children's Information
+            7. Children's Information
           </h2>
           <p className="text-slate-400">
             Another part of our priority is adding protection for children while using the internet. TableView.dev does not knowingly collect any Personal Identifiable Information from children under the age of 13. If you think that your child provided this kind of information on our website, we strongly encourage you to contact us immediately.
@@ -150,7 +196,7 @@ export const PrivacyPolicy = () => {
 
         <section>
           <h2 className="text-xl font-bold text-slate-100 mb-3">
-            7. Contact Us
+            8. Contact Us
           </h2>
           <p className="text-slate-400">
             If you have additional questions or require more information about our Privacy Policy, do not hesitate to contact us by email at{' '}

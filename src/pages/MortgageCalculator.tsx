@@ -274,7 +274,8 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
 
   return (
     <>
-      <div className="print:hidden max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24 lg:pb-12 space-y-10">
+      {/* data-sentry-mask: every field on this page is the user's own financial position. */}
+      <div data-sentry-mask="true" className="print:hidden max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24 lg:pb-12 space-y-10">
       {/* Top Banner & Header */}
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4">

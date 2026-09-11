@@ -15,7 +15,7 @@ if (typeof (BigInt.prototype as any).toJSON !== 'function') {
   };
 }
 
-// Re-apply a previously granted cookie choice (and load Clarity if granted).
+// Re-apply a previously granted cookie choice (and start analytics if granted).
 initConsent();
 
 // Sentry is loaded lazily on idle to keep it off the critical path;

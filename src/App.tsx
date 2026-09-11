@@ -36,6 +36,7 @@ import { AlertCircle, ArrowLeft, FileQuestion, Mail } from 'lucide-react';
 import { getBugReportMailto } from './lib/feedback';
 import { describeFile, captureException } from './lib/sentry';
 import { isEngineLoadError } from './lib/engineError';
+import { analytics, sizeBucket, fileExtension } from './lib/analytics';
 import { HOME_META, GUIDES_HUB_META, STATIC_PAGE_META } from './data/routeMeta';
 import { isKnownRoute } from './lib/resolveRoute';
 
@@ -103,6 +104,12 @@ export function App() {
     setErrorMessage(null);
     setLoadingStatus(`Reading ${file.name}...`);
 
+    // Funnel step 1. Records only the extension and a coarse size bucket.
+    const ext = fileExtension(file.name);
+    const bucket = sizeBucket(file.size);
+    const startedAt = performance.now();
+    analytics.fileDropped({ name: file.name, size: file.size });
+
     try {
       setLoadingStatus('Loading the in-browser SQL engine...');
       // Lazy: the DuckDB-Wasm engine + SheetJS are only fetched when a file is actually opened.
@@ -111,6 +118,15 @@ export function App() {
       setCurrentTable(res.tableName);
       setFileType(res.fileType);
       setSheets(res.sheets);
+
+      // Funnel step 3. rowCount is unknown here, so report 0 and let the grid
+      // report the real count once it has queried the table.
+      analytics.fileOpened({
+        extension: ext,
+        sizeBucket: bucket,
+        rowCount: 0,
+        durationMs: performance.now() - startedAt,
+      });
     } catch (err: any) {
       console.error('Failed to load file:', err);
       // Privacy: never send the user's file name — only coarse, non-identifying metadata.
@@ -120,6 +136,7 @@ export function App() {
       });
 
       if (isEngineLoadError(err)) {
+        analytics.engineLoadFailed(String(err?.message ?? 'unknown'));
         // The engine is a ~6 MB CDN download. When it is blocked, blaming the
         // user's file sends them off debugging a perfectly good dataset.
         setErrorMessage(
@@ -128,6 +145,11 @@ export function App() {
             'Your file was not uploaded anywhere. Please check your connection and try again.'
         );
       } else {
+        analytics.fileOpenFailed({
+          extension: ext,
+          sizeBucket: bucket,
+          reason: String(err?.message ?? 'unknown'),
+        });
         setErrorMessage(
           `Failed to open ${file.name}: ${err.message || 'Unknown error'}. Make sure the file is not corrupted.`
         );

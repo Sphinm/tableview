@@ -305,7 +305,8 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
   return (
     <>
-      <div className="print:hidden min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
+      {/* data-sentry-mask: purchase price, ARV and rehab budget are the user's own deal. */}
+      <div data-sentry-mask="true" className="print:hidden min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
       {/* Hero Header */}
       <section className="relative pt-12 pb-8 border-b border-slate-800 bg-gradient-to-b from-amber-950/20 via-slate-950 to-slate-950">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

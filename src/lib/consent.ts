@@ -5,20 +5,19 @@
  * - The *default* consent state is written inline in index.html <head> so that it
  *   is guaranteed to run before the AdSense tag. This module only ever *upgrades*
  *   that state after an explicit user action.
- * - Microsoft Clarity (session recording) and Google Analytics 4 both count as
- *   analytics, so neither is loaded until the user grants consent.
+ * - Google Analytics 4 and Sentry session replay both count as analytics, so
+ *   neither is loaded until the visitor grants consent.
  * - No cookies are set by this module; the choice is stored in localStorage.
  */
 
 export type ConsentState = 'granted' | 'denied' | 'unset';
 
 const STORAGE_KEY = 'tableview_cookie_consent';
-const CLARITY_PROJECT_ID = 'yeyf0hxgk6';
 
 /**
  * Google Analytics 4 measurement ID.
  *
- * GA4 is loaded LAZILY, only after analytics consent, rather than with the
+ * GA4 is loaded lazily, only after analytics consent, rather than with the
  * unconditional snippet Google's dashboard hands out. That snippet loads
  * gtag.js on every visit and relies on Consent Mode's *advanced* mode to
  * suppress cookies before consent — which still sends cookieless pings to
@@ -39,8 +38,35 @@ declare global {
   }
 }
 
-let clarityLoaded = false;
 let analyticsLoaded = false;
+
+/** Read the persisted choice. Returns 'unset' when the user has not decided yet. */
+export function getConsent(): ConsentState {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored === 'accepted') return 'granted';
+    if (stored === 'essential_only') return 'denied';
+  } catch {
+    // localStorage can be unavailable in private/restricted contexts.
+  }
+  return 'unset';
+}
+
+/**
+ * Push a Consent Mode v2 update. Safe to call even if the inline stub is missing
+ * (e.g. in unit tests or if the head script was stripped by a proxy).
+ */
+function pushConsentUpdate(granted: boolean) {
+  const gtag = window.gtag;
+  if (typeof gtag !== 'function') return;
+
+  gtag('consent', 'update', {
+    ad_storage: granted ? 'granted' : 'denied',
+    ad_user_data: granted ? 'granted' : 'denied',
+    ad_personalization: granted ? 'granted' : 'denied',
+    analytics_storage: granted ? 'granted' : 'denied',
+  });
+}
 
 /**
  * Load Google Analytics 4, once, after consent.
@@ -53,7 +79,10 @@ export function loadAnalytics() {
   if (analyticsLoaded || typeof document === 'undefined') return;
 
   // Someone may have loaded it already (manual paste, tag manager); don't double up.
-  if (document.querySelector('script[data-tableview-ga4]') || document.querySelector('script[src*="googletagmanager.com/gtag/js"]')) {
+  if (
+    document.querySelector('script[data-tableview-ga4]') ||
+    document.querySelector('script[src*="googletagmanager.com/gtag/js"]')
+  ) {
     analyticsLoaded = true;
     return;
   }
@@ -86,48 +115,18 @@ export function loadAnalytics() {
   document.head.appendChild(script);
 }
 
-/** Read the persisted choice. Returns 'unset' when the user has not decided yet. */
-export function getConsent(): ConsentState {
-  try {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === 'accepted') return 'granted';
-    if (stored === 'essential_only') return 'denied';
-  } catch {
-    // localStorage can be unavailable in private/restricted contexts.
-  }
-  return 'unset';
+/** Start every consent-gated recorder. Called once, after a grant. */
+async function startAnalytics() {
+  loadAnalytics();
+  // Imported lazily so the replay bundle is never fetched without consent.
+  const { startReplay } = await import('./sentry');
+  await startReplay();
 }
 
-/**
- * Push a Consent Mode v2 update. Safe to call even if the inline stub is missing
- * (e.g. in unit tests or if the head script was stripped by a proxy).
- */
-function pushConsentUpdate(granted: boolean) {
-  const gtag = window.gtag;
-  if (typeof gtag !== 'function') return;
-
-  gtag('consent', 'update', {
-    ad_storage: granted ? 'granted' : 'denied',
-    ad_user_data: granted ? 'granted' : 'denied',
-    ad_personalization: granted ? 'granted' : 'denied',
-    analytics_storage: granted ? 'granted' : 'denied',
-  });
-}
-
-/** Inject Microsoft Clarity exactly once, and only after consent. */
-function loadClarity() {
-  if (clarityLoaded || typeof document === 'undefined') return;
-  if (document.querySelector('script[data-tableview-clarity]')) {
-    clarityLoaded = true;
-    return;
-  }
-  clarityLoaded = true;
-
-  const script = document.createElement('script');
-  script.async = true;
-  script.dataset.tableviewClarity = 'true';
-  script.src = `https://www.clarity.ms/tag/${CLARITY_PROJECT_ID}`;
-  document.head.appendChild(script);
+/** Stop recorders that can be stopped at runtime. */
+async function stopAnalytics() {
+  const { stopReplay } = await import('./sentry');
+  stopReplay();
 }
 
 /**
@@ -150,12 +149,13 @@ export function setConsent(granted: boolean) {
   pushConsentUpdate(granted);
 
   if (granted) {
-    // Consent update is pushed before the tags load, so both start in the
+    // Consent update is pushed before the tags load, so they start in the
     // granted state rather than being corrected afterwards.
-    loadAnalytics();
-    loadClarity();
+    void startAnalytics();
     return;
   }
+
+  void stopAnalytics();
 
   if (previous === 'granted') {
     window.location.reload();
@@ -174,16 +174,14 @@ export function openCookieSettings() {
 export function initConsent() {
   if (getConsent() === 'granted') {
     pushConsentUpdate(true);
-    loadAnalytics();
-    loadClarity();
+    void startAnalytics();
   }
 }
 
 /**
- * Test-only: clears the "already loaded" latches so each test starts from a
- * clean slate. Never called by application code.
+ * Test-only: clears the "already loaded" latch so each test starts clean.
+ * Never called by application code.
  */
 export function __resetLoadLatchesForTests() {
-  clarityLoaded = false;
   analyticsLoaded = false;
 }

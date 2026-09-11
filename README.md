@@ -137,14 +137,14 @@ Deliberately excluded:
 - **Legal pages** (privacy, terms, disclaimer, about, contact) — thin content
   with negligible RPM and a policy risk. A test enforces this.
 - **The data workspace** (`DataView`, `JsonView`) — never place ads next to a
-  user's own data; those views are also `data-clarity-mask`ed.
+  user's own data; those views are also `data-sentry-mask`ed.
 
 ---
 
 ## 📊 Analytics
 
-**Google Analytics 4** (`G-JJBNH56W95`) and **Microsoft Clarity** are both loaded
-from `src/lib/consent.ts`, and only after the visitor grants analytics consent.
+**Google Analytics 4** (`G-JJBNH56W95`) and **Sentry session replay** are both
+gated on analytics consent in `src/lib/consent.ts`.
 
 This is **basic consent mode**, deliberately *not* the snippet the GA4 dashboard
 hands out. That snippet loads `gtag.js` on every visit and relies on Consent
@@ -172,13 +172,20 @@ guards exist to keep that true:
 - **Sentry scrubbing** (`src/lib/sentry.ts`) — file names, table names, sheet
   names, SQL text and column names are redacted before any event is sent.
   `sendDefaultPii` is off.
-- **Session-recording masking** — `DataView` and `JsonView` are marked
-  `data-clarity-mask`, so grid contents, the SQL console and JSON trees never
-  reach Microsoft Clarity.
+- **Session-recording masking** — `DataView`, `JsonView` and all seven
+  calculators carry `data-sentry-mask`, and replay additionally sets
+  `maskAllText`, `maskAllInputs` and `blockAllMedia`. Grid contents, the SQL
+  console, JSON trees and every calculator field are excluded from recordings.
+  Request and response bodies are never captured.
+- **Replay never ships without consent** — the Sentry preload is gated, because
+  `@sentry/react` re-exports `@sentry/replay` and loading the core would
+  otherwise download the recorder. Verified against a cold browser profile:
+  without consent the replay chunk is never requested; with consent, both chunks
+  load. A test asserts the guard stays in place.
 - **Consent Mode v2** — `index.html` declares a *denied* default before the
   AdSense tag loads; `src/lib/consent.ts` upgrades it only after an explicit
-  choice. Clarity is not loaded at all without consent, and consent can be
-  withdrawn from the footer's "Cookie Settings" link.
+  choice. Nothing third-party loads before then, and consent can be withdrawn
+  from the footer's "Cookie Settings" link.
 - **Self-hosted fonts** — Inter and JetBrains Mono are served from our own origin
   rather than Google's CDN. This drops two third-party connections from the
   critical path and avoids sending every visitor's IP to Google, which a German

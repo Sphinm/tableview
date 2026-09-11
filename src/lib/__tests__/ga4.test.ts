@@ -78,7 +78,7 @@ describe('Google Analytics 4 loading', () => {
     expect(gtagCalls).toEqual([]);
   });
 
-  /** Scripts tagged as GA4 specifically — consent also loads Clarity. */
+  /** Scripts tagged as GA4 specifically — consent also starts session replay. */
   const ga4Scripts = () => appended.filter((s) => s.dataset.tableviewGa4 === 'true');
 
   it('loads the GA4 script after consent is granted', () => {

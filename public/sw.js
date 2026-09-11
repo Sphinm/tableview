@@ -27,7 +27,6 @@ const BYPASS_HOSTS = [
   'doubleclick.net',
   'google-analytics.com',
   'googletagmanager.com',
-  'clarity.ms',
   'sentry.io',
 ];
 

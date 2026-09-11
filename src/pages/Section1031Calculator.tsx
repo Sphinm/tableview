@@ -419,7 +419,9 @@ export const Section1031Calculator = () => {
   const exchDeadlinePassed = result.exchangeDaysRemaining < 0;
 
   return (
-    <div className="w-full max-w-7xl mx-auto px-4 py-8">
+    // data-sentry-mask: this page collects adjusted basis, accumulated
+    // depreciation and mortgage balances — effectively the user's tax position.
+    <div data-sentry-mask="true" className="w-full max-w-7xl mx-auto px-4 py-8">
       {/* ---- Header ---- */}
       <header className="text-center max-w-3xl mx-auto mb-10">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-4">

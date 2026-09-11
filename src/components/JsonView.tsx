@@ -452,10 +452,10 @@ export const JsonView: React.FC<JsonViewProps> = ({
   }, [data]);
 
   return (
-    // data-clarity-mask: this view renders the user's raw JSON — keys, values and
+    // data-sentry-mask: this view renders the user's raw JSON — keys, values and
     // the source text pane. None of it may reach session recording.
     <div
-      data-clarity-mask="true"
+      data-sentry-mask="true"
       className="relative rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl overflow-hidden flex flex-col min-h-[500px]"
     >
       {/* Toast Notification */}
