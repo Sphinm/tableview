@@ -22,6 +22,7 @@ import { updatePageMeta, navigateTo } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
+import { RelatedCalculators } from '../components/RelatedCalculators';
 
 const parquetSchemas = [
   {
@@ -872,64 +873,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
 
           <MethodologyDisclosure type="cloud" />
 
-          {/* Subsection 5: Related Data Engineering Tools Cross-Links */}
-          <div className="pt-6 border-t border-slate-800">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
-              Explore Related Parquet & Cloud FinOps Tools
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <a
-                href="/csv-to-parquet"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/csv-to-parquet');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-emerald-300 flex items-center justify-between">
-                  <span>CSV to Parquet Converter</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-emerald-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  100% private, client-side DuckDB-Wasm converter with Snappy/ZSTD compression.
-                </p>
-              </a>
-
-              <a
-                href="/parquet-viewer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/parquet-viewer');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-emerald-300 flex items-center justify-between">
-                  <span>Online Parquet Viewer</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-emerald-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Inspect file schema, row groups, metadata, and execute live SQL in your browser.
-                </p>
-              </a>
-
-              <a
-                href="/snowflake-cost-calculator"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/snowflake-cost-calculator');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-emerald-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-emerald-300 flex items-center justify-between">
-                  <span>Snowflake Cost Calculator</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-emerald-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Estimate warehouse sizing credits, multi-cluster autoscaling, and storage costs.
-                </p>
-              </a>
-            </div>
-          </div>
+          <RelatedCalculators currentSlug="parquet-storage-calculator" category="cloud-finops" />
         </div>
       </section>
     </div>

@@ -11,8 +11,7 @@ import {
   Sparkles,
   ArrowRight,
   Printer,
-  Bookmark,
-  Terminal
+  Bookmark
 } from 'lucide-react';
 import {
   type MortgageInputs,
@@ -33,6 +32,7 @@ import { AdSlot } from '../components/AdSlot';
 import { PaymentDonutChart } from '../components/PaymentDonutChart';
 import { AmortizationChart } from '../components/AmortizationChart';
 import { PrintableMortgageReport } from '../components/PrintableMortgageReport';
+import { RelatedCalculators } from '../components/RelatedCalculators';
 
 const mortgageFaqs = [
   {
@@ -87,10 +87,9 @@ const mortgageSchemas = [
 
 interface MortgageCalculatorProps {
   onTrySample?: () => void;
-  onAnalyzeInWorkbench?: (tableName: string, data: Record<string, any>[]) => Promise<void>;
 }
 
-export const MortgageCalculator = ({ onTrySample, onAnalyzeInWorkbench }: MortgageCalculatorProps) => {
+export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalculatorProps) => {
   const [showScenariosModal, setShowScenariosModal] = useState(false);
 
   useEffect(() => {
@@ -1118,31 +1117,6 @@ export const MortgageCalculator = ({ onTrySample, onAnalyzeInWorkbench }: Mortga
                 <Download className="size-3.5" />
                 <span>Export CSV</span>
               </button>
-
-              {onAnalyzeInWorkbench && (
-                <button
-                  onClick={() => {
-                    const rows = monthlySchedule.map((r) => ({
-                      month: r.monthIndex,
-                      year: r.year,
-                      payment: Number(r.totalPayment.toFixed(2)),
-                      principal: Number(r.principalPaid.toFixed(2)),
-                      interest: Number(r.interestPaid.toFixed(2)),
-                      tax: Number(r.propertyTax.toFixed(2)),
-                      insurance: Number(r.homeInsurance.toFixed(2)),
-                      pmi: Number(r.pmi.toFixed(2)),
-                      balance: Number(r.endingBalance.toFixed(2)),
-                      cumulative_interest: Number(r.totalInterestToDate.toFixed(2))
-                    }));
-                    onAnalyzeInWorkbench(`mortgage_${homeValue}`, rows);
-                  }}
-                  className="px-3 py-2 sm:py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-semibold inline-flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-sm"
-                  title="Query complete 360-month amortization schedule using DuckDB SQL Workbench"
-                >
-                  <Terminal className="size-3.5 text-purple-400" />
-                  <span>Analyze in SQL</span>
-                </button>
-              )}
             </div>
           </div>
         </div>
@@ -1356,31 +1330,8 @@ export const MortgageCalculator = ({ onTrySample, onAnalyzeInWorkbench }: Mortga
           </div>
         </div>
 
-        {/* Workbench CTA */}
-        <div className="pt-6 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="space-y-1 text-center sm:text-left">
-            <h4 className="text-sm font-bold text-slate-200">
-              Need to analyze large mortgage or loan portfolio files?
-            </h4>
-            <p className="text-xs text-slate-400">
-              Drop Fannie Mae/Freddie Mac single-family loan files or local spreadsheets directly into DuckDB-Wasm in memory.
-            </p>
-          </div>
-
-          <button
-            onClick={() => {
-              navigateTo('/');
-              if (onTrySample) {
-                setTimeout(() => onTrySample(), 120);
-              }
-            }}
-            className="btn-primary px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold inline-flex items-center gap-2 cursor-pointer shadow-md hover:scale-[1.01] active:scale-[0.99] transition-all shrink-0 whitespace-nowrap"
-          >
-            <Sparkles className="size-4 text-amber-400" />
-            <span>Open TableView Workbench</span>
-            <ArrowRight className="size-3.5 opacity-80" />
-          </button>
-        </div>
+        {/* Related Calculators Cross-Sell */}
+        <RelatedCalculators currentSlug="mortgage-calculator" category="real-estate" />
       </div>
 
       {/* Mobile Sticky Summary Bottom Bar */}

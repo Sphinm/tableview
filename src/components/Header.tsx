@@ -248,13 +248,13 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
     }
   ];
 
-  const calculatorItems = [
+  const realEstateCalcs = [
     {
       title: 'DSCR Loan Calculator',
       description: 'Rental property cash flow, DSCR ratio & qualification tiers',
       path: '/dscr-loan-calculator',
       icon: Building,
-      badge: 'High ROI'
+      badge: 'Rental ROI'
     },
     {
       title: 'Hard Money & Fix-Flip',
@@ -262,20 +262,6 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
       path: '/hard-money-calculator',
       icon: Hammer,
       badge: '70% Rule'
-    },
-    {
-      title: 'Snowflake Warehouse Cost',
-      description: 'Warehouse compute credits, autoscaling & FinOps suspend savings',
-      path: '/snowflake-cost-calculator',
-      icon: Server,
-      badge: 'FinOps'
-    },
-    {
-      title: 'Parquet Cloud Savings',
-      description: 'S3 byte reduction & Athena / BigQuery per-query scan cut',
-      path: '/parquet-storage-calculator',
-      icon: Zap,
-      badge: 'S3 & Athena'
     },
     {
       title: 'Mortgage Calculator',
@@ -289,9 +275,28 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
       description: 'Compare current vs new loan, monthly savings & closing payoff',
       path: '/refinance-calculator',
       icon: ArrowRightLeft,
-      badge: 'New'
+      badge: 'Refinance'
     }
   ];
+
+  const cloudFinOpsCalcs = [
+    {
+      title: 'Snowflake Warehouse Cost',
+      description: 'Warehouse compute credits, autoscaling & FinOps suspend savings',
+      path: '/snowflake-cost-calculator',
+      icon: Server,
+      badge: 'FinOps'
+    },
+    {
+      title: 'Parquet Cloud Savings',
+      description: 'S3 byte reduction & Athena / BigQuery per-query scan cut',
+      path: '/parquet-storage-calculator',
+      icon: Zap,
+      badge: 'S3 & Athena'
+    }
+  ];
+
+  const calculatorItems = [...realEstateCalcs, ...cloudFinOpsCalcs];
 
   return (
     <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50 transition-colors">
@@ -332,7 +337,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                 aria-expanded={parquetDropdownOpen}
               >
                 <Table className="size-4 text-emerald-400" />
-                <span>All Tools</span>
+                <span>Data Tools</span>
                 <ChevronDown
                   className={`size-3.5 transition-transform duration-200 opacity-70 ${
                     parquetDropdownOpen ? 'rotate-180' : ''
@@ -506,49 +511,89 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
 
               {/* Calculators Flyout Panel */}
               {calcDropdownOpen && (
-                <div className="absolute left-0 top-full pt-1.5 w-[380px] z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-2">
-                    <div className="px-3 pt-2 pb-1.5 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80">
+                <div className="absolute left-0 top-full pt-1.5 w-[420px] z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-2.5">
+                    <div className="px-3 pt-2 pb-2 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80">
                       <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
-                        Financial Calculators
+                        Financial & FinOps Calculators
                       </span>
                       <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                         100% Client-Side
                       </span>
                     </div>
 
-                    <div className="py-1 space-y-0.5">
-                      {calculatorItems.map((calc) => (
-                        <a
-                          key={calc.path}
-                          href={calc.path}
-                          onClick={(e) => handleNav(e, calc.path)}
-                          className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
-                        >
-                          <div className="size-8 rounded-lg bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-slate-700/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                            <calc.icon className="size-4" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
-                                {calc.title}
-                              </span>
-                              {calc.badge && (
-                                <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
-                                  {calc.badge}
-                                </span>
-                              )}
+                    <div className="py-2 space-y-3">
+                      {/* Real Estate Group */}
+                      <div className="space-y-0.5">
+                        <div className="px-3 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold mb-1">
+                          Real Estate & Loans
+                        </div>
+                        {realEstateCalcs.map((calc) => (
+                          <a
+                            key={calc.path}
+                            href={calc.path}
+                            onClick={(e) => handleNav(e, calc.path)}
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                          >
+                            <div className="size-7 rounded-lg bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-slate-700/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                              <calc.icon className="size-3.5" />
                             </div>
-                            <p className="text-[11px] text-slate-500 dark:text-slate-400 leading-snug truncate mt-0.5">
-                              {calc.description}
-                            </p>
-                          </div>
-                        </a>
-                      ))}
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                  {calc.title}
+                                </span>
+                                {calc.badge && (
+                                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
+                                    {calc.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug truncate mt-0.5">
+                                {calc.description}
+                              </p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+
+                      {/* Cloud FinOps Group */}
+                      <div className="space-y-0.5 pt-1.5 border-t border-slate-100 dark:border-slate-800/60">
+                        <div className="px-3 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold mb-1">
+                          Cloud & Data FinOps
+                        </div>
+                        {cloudFinOpsCalcs.map((calc) => (
+                          <a
+                            key={calc.path}
+                            href={calc.path}
+                            onClick={(e) => handleNav(e, calc.path)}
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                          >
+                            <div className="size-7 rounded-lg bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-slate-700/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                              <calc.icon className="size-3.5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                  {calc.title}
+                                </span>
+                                {calc.badge && (
+                                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                    {calc.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug truncate mt-0.5">
+                                {calc.description}
+                              </p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
                     </div>
 
                     {/* Bottom Link: View all */}
-                    <div className="mt-1 pt-1.5 border-t border-slate-100 dark:border-slate-800/80">
+                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
                       <a
                         href="/finance-calculator"
                         onClick={(e) => handleNav(e, '/finance-calculator')}
@@ -556,7 +601,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                       >
                         <span className="flex items-center gap-1.5">
                           <Calculator className="size-3.5" />
-                          <span>Browse All Calculators Hub</span>
+                          <span>Browse All 10+ Calculators Hub</span>
                         </span>
                         <ArrowRight className="size-3.5" />
                       </a>
@@ -672,7 +717,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             >
               <span className="flex items-center gap-2.5">
                 <Table className="size-4 text-emerald-600 dark:text-emerald-400" />
-                <span>All Data Tools (15 Tools)</span>
+                <span>Data Tools (Viewers, Converters, SQL)</span>
               </span>
               <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileParquetExpanded ? 'rotate-180' : ''}`} />
             </button>
@@ -717,7 +762,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             >
               <span className="flex items-center gap-2.5">
                 <Calculator className="size-4 text-indigo-600 dark:text-indigo-400" />
-                <span>Financial Calculators</span>
+                <span>Financial & FinOps Calculators</span>
               </span>
               <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileCalcsExpanded ? 'rotate-180' : ''}`} />
             </button>

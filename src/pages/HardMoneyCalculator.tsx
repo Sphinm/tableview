@@ -19,11 +19,12 @@ import {
   type HardMoneyInputs,
   type HardMoneyResult
 } from '../lib/hardMoneyCalculator';
-import { updatePageMeta, navigateTo } from '../lib/router';
+import { updatePageMeta } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
 import { PrintableHardMoneyReport } from '../components/PrintableHardMoneyReport';
+import { RelatedCalculators } from '../components/RelatedCalculators';
 
 const hardMoneySchemas = [
   {
@@ -1083,64 +1084,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
           <MethodologyDisclosure type="hardmoney" />
 
-          {/* Subsection 5: Related Real Estate Calculators Cross-Links */}
-          <div className="pt-6 border-t border-slate-800">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
-              Explore Related Real Estate & Finance Calculators
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <a
-                href="/dscr-loan-calculator"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/dscr-loan-calculator');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
-                  <span>DSCR Loan Calculator</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  BRRRR refinance exit? Calculate rental debt coverage and cash-on-cash returns.
-                </p>
-              </a>
-
-              <a
-                href="/mortgage-calculator"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/mortgage-calculator');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
-                  <span>Mortgage Payment Calculator</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Analyze 15/30-year fixed loan amortization, PMI thresholds, and principal payoff.
-                </p>
-              </a>
-
-              <a
-                href="/refinance-calculator"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/refinance-calculator');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
-                  <span>Mortgage Refinance Calculator</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Evaluate permanent take-out financing, break-even months, and interest savings.
-                </p>
-              </a>
-            </div>
-          </div>
+          <RelatedCalculators currentSlug="hard-money-calculator" category="real-estate" />
         </div>
       </section>
 

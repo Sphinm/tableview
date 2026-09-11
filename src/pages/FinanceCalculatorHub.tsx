@@ -12,8 +12,10 @@ import {
   Building,
   Hammer,
   Server,
-  Zap
+  Zap,
+  HelpCircle
 } from 'lucide-react';
+import { AdSlot } from '../components/AdSlot';
 import {
   calculateAutoLoan,
   calculatePersonalLoan,
@@ -860,6 +862,49 @@ export const FinanceCalculatorHub = () => {
           </div>
         </div>
       )}
+
+      {/* Highest-intent placement beneath calculation outcomes */}
+      <AdSlot unit="calculatorResult" className="my-8" />
+
+      {/* Common Financial Planning FAQs */}
+      <div className="space-y-4 pt-6 border-t border-slate-800">
+        <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
+          <HelpCircle className="size-5 text-indigo-400" />
+          <span>Financial Planning & Loan Questions</span>
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+            <h4 className="font-semibold text-slate-200 text-sm">Are my financial numbers uploaded or stored?</h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              No. All calculations run 100% client-side in your browser JavaScript/Wasm sandbox. None of your loan amounts, interest rates, balances, or financial details are ever transmitted to any remote server.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+            <h4 className="font-semibold text-slate-200 text-sm">How does compound interest accelerate wealth building?</h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Compound interest earns returns on both your initial principal and previous accumulated interest. Over 10+ years, exponential compounding typically exceeds total direct deposits, significantly accelerating net worth growth.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+            <h4 className="font-semibold text-slate-200 text-sm">What is the difference between APR and interest rate?</h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              The nominal interest rate is the base cost of borrowing the principal. APR (Annual Percentage Rate) includes additional upfront lender fees, origination points, and documentation costs, reflecting the true annualized borrowing expense.
+            </p>
+          </div>
+
+          <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
+            <h4 className="font-semibold text-slate-200 text-sm">Can I export loan schedules into Microsoft Excel?</h4>
+            <p className="text-xs text-slate-400 leading-relaxed">
+              Yes. Use our standalone DSCR, Hard Money, Mortgage, and Refinance tools to generate multi-year monthly amortization schedules and export formatted .xlsx spreadsheets with one click.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* In-article closing ad placement */}
+      <AdSlot unit="calculatorFaq" format="horizontal" />
     </div>
   );
 };

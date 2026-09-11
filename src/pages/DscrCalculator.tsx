@@ -14,20 +14,20 @@ import {
   BookOpen,
   ShieldCheck,
   Printer,
-  Bookmark,
-  Terminal
+  Bookmark
 } from 'lucide-react';
 import {
   calculateDscr,
   generateDscrAmortization,
   type DscrInputs
 } from '../lib/dscrCalculator';
-import { updatePageMeta, navigateTo } from '../lib/router';
+import { updatePageMeta } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
 import { PrintableDscrReport } from '../components/PrintableDscrReport';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
+import { RelatedCalculators } from '../components/RelatedCalculators';
 
 const dscrSchemas = [
   {
@@ -137,10 +137,9 @@ const dscrSchemas = [
 
 interface DscrCalculatorProps {
   onTrySample?: () => void;
-  onAnalyzeInWorkbench?: (tableName: string, data: Record<string, any>[]) => Promise<void>;
 }
 
-export const DscrCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWorkbench }: DscrCalculatorProps) => {
+export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProps) => {
   const [showScenariosModal, setShowScenariosModal] = useState(false);
 
   useEffect(() => {
@@ -893,28 +892,6 @@ export const DscrCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWorkbench
                   <FileSpreadsheet className="size-3.5" />
                   <span>Export Excel</span>
                 </button>
-                {onAnalyzeInWorkbench && (
-                  <button
-                    onClick={() => {
-                      const rows = fullMonthlySchedule.map((r) => ({
-                        year: r.year,
-                        month: r.month,
-                        payment: Number(r.payment.toFixed(2)),
-                        principal: Number(r.principal.toFixed(2)),
-                        interest: Number(r.interest.toFixed(2)),
-                        balance: Number(r.balance.toFixed(2)),
-                        accumulated_interest: Number(r.accumulatedInterest.toFixed(2)),
-                        accumulated_principal: Number(r.accumulatedPrincipal.toFixed(2))
-                      }));
-                      onAnalyzeInWorkbench(`dscr_schedule_${propertyValue}`, rows);
-                    }}
-                    className="px-3.5 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 text-xs font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
-                    title="Query complete DSCR amortization schedule with TableView SQL Workbench"
-                  >
-                    <Terminal className="size-3.5 text-purple-400" />
-                    <span>Analyze in SQL</span>
-                  </button>
-                )}
               </div>
             </div>
           </div>
@@ -983,29 +960,6 @@ export const DscrCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWorkbench
                 <Download className="size-3.5" />
                 <span>CSV</span>
               </button>
-
-              {onAnalyzeInWorkbench && (
-                <button
-                  onClick={() => {
-                    const rows = fullMonthlySchedule.map((r) => ({
-                      year: r.year,
-                      month: r.month,
-                      payment: Number(r.payment.toFixed(2)),
-                      principal: Number(r.principal.toFixed(2)),
-                      interest: Number(r.interest.toFixed(2)),
-                      balance: Number(r.balance.toFixed(2)),
-                      accumulated_interest: Number(r.accumulatedInterest.toFixed(2)),
-                      accumulated_principal: Number(r.accumulatedPrincipal.toFixed(2))
-                    }));
-                    onAnalyzeInWorkbench(`dscr_schedule_${propertyValue}`, rows);
-                  }}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-950/70 hover:bg-purple-900 border border-purple-800/80 text-xs font-semibold text-purple-300 transition-colors cursor-pointer"
-                  title="Query complete DSCR amortization schedule with TableView SQL Workbench"
-                >
-                  <Terminal className="size-3.5 text-purple-400" />
-                  <span>Analyze in SQL</span>
-                </button>
-              )}
             </div>
           </div>
 
@@ -1412,64 +1366,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWorkbench
             </div>
           </div>
 
-          {/* Subsection 5: Related Financial Calculators & Tool Cross-Links */}
-          <div className="pt-6 border-t border-slate-800">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
-              Explore Related Real Estate & Finance Calculators
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <a
-                href="/hard-money-calculator"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/hard-money-calculator');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
-                  <span>Hard Money & Fix-and-Flip</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Calculate 70% rule MAO, points, holding interest, and net flip profit margins.
-                </p>
-              </a>
-
-              <a
-                href="/mortgage-calculator"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/mortgage-calculator');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
-                  <span>Mortgage Payment Calculator</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Analyze 15/30-year fixed loan amortization, PMI thresholds, and principal payoff.
-                </p>
-              </a>
-
-              <a
-                href="/refinance-calculator"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/refinance-calculator');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-indigo-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-indigo-300 flex items-center justify-between">
-                  <span>Mortgage Refinance Calculator</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-indigo-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Compute monthly savings, closing cost break-even timeline, and lifetime interest delta.
-                </p>
-              </a>
-            </div>
-          </div>
+          <RelatedCalculators currentSlug="dscr-loan-calculator" category="real-estate" />
         </div>
       </section>
 

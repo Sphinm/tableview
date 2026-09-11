@@ -285,6 +285,27 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
         </div>
       )}
 
+      {activeCategory === 'calculator' && (
+        <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-slate-950 border border-indigo-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-3 text-left">
+            <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+              <Calculator className="size-5" />
+            </div>
+            <div>
+              <h4 className="text-sm font-bold text-slate-100">Looking for our Full Financial Planning & FinOps Hub?</h4>
+              <p className="text-xs text-slate-400">Explore loan underwriting, debt payoff, compound growth, and cloud infrastructure modeling.</p>
+            </div>
+          </div>
+          <button
+            onClick={() => navigateTo('/finance-calculator')}
+            className="btn-primary px-4 py-2 rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 shrink-0 cursor-pointer shadow-sm"
+          >
+            <span>Launch Calculators Hub</span>
+            <ArrowRight className="size-3" />
+          </button>
+        </div>
+      )}
+
       {/* The "Small Block Entry Points" Grid (ILovePDF-Style Bento Grid) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
         {filteredTools.map((tool) => {

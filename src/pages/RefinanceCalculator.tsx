@@ -18,8 +18,7 @@ import {
   RefreshCw,
   Home,
   Printer,
-  Bookmark,
-  Terminal
+  Bookmark
 } from 'lucide-react';
 import {
   type RefinanceInputs,
@@ -37,6 +36,7 @@ import { AdSlot } from '../components/AdSlot';
 import { RefinanceBalanceChart } from '../components/RefinanceBalanceChart';
 import { PrintableRefinanceReport } from '../components/PrintableRefinanceReport';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
+import { RelatedCalculators } from '../components/RelatedCalculators';
 
 const refinanceFaqs = [
   {
@@ -99,10 +99,9 @@ const refinanceSchemas = [
 
 interface RefinanceCalculatorProps {
   onTrySample?: () => void;
-  onAnalyzeInWorkbench?: (tableName: string, data: Record<string, any>[]) => Promise<void>;
 }
 
-export const RefinanceCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWorkbench }: RefinanceCalculatorProps) => {
+export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalculatorProps) => {
   const [showScenariosModal, setShowScenariosModal] = useState(false);
 
   useEffect(() => {
@@ -361,7 +360,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWork
             }}
             className="hover:text-slate-200 transition-colors"
           >
-            Workbench
+            Home
           </a>
           <span>/</span>
           <a
@@ -1347,30 +1346,6 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWork
               <FileSpreadsheet className="size-3.5 text-emerald-400" />
               <span>Excel (.xlsx)</span>
             </button>
-
-            {onAnalyzeInWorkbench && (
-              <button
-                onClick={() => {
-                  const rows = monthlySchedule.map((r) => ({
-                    month: r.month,
-                    year: r.year,
-                    old_payment: Number(r.oldPayment.toFixed(2)),
-                    old_balance: Number(r.oldBalance.toFixed(2)),
-                    new_payment: Number(r.newPayment.toFixed(2)),
-                    new_balance: Number(r.newBalance.toFixed(2)),
-                    monthly_savings: Number(r.monthlySavings.toFixed(2)),
-                    cumulative_savings: Number(r.cumulativeSavings.toFixed(2)),
-                    equity_diff: Number(r.equityDifference.toFixed(2))
-                  }));
-                  onAnalyzeInWorkbench(`refinance_${Math.round(summary.newLoanAmount)}`, rows);
-                }}
-                className="px-3 py-1.5 rounded-lg bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 text-xs font-semibold text-purple-300 flex items-center gap-1.5 transition-all cursor-pointer shadow-sm"
-                title="Query complete refinance amortization schedule with TableView SQL Workbench"
-              >
-                <Terminal className="size-3.5 text-purple-400" />
-                <span>Analyze in SQL</span>
-              </button>
-            )}
           </div>
         </div>
 
@@ -1646,6 +1621,9 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample, onAnalyzeInWork
             </p>
           </div>
         </div>
+
+        {/* Related Calculators Cross-Sell */}
+        <RelatedCalculators currentSlug="refinance-calculator" category="real-estate" />
       </div>
     </div>
 

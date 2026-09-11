@@ -6,7 +6,6 @@ import {
   TrendingDown,
   HardDrive,
   CheckCircle2,
-  ArrowRight,
   HelpCircle,
   Layers,
   ShieldCheck
@@ -20,10 +19,11 @@ import {
   type SnowflakeEdition,
   type SnowflakeResult
 } from '../lib/snowflakeCalculator';
-import { updatePageMeta, navigateTo } from '../lib/router';
+import { updatePageMeta } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
+import { RelatedCalculators } from '../components/RelatedCalculators';
 
 const snowflakeSchemas = [
   {
@@ -863,64 +863,7 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
 
           <MethodologyDisclosure type="cloud" />
 
-          {/* Subsection 5: Related Cloud Data Tools Cross-Links */}
-          <div className="pt-6 border-t border-slate-800">
-            <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
-              Explore Related Cloud Data Engineering & FinOps Tools
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <a
-                href="/parquet-storage-calculator"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/parquet-storage-calculator');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-cyan-300 flex items-center justify-between">
-                  <span>Parquet Storage & Query Savings</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-cyan-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Cut AWS S3 and Athena costs by 80%+ converting CSV/JSON to Apache Parquet.
-                </p>
-              </a>
-
-              <a
-                href="/parquet-viewer"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/parquet-viewer');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-cyan-300 flex items-center justify-between">
-                  <span>Online Parquet Viewer</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-cyan-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Inspect Parquet schema, metadata, and run SQL queries in-browser via DuckDB-Wasm.
-                </p>
-              </a>
-
-              <a
-                href="/csv-to-parquet"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigateTo('/csv-to-parquet');
-                }}
-                className="group p-4 rounded-xl bg-slate-900 border border-slate-800 hover:border-cyan-500/60 transition-all cursor-pointer"
-              >
-                <div className="font-bold text-slate-200 text-sm group-hover:text-cyan-300 flex items-center justify-between">
-                  <span>CSV to Parquet Converter</span>
-                  <ArrowRight className="size-4 text-slate-500 group-hover:text-cyan-400 transition-transform group-hover:translate-x-1" />
-                </div>
-                <p className="text-xs text-slate-400 mt-1">
-                  Client-side fast conversion with Snappy, ZSTD, and GZIP compression codecs.
-                </p>
-              </a>
-            </div>
-          </div>
+          <RelatedCalculators currentSlug="snowflake-cost-calculator" category="cloud-finops" />
         </div>
       </section>
     </div>

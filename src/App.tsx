@@ -169,28 +169,6 @@ export function App() {
     setErrorMessage(null);
   };
 
-  const handleAnalyzeScheduleInWorkbench = async (baseName: string, records: Record<string, any>[]) => {
-    setIsLoading(true);
-    setErrorMessage(null);
-    setLoadingStatus(`Loading ${records.length} schedule rows into DuckDB virtual workspace...`);
-    navigateTo('/');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    try {
-      const { loadJsonDataIntoDuckDB } = await import('./lib/duckdb');
-      const res = await loadJsonDataIntoDuckDB(baseName, records);
-      setCurrentTable(res.tableName);
-      setFileType(res.fileType);
-      setSheets(undefined);
-    } catch (err: any) {
-      console.error('Failed to analyze schedule in DuckDB:', err);
-      captureException(err, { tags: { action: 'analyze_schedule' } });
-      setErrorMessage(`Failed to open schedule in workbench: ${err.message || 'Unknown error'}`);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   // Render current view based on route path
   const renderCurrentView = () => {
     // Check if on dedicated tool landing page
@@ -290,28 +268,13 @@ export function App() {
         return <TermsOfService />;
 
       case '/mortgage-calculator':
-        return (
-          <MortgageCalculator
-            onTrySample={handleTrySample}
-            onAnalyzeInWorkbench={handleAnalyzeScheduleInWorkbench}
-          />
-        );
+        return <MortgageCalculator onTrySample={handleTrySample} />;
 
       case '/refinance-calculator':
-        return (
-          <RefinanceCalculator
-            onTrySample={handleTrySample}
-            onAnalyzeInWorkbench={handleAnalyzeScheduleInWorkbench}
-          />
-        );
+        return <RefinanceCalculator onTrySample={handleTrySample} />;
 
       case '/dscr-loan-calculator':
-        return (
-          <DscrCalculator
-            onTrySample={handleTrySample}
-            onAnalyzeInWorkbench={handleAnalyzeScheduleInWorkbench}
-          />
-        );
+        return <DscrCalculator onTrySample={handleTrySample} />;
 
       case '/hard-money-calculator':
         return <HardMoneyCalculator onTrySample={handleTrySample} />;
