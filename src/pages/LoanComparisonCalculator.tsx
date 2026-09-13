@@ -19,6 +19,56 @@ import { NumericInput } from '../components/NumericInput';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { AdSlot } from '../components/AdSlot';
+import {
+  CalculatorPresetsBar,
+  type CalculatorPreset,
+  PrintReportButton,
+  PrintableReportHeader,
+  ComparisonBarChart,
+} from '../components/calculator-kit';
+
+const LOAN_PRESETS: CalculatorPreset<{ a: LoanParameters; b: LoanParameters }>[] = [
+  {
+    id: '30vs15',
+    label: '30-Yr Fixed vs 15-Yr Fixed',
+    badge: 'Most Popular',
+    description: 'Compare standard 30-year payment flexibility against 15-year interest savings',
+    values: {
+      a: { name: 'Option A (30-Yr Fixed)', loanAmount: 400000, interestRate: 6.75, termYears: 30, originationPoints: 0, upfrontFees: 1500, extraMonthlyPayment: 0 },
+      b: { name: 'Option B (15-Yr Fixed)', loanAmount: 400000, interestRate: 5.875, termYears: 15, originationPoints: 0, upfrontFees: 1500, extraMonthlyPayment: 0 },
+    },
+  },
+  {
+    id: 'points-buydown',
+    label: 'Zero Points vs 2 Points Buy-down',
+    badge: 'Break-even',
+    description: 'See whether paying upfront points to lower the interest rate pays off',
+    values: {
+      a: { name: 'Option A (Zero Points)', loanAmount: 450000, interestRate: 7.00, termYears: 30, originationPoints: 0, upfrontFees: 2000, extraMonthlyPayment: 0 },
+      b: { name: 'Option B (2 Points @ 6.25%)', loanAmount: 450000, interestRate: 6.25, termYears: 30, originationPoints: 2, upfrontFees: 2000, extraMonthlyPayment: 0 },
+    },
+  },
+  {
+    id: 'arm-vs-fixed',
+    label: '7/1 ARM vs 30-Yr Fixed',
+    badge: 'Rate Spread',
+    description: 'Compare introductory ARM savings against 30-year fixed rate stability',
+    values: {
+      a: { name: 'Option A (30-Yr Fixed)', loanAmount: 500000, interestRate: 6.875, termYears: 30, originationPoints: 0, upfrontFees: 2500, extraMonthlyPayment: 0 },
+      b: { name: 'Option B (7/1 ARM @ 5.75%)', loanAmount: 500000, interestRate: 5.75, termYears: 30, originationPoints: 0, upfrontFees: 2500, extraMonthlyPayment: 0 },
+    },
+  },
+  {
+    id: 'jumbo-downpayment',
+    label: '10% Down vs 20% Down',
+    badge: 'Cash Flow',
+    description: 'Evaluate preserving cash at closing vs eliminating debt burden',
+    values: {
+      a: { name: 'Option A (10% Down)', loanAmount: 540000, interestRate: 6.85, termYears: 30, originationPoints: 0, upfrontFees: 3000, extraMonthlyPayment: 0 },
+      b: { name: 'Option B (20% Down)', loanAmount: 480000, interestRate: 6.50, termYears: 30, originationPoints: 0, upfrontFees: 3000, extraMonthlyPayment: 0 },
+    },
+  },
+];
 
 const loanComparisonSchemas = [
   {
@@ -105,6 +155,13 @@ export const LoanComparisonCalculator = () => {
   const [copied, setCopied] = useState(false);
   const [mobileTab, setMobileTab] = useState<'both' | 'a' | 'b' | 'verdict'>('both');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [activePresetId, setActivePresetId] = useState<string | null>('30vs15');
+
+  const handleSelectPreset = (preset: CalculatorPreset<{ a: LoanParameters; b: LoanParameters }>) => {
+    setActivePresetId(preset.id);
+    if (preset.values?.a) setLoanA(preset.values.a);
+    if (preset.values?.b) setLoanB(preset.values.b);
+  };
 
   const handleCopyLink = () => {
     const params = new URLSearchParams();
@@ -177,6 +234,13 @@ export const LoanComparisonCalculator = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* Printable Executive Brief Header */}
+      <PrintableReportHeader
+        title="Side-by-Side Loan Comparison Report"
+        subtitle="100% Private In-Browser Payment & Lifetime Cost Analysis"
+        referenceId={`LC-${Math.round(loanA.loanAmount / 1000)}k-vs-${Math.round(loanB.loanAmount / 1000)}k`}
+      />
+
       {/* Header & Breadcrumb */}
       <div className="mb-8">
         <div className="flex items-center gap-2 text-xs font-medium text-slate-400 mb-3">
@@ -202,6 +266,8 @@ export const LoanComparisonCalculator = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 shrink-0">
+            <PrintReportButton />
+
             <button
               onClick={handleCopyLink}
               className="px-3.5 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm"
@@ -292,6 +358,34 @@ export const LoanComparisonCalculator = () => {
           </div>
         </div>
       </div>
+
+      {/* Side-by-Side Interactive Comparison Chart */}
+      <div className="mb-8">
+        <ComparisonBarChart
+          loanA={{
+            name: loanA.name,
+            actualMonthlyPayment: comparison.loanA.actualMonthlyPayment,
+            totalInterestPaid: comparison.loanA.totalInterestPaid,
+            totalLoanCost: comparison.loanA.totalLoanCost,
+            upfrontClosingCosts: comparison.loanA.upfrontClosingCosts,
+          }}
+          loanB={{
+            name: loanB.name,
+            actualMonthlyPayment: comparison.loanB.actualMonthlyPayment,
+            totalInterestPaid: comparison.loanB.totalInterestPaid,
+            totalLoanCost: comparison.loanB.totalLoanCost,
+            upfrontClosingCosts: comparison.loanB.upfrontClosingCosts,
+          }}
+        />
+      </div>
+
+      {/* Scenario Presets Bar */}
+      <CalculatorPresetsBar
+        presets={LOAN_PRESETS}
+        activeId={activePresetId}
+        onSelect={handleSelectPreset}
+        title="Scenario Presets"
+      />
 
       {/* Mobile Segmented Switcher */}
       <div className="flex lg:hidden items-center p-1 bg-slate-900/90 border border-slate-800 rounded-xl mb-6 text-xs font-semibold sticky top-16 z-20 backdrop-blur-md">

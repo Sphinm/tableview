@@ -26,6 +26,94 @@ import { PrintableHardMoneyReport } from '../components/PrintableHardMoneyReport
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
+import {
+  CalculatorPresetsBar,
+  type CalculatorPreset,
+  CashFlowDonutChart,
+} from '../components/calculator-kit';
+
+const HARD_MONEY_PRESETS: CalculatorPreset<HardMoneyInputs>[] = [
+  {
+    id: 'standard-flip',
+    label: 'Standard Fix & Flip (70% Rule)',
+    badge: 'Popular',
+    description: 'Moderate cosmetic rehab with 6-month turnaround meeting the classic 70% rule',
+    values: {
+      purchasePrice: 220000,
+      rehabBudget: 50000,
+      afterRepairValue: 360000,
+      ltvPercent: 85,
+      rehabFinancedPercent: 100,
+      interestRate: 10.5,
+      originationPoints: 2.0,
+      lenderUnderwritingFees: 1500,
+      projectDurationMonths: 6,
+      monthlyHoldingCosts: 650,
+      realtorCommissionPercent: 5.0,
+      exitClosingCostsPercent: 1.5,
+    },
+  },
+  {
+    id: 'heavy-rehab',
+    label: 'Heavy Rehab / Addition (65% MAO)',
+    badge: 'High Spread',
+    description: 'Major structural renovation or square footage addition requiring 9-month hold',
+    values: {
+      purchasePrice: 180000,
+      rehabBudget: 95000,
+      afterRepairValue: 420000,
+      ltvPercent: 80,
+      rehabFinancedPercent: 100,
+      interestRate: 11.25,
+      originationPoints: 2.5,
+      lenderUnderwritingFees: 1800,
+      projectDurationMonths: 9,
+      monthlyHoldingCosts: 800,
+      realtorCommissionPercent: 5.0,
+      exitClosingCostsPercent: 1.5,
+    },
+  },
+  {
+    id: 'quick-turnaround',
+    label: 'Wholetail / Cosmetic (4 Months)',
+    badge: 'Fast Turn',
+    description: 'Light paint & carpet cosmetic refresh with low holding debt overhead',
+    values: {
+      purchasePrice: 280000,
+      rehabBudget: 25000,
+      afterRepairValue: 375000,
+      ltvPercent: 90,
+      rehabFinancedPercent: 100,
+      interestRate: 10.0,
+      originationPoints: 1.5,
+      lenderUnderwritingFees: 1200,
+      projectDurationMonths: 4,
+      monthlyHoldingCosts: 500,
+      realtorCommissionPercent: 4.5,
+      exitClosingCostsPercent: 1.0,
+    },
+  },
+  {
+    id: 'brrrr-hold',
+    label: 'BRRRR Buy & Refinance',
+    badge: 'Long-term Hold',
+    description: 'Bridge acquisition targeting cash-out refinance into long-term DSCR mortgage',
+    values: {
+      purchasePrice: 200000,
+      rehabBudget: 45000,
+      afterRepairValue: 320000,
+      ltvPercent: 85,
+      rehabFinancedPercent: 100,
+      interestRate: 10.75,
+      originationPoints: 2.0,
+      lenderUnderwritingFees: 1500,
+      projectDurationMonths: 6,
+      monthlyHoldingCosts: 600,
+      realtorCommissionPercent: 0,
+      exitClosingCostsPercent: 2.0,
+    },
+  },
+];
 
 const hardMoneySchemas = [
   {
@@ -170,12 +258,25 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
   const [exitClosingCostsPercent, setExitClosingCostsPercent] = useState<number>(1.5);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
 
-  // Quick Presets
-  const arvPresets = [
-    { purchase: 180000, rehab: 45000, arv: 290000, label: 'Starter Flip ($290k ARV)' },
-    { purchase: 260000, rehab: 70000, arv: 420000, label: 'Suburban Flip ($420k ARV)' },
-    { purchase: 450000, rehab: 110000, arv: 720000, label: 'High-End ($720k ARV)' }
-  ];
+  const [activePresetId, setActivePresetId] = useState<string | null>('standard-flip');
+
+  const handleSelectPreset = (preset: CalculatorPreset<HardMoneyInputs>) => {
+    setActivePresetId(preset.id);
+    const v = preset.values;
+    if (!v) return;
+    if (v.purchasePrice !== undefined) setPurchasePrice(v.purchasePrice);
+    if (v.rehabBudget !== undefined) setRehabBudget(v.rehabBudget);
+    if (v.afterRepairValue !== undefined) setAfterRepairValue(v.afterRepairValue);
+    if (v.ltvPercent !== undefined) setLtvPercent(v.ltvPercent);
+    if (v.rehabFinancedPercent !== undefined) setRehabFinancedPercent(v.rehabFinancedPercent);
+    if (v.interestRate !== undefined) setInterestRate(v.interestRate);
+    if (v.originationPoints !== undefined) setOriginationPoints(v.originationPoints);
+    if (v.lenderUnderwritingFees !== undefined) setLenderUnderwritingFees(v.lenderUnderwritingFees);
+    if (v.projectDurationMonths !== undefined) setProjectDurationMonths(v.projectDurationMonths);
+    if (v.monthlyHoldingCosts !== undefined) setMonthlyHoldingCosts(v.monthlyHoldingCosts);
+    if (v.realtorCommissionPercent !== undefined) setRealtorCommissionPercent(v.realtorCommissionPercent);
+    if (v.exitClosingCostsPercent !== undefined) setExitClosingCostsPercent(v.exitClosingCostsPercent);
+  };
 
   const inputs: HardMoneyInputs = useMemo(
     () => ({
@@ -327,22 +428,14 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
             Analyze short-term bridge financing, upfront points, monthly interest-only payments, and rehab budget draws. Accurately verify the <strong>70% Rule of House Flipping</strong> and net cash-on-cash ROI.
           </p>
 
-          {/* Preset Buttons */}
-          <div className="flex items-center gap-2 mt-6 flex-wrap">
-            <span className="text-xs text-slate-400">Deal Presets:</span>
-            {arvPresets.map((preset, idx) => (
-              <button
-                key={idx}
-                onClick={() => {
-                  setPurchasePrice(preset.purchase);
-                  setRehabBudget(preset.rehab);
-                  setAfterRepairValue(preset.arv);
-                }}
-                className="px-3 py-1 rounded-lg text-xs font-mono bg-slate-900 text-slate-300 border border-slate-800 hover:bg-slate-800 hover:text-slate-100 transition-colors cursor-pointer"
-              >
-                {preset.label}
-              </button>
-            ))}
+          {/* Flip Scenario Presets */}
+          <div className="mt-6">
+            <CalculatorPresetsBar
+              presets={HARD_MONEY_PRESETS}
+              activeId={activePresetId}
+              onSelect={handleSelectPreset}
+              title="Flip Scenarios"
+            />
           </div>
         </div>
       </section>
@@ -645,6 +738,22 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 <span className="text-[10px] text-slate-500">All-in basis</span>
               </div>
             </div>
+
+            {/* Project Capital & Cost Allocation Donut */}
+            <CashFlowDonutChart
+              segments={[
+                { id: 'purchase', label: 'Purchase Loan', amount: result.purchaseLoanAmount, color: '#6366f1' },
+                { id: 'down', label: 'Cash Down & Points', amount: result.initialCashRequired, color: '#06b6d4' },
+                { id: 'rehab', label: 'Rehab Budget', amount: rehabBudget, color: '#8b5cf6' },
+                { id: 'holding', label: 'Holding Debt & Carrying', amount: result.totalHoldingCosts + result.totalInterestPaid, color: '#f59e0b' },
+                { id: 'exit', label: 'Exit Selling & Closing', amount: result.totalExitCosts, color: '#f43f5e' },
+                ...(result.netProfit > 0 ? [{ id: 'profit', label: 'Net Flip Profit', amount: result.netProfit, color: '#10b981' }] : []),
+              ]}
+              centerTitle="Project ARV"
+              centerValue={currencyFmt(afterRepairValue)}
+              title="Project Capital Allocation & Profit Spread"
+              subtitle="Visual allocation of acquisition, renovation draws, financing debt, selling costs, and projected profit."
+            />
 
             {/* Comprehensive Cost Waterfall Table */}
             <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-3">

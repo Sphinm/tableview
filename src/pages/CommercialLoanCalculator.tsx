@@ -20,6 +20,76 @@ import { NumericInput } from '../components/NumericInput';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { AdSlot } from '../components/AdSlot';
+import {
+  CalculatorPresetsBar,
+  type CalculatorPreset,
+  PrintReportButton,
+  PrintableReportHeader,
+  CommercialBalloonChart,
+} from '../components/calculator-kit';
+
+const COMMERCIAL_PRESETS: CalculatorPreset<CommercialLoanInputs>[] = [
+  {
+    id: 'multifamily-5-25',
+    label: 'Multifamily 5/25 Balloon',
+    badge: 'Most Common',
+    description: '5-year balloon maturity based on 25-year amortization schedule with 25% down',
+    values: {
+      propertyPrice: 2000000,
+      downPaymentPercent: 25,
+      interestRate: 6.85,
+      amortizationYears: 25,
+      balloonTermYears: 5,
+      originationPoints: 1.0,
+      closingFees: 12000,
+    },
+  },
+  {
+    id: 'retail-10-30',
+    label: 'Retail Strip 10/30 Balloon',
+    badge: 'Longer Runway',
+    description: '10-year balloon maturity based on 30-year amortization schedule with 30% down',
+    values: {
+      propertyPrice: 3500000,
+      downPaymentPercent: 30,
+      interestRate: 7.15,
+      amortizationYears: 30,
+      balloonTermYears: 10,
+      originationPoints: 0.75,
+      closingFees: 18000,
+    },
+  },
+  {
+    id: 'industrial-5-25',
+    label: 'Industrial 5-Yr Balloon',
+    badge: 'Value-Add',
+    description: 'Standard 5-year balloon with 35% equity down on industrial logistics',
+    values: {
+      propertyPrice: 4000000,
+      downPaymentPercent: 35,
+      interestRate: 7.25,
+      amortizationYears: 25,
+      balloonTermYears: 5,
+      originationPoints: 1.0,
+      closingFees: 22000,
+    },
+  },
+  {
+    id: 'sba-504',
+    label: 'SBA 504 25-Yr (No Balloon)',
+    badge: 'Zero Balloon',
+    description: 'Owner-occupied commercial property with 10% down and full 25-year amortization',
+    values: {
+      propertyPrice: 1500000,
+      downPaymentPercent: 10,
+      interestRate: 6.65,
+      amortizationYears: 25,
+      balloonTermYears: 25,
+      originationPoints: 1.5,
+      closingFees: 15000,
+    },
+  },
+];
 
 const commercialLoanSchemas = [
   {
@@ -81,6 +151,12 @@ export const CommercialLoanCalculator = () => {
 
   const [copied, setCopied] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [activePresetId, setActivePresetId] = useState<string | null>('multifamily-5-25');
+
+  const handleSelectPreset = (preset: CalculatorPreset<CommercialLoanInputs>) => {
+    setActivePresetId(preset.id);
+    setInputs((prev) => ({ ...prev, ...preset.values }));
+  };
 
   const handleCopyLink = () => {
     const params = new URLSearchParams();
@@ -164,6 +240,13 @@ export const CommercialLoanCalculator = () => {
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      {/* Printable Executive Brief Header */}
+      <PrintableReportHeader
+        title="Commercial Real Estate Debt & Balloon Analysis"
+        subtitle="Underwriting Brief: Amortization, Balloon Cliff & Refinance Feasibility"
+        referenceId={`CRE-${Math.round(inputs.propertyPrice / 1000)}k-${inputs.balloonTermYears}yr`}
+      />
+
       {/* Header & Breadcrumbs */}
       <div className="mb-8">
         <div className="flex items-center gap-2 text-xs font-medium text-slate-400 mb-3">
@@ -189,6 +272,8 @@ export const CommercialLoanCalculator = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 shrink-0">
+            <PrintReportButton />
+
             <button
               onClick={handleCopyLink}
               className="px-3.5 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm"
@@ -262,6 +347,25 @@ export const CommercialLoanCalculator = () => {
           </div>
         </div>
       )}
+
+      {/* Commercial Balloon Amortization Trajectory Chart */}
+      <div className="mb-8">
+        <CommercialBalloonChart
+          schedule={summary.yearlySchedule}
+          balloonYears={inputs.balloonTermYears}
+          amortizationYears={inputs.amortizationYears}
+          balloonBalance={summary.balloonDueAmount}
+          originalLoanAmount={summary.loanAmount}
+        />
+      </div>
+
+      {/* CRE Scenario Presets */}
+      <CalculatorPresetsBar
+        presets={COMMERCIAL_PRESETS}
+        activeId={activePresetId}
+        onSelect={handleSelectPreset}
+        title="CRE Deal Scenarios"
+      />
 
       {/* Main Grid: Inputs vs Results */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">

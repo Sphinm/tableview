@@ -24,6 +24,14 @@ export interface CommercialAmortizationMonth {
   isBalloonPaymentMonth?: boolean;
 }
 
+export interface CommercialAmortizationYear {
+  year: number;
+  paymentsTotal: number;
+  principalTotal: number;
+  interestTotal: number;
+  endingBalance: number;
+}
+
 export interface CommercialLoanSummary {
   propertyPrice: number;
   downPaymentAmount: number;
@@ -56,13 +64,7 @@ export interface CommercialLoanSummary {
   refinanceAnalysis: string;
 
   // Schedule Preview
-  yearlySchedule: {
-    year: number;
-    paymentsTotal: number;
-    principalTotal: number;
-    interestTotal: number;
-    endingBalance: number;
-  }[];
+  yearlySchedule: CommercialAmortizationYear[];
 }
 
 export function calculateCommercialLoan(inputs: CommercialLoanInputs): CommercialLoanSummary {

@@ -21,6 +21,7 @@ import { NumericInput } from '../components/NumericInput';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { AdSlot } from '../components/AdSlot';
+import { PrintReportButton, PrintableReportHeader } from '../components/calculator-kit';
 
 const salaryCalculatorSchemas = [
   {
@@ -207,6 +208,13 @@ export const SalaryCalculator = ({
 
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* Printable Executive Brief Header */}
+      <PrintableReportHeader
+        title={`${displayTitle} — Comprehensive Pay Analysis`}
+        subtitle="100% Private In-Browser FLSA Gross Wage Conversion & Overtime Breakdown"
+        referenceId={`PAY-${Math.round(summary.annualSalary / 1000)}k-${summary.hoursPerWeek}hrs`}
+      />
+
       {/* Breadcrumb & Actions Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
         <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
@@ -218,6 +226,8 @@ export const SalaryCalculator = ({
         </div>
 
         <div className="flex items-center gap-2.5 self-start sm:self-auto">
+          <PrintReportButton />
+
           <button
             onClick={handleCopyLink}
             className="px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm"

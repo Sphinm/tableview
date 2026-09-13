@@ -28,6 +28,109 @@ import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
+import {
+  CalculatorPresetsBar,
+  type CalculatorPreset,
+  CashFlowDonutChart,
+} from '../components/calculator-kit';
+
+interface DscrPresetValues {
+  propertyValue: number;
+  downPaymentPercent: number;
+  interestRate: number;
+  loanTermYears: number;
+  isInterestOnly: boolean;
+  monthlyRent: number;
+  annualPropertyTax: number;
+  annualInsurance: number;
+  monthlyHoa: number;
+  vacancyRate: number;
+  managementFeeRate: number;
+  annualMaintenanceReserve: number;
+}
+
+const DSCR_INVESTOR_PRESETS: CalculatorPreset<DscrPresetValues>[] = [
+  {
+    id: 'strong-cashflow',
+    label: '1.35x Prime Cash Flow',
+    badge: 'Tier 1 Target',
+    description: 'Conservative 25% down payment with robust rental yield meeting prime lender terms',
+    values: {
+      propertyValue: 400000,
+      downPaymentPercent: 25,
+      interestRate: 6.875,
+      loanTermYears: 30,
+      isInterestOnly: false,
+      monthlyRent: 3300,
+      annualPropertyTax: 4800,
+      annualInsurance: 1400,
+      monthlyHoa: 0,
+      vacancyRate: 5,
+      managementFeeRate: 8,
+      annualMaintenanceReserve: 1800,
+    },
+  },
+  {
+    id: 'breakeven-100',
+    label: '1.00x Break-Even Threshold',
+    badge: 'Minimum Tier',
+    description: 'Market rent strictly equals PITIA debt service and escrows',
+    values: {
+      propertyValue: 350000,
+      downPaymentPercent: 20,
+      interestRate: 7.25,
+      loanTermYears: 30,
+      isInterestOnly: false,
+      monthlyRent: 2350,
+      annualPropertyTax: 4200,
+      annualInsurance: 1200,
+      monthlyHoa: 50,
+      vacancyRate: 5,
+      managementFeeRate: 8,
+      annualMaintenanceReserve: 1200,
+    },
+  },
+  {
+    id: 'interest-only-dscr',
+    label: '10-Yr Interest-Only (1.50x+)',
+    badge: 'Cash Flow Boost',
+    description: 'Eliminates principal repayment to maximize monthly cash-in-pocket and pass tight DSCR guidelines',
+    values: {
+      propertyValue: 500000,
+      downPaymentPercent: 20,
+      interestRate: 7.125,
+      loanTermYears: 30,
+      isInterestOnly: true,
+      monthlyRent: 3800,
+      annualPropertyTax: 6000,
+      annualInsurance: 1600,
+      monthlyHoa: 0,
+      vacancyRate: 5,
+      managementFeeRate: 8,
+      annualMaintenanceReserve: 2400,
+    },
+  },
+  {
+    id: 'str-high-yield',
+    label: 'Vacation Rental / STR',
+    badge: 'High Yield',
+    description: 'Short-term rental property with elevated gross revenue against operating escrows',
+    values: {
+      propertyValue: 600000,
+      downPaymentPercent: 25,
+      interestRate: 7.375,
+      loanTermYears: 30,
+      isInterestOnly: false,
+      monthlyRent: 5200,
+      annualPropertyTax: 7200,
+      annualInsurance: 2400,
+      monthlyHoa: 150,
+      vacancyRate: 10,
+      managementFeeRate: 15,
+      annualMaintenanceReserve: 3600,
+    },
+  },
+];
 
 const dscrSchemas = [
   {
@@ -185,6 +288,28 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
   const [scheduleView, setScheduleView] = useState<'annual' | 'monthly'>('annual');
   const [schedulePage, setSchedulePage] = useState<number>(1);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
+  const [activePresetId, setActivePresetId] = useState<string | null>('strong-cashflow');
+
+  const handleSelectPreset = (preset: CalculatorPreset<DscrPresetValues>) => {
+    setActivePresetId(preset.id);
+    const v = preset.values;
+    if (!v) return;
+    if (v.propertyValue !== undefined) setPropertyValue(v.propertyValue);
+    if (v.downPaymentPercent !== undefined) {
+      setDownPaymentType('percent');
+      setDownPayment(v.downPaymentPercent);
+    }
+    if (v.interestRate !== undefined) setInterestRate(v.interestRate);
+    if (v.loanTermYears !== undefined) setLoanTermYears(v.loanTermYears);
+    if (v.isInterestOnly !== undefined) setIsInterestOnly(v.isInterestOnly);
+    if (v.monthlyRent !== undefined) setMonthlyRent(v.monthlyRent);
+    if (v.annualPropertyTax !== undefined) setAnnualPropertyTax(v.annualPropertyTax);
+    if (v.annualInsurance !== undefined) setAnnualInsurance(v.annualInsurance);
+    if (v.monthlyHoa !== undefined) setMonthlyHoa(v.monthlyHoa);
+    if (v.vacancyRate !== undefined) setVacancyRate(v.vacancyRate);
+    if (v.managementFeeRate !== undefined) setManagementFeeRate(v.managementFeeRate);
+    if (v.annualMaintenanceReserve !== undefined) setAnnualMaintenanceReserve(v.annualMaintenanceReserve);
+  };
 
   // Sync Down Payment when type changes
   const handleDownPaymentTypeChange = (newType: 'percent' | 'money') => {
@@ -198,9 +323,6 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
     }
     setDownPaymentType(newType);
   };
-
-  // Preset buttons
-  const propertyPresets = [300000, 450000, 650000, 900000, 1400000];
 
   // Inputs model
   const inputs: DscrInputs = useMemo(
@@ -397,22 +519,14 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
             Calculate your <strong>Debt-Service Coverage Ratio (DSCR)</strong>, net cash flow, and maximum eligible loan amount for residential rental properties (1-4 units and commercial). Zero personal income verification required.
           </p>
 
-          {/* Quick Property Value Presets */}
-          <div className="flex items-center gap-2 mt-6 flex-wrap">
-            <span className="text-xs text-slate-400">Quick Presets:</span>
-            {propertyPresets.map((preset) => (
-              <button
-                key={preset}
-                onClick={() => setPropertyValue(preset)}
-                className={`px-3 py-1 rounded-lg text-xs font-mono transition-colors cursor-pointer border ${
-                  propertyValue === preset
-                    ? 'bg-indigo-600 text-white border-indigo-500 font-semibold shadow-sm'
-                    : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800 hover:text-slate-100'
-                }`}
-              >
-                {currencyFmt(preset)}
-              </button>
-            ))}
+          {/* DSCR Scenario Presets */}
+          <div className="mt-6">
+            <CalculatorPresetsBar
+              presets={DSCR_INVESTOR_PRESETS}
+              activeId={activePresetId}
+              onSelect={handleSelectPreset}
+              title="DSCR Scenarios"
+            />
           </div>
         </div>
       </section>
@@ -757,6 +871,22 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                 <span className="text-[10px] text-slate-500">at current rent</span>
               </div>
             </div>
+
+            {/* Visual Cash Flow Allocation Donut */}
+            <CashFlowDonutChart
+              segments={[
+                { id: 'pi', label: 'Principal & Interest', amount: result.monthlyPrincipalAndInterest, color: '#6366f1' },
+                { id: 'taxes', label: 'Property Taxes', amount: result.monthlyTaxes, color: '#10b981' },
+                { id: 'insurance', label: 'Home Insurance', amount: result.monthlyInsurance, color: '#06b6d4' },
+                ...(result.monthlyHoa > 0 ? [{ id: 'hoa', label: 'HOA Fees', amount: result.monthlyHoa, color: '#f59e0b' }] : []),
+                { id: 'mgmt', label: 'Management & Vacancy', amount: result.monthlyManagementFee, color: '#8b5cf6' },
+                ...(result.monthlyMaintenance > 0 ? [{ id: 'maint', label: 'Maintenance Reserve', amount: result.monthlyMaintenance, color: '#64748b' }] : []),
+              ]}
+              centerTitle="Monthly Outflow"
+              centerValue={currencyFmt(result.monthlyPitia + result.monthlyManagementFee + result.monthlyMaintenance)}
+              title="Monthly Cash Outflow Distribution"
+              subtitle="Visual breakdown of debt service, property taxes, insurance escrows, and reserves."
+            />
 
             {/* Monthly PITIA Expense Breakdown Table */}
             <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-3">

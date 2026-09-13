@@ -37,6 +37,7 @@ import { PaymentDonutChart } from '../components/PaymentDonutChart';
 import { AmortizationChart } from '../components/AmortizationChart';
 import { PrintableMortgageReport } from '../components/PrintableMortgageReport';
 import { RelatedCalculators } from '../components/RelatedCalculators';
+import { CalculatorPresetsBar, PrintReportButton } from '../components/calculator-kit';
 
 // Sourced from the shared registry so the rendered page, the JSON-LD and the
 // prerendered HTML can never disagree. This page previously declared FAQPage
@@ -123,6 +124,95 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
   // View state for Amortization table
   const [scheduleView, setScheduleView] = useState<'annual' | 'monthly'>('annual');
   const [monthlyPage, setMonthlyPage] = useState<number>(1);
+  const [activePreset, setActivePreset] = useState<string | null>('30-yr-conventional');
+
+  const MORTGAGE_PRESETS = [
+    {
+      id: '30-yr-conventional',
+      label: '30-Yr Fixed (20% Down)',
+      badge: 'Popular',
+      apply: () => {
+        setHomeValue(400000);
+        setDownPayment(80000);
+        setDownPaymentType('money');
+        setInterestRate(6.5);
+        setLoanTermYears(30);
+        setLoanType('conventional');
+        setPropertyTaxYearly(3200);
+        setHomeInsuranceYearly(1500);
+        setMonthlyHoa(0);
+        setExtraMonthlyPrincipal(0);
+      }
+    },
+    {
+      id: '15-yr-fast-equity',
+      label: '15-Yr Fixed (Fast Equity)',
+      badge: 'Save Interest',
+      apply: () => {
+        setHomeValue(400000);
+        setDownPayment(80000);
+        setDownPaymentType('money');
+        setInterestRate(5.85);
+        setLoanTermYears(15);
+        setLoanType('conventional');
+        setPropertyTaxYearly(3200);
+        setHomeInsuranceYearly(1500);
+        setMonthlyHoa(0);
+        setExtraMonthlyPrincipal(0);
+      }
+    },
+    {
+      id: 'fha-starter',
+      label: 'FHA (3.5% Down)',
+      badge: 'Low Down',
+      apply: () => {
+        setHomeValue(350000);
+        setDownPayment(12250);
+        setDownPaymentType('money');
+        setInterestRate(6.25);
+        setLoanTermYears(30);
+        setLoanType('fha');
+        setPropertyTaxYearly(3000);
+        setHomeInsuranceYearly(1400);
+        setMonthlyHoa(0);
+        setExtraMonthlyPrincipal(0);
+      }
+    },
+    {
+      id: 'starter-condo',
+      label: 'Starter Condo w/ HOA',
+      badge: 'Condo',
+      apply: () => {
+        setHomeValue(280000);
+        setDownPayment(28000);
+        setDownPaymentType('money');
+        setInterestRate(6.6);
+        setLoanTermYears(30);
+        setLoanType('conventional');
+        setPropertyTaxYearly(2400);
+        setHomeInsuranceYearly(900);
+        setMonthlyHoa(280);
+        setExtraMonthlyPrincipal(0);
+      }
+    },
+    {
+      id: 'jumbo-luxury',
+      label: 'Jumbo High-Balance',
+      badge: 'Jumbo',
+      apply: () => {
+        setHomeValue(950000);
+        setDownPayment(190000);
+        setDownPaymentType('money');
+        setInterestRate(6.75);
+        setLoanTermYears(30);
+        setLoanType('conventional');
+        setPropertyTaxYearly(8500);
+        setHomeInsuranceYearly(2800);
+        setMonthlyHoa(0);
+        setExtraMonthlyPrincipal(0);
+      }
+    }
+  ];
 
   // Sync Down Payment when type changes
   const handleDownPaymentTypeChange = (newType: 'money' | 'percent') => {
@@ -327,6 +417,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
               <Bookmark className="size-3.5 text-indigo-400" />
               <span>Saved Scenarios</span>
             </button>
+            <PrintReportButton onPrint={handleExportPdf} label="Print / PDF" />
           </div>
         </div>
 
@@ -339,6 +430,15 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             Accurately calculate your total monthly mortgage payment including principal, interest, real estate taxes, homeowner insurance, PMI, and HOA fees. Includes real-time amortization schedules and bi-weekly savings analysis.
           </p>
         </div>
+
+        <CalculatorPresetsBar
+          presets={MORTGAGE_PRESETS}
+          activePresetId={activePreset}
+          onSelectPreset={(preset) => {
+            setActivePreset(preset.id);
+            preset.apply?.();
+          }}
+        />
       </div>
 
       {/* Main 2-Column Calculator Grid */}

@@ -41,6 +41,7 @@ import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
+import { CalculatorPresetsBar, PrintReportButton } from '../components/calculator-kit';
 
 // Sourced from the shared registry — see the note in MortgageCalculator.tsx.
 const refinanceFaqs = getCalculatorFaqs('/refinance-calculator');
@@ -192,6 +193,35 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
       setRollCostsIntoLoan(true);
     }
   };
+
+  const [activePreset, setActivePreset] = useState<string | null>(null);
+
+  const REFINANCE_PRESETS = [
+    {
+      id: 'rateDrop',
+      label: 'Lower Rate 30-Yr',
+      badge: 'Cash Savings',
+      apply: () => applyPreset('rateDrop')
+    },
+    {
+      id: 'shorten15',
+      label: 'Shorten 30-Yr to 15-Yr',
+      badge: 'Fast Payoff',
+      apply: () => applyPreset('shorten15')
+    },
+    {
+      id: 'cashOut',
+      label: 'Cash-Out Refi ($40k)',
+      badge: 'Equity Access',
+      apply: () => applyPreset('cashOut')
+    },
+    {
+      id: 'zeroCost',
+      label: 'Zero-Cost Rollover',
+      badge: '$0 Out of Pocket',
+      apply: () => applyPreset('zeroCost')
+    }
+  ];
 
   // Calculations
   const inputs: RefinanceInputs = useMemo(
@@ -397,6 +427,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             <Bookmark className="size-3.5 text-indigo-400" />
             <span>Saved Scenarios</span>
           </button>
+          <PrintReportButton onPrint={handleExportPdf} label="Print / PDF" />
         </div>
       </div>
 
@@ -414,34 +445,14 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
           Unsure if you should refinance? Calculate whether refinancing makes financial sense based on interest rate reductions, discount points, upfront closing costs, income tax shift, and multi-year homeowner equity growth.
         </p>
 
-        {/* Quick Scenario Presets */}
-        <div className="flex flex-wrap items-center gap-2 pt-2">
-          <span className="text-xs font-medium text-slate-400 mr-1">Quick Scenarios:</span>
-          <button
-            onClick={() => applyPreset('shorten15')}
-            className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-medium text-slate-300 hover:text-slate-100 transition-all cursor-pointer"
-          >
-            Shorten 30-Yr to 15-Yr
-          </button>
-          <button
-            onClick={() => applyPreset('rateDrop')}
-            className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-medium text-slate-300 hover:text-slate-100 transition-all cursor-pointer"
-          >
-            Lower Rate 30-Yr (Cash Savings)
-          </button>
-          <button
-            onClick={() => applyPreset('cashOut')}
-            className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-medium text-slate-300 hover:text-slate-100 transition-all cursor-pointer"
-          >
-            Cash-Out Refi ($40k)
-          </button>
-          <button
-            onClick={() => applyPreset('zeroCost')}
-            className="px-2.5 py-1 rounded-md bg-slate-900 hover:bg-slate-800 border border-slate-800 text-xs font-medium text-slate-300 hover:text-slate-100 transition-all cursor-pointer"
-          >
-            Zero-Closing-Cost Refi
-          </button>
-        </div>
+        <CalculatorPresetsBar
+          presets={REFINANCE_PRESETS}
+          activePresetId={activePreset}
+          onSelectPreset={(preset) => {
+            setActivePreset(preset.id);
+            preset.apply?.();
+          }}
+        />
       </div>
 
       {/* Main Grid: Inputs vs Results */}
