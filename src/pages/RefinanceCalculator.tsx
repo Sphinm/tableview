@@ -39,6 +39,8 @@ import { RefinanceBalanceChart } from '../components/RefinanceBalanceChart';
 import { PrintableRefinanceReport } from '../components/PrintableRefinanceReport';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import { RelatedCalculators } from '../components/RelatedCalculators';
+import { CurrencyInput } from '../components/CurrencyInput';
+import { NumericInput } from '../components/NumericInput';
 
 // Sourced from the shared registry — see the note in MortgageCalculator.tsx.
 const refinanceFaqs = getCalculatorFaqs('/refinance-calculator');
@@ -461,51 +463,33 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Original Home Price
                 </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-slate-400">$</span>
-                  <input
-                    type="number"
-                    value={homePrice}
-                    onChange={(e) => handleHomePriceChange(Number(e.target.value))}
-                    step="5000"
-                    min="0"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-7 pr-3 py-2 text-xs text-slate-100 font-mono focus:border-indigo-500 focus:outline-none"
-                  />
-                </div>
+                <CurrencyInput
+                  value={homePrice}
+                  onChange={handleHomePriceChange}
+                  className="py-2 text-xs font-mono"
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Original Down Payment
                 </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-slate-400">$</span>
-                  <input
-                    type="number"
-                    value={downPayment}
-                    onChange={(e) => handleDownPaymentChange(Number(e.target.value))}
-                    step="5000"
-                    min="0"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-7 pr-3 py-2 text-xs text-slate-100 font-mono focus:border-indigo-500 focus:outline-none"
-                  />
-                </div>
+                <CurrencyInput
+                  value={downPayment}
+                  onChange={handleDownPaymentChange}
+                  className="py-2 text-xs font-mono"
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Original Loan Amount
                 </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-slate-400">$</span>
-                  <input
-                    type="number"
-                    value={originalLoanAmount}
-                    onChange={(e) => setOriginalLoanAmount(Number(e.target.value))}
-                    step="5000"
-                    min="0"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-7 pr-3 py-2 text-xs text-slate-100 font-mono focus:border-indigo-500 focus:outline-none"
-                  />
-                </div>
+                <CurrencyInput
+                  value={originalLoanAmount}
+                  onChange={setOriginalLoanAmount}
+                  className="py-2 text-xs font-mono"
+                />
               </div>
 
               <div>
@@ -528,35 +512,29 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Current Interest Rate
                 </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={currentInterestRate}
-                    onChange={(e) => setCurrentInterestRate(Number(e.target.value))}
-                    step="0.05"
-                    min="0"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-7 py-2 text-xs text-slate-100 font-mono focus:border-indigo-500 focus:outline-none"
-                  />
-                  <span className="absolute right-3 top-2.5 text-xs text-slate-400">%</span>
-                </div>
+                <NumericInput
+                  value={currentInterestRate}
+                  onChange={setCurrentInterestRate}
+                  suffix="%"
+                  step={0.05}
+                  min={0}
+                  className="py-2 text-xs font-mono focus:border-indigo-500"
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Months Already Paid
                 </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={monthsAlreadyPaid}
-                    onChange={(e) => setMonthsAlreadyPaid(Number(e.target.value))}
-                    step="1"
-                    min="0"
-                    max={originalTermYears * 12}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-8 py-2 text-xs text-slate-100 font-mono focus:border-indigo-500 focus:outline-none"
-                  />
-                  <span className="absolute right-2.5 top-2.5 text-[11px] text-slate-400">Mo</span>
-                </div>
+                <NumericInput
+                  value={monthsAlreadyPaid}
+                  onChange={setMonthsAlreadyPaid}
+                  suffix="Mo"
+                  step={1}
+                  min={0}
+                  max={originalTermYears * 12}
+                  className="py-2 text-xs font-mono focus:border-indigo-500"
+                />
               </div>
             </div>
 
@@ -608,52 +586,40 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   New Interest Rate
                 </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={newInterestRate}
-                    onChange={(e) => setNewInterestRate(Number(e.target.value))}
-                    step="0.05"
-                    min="0"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-7 py-2 text-xs text-slate-100 font-mono focus:border-emerald-500 focus:outline-none"
-                  />
-                  <span className="absolute right-3 top-2.5 text-xs text-slate-400">%</span>
-                </div>
+                <NumericInput
+                  value={newInterestRate}
+                  onChange={setNewInterestRate}
+                  suffix="%"
+                  step={0.05}
+                  min={0}
+                  className="py-2 text-xs font-mono focus:border-emerald-500"
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Years Before Sell / Horizon
                 </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={yearsBeforeSell}
-                    onChange={(e) => setYearsBeforeSell(Number(e.target.value))}
-                    step="1"
-                    min="1"
-                    max="30"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-8 py-2 text-xs text-slate-100 font-mono focus:border-emerald-500 focus:outline-none"
-                  />
-                  <span className="absolute right-2.5 top-2.5 text-[11px] text-slate-400">Yrs</span>
-                </div>
+                <NumericInput
+                  value={yearsBeforeSell}
+                  onChange={setYearsBeforeSell}
+                  suffix="Yrs"
+                  step={1}
+                  min={1}
+                  max={30}
+                  className="py-2 text-xs font-mono focus:border-emerald-500"
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Cash-Out Amount (Optional)
                 </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-slate-400">$</span>
-                  <input
-                    type="number"
-                    value={cashOutAmount}
-                    onChange={(e) => setCashOutAmount(Number(e.target.value))}
-                    step="1000"
-                    min="0"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-7 pr-3 py-2 text-xs text-slate-100 font-mono focus:border-emerald-500 focus:outline-none"
-                  />
-                </div>
+                <CurrencyInput
+                  value={cashOutAmount}
+                  onChange={setCashOutAmount}
+                  className="py-2 text-xs font-mono"
+                />
               </div>
             </div>
 
@@ -689,51 +655,39 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Discount Points
                 </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={discountPoints}
-                    onChange={(e) => setDiscountPoints(Number(e.target.value))}
-                    step="0.125"
-                    min="0"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-7 py-2 text-xs text-slate-100 font-mono focus:border-amber-500 focus:outline-none"
-                  />
-                  <span className="absolute right-2.5 top-2.5 text-xs text-slate-400">%</span>
-                </div>
+                <NumericInput
+                  value={discountPoints}
+                  onChange={setDiscountPoints}
+                  suffix="%"
+                  step={0.125}
+                  min={0}
+                  className="py-2 text-xs font-mono focus:border-amber-500"
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Origination Fee
                 </label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={originationPercent}
-                    onChange={(e) => setOriginationPercent(Number(e.target.value))}
-                    step="0.1"
-                    min="0"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-7 py-2 text-xs text-slate-100 font-mono focus:border-amber-500 focus:outline-none"
-                  />
-                  <span className="absolute right-2.5 top-2.5 text-xs text-slate-400">%</span>
-                </div>
+                <NumericInput
+                  value={originationPercent}
+                  onChange={setOriginationPercent}
+                  suffix="%"
+                  step={0.1}
+                  min={0}
+                  className="py-2 text-xs font-mono focus:border-amber-500"
+                />
               </div>
 
               <div>
                 <label className="block text-xs font-medium text-slate-400 mb-1">
                   Other Closing Costs
                 </label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-xs text-slate-400">$</span>
-                  <input
-                    type="number"
-                    value={otherClosingCosts}
-                    onChange={(e) => setOtherClosingCosts(Number(e.target.value))}
-                    step="100"
-                    min="0"
-                    className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-7 pr-3 py-2 text-xs text-slate-100 font-mono focus:border-amber-500 focus:outline-none"
-                  />
-                </div>
+                <CurrencyInput
+                  value={otherClosingCosts}
+                  onChange={setOtherClosingCosts}
+                  className="py-2 text-xs font-mono"
+                />
               </div>
 
               <div className="sm:col-span-3 pt-1">
@@ -768,32 +722,26 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-[11px] text-slate-400 mb-1">Federal Income Tax</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={federalTaxRate}
-                      onChange={(e) => setFederalTaxRate(Number(e.target.value))}
-                      step="1"
-                      min="0"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-7 py-1.5 text-xs text-slate-100 font-mono focus:border-indigo-500 focus:outline-none"
-                    />
-                    <span className="absolute right-2.5 top-2 text-xs text-slate-400">%</span>
-                  </div>
+                  <NumericInput
+                    value={federalTaxRate}
+                    onChange={setFederalTaxRate}
+                    suffix="%"
+                    step={1}
+                    min={0}
+                    className="py-1.5 text-xs font-mono focus:border-indigo-500"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-[11px] text-slate-400 mb-1">State Income Tax</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      value={stateTaxRate}
-                      onChange={(e) => setStateTaxRate(Number(e.target.value))}
-                      step="0.5"
-                      min="0"
-                      className="w-full bg-slate-950 border border-slate-800 rounded-lg pl-3 pr-7 py-1.5 text-xs text-slate-100 font-mono focus:border-indigo-500 focus:outline-none"
-                    />
-                    <span className="absolute right-2.5 top-2 text-xs text-slate-400">%</span>
-                  </div>
+                  <NumericInput
+                    value={stateTaxRate}
+                    onChange={setStateTaxRate}
+                    suffix="%"
+                    step={0.5}
+                    min={0}
+                    className="py-1.5 text-xs font-mono focus:border-indigo-500"
+                  />
                 </div>
               </div>
 

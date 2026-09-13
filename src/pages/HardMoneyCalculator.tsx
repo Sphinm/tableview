@@ -6,7 +6,6 @@ import {
   AlertTriangle,
   Download,
   FileSpreadsheet,
-  Percent,
   CheckCircle2,
   ArrowRight,
   BookOpen,
@@ -25,6 +24,8 @@ import { AdSlot } from '../components/AdSlot';
 import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { PrintableHardMoneyReport } from '../components/PrintableHardMoneyReport';
 import { RelatedCalculators } from '../components/RelatedCalculators';
+import { CurrencyInput } from '../components/CurrencyInput';
+import { NumericInput } from '../components/NumericInput';
 
 const hardMoneySchemas = [
   {
@@ -363,16 +364,11 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <span>Acquisition / Purchase Price</span>
                   <span className="text-slate-100 font-mono font-bold">{currencyFmt(purchasePrice)}</span>
                 </label>
-                <div className="relative">
-                  <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    value={purchasePrice || ''}
-                    onChange={(e) => setPurchasePrice(Math.max(0, Number(e.target.value)))}
-                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
-                  />
-                </div>
+                <CurrencyInput
+                  value={purchasePrice}
+                  onChange={(v) => setPurchasePrice(Math.max(0, v))}
+                  className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
+                />
               </div>
 
               {/* Rehab Budget & ARV */}
@@ -381,32 +377,22 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Rehab Budget ($)
                   </label>
-                  <div className="relative">
-                    <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      value={rehabBudget || ''}
-                      onChange={(e) => setRehabBudget(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
-                    />
-                  </div>
+                  <CurrencyInput
+                    value={rehabBudget}
+                    onChange={(v) => setRehabBudget(Math.max(0, v))}
+                    className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     After Repair Value (ARV)
                   </label>
-                  <div className="relative">
-                    <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      value={afterRepairValue || ''}
-                      onChange={(e) => setAfterRepairValue(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-amber-300 font-mono font-bold focus:outline-none focus:border-amber-500 transition-colors"
-                    />
-                  </div>
+                  <CurrencyInput
+                    value={afterRepairValue}
+                    onChange={(v) => setAfterRepairValue(Math.max(0, v))}
+                    className="py-2 text-base sm:text-sm font-mono font-bold text-amber-300 focus:border-amber-500"
+                  />
                 </div>
               </div>
 
@@ -421,32 +407,24 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Purchase LTV (%)
                   </label>
-                  <div className="relative">
-                    <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      value={ltvPercent || ''}
-                      onChange={(e) => setLtvPercent(Math.max(0, Math.min(100, Number(e.target.value))))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
-                    />
-                  </div>
+                  <NumericInput
+                    value={ltvPercent}
+                    onChange={(v) => setLtvPercent(Math.max(0, Math.min(100, v)))}
+                    suffix="%"
+                    className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Rehab Financed (%)
                   </label>
-                  <div className="relative">
-                    <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      value={rehabFinancedPercent || ''}
-                      onChange={(e) => setRehabFinancedPercent(Math.max(0, Math.min(100, Number(e.target.value))))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
-                    />
-                  </div>
+                  <NumericInput
+                    value={rehabFinancedPercent}
+                    onChange={(v) => setRehabFinancedPercent(Math.max(0, Math.min(100, v)))}
+                    suffix="%"
+                    className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
+                  />
                 </div>
               </div>
 
@@ -455,51 +433,37 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Interest Rate (%)
                   </label>
-                  <div className="relative">
-                    <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      step="0.25"
-                      value={interestRate || ''}
-                      onChange={(e) => setInterestRate(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
-                    />
-                  </div>
+                  <NumericInput
+                    value={interestRate}
+                    onChange={(v) => setInterestRate(Math.max(0, v))}
+                    suffix="%"
+                    step={0.25}
+                    className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Origination Points
                   </label>
-                  <div className="relative">
-                    <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      step="0.5"
-                      value={originationPoints || ''}
-                      onChange={(e) => setOriginationPoints(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
-                    />
-                  </div>
+                  <NumericInput
+                    value={originationPoints}
+                    onChange={(v) => setOriginationPoints(Math.max(0, v))}
+                    suffix="%"
+                    step={0.5}
+                    className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Underwriting / Admin ($)
                   </label>
-                  <div className="relative">
-                    <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      step="100"
-                      value={lenderUnderwritingFees || ''}
-                      onChange={(e) => setLenderUnderwritingFees(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
-                    />
-                  </div>
+                  <CurrencyInput
+                    value={lenderUnderwritingFees}
+                    onChange={(v) => setLenderUnderwritingFees(Math.max(0, v))}
+                    className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
+                  />
                 </div>
               </div>
 
@@ -525,16 +489,11 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Monthly Holding Cost ($)
                   </label>
-                  <div className="relative">
-                    <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      value={monthlyHoldingCosts || ''}
-                      onChange={(e) => setMonthlyHoldingCosts(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors"
-                    />
-                  </div>
+                  <CurrencyInput
+                    value={monthlyHoldingCosts}
+                    onChange={(v) => setMonthlyHoldingCosts(Math.max(0, v))}
+                    className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
+                  />
                 </div>
               </div>
 
@@ -544,13 +503,12 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Realtor Commission (%)
                   </label>
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    step="0.5"
-                    value={realtorCommissionPercent || ''}
-                    onChange={(e) => setRealtorCommissionPercent(Math.max(0, Number(e.target.value)))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none"
+                  <NumericInput
+                    value={realtorCommissionPercent}
+                    onChange={(v) => setRealtorCommissionPercent(Math.max(0, v))}
+                    suffix="%"
+                    step={0.5}
+                    className="py-2 text-base sm:text-sm font-mono"
                   />
                 </div>
 
@@ -558,13 +516,12 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Exit Closing Cost (%)
                   </label>
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    step="0.5"
-                    value={exitClosingCostsPercent || ''}
-                    onChange={(e) => setExitClosingCostsPercent(Math.max(0, Number(e.target.value)))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none"
+                  <NumericInput
+                    value={exitClosingCostsPercent}
+                    onChange={(v) => setExitClosingCostsPercent(Math.max(0, v))}
+                    suffix="%"
+                    step={0.5}
+                    className="py-2 text-base sm:text-sm font-mono"
                   />
                 </div>
               </div>

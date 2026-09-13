@@ -1,0 +1,257 @@
+/**
+ * Side-by-Side Loan Comparison Calculator Engine
+ * 100% Client-Side Pure Mathematics (Zero Server Egress)
+ */
+
+export interface LoanParameters {
+  name: string;
+  loanAmount: number;
+  interestRate: number; // e.g. 6.5 for 6.5%
+  termYears: number; // e.g. 30
+  originationPoints: number; // e.g. 1.0 for 1%
+  upfrontFees: number; // e.g. $1,500
+  extraMonthlyPayment: number; // e.g. $100
+}
+
+export interface SingleLoanResult {
+  name: string;
+  loanAmount: number;
+  interestRate: number;
+  termYears: number;
+  scheduledMonthlyPayment: number;
+  actualMonthlyPayment: number; // scheduled + extra
+  totalMonthsScheduled: number;
+  actualMonthsToPayoff: number;
+  actualYearsToPayoff: number;
+  totalInterestPaid: number;
+  upfrontClosingCosts: number;
+  totalLoanCost: number; // loan amount + interest + upfront fees
+  amortizationPreview: {
+    year: number;
+    balance: number;
+    interestPaidYear: number;
+    principalPaidYear: number;
+    totalInterestPaidSoFar: number;
+  }[];
+}
+
+export interface LoanComparisonSummary {
+  loanA: SingleLoanResult;
+  loanB: SingleLoanResult;
+  monthlyPaymentDiff: number; // A - B (positive: B is cheaper monthly)
+  totalInterestDiff: number; // A - B (positive: B has less interest)
+  totalCostDiff: number; // A - B (positive: B has lower total cost)
+  upfrontCostDiff: number; // A - B (positive: A costs more upfront)
+  breakEvenMonths: number | null; // months for lower-rate loan to recoup higher upfront fees
+  recommendation: {
+    betterOverall: 'A' | 'B' | 'TIE';
+    lowerMonthly: 'A' | 'B' | 'TIE';
+    lowerInterest: 'A' | 'B' | 'TIE';
+    headline: string;
+    subHeadline?: string;
+    description: string;
+  };
+}
+
+export function calculateSingleLoan(params: LoanParameters): SingleLoanResult {
+  const {
+    name,
+    loanAmount,
+    interestRate,
+    termYears,
+    originationPoints = 0,
+    upfrontFees = 0,
+    extraMonthlyPayment = 0
+  } = params;
+
+  const totalMonthsScheduled = Math.round(termYears * 12);
+  const monthlyRate = interestRate > 0 ? interestRate / 100 / 12 : 0;
+
+  // Scheduled Monthly P&I
+  let scheduledMonthlyPayment = 0;
+  if (monthlyRate === 0) {
+    scheduledMonthlyPayment = totalMonthsScheduled > 0 ? loanAmount / totalMonthsScheduled : 0;
+  } else {
+    const factor = Math.pow(1 + monthlyRate, totalMonthsScheduled);
+    scheduledMonthlyPayment = totalMonthsScheduled > 0 ? (loanAmount * monthlyRate * factor) / (factor - 1) : 0;
+  }
+
+  const actualMonthlyPayment = scheduledMonthlyPayment + Math.max(0, extraMonthlyPayment);
+  const upfrontClosingCosts = (loanAmount * (originationPoints / 100)) + upfrontFees;
+
+  // Simulate monthly amortization
+  let balance = loanAmount;
+  let cumulativeInterest = 0;
+  let monthsCount = 0;
+
+  const yearlyData: {
+    year: number;
+    balance: number;
+    interestPaidYear: number;
+    principalPaidYear: number;
+    totalInterestPaidSoFar: number;
+  }[] = [];
+
+  let currentYearInterest = 0;
+  let currentYearPrincipal = 0;
+
+  while (balance > 0.01 && monthsCount < totalMonthsScheduled * 2) {
+    monthsCount++;
+    const monthlyInterest = balance * monthlyRate;
+    let payment = actualMonthlyPayment;
+
+    if (payment > balance + monthlyInterest) {
+      payment = balance + monthlyInterest;
+    }
+
+    const principalPaid = payment - monthlyInterest;
+    balance = Math.max(0, balance - principalPaid);
+    cumulativeInterest += monthlyInterest;
+    currentYearInterest += monthlyInterest;
+    currentYearPrincipal += principalPaid;
+
+    if (monthsCount % 12 === 0 || balance <= 0.01) {
+      const year = Math.ceil(monthsCount / 12);
+      yearlyData.push({
+        year,
+        balance: Math.round(balance),
+        interestPaidYear: Math.round(currentYearInterest),
+        principalPaidYear: Math.round(currentYearPrincipal),
+        totalInterestPaidSoFar: Math.round(cumulativeInterest)
+      });
+      currentYearInterest = 0;
+      currentYearPrincipal = 0;
+    }
+  }
+
+  const actualMonthsToPayoff = monthsCount;
+  const actualYearsToPayoff = Number((actualMonthsToPayoff / 12).toFixed(1));
+  const totalLoanCost = loanAmount + cumulativeInterest + upfrontClosingCosts;
+
+  return {
+    name,
+    loanAmount: Math.round(loanAmount),
+    interestRate,
+    termYears,
+    scheduledMonthlyPayment: Number(scheduledMonthlyPayment.toFixed(2)),
+    actualMonthlyPayment: Number(actualMonthlyPayment.toFixed(2)),
+    totalMonthsScheduled,
+    actualMonthsToPayoff,
+    actualYearsToPayoff,
+    totalInterestPaid: Math.round(cumulativeInterest),
+    upfrontClosingCosts: Math.round(upfrontClosingCosts),
+    totalLoanCost: Math.round(totalLoanCost),
+    amortizationPreview: yearlyData
+  };
+}
+
+export function compareLoans(loanAParams: LoanParameters, loanBParams: LoanParameters): LoanComparisonSummary {
+  const loanA = calculateSingleLoan(loanAParams);
+  const loanB = calculateSingleLoan(loanBParams);
+
+  const monthlyPaymentDiff = Number((loanA.actualMonthlyPayment - loanB.actualMonthlyPayment).toFixed(2));
+  const totalInterestDiff = loanA.totalInterestPaid - loanB.totalInterestPaid;
+  const totalCostDiff = loanA.totalLoanCost - loanB.totalLoanCost;
+  const upfrontCostDiff = loanA.upfrontClosingCosts - loanB.upfrontClosingCosts;
+
+  // Calculate Break-Even Months (if one loan has higher upfront fees but lower monthly payments)
+  let breakEvenMonths: number | null = null;
+  if (loanA.upfrontClosingCosts > loanB.upfrontClosingCosts && loanB.actualMonthlyPayment > loanA.actualMonthlyPayment) {
+    // Loan A costs more upfront, but saves monthly
+    const monthlySavings = loanB.actualMonthlyPayment - loanA.actualMonthlyPayment;
+    const feeDifference = loanA.upfrontClosingCosts - loanB.upfrontClosingCosts;
+    breakEvenMonths = Math.ceil(feeDifference / monthlySavings);
+  } else if (loanB.upfrontClosingCosts > loanA.upfrontClosingCosts && loanA.actualMonthlyPayment > loanB.actualMonthlyPayment) {
+    // Loan B costs more upfront, but saves monthly
+    const monthlySavings = loanA.actualMonthlyPayment - loanB.actualMonthlyPayment;
+    const feeDifference = loanB.upfrontClosingCosts - loanA.upfrontClosingCosts;
+    breakEvenMonths = Math.ceil(feeDifference / monthlySavings);
+  }
+
+  // Determine Winners
+  let betterOverall: 'A' | 'B' | 'TIE' = 'TIE';
+  if (totalCostDiff > 50) betterOverall = 'B';
+  else if (totalCostDiff < -50) betterOverall = 'A';
+
+  let lowerMonthly: 'A' | 'B' | 'TIE' = 'TIE';
+  if (monthlyPaymentDiff > 1) lowerMonthly = 'B';
+  else if (monthlyPaymentDiff < -1) lowerMonthly = 'A';
+
+  let lowerInterest: 'A' | 'B' | 'TIE' = 'TIE';
+  if (totalInterestDiff > 50) lowerInterest = 'B';
+  else if (totalInterestDiff < -50) lowerInterest = 'A';
+
+  // Helpers to clean loan names and extract (e.g. ...) notes
+  const cleanLoanName = (name: string): string =>
+    name.replace(/\s*\((?:e\.?g\.?|ex\.)[^)]*\)/gi, '').trim() || name;
+
+  const extractEgNote = (name: string): string | null => {
+    const match = name.match(/\(((?:e\.?g\.?|ex\.)[^)]*)\)/i);
+    return match ? match[1].trim() : null;
+  };
+
+  const cleanNameA = cleanLoanName(loanA.name);
+  const cleanNameB = cleanLoanName(loanB.name);
+  const egA = extractEgNote(loanA.name);
+  const egB = extractEgNote(loanB.name);
+
+  // Construct Recommendation Headline & Sub-headline
+  let headline = '';
+  let subHeadline: string | undefined;
+  let description = '';
+
+  if (betterOverall === 'TIE') {
+    headline = 'Both loan options have virtually identical total lifetime costs.';
+    if (egA || egB) {
+      subHeadline = egA && egB ? `(${egA} vs. ${egB.replace(/^e\.g\.\s*/i, '')})` : `(${egA || egB})`;
+    }
+    description = 'Compare upfront closing costs and monthly cash flow flexibility to decide.';
+  } else {
+    const winnerClean = betterOverall === 'A' ? cleanNameA : cleanNameB;
+    const loserClean = betterOverall === 'A' ? cleanNameB : cleanNameA;
+    const winnerEg = betterOverall === 'A' ? egA : egB;
+    const loserEg = betterOverall === 'A' ? egB : egA;
+    const costSavings = Math.abs(totalCostDiff).toLocaleString();
+
+    headline = `${winnerClean} saves you $${costSavings} in total lifetime costs compared to ${loserClean}.`;
+
+    if (winnerEg || loserEg) {
+      if (winnerEg && loserEg) {
+        subHeadline = `(${winnerEg} vs. ${loserEg.replace(/^e\.g\.\s*/i, '')})`;
+      } else if (winnerEg) {
+        subHeadline = `(${winnerEg})`;
+      } else if (loserEg) {
+        subHeadline = `(vs. ${loserEg})`;
+      }
+    }
+
+    if (lowerMonthly === betterOverall) {
+      description = `${winnerClean} offers both a lower monthly payment and lower overall interest over the life of the loan.`;
+    } else {
+      const lowerMonthlyClean = lowerMonthly === 'A' ? cleanNameA : cleanNameB;
+      const monthlySavings = Math.abs(monthlyPaymentDiff).toFixed(2);
+      description = `While ${lowerMonthlyClean} saves you $${monthlySavings}/month in cash flow, ${winnerClean} is mathematically cheaper in the long run because it builds equity faster and incurs significantly less interest.`;
+      if (breakEvenMonths) {
+        description += ` Upfront cost difference breaks even in approximately ${breakEvenMonths} months.`;
+      }
+    }
+  }
+
+  return {
+    loanA,
+    loanB,
+    monthlyPaymentDiff,
+    totalInterestDiff,
+    totalCostDiff,
+    upfrontCostDiff,
+    breakEvenMonths,
+    recommendation: {
+      betterOverall,
+      lowerMonthly,
+      lowerInterest,
+      headline,
+      subHeadline,
+      description
+    }
+  };
+}

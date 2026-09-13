@@ -24,6 +24,8 @@ import {
   getMonthName
 } from '../lib/mortgageCalculator';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
+import { CurrencyInput } from '../components/CurrencyInput';
+import { NumericInput } from '../components/NumericInput';
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
@@ -375,21 +377,12 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                   ))}
                 </div>
               </div>
-              <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">
-                  $
-                </span>
-                <input
-                  id="home-value"
-                  type="number"
-                  inputMode="numeric"
-                  step="1000"
-                  min="0"
-                  value={homeValue}
-                  onChange={(e) => setHomeValue(Number(e.target.value))}
-                  className="w-full pl-8 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-base sm:text-sm font-semibold tracking-wide outline-none transition-colors"
-                />
-              </div>
+              <CurrencyInput
+                id="home-value"
+                value={homeValue}
+                onChange={setHomeValue}
+                className="py-2.5"
+              />
             </div>
 
             {/* Down Payment */}
@@ -424,21 +417,23 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                   </button>
                 </div>
               </div>
-              <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 font-medium text-sm">
-                  {downPaymentType === 'money' ? '$' : '%'}
-                </span>
-                <input
+              {downPaymentType === 'money' ? (
+                <CurrencyInput
                   id="down-payment"
-                  type="number"
-                  inputMode="decimal"
-                  step={downPaymentType === 'percent' ? '0.5' : '1000'}
-                  min="0"
                   value={downPayment}
-                  onChange={(e) => setDownPayment(Number(e.target.value))}
-                  className="w-full pl-8 pr-4 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-base sm:text-sm font-semibold tracking-wide outline-none transition-colors"
+                  onChange={setDownPayment}
+                  className="py-2.5"
                 />
-              </div>
+              ) : (
+                <NumericInput
+                  id="down-payment"
+                  value={downPayment}
+                  onChange={setDownPayment}
+                  suffix="%"
+                  max={100}
+                  className="py-2.5"
+                />
+              )}
               <div className="flex items-center justify-between text-[11px] text-slate-400 pt-0.5">
                 <span>
                   Actual Down: <strong className="text-slate-200">{fmtInt(summary.downPaymentAmount)}</strong> ({summary.downPaymentPercent.toFixed(1)}%)
@@ -455,44 +450,26 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                 <label htmlFor="interest-rate" className="text-xs font-semibold text-slate-300">
                   Interest Rate (APR)
                 </label>
-                <div className="relative">
-                  <input
-                    id="interest-rate"
-                    type="number"
-                    inputMode="decimal"
-                    step="0.01"
-                    min="0"
-                    max="25"
-                    value={interestRate}
-                    onChange={(e) => setInterestRate(Number(e.target.value))}
-                    className="w-full pl-3.5 pr-8 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-base sm:text-sm font-semibold outline-none transition-colors"
-                  />
-                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">
-                    %
-                  </span>
-                </div>
+                <NumericInput
+                  id="interest-rate"
+                  value={interestRate}
+                  onChange={setInterestRate}
+                  suffix="%"
+                  className="py-2.5"
+                />
               </div>
 
               <div className="space-y-2">
                 <label htmlFor="loan-term" className="text-xs font-semibold text-slate-300">
                   Loan Term (Years)
                 </label>
-                <div className="relative">
-                  <input
-                    id="loan-term"
-                    type="number"
-                    inputMode="numeric"
-                    step="1"
-                    min="1"
-                    max="50"
-                    value={loanTermYears}
-                    onChange={(e) => setLoanTermYears(Number(e.target.value))}
-                    className="w-full pl-3.5 pr-14 py-2.5 rounded-xl bg-slate-950 border border-slate-800 focus:border-indigo-500 text-slate-100 text-base sm:text-sm font-semibold outline-none transition-colors"
-                  />
-                  <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-medium">
-                    years
-                  </span>
-                </div>
+                <NumericInput
+                  id="loan-term"
+                  value={loanTermYears}
+                  onChange={setLoanTermYears}
+                  suffix="years"
+                  className="py-2.5"
+                />
               </div>
             </div>
 
@@ -539,14 +516,13 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                 <label htmlFor="start-year" className="text-xs font-semibold text-slate-300">
                   Start Year
                 </label>
-                <input
+                <NumericInput
                   id="start-year"
-                  type="number"
-                  min="1990"
-                  max="2100"
                   value={startYear}
-                  onChange={(e) => setStartYear(Number(e.target.value))}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-xs font-medium outline-none"
+                  onChange={setStartYear}
+                  min={1990}
+                  max={2100}
+                  className="py-2.5 text-xs font-medium"
                 />
               </div>
             </div>
@@ -564,30 +540,19 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <label htmlFor="property-tax" className="text-xs font-semibold text-slate-300">
-                    Property Tax
+                    Property Taxes
                   </label>
                   <span className="text-[11px] text-slate-400 font-mono">
                     {fmt(summary.monthlyPropertyTax)}/mo
                   </span>
                 </div>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
-                    $
-                  </span>
-                  <input
-                    id="property-tax"
-                    type="number"
-                    inputMode="numeric"
-                    min="0"
-                    step="100"
-                    value={propertyTaxYearly}
-                    onChange={(e) => setPropertyTaxYearly(Number(e.target.value))}
-                    className="w-full pl-7 pr-12 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">
-                    /yr
-                  </span>
-                </div>
+                <CurrencyInput
+                  id="property-tax"
+                  value={propertyTaxYearly}
+                  onChange={setPropertyTaxYearly}
+                  suffix="/yr"
+                  className="py-2 text-xs"
+                />
                 <div className="flex items-center justify-between text-[10px] text-slate-400 pt-0.5">
                   <span>{(homeValue > 0 ? ((propertyTaxYearly / homeValue) * 100).toFixed(2) : '0.00')}% effective</span>
                   <div className="flex items-center gap-1">
@@ -621,24 +586,13 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                     {fmt(summary.monthlyHomeInsurance)}/mo
                   </span>
                 </div>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
-                    $
-                  </span>
-                  <input
-                    id="home-insurance"
-                    type="number"
-                    inputMode="numeric"
-                    min="0"
-                    step="50"
-                    value={homeInsuranceYearly}
-                    onChange={(e) => setHomeInsuranceYearly(Number(e.target.value))}
-                    className="w-full pl-7 pr-12 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">
-                    /yr
-                  </span>
-                </div>
+                <CurrencyInput
+                  id="home-insurance"
+                  value={homeInsuranceYearly}
+                  onChange={setHomeInsuranceYearly}
+                  suffix="/yr"
+                  className="py-2 text-xs"
+                />
               </div>
 
               {/* PMI Rate */}
@@ -662,23 +616,14 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                     {fmt(summary.monthlyPmi)}/mo
                   </span>
                 </div>
-                <div className="relative">
-                  <input
-                    id="pmi-rate"
-                    type="number"
-                    inputMode="decimal"
-                    min="0"
-                    step="0.05"
-                    max="5"
-                    value={summary.isPmiRequired ? pmiRate : 0}
-                    onChange={(e) => setPmiRate(Number(e.target.value))}
-                    disabled={!summary.isPmiRequired}
-                    className="w-full pl-3 pr-8 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none disabled:opacity-40 disabled:cursor-not-allowed"
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
-                    %
-                  </span>
-                </div>
+                <NumericInput
+                  id="pmi-rate"
+                  value={summary.isPmiRequired ? pmiRate : 0}
+                  onChange={setPmiRate}
+                  disabled={!summary.isPmiRequired}
+                  suffix="%"
+                  className="py-2 text-xs"
+                />
               </div>
 
               {/* Monthly HOA */}
@@ -691,24 +636,13 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                     {fmt(summary.monthlyHoa)}/mo
                   </span>
                 </div>
-                <div className="relative">
-                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">
-                    $
-                  </span>
-                  <input
-                    id="monthly-hoa"
-                    type="number"
-                    inputMode="numeric"
-                    min="0"
-                    step="25"
-                    value={monthlyHoa}
-                    onChange={(e) => setMonthlyHoa(Number(e.target.value))}
-                    className="w-full pl-7 pr-12 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
-                  />
-                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px]">
-                    /mo
-                  </span>
-                </div>
+                <CurrencyInput
+                  id="monthly-hoa"
+                  value={monthlyHoa}
+                  onChange={setMonthlyHoa}
+                  suffix="/mo"
+                  className="py-2 text-xs"
+                />
               </div>
             </div>
 
@@ -981,18 +915,13 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
               <label htmlFor="extra-monthly-principal" className="text-xs text-slate-300 font-medium">
                 Add Extra Monthly Principal:
               </label>
-              <div className="relative w-36">
-                <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
-                <input
+              <div className="w-36">
+                <CurrencyInput
                   id="extra-monthly-principal"
-                  type="number"
-                  inputMode="numeric"
-                  step="50"
-                  min="0"
                   value={extraMonthlyPrincipal}
-                  onChange={(e) => setExtraMonthlyPrincipal(Number(e.target.value))}
+                  onChange={setExtraMonthlyPrincipal}
                   placeholder="0"
-                  className="w-full pl-6 pr-2 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-base sm:text-xs font-semibold text-slate-100 outline-none"
+                  className="py-1.5 text-base sm:text-xs font-semibold"
                 />
               </div>
             </div>
@@ -1003,18 +932,13 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                 <label htmlFor="extra-lump-sum" className="text-xs text-slate-300 font-medium">
                   One-time Lump Sum Principal:
                 </label>
-                <div className="relative w-36">
-                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
-                  <input
+                <div className="w-36">
+                  <CurrencyInput
                     id="extra-lump-sum"
-                    type="number"
-                    inputMode="numeric"
-                    step="1000"
-                    min="0"
                     value={extraLumpSumAmount}
-                    onChange={(e) => setExtraLumpSumAmount(Number(e.target.value))}
+                    onChange={setExtraLumpSumAmount}
                     placeholder="0"
-                    className="w-full pl-6 pr-2 py-1.5 rounded-lg bg-slate-950 border border-slate-800 text-base sm:text-xs font-semibold text-slate-100 outline-none"
+                    className="py-1.5 text-base sm:text-xs font-semibold"
                   />
                 </div>
               </div>

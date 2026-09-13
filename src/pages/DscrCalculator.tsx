@@ -1,13 +1,11 @@
 import { useState, useMemo, useEffect } from 'react';
 import {
   Calculator,
-  DollarSign,
   Building,
   TrendingUp,
   Download,
   FileSpreadsheet,
   Sparkles,
-  Percent,
   CheckCircle2,
   ArrowRight,
   BookOpen,
@@ -28,6 +26,8 @@ import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { PrintableDscrReport } from '../components/PrintableDscrReport';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import { RelatedCalculators } from '../components/RelatedCalculators';
+import { CurrencyInput } from '../components/CurrencyInput';
+import { NumericInput } from '../components/NumericInput';
 
 const dscrSchemas = [
   {
@@ -434,16 +434,11 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <span>Purchase / Property Value</span>
                   <span className="text-indigo-400 font-mono font-bold">{currencyFmt(propertyValue)}</span>
                 </label>
-                <div className="relative">
-                  <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    value={propertyValue || ''}
-                    onChange={(e) => setPropertyValue(Math.max(0, Number(e.target.value)))}
-                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
-                  />
-                </div>
+                <CurrencyInput
+                  value={propertyValue}
+                  onChange={(v) => setPropertyValue(Math.max(0, v))}
+                  className="py-2 text-base sm:text-sm font-mono"
+                />
               </div>
 
               {/* Down Payment */}
@@ -476,21 +471,21 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   </div>
                 </div>
 
-                <div className="relative">
-                  {downPaymentType === 'percent' ? (
-                    <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                  ) : (
-                    <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                  )}
-                  <input
-                    type="number"
-                    inputMode={downPaymentType === 'percent' ? 'decimal' : 'numeric'}
-                    step={downPaymentType === 'percent' ? '0.5' : '1000'}
-                    value={downPayment || ''}
-                    onChange={(e) => setDownPayment(Math.max(0, Number(e.target.value)))}
-                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
+                {downPaymentType === 'percent' ? (
+                  <NumericInput
+                    value={downPayment}
+                    onChange={(v) => setDownPayment(Math.max(0, v))}
+                    suffix="%"
+                    step={0.5}
+                    className="py-2 text-base sm:text-sm font-mono"
                   />
-                </div>
+                ) : (
+                  <CurrencyInput
+                    value={downPayment}
+                    onChange={(v) => setDownPayment(Math.max(0, v))}
+                    className="py-2 text-base sm:text-sm font-mono"
+                  />
+                )}
                 <p className="text-[11px] text-slate-400 mt-1 flex justify-between">
                   <span>Down Payment Amount: {currencyFmt(result.downPaymentAmount)}</span>
                   <span>LTV: {result.ltv}%</span>
@@ -503,17 +498,13 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Interest Rate (%)
                   </label>
-                  <div className="relative">
-                    <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      step="0.125"
-                      value={interestRate || ''}
-                      onChange={(e) => setInterestRate(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
-                    />
-                  </div>
+                  <NumericInput
+                    value={interestRate}
+                    onChange={(v) => setInterestRate(Math.max(0, v))}
+                    suffix="%"
+                    step={0.125}
+                    className="py-2 text-base sm:text-sm font-mono"
+                  />
                 </div>
 
                 <div>
@@ -560,16 +551,11 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <span>Monthly Gross Rent Expected</span>
                   <span className="text-emerald-400 font-mono font-bold">{currencyFmt(monthlyRent)}/mo</span>
                 </label>
-                <div className="relative">
-                  <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    value={monthlyRent || ''}
-                    onChange={(e) => setMonthlyRent(Math.max(0, Number(e.target.value)))}
-                    className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
-                  />
-                </div>
+                <CurrencyInput
+                  value={monthlyRent}
+                  onChange={(v) => setMonthlyRent(Math.max(0, v))}
+                  className="py-2 text-base sm:text-sm font-mono"
+                />
               </div>
 
               {/* Taxes & Insurance */}
@@ -578,32 +564,22 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Annual Property Tax
                   </label>
-                  <div className="relative">
-                    <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      value={annualPropertyTax || ''}
-                      onChange={(e) => setAnnualPropertyTax(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
-                    />
-                  </div>
+                  <CurrencyInput
+                    value={annualPropertyTax}
+                    onChange={(v) => setAnnualPropertyTax(Math.max(0, v))}
+                    className="py-2 text-base sm:text-sm font-mono"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Annual Insurance
                   </label>
-                  <div className="relative">
-                    <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      value={annualInsurance || ''}
-                      onChange={(e) => setAnnualInsurance(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
-                    />
-                  </div>
+                  <CurrencyInput
+                    value={annualInsurance}
+                    onChange={(v) => setAnnualInsurance(Math.max(0, v))}
+                    className="py-2 text-base sm:text-sm font-mono"
+                  />
                 </div>
               </div>
 
@@ -613,32 +589,24 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Monthly HOA Fee
                   </label>
-                  <div className="relative">
-                    <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      value={monthlyHoa || ''}
-                      onChange={(e) => setMonthlyHoa(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
-                    />
-                  </div>
+                  <CurrencyInput
+                    value={monthlyHoa}
+                    onChange={(v) => setMonthlyHoa(Math.max(0, v))}
+                    className="py-2 text-base sm:text-sm font-mono"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Vacancy Rate (%)
                   </label>
-                  <div className="relative">
-                    <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      value={vacancyRate || ''}
-                      onChange={(e) => setVacancyRate(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
-                    />
-                  </div>
+                  <NumericInput
+                    value={vacancyRate}
+                    onChange={(v) => setVacancyRate(Math.max(0, v))}
+                    suffix="%"
+                    step={0.5}
+                    className="py-2 text-base sm:text-sm font-mono"
+                  />
                 </div>
               </div>
 
@@ -648,45 +616,35 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Mgmt Fee (%)
                   </label>
-                  <div className="relative">
-                    <Percent className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      value={managementFeeRate || ''}
-                      onChange={(e) => setManagementFeeRate(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-2 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
-                    />
-                  </div>
+                  <NumericInput
+                    value={managementFeeRate}
+                    onChange={(v) => setManagementFeeRate(Math.max(0, v))}
+                    suffix="%"
+                    step={0.5}
+                    className="py-2 text-base sm:text-sm font-mono"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Maintenance ($/yr)
                   </label>
-                  <div className="relative">
-                    <DollarSign className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      value={annualMaintenanceReserve || ''}
-                      onChange={(e) => setAnnualMaintenanceReserve(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-2 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-indigo-500 transition-colors"
-                    />
-                  </div>
+                  <CurrencyInput
+                    value={annualMaintenanceReserve}
+                    onChange={(v) => setAnnualMaintenanceReserve(Math.max(0, v))}
+                    className="py-2 text-base sm:text-sm font-mono"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Target DSCR
                   </label>
-                  <input
-                    type="number"
-                    inputMode="decimal"
-                    step="0.05"
-                    value={targetDscr || ''}
-                    onChange={(e) => setTargetDscr(Math.max(0.5, Number(e.target.value)))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-indigo-300 font-mono font-bold focus:outline-none focus:border-indigo-500 transition-colors"
+                  <NumericInput
+                    value={targetDscr}
+                    onChange={(v) => setTargetDscr(Math.max(0.5, v))}
+                    step={0.05}
+                    className="py-2 text-base sm:text-sm font-mono font-bold text-indigo-300"
                   />
                 </div>
               </div>

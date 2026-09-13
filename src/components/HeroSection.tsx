@@ -23,7 +23,8 @@ export const HeroSection = ({
     'Apache Parquet',
     'JSON & NDJSON',
     'DuckDB SQL',
-    'Calculators & FinOps'
+    'Commercial Loans & Mortgages',
+    'Payroll & Wage Models'
   ];
 
   return (
@@ -55,16 +56,16 @@ export const HeroSection = ({
 
         {/* Main Headline */}
         <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-100 tracking-tight leading-[1.15] mb-5">
-          Every tool you need to{' '}
+          The 100% Private In-Browser{' '}
           <span className="bg-gradient-to-r from-emerald-400 via-indigo-300 to-cyan-400 bg-clip-text text-transparent">
-            view, query & convert
+            Spreadsheet & Analytical Modeling
           </span>{' '}
-          data files
+          Engine
         </h1>
 
         {/* Subtitle */}
         <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto mb-7">
-          Fast, 100% private in-browser viewers, converters, and SQL workbench for CSV, Excel, Parquet, and JSON. Runs entirely in local browser WebAssembly memory with zero cloud file uploads.
+          Fast, zero-server-egress workspace for inspecting CSV, Excel, Parquet, and JSON, running DuckDB SQL analytics, and modeling commercial loans, mortgages, and payroll directly in browser memory.
         </p>
 
         {/* Supported Formats Badges */}

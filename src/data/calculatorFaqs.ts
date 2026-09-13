@@ -234,6 +234,101 @@ export const CALCULATOR_FAQS: Record<string, CalcFaq[]> = {
       a: 'Avro is a row-oriented format optimized for write-heavy streaming message queues (Kafka). Parquet and ORC are both columnar formats optimized for analytical read queries (OLAP). Parquet has achieved universal cross-platform dominance across Spark, DuckDB, Trino, Snowflake, Databricks, ClickHouse, and AWS Athena.',
     },
   ],
+
+  '/loan-comparison-calculator': [
+    {
+      q: 'How do discount points affect my loan comparison?',
+      a: 'One mortgage point costs 1% of the loan amount and typically lowers your interest rate by 0.25%. To determine if paying points is worthwhile, divide the upfront cost of the points by the monthly payment savings. If you plan to keep the loan longer than the break-even period (typically 36 to 60 months), buying points saves money.',
+    },
+    {
+      q: 'Why can a 15-year loan save hundreds of thousands in interest?',
+      a: 'A 15-year loan features higher monthly principal and interest payments than a 30-year loan, but cuts the compounding timeline in half and usually carries a lower interest rate (0.5% to 1.0% lower). This combination drastically reduces total lifetime interest payments.',
+    },
+    {
+      q: 'How is the break-even point on loan upfront fees calculated?',
+      a: 'Break-even in months = (Total Upfront Closing Costs of Loan B - Total Upfront Costs of Loan A) / (Monthly Payment of Loan A - Monthly Payment of Loan B). It tells you how many months you must hold the loan before lower monthly payments compensate for higher upfront origination fees.',
+    },
+    {
+      q: 'What is the benefit of making extra monthly principal payments?',
+      a: 'Any extra dollar paid directly toward principal shortens the repayment schedule and eliminates the compound interest that would have accrued on that dollar across remaining years. Even an extra $100/month can shave 3 to 5 years off a 30-year term.',
+    },
+  ],
+
+  '/commercial-loan-calculator': [
+    {
+      q: 'What is a balloon payment on a commercial real estate loan?',
+      a: 'A balloon payment is the remaining lump-sum principal balance due at the end of a commercial loan term (often 5, 7, or 10 years) when the amortization schedule is longer (typically 20, 25, or 30 years). The borrower must pay off, refinance, or sell the property before the balloon maturity date.',
+    },
+    {
+      q: 'Why do commercial mortgages have 20 or 25-year amortizations with 5 or 10-year terms?',
+      a: 'Commercial lenders avoid locking in long-term fixed interest rates for 30 years due to interest rate risk. Structuring loans with a 25-year amortization keeps monthly debt service manageable while a 5-to-10-year maturity allows the bank to re-evaluate underwriting and reset interest rates.',
+    },
+    {
+      q: 'What happens when a commercial balloon loan matures?',
+      a: 'Upon maturity, the borrower must satisfy the balloon payment by refinancing with the current lender or a new lender, paying cash from reserves, or selling the asset. Borrowers should begin the refinancing process 6 to 12 months prior to the balloon maturity date.',
+    },
+    {
+      q: 'What is an Interest-Only (IO) period in commercial financing?',
+      a: 'During an Interest-Only period (e.g. initial 1 to 3 years), the borrower only pays monthly interest and no principal. This maximizes cash flow during property renovations, tenant lease-up, or stabilization before standard amortization commences.',
+    },
+  ],
+
+  '/salary-to-hourly-calculator': [
+    {
+      q: 'What is the standard formula to convert salary to hourly?',
+      a: 'Divide your total annual gross salary by the number of hours worked in a year. In a standard full-time role with 40 hours per week and 52 weeks per year (including paid holidays and vacation), there are 2,080 hours. For example, a $75,000 salary equals $75,000 / 2,080 = $36.06/hour.',
+    },
+    {
+      q: 'Why does this calculator not include federal and state income taxes?',
+      a: 'This calculator computes pure gross mathematical conversions. Net take-home pay depends on personal W-4 withholding allowances, pre-tax 401(k) and HSA contributions, health insurance deductions, and state tax brackets (which range from 0% in Florida/Texas/Washington to over 13% in California). Providing an inaccurate net tax estimate would be misleading for contract negotiation.',
+    },
+    {
+      q: 'How does paid time off (PTO) affect my effective hourly wage?',
+      a: 'If you receive 25 days of paid time off (10 holidays + 15 vacation days), you actually work 1,880 hours instead of 2,080. If you divide your annual salary by only the actual hours worked, your "effective working wage" is higher. However, for payroll calculations, your base hourly rate remains calculated over the 2,080 total paid hours.',
+    },
+    {
+      q: 'How is overtime calculated for salaried non-exempt employees?',
+      a: 'For salaried non-exempt employees, the regular hourly rate is determined by dividing the weekly salary by 40 hours. For every hour worked above 40 in that week, the employee receives an extra half-time (0.5x) or time-and-a-half (1.5x) depending on whether the salary was intended to cover all hours worked or standard 40 hours.',
+    },
+  ],
+
+  '/json-formatter': [
+    {
+      q: 'Does this JSON formatter upload my data to any remote server?',
+      a: 'No! The JSON formatter operates 100% locally in your web browser using JavaScript and WebAssembly. Your data never leaves your computer, making it completely safe for API keys, confidential customer records, and production tokens.',
+    },
+    {
+      q: 'How does the in-browser JSON validator pinpoint syntax errors?',
+      a: 'The parser analyzes JSON character by character. When invalid tokens, unquoted keys, trailing commas, or unclosed braces are encountered, it identifies the exact line number, column offset, and unexpected character snippet.',
+    },
+    {
+      q: 'Can this tool format large JSON files with thousands of lines?',
+      a: 'Yes, modern browser V8 engines can format multi-megabyte JSON payloads in milliseconds. For files exceeding hundreds of megabytes, you can also use TableView\'s DuckDB SQL engine to query NDJSON/JSONL directly.',
+    },
+    {
+      q: 'What is the difference between JSON minification and beautification?',
+      a: 'Beautification adds standard 2-space or 4-space indentation and line breaks for human readability. Minification strips all unnecessary whitespace, comments, and newlines to compress file size for HTTP transmission and API payloads.',
+    },
+  ],
+
+  '/sql-formatter': [
+    {
+      q: 'Which SQL dialects are supported by this formatter?',
+      a: 'Our SQL formatter supports DuckDB, PostgreSQL, MySQL, SQLite, Snowflake, Amazon Redshift, Google BigQuery, MariaDB, Transact-SQL (T-SQL), Spark SQL, and standard ANSI SQL.',
+    },
+    {
+      q: 'Can I execute queries directly after formatting?',
+      a: 'Yes! You can click "Open in DuckDB SQL Workbench" to immediately execute the formatted SQL query against local CSV, Parquet, or Excel files in your browser with zero database installation.',
+    },
+    {
+      q: 'Is my SQL query or schema sent to external servers?',
+      a: 'No. Formatting is executed entirely on your client device inside browser JavaScript. Confidential database schemas, table names, and proprietary business logic remain 100% private.',
+    },
+    {
+      q: 'What does SQL Minify do?',
+      a: 'SQL Minify removes redundant whitespace, comments, and line breaks to compress queries into a single compact string. This is ideal for embedding queries into source code, application config files, or URL parameters.',
+    },
+  ],
 };
 export function getCalculatorFaqs(path: string): CalcFaq[] {
   return CALCULATOR_FAQS[path] ?? [];

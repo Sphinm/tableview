@@ -24,6 +24,7 @@ import { fileURLToPath } from 'node:url';
 import { TOOLS_CONFIG } from '../src/data/tools';
 import { guidesData } from '../src/data/guides';
 import { listPrerenderTargets, resolveRoutePath } from '../src/lib/resolveRoute';
+import { SALARY_LONG_TAIL_MAP } from '../src/data/salaryLongTail';
 import {
   HOME_META,
   GUIDES_HUB_META,
@@ -258,6 +259,62 @@ function resolvePage(url: string, canonical: string): ResolvedPage {
         breadcrumb([
           { name: 'Home', url: '/' },
           { name: label, url: calc.canonical },
+        ]),
+      ],
+    };
+  }
+
+  // --- Programmatic Salary Long-Tail Pages ----------------------------------
+  const salaryPage = SALARY_LONG_TAIL_MAP[canonical];
+  if (salaryPage) {
+    const label = salaryPage.title.includes('?')
+      ? `${salaryPage.title.split('?')[0].trim()}?`
+      : salaryPage.title;
+    const faqs = [
+      {
+        q: `How much is a $${salaryPage.salary.toLocaleString()} annual salary per hour?`,
+        a: `A $${salaryPage.salary.toLocaleString()} yearly salary equals $${salaryPage.hourlyRate} per hour for a standard 40-hour workweek across 52 weeks (2,080 working hours).`,
+      },
+      {
+        q: `What is the bi-weekly paycheck for $${salaryPage.salary.toLocaleString()} a year?`,
+        a: `Assuming 26 pay periods per year, a $${salaryPage.salary.toLocaleString()} salary yields a gross bi-weekly paycheck of $${salaryPage.biweekly} before deductions and taxes.`,
+      },
+      {
+        q: `How much overtime pay do you get with a $${salaryPage.salary.toLocaleString()} salary?`,
+        a: `At a base hourly rate of $${salaryPage.hourlyRate}, non-exempt employees earn $${(Number(salaryPage.hourlyRate) * 1.5).toFixed(2)} per hour for FLSA 1.5x time-and-a-half overtime.`,
+      },
+    ];
+
+    return {
+      title: salaryPage.metaTitle,
+      description: salaryPage.metaDescription,
+      canonical: salaryPage.path,
+      route,
+      faqs,
+      h1: label,
+      intro: salaryPage.metaDescription,
+      jsonLd: [
+        {
+          '@type': 'WebApplication',
+          name: label,
+          url: `${SITE}${salaryPage.path}`,
+          description: salaryPage.metaDescription,
+          applicationCategory: 'FinanceApplication',
+          operatingSystem: 'All',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: faqs.map((f) => ({
+            '@type': 'Question',
+            name: f.q,
+            acceptedAnswer: { '@type': 'Answer', text: f.a },
+          })),
+        },
+        breadcrumb([
+          { name: 'Home', url: '/' },
+          { name: 'Salary to Hourly Calculator', url: '/salary-to-hourly-calculator' },
+          { name: `$${salaryPage.salary.toLocaleString()} a Year to Hourly`, url: salaryPage.path },
         ]),
       ],
     };

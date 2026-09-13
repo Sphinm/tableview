@@ -29,6 +29,11 @@ const SnowflakeCalculator = lazy(() => import('./pages/SnowflakeCalculator').the
 const ParquetSavingsCalculator = lazy(() => import('./pages/ParquetSavingsCalculator').then(m => ({ default: m.ParquetSavingsCalculator })));
 const FinanceCalculatorHub = lazy(() => import('./pages/FinanceCalculatorHub').then(m => ({ default: m.FinanceCalculatorHub })));
 const Section1031Calculator = lazy(() => import('./pages/Section1031Calculator').then(m => ({ default: m.Section1031Calculator })));
+const LoanComparisonCalculator = lazy(() => import('./pages/LoanComparisonCalculator').then(m => ({ default: m.LoanComparisonCalculator })));
+const CommercialLoanCalculator = lazy(() => import('./pages/CommercialLoanCalculator').then(m => ({ default: m.CommercialLoanCalculator })));
+const SalaryCalculator = lazy(() => import('./pages/SalaryCalculator').then(m => ({ default: m.SalaryCalculator })));
+const JsonFormatter = lazy(() => import('./pages/JsonFormatter').then(m => ({ default: m.JsonFormatter })));
+const SqlFormatter = lazy(() => import('./pages/SqlFormatter').then(m => ({ default: m.SqlFormatter })));
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
 import { TOOLS_CONFIG } from './data/tools';
 import { getInitialTheme, applyTheme, type Theme } from './lib/theme';
@@ -39,6 +44,7 @@ import { isEngineLoadError } from './lib/engineError';
 import { analytics, sizeBucket, fileExtension } from './lib/analytics';
 import { HOME_META, GUIDES_HUB_META, STATIC_PAGE_META } from './data/routeMeta';
 import { isKnownRoute } from './lib/resolveRoute';
+import { SALARY_LONG_TAIL_SLUG_MAP } from './data/salaryLongTail';
 
 export function App() {
   const { path, slug } = useRouter();
@@ -291,25 +297,50 @@ export function App() {
         return <TermsOfService />;
 
       case '/mortgage-calculator':
-        return <MortgageCalculator onTrySample={handleTrySample} />;
+        return <MortgageCalculator />;
 
       case '/refinance-calculator':
-        return <RefinanceCalculator onTrySample={handleTrySample} />;
+        return <RefinanceCalculator />;
 
       case '/dscr-loan-calculator':
-        return <DscrCalculator onTrySample={handleTrySample} />;
+        return <DscrCalculator />;
 
       case '/hard-money-calculator':
-        return <HardMoneyCalculator onTrySample={handleTrySample} />;
+        return <HardMoneyCalculator />;
 
       case '/snowflake-cost-calculator':
-        return <SnowflakeCalculator onTrySample={handleTrySample} />;
+        return <SnowflakeCalculator />;
 
       case '/parquet-storage-calculator':
-        return <ParquetSavingsCalculator onTrySample={handleTrySample} />;
+        return <ParquetSavingsCalculator />;
 
       case '/section-1031-exchange-calculator':
         return <Section1031Calculator />;
+
+      case '/loan-comparison-calculator':
+        return <LoanComparisonCalculator />;
+
+      case '/commercial-loan-calculator':
+        return <CommercialLoanCalculator />;
+
+      case '/salary-to-hourly-calculator': {
+        const longTailConfig = slug ? SALARY_LONG_TAIL_SLUG_MAP[slug] : undefined;
+        return (
+          <SalaryCalculator
+            key={slug || 'default'}
+            initialSalary={longTailConfig?.salary}
+            customTitle={longTailConfig?.title || longTailConfig?.metaTitle}
+            customDescription={longTailConfig?.metaDescription}
+            canonicalPath={longTailConfig?.path}
+          />
+        );
+      }
+
+      case '/json-formatter':
+        return <JsonFormatter />;
+
+      case '/sql-formatter':
+        return <SqlFormatter />;
 
       case '/finance-calculator':
       case '/calculator':

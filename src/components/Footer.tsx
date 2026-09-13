@@ -222,6 +222,24 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                   </span>
                 </a>
               </li>
+              <li>
+                <a
+                  href="/json-formatter"
+                  onClick={(e) => handleNav(e, '/json-formatter')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  JSON Formatter
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/sql-formatter"
+                  onClick={(e) => handleNav(e, '/sql-formatter')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  SQL Formatter
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -242,6 +260,60 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
                     High ROI
                   </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/commercial-loan-calculator"
+                  onClick={(e) => handleNav(e, '/commercial-loan-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Commercial Loan & Balloon
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/section-1031-exchange-calculator"
+                  onClick={(e) => handleNav(e, '/section-1031-exchange-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  1031 Exchange Tax Shield
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/loan-comparison-calculator"
+                  onClick={(e) => handleNav(e, '/loan-comparison-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Loan Comparison (Side-by-Side)
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/salary-to-hourly-calculator"
+                  onClick={(e) => handleNav(e, '/salary-to-hourly-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Salary to Hourly & Payroll
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/mortgage-calculator"
+                  onClick={(e) => handleNav(e, '/mortgage-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Mortgage Calculator
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/refinance-calculator"
+                  onClick={(e) => handleNav(e, '/refinance-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Refinance Break-Even
                 </a>
               </li>
               <li>
@@ -269,24 +341,6 @@ export const Footer = ({ onTrySample }: FooterProps) => {
                   className="hover:text-slate-100 transition-colors block"
                 >
                   Parquet Cloud Savings
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/mortgage-calculator"
-                  onClick={(e) => handleNav(e, '/mortgage-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Mortgage Calculator
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/refinance-calculator"
-                  onClick={(e) => handleNav(e, '/refinance-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Refinance Break-Even
                 </a>
               </li>
               <li className="pt-1">

@@ -113,17 +113,6 @@ export const AdSlot = ({
   // Nothing to show until a real unit id exists. Rendering an <ins> with the
   // placeholder would submit invalid requests, so keep the DOM clean instead.
   if (!isConfigured) {
-    if (import.meta.env.DEV) {
-      return (
-        <div
-          className={`ad-slot no-print my-6 flex items-center justify-center rounded-xl border border-dashed border-slate-700 bg-slate-900/40 text-[11px] text-slate-500 ${className}`}
-          style={{ minHeight: reserved }}
-          data-ad-placeholder={unit ?? 'unconfigured'}
-        >
-          Ad slot "{unit ?? slot ?? 'unknown'}" — set a real unit id in src/data/adSlots.ts
-        </div>
-      );
-    }
     return null;
   }
 

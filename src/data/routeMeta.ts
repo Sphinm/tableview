@@ -13,9 +13,9 @@ export interface PageMeta {
 }
 
 export const HOME_META: PageMeta = {
-  title: 'TableView.dev — Browser Data Workspace for CSV, Excel, Parquet & JSON',
+  title: 'TableView.dev — 100% Private In-Browser Spreadsheet & Analytical Modeling Engine',
   description:
-    '100% private in-browser data workspace. View, query with SQL, and convert CSV, Excel (.xlsx), Apache Parquet, and JSON files directly in your browser with zero server uploads.',
+    'High-performance client-side data workspace and financial modeling engine. Inspect, query with DuckDB SQL, and convert CSV, Excel, Parquet & JSON, or model commercial loans, mortgages, and payroll with zero server uploads.',
   canonical: '/',
 };
 
@@ -69,6 +69,36 @@ export const CALCULATOR_META: Record<string, PageMeta> = {
     description:
       'Free in-browser 1031 exchange calculator. Compute realized gain, cash and mortgage boot, deferred gain and the tax you actually owe, plus the 45-day identification and 180-day exchange deadlines. Nothing is uploaded.',
     canonical: '/section-1031-exchange-calculator',
+  },
+  '/loan-comparison-calculator': {
+    title: 'Loan Comparison Calculator — Side-by-Side Payment & Interest Analysis | TableView.dev',
+    description:
+      'Compare two loans side-by-side. Calculate monthly payment differences, lifetime interest savings, break-even on discount points, and total costs with Excel export.',
+    canonical: '/loan-comparison-calculator',
+  },
+  '/commercial-loan-calculator': {
+    title: 'Commercial Real Estate Loan & Balloon Payment Calculator | TableView.dev',
+    description:
+      'Calculate commercial mortgage payments, balloon payment at maturity, interest-only options, and loan balance with instant Excel schedule export.',
+    canonical: '/commercial-loan-calculator',
+  },
+  '/salary-to-hourly-calculator': {
+    title: 'Salary to Hourly Calculator — Convert Paycheck, Overtime & Wage Matrix | TableView.dev',
+    description:
+      'Convert annual salary to hourly wage, daily, weekly, bi-weekly (26x), and monthly paycheck. Compute FLSA 1.5x overtime and PTO value with Excel export.',
+    canonical: '/salary-to-hourly-calculator',
+  },
+  '/json-formatter': {
+    title: 'JSON Formatter, Validator & Beautifier Online — 100% Client-Side | TableView.dev',
+    description:
+      'Format, indent, validate, and minify JSON online. 100% private in-browser tool with line and column syntax error detection. Zero server uploads.',
+    canonical: '/json-formatter',
+  },
+  '/sql-formatter': {
+    title: 'SQL Formatter, Beautifier & Minifier Online — DuckDB, Postgres & MySQL | TableView.dev',
+    description:
+      'Beautify, indent, format, and minify SQL queries online. Supports DuckDB, PostgreSQL, MySQL, SQLite, Snowflake, and BigQuery. 100% in-browser.',
+    canonical: '/sql-formatter',
   },
   '/finance-calculator': {
     title: 'Financial Calculators Hub - Free Personal Finance & Loan Tools | TableView.dev',

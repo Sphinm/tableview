@@ -1,5 +1,6 @@
 import { TOOLS_CONFIG } from '../data/tools';
 import { isGuideSlug, GUIDE_SLUGS } from '../data/guideSlugs';
+import { SALARY_LONG_TAIL_MAP, SALARY_LONG_TAIL_PAGES } from '../data/salaryLongTail';
 
 export interface RouteState {
   path: string;
@@ -70,6 +71,28 @@ const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
       /^\/(?:tools\/)?(?:section-1031-exchange-calculator|1031-exchange-calculator|1031-calculator|like-kind-exchange-calculator|1031-exchange|1031)$/,
     path: '/section-1031-exchange-calculator',
   },
+  {
+    pattern: /^\/(?:tools\/)?(?:loan-comparison-calculator|loan-compare|compare-loans|loan-comparison)$/,
+    path: '/loan-comparison-calculator',
+  },
+  {
+    pattern:
+      /^\/(?:tools\/)?(?:commercial-loan-calculator|commercial-mortgage-calculator|balloon-payment-calculator|commercial-property-loan-calculator|commercial-real-estate-loan-calculator)$/,
+    path: '/commercial-loan-calculator',
+  },
+  {
+    pattern:
+      /^\/(?:tools\/)?(?:salary-to-hourly-calculator|hourly-to-salary-calculator|salary-to-hourly|hourly-to-salary|salary-calculator)$/,
+    path: '/salary-to-hourly-calculator',
+  },
+  {
+    pattern: /^\/(?:tools\/)?(?:json-formatter|json-beautifier|json-validator|json-viewer-online|format-json)$/,
+    path: '/json-formatter',
+  },
+  {
+    pattern: /^\/(?:tools\/)?(?:sql-formatter|sql-beautifier|sql-minify|format-sql)$/,
+    path: '/sql-formatter',
+  },
   { pattern: /^\/(?:finance-calculator|calculators|financial-calculators|calculator)$/, path: '/finance-calculator' },
 ];
 
@@ -102,6 +125,10 @@ export function resolveRoutePath(cleanPath: string): RouteState {
 
   for (const { pattern, path } of STATIC_ALIASES) {
     if (pattern.test(raw)) return { path };
+  }
+
+  if (SALARY_LONG_TAIL_MAP[raw]) {
+    return { path: '/salary-to-hourly-calculator', slug: SALARY_LONG_TAIL_MAP[raw].slug };
   }
 
   const potentialToolSlug = raw.startsWith('/tools/') ? raw.replace('/tools/', '') : raw.slice(1);
@@ -156,6 +183,12 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/snowflake-cost-calculator',
   '/parquet-storage-calculator',
   '/section-1031-exchange-calculator',
+  '/loan-comparison-calculator',
+  '/commercial-loan-calculator',
+  '/salary-to-hourly-calculator',
+  ...SALARY_LONG_TAIL_PAGES.map((p) => p.path),
+  '/json-formatter',
+  '/sql-formatter',
   '/about',
   '/contact',
   '/privacy',
@@ -165,6 +198,26 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
 
 export function isKnownRoute(path: string): boolean {
   return KNOWN_ROUTES.has(path);
+}
+
+/**
+ * Checks if a given path or alias represents any calculator page
+ * (including commercial, mortgage, refinance, dscr, salary long-tail, etc.).
+ */
+export function isCalculatorRoute(currentPath: string): boolean {
+  if (!currentPath) return false;
+  return (
+    currentPath.includes('calculator') ||
+    currentPath.includes('refinance') ||
+    currentPath.includes('mortgage') ||
+    currentPath.includes('dscr') ||
+    currentPath.includes('hard-money') ||
+    currentPath.includes('snowflake') ||
+    currentPath.includes('loan') ||
+    currentPath.includes('exchange') ||
+    currentPath.includes('salary') ||
+    currentPath.includes('how-much-an-hour')
+  );
 }
 
 /**
@@ -213,12 +266,32 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
       '/1031-exchange-calculator',
       '/like-kind-exchange-calculator',
     ],
+    '/loan-comparison-calculator': ['/loan-compare', '/compare-loans', '/loan-comparison'],
+    '/commercial-loan-calculator': [
+      '/commercial-mortgage-calculator',
+      '/balloon-payment-calculator',
+      '/commercial-property-loan-calculator',
+      '/commercial-real-estate-loan-calculator',
+    ],
+    '/salary-to-hourly-calculator': [
+      '/hourly-to-salary-calculator',
+      '/salary-to-hourly',
+      '/hourly-to-salary',
+      '/salary-calculator',
+    ],
+    '/json-formatter': ['/json-beautifier', '/json-validator', '/json-viewer-online', '/format-json'],
+    '/sql-formatter': ['/sql-beautifier', '/sql-minify', '/format-sql'],
   };
   for (const [canonical, aliases] of Object.entries(calculatorAliases)) {
     // The canonical itself must exist too — /finance-calculator is not in
     // TOOLS_CONFIG, so without this its aliases pointed at a missing page.
     add(canonical, canonical);
     for (const alias of aliases) add(alias, canonical);
+  }
+
+  // Programmatic Salary Long-Tail Pages
+  for (const page of SALARY_LONG_TAIL_PAGES) {
+    add(page.path, page.path);
   }
 
   // Guides

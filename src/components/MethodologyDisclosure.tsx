@@ -1,7 +1,7 @@
 import { ShieldCheck, BookOpen, Lock, Scale, Clock } from 'lucide-react';
 
 interface MethodologyDisclosureProps {
-  type?: 'mortgage' | 'dscr' | 'refinance' | 'hardmoney' | 'cloud' | 'section1031';
+  type?: 'mortgage' | 'dscr' | 'refinance' | 'hardmoney' | 'cloud' | 'section1031' | 'loanComparison' | 'commercial' | 'salary';
 }
 
 export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosureProps) => {
@@ -118,6 +118,72 @@ export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosu
               icon: Lock,
               title: 'Zero Telemetry & Egress Fees',
               desc: 'Benchmark your cloud data architecture client-side without connecting your AWS or Snowflake IAM credentials.'
+            }
+          ]
+        };
+
+      case 'loanComparison':
+        return {
+          title: 'Side-by-Side Loan Comparison Methodology',
+          standards: [
+            {
+              icon: Scale,
+              title: 'Standard Fixed-Rate Amortization Math',
+              desc: 'Monthly principal and interest payments for each loan option are computed using standard banking formulas: M = P[r(1+r)^n]/[(1+r)^n - 1].'
+            },
+            {
+              icon: BookOpen,
+              title: 'Discount Points Break-Even Formula',
+              desc: 'Net break-even months = (Upfront Costs Loan B - Upfront Costs Loan A) / (Monthly Payment Loan A - Monthly Payment Loan B).'
+            },
+            {
+              icon: Lock,
+              title: '100% Client-Side Privacy Guarantee',
+              desc: 'All loan figures, proposed interest rates, and financial terms are processed solely in local memory with zero remote transmission.'
+            }
+          ]
+        };
+
+      case 'commercial':
+        return {
+          title: 'Commercial Real Estate Loan Underwriting Standards',
+          standards: [
+            {
+              icon: Scale,
+              title: 'Balloon Principal Balance Computation',
+              desc: 'Monthly debt service is calculated over the full 20 to 30-year amortization schedule, and remaining principal is compounded to the balloon maturity date.'
+            },
+            {
+              icon: BookOpen,
+              title: 'Interest-Only (IO) Period Modeling',
+              desc: 'During IO periods, payments equal loan amount times monthly rate, preserving cash flow before principal amortization commences.'
+            },
+            {
+              icon: Lock,
+              title: '100% Private Deal Evaluation',
+              desc: 'Property values, commercial financing terms, and underwriting metrics never leave your device.'
+            }
+          ]
+        };
+
+      case 'salary':
+        return {
+          title: 'Gross Wage & FLSA Overtime Standards',
+          standards: [
+            {
+              icon: Scale,
+              title: '2,080 Standard Annual Working Hours',
+              desc: 'Hourly rates are converted using standard US Department of Labor benchmarks: 40 hours per week across 52 weeks per calendar year.'
+            },
+            {
+              icon: BookOpen,
+              title: 'FLSA Statutory Overtime Rules',
+              desc: 'Calculates non-exempt overtime at 1.5x time-and-a-half according to Fair Labor Standards Act federal regulations.'
+            },
+            {
+              icon: Lock,
+              title: '100% Client-Side Privacy Guarantee',
+              desc: 'No compensation figures, hourly rates, or payroll terms are ever transmitted to any server or tracked.'
             }
           ]
         };

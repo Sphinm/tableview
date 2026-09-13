@@ -1,8 +1,9 @@
 import { describe, it, expect } from 'bun:test';
-import { listPrerenderTargets, resolveRoutePath, isKnownRoute, GUIDE_SLUGS } from '../resolveRoute';
+import { listPrerenderTargets, resolveRoutePath, isKnownRoute, isCalculatorRoute, GUIDE_SLUGS } from '../resolveRoute';
 import { TOOLS_CONFIG } from '../../data/tools';
 import { guidesData } from '../../data/guides';
 import { HOME_META, GUIDES_HUB_META, CALCULATOR_META, STATIC_PAGE_META } from '../../data/routeMeta';
+import { SALARY_LONG_TAIL_MAP } from '../../data/salaryLongTail';
 
 /** Route keys the app actually renders (mirrors App.tsx's switch). */
 const APP_ROUTES = new Set([
@@ -19,6 +20,11 @@ const APP_ROUTES = new Set([
   '/snowflake-cost-calculator',
   '/parquet-storage-calculator',
   '/section-1031-exchange-calculator',
+  '/loan-comparison-calculator',
+  '/commercial-loan-calculator',
+  '/salary-to-hourly-calculator',
+  '/json-formatter',
+  '/sql-formatter',
   '/about',
   '/contact',
   '/privacy',
@@ -40,6 +46,9 @@ function titleFor(canonical: string): string | undefined {
 
   const calc = CALCULATOR_META[canonical];
   if (calc) return calc.title;
+
+  const salaryPage = SALARY_LONG_TAIL_MAP[canonical];
+  if (salaryPage) return salaryPage.metaTitle;
 
   const tool = TOOLS_BY_PATH.get(canonical);
   if (tool) return tool.metaTitle;
@@ -184,5 +193,44 @@ describe('Known-route classification (drives the noindex 404 guard)', () => {
     for (const { url } of targets) {
       expect(isKnownRoute(resolveRoutePath(url).path)).toBe(true);
     }
+  });
+
+  describe('isCalculatorRoute', () => {
+    it('identifies all primary financial calculators', () => {
+      const calcPaths = [
+        '/mortgage-calculator',
+        '/refinance-calculator',
+        '/dscr-loan-calculator',
+        '/hard-money-calculator',
+        '/snowflake-cost-calculator',
+        '/parquet-storage-calculator',
+        '/section-1031-exchange-calculator',
+        '/loan-comparison-calculator',
+        '/commercial-loan-calculator',
+        '/salary-to-hourly-calculator',
+        '/finance-calculator',
+        '/calculator',
+      ];
+
+      for (const p of calcPaths) {
+        expect(isCalculatorRoute(p)).toBe(true);
+      }
+    });
+
+    it('identifies programmatic salary SEO routes', () => {
+      expect(isCalculatorRoute('/30000-a-year-is-how-much-an-hour')).toBe(true);
+      expect(isCalculatorRoute('/100000-a-year-is-how-much-an-hour')).toBe(true);
+    });
+
+    it('returns false for data tools, guides, and static pages', () => {
+      expect(isCalculatorRoute('/')).toBe(false);
+      expect(isCalculatorRoute('/csv-viewer')).toBe(false);
+      expect(isCalculatorRoute('/parquet-viewer')).toBe(false);
+      expect(isCalculatorRoute('/sql-workbench')).toBe(false);
+      expect(isCalculatorRoute('/json-formatter')).toBe(false);
+      expect(isCalculatorRoute('/guides')).toBe(false);
+      expect(isCalculatorRoute('/about')).toBe(false);
+      expect(isCalculatorRoute('/privacy')).toBe(false);
+    });
   });
 });

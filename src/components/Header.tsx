@@ -27,9 +27,13 @@ import {
   Zap,
   FileText,
   Terminal,
-  Database
+  Database,
+  Scale,
+  Building2,
+  DollarSign
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
+import { isCalculatorRoute } from '../lib/resolveRoute';
 
 interface HeaderProps {
   onTrySample?: () => void;
@@ -130,13 +134,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
     currentPath.startsWith('/sql-') ||
     currentPath.startsWith('/tools');
   const isWorkbench = !isToolsSection && (currentPath === '/' || currentPath === '');
-  const isCalculatorSection =
-    currentPath.includes('calculator') ||
-    currentPath.includes('refinance') ||
-    currentPath.includes('mortgage') ||
-    currentPath.includes('dscr') ||
-    currentPath.includes('hard-money') ||
-    currentPath.includes('snowflake');
+  const isCalculatorSection = isCalculatorRoute(currentPath);
   const isGuides = currentPath.startsWith('/guides');
   const isAbout = currentPath === '/about';
   const isContact = currentPath === '/contact';
@@ -234,6 +232,18 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
       badge: 'SQL'
     },
     {
+      title: 'JSON Formatter',
+      description: 'Prettify, validate & fix JSON syntax',
+      path: '/json-formatter',
+      icon: FileCode
+    },
+    {
+      title: 'SQL Formatter',
+      description: 'Beautify & format SQL queries',
+      path: '/sql-formatter',
+      icon: Terminal
+    },
+    {
       title: 'Schema & Profiling',
       description: 'Inspect schemas, null rates & DDL',
       path: '/parquet-schema-inspector',
@@ -251,17 +261,31 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
   const realEstateCalcs = [
     {
       title: 'DSCR Loan Calculator',
-      description: 'Rental property cash flow, DSCR ratio & qualification tiers',
+      description: 'Rental cash flow, DSCR ratio & qualification tiers',
       path: '/dscr-loan-calculator',
       icon: Building,
       badge: 'Rental ROI'
     },
     {
-      title: 'Hard Money & Fix-Flip',
-      description: 'Fix & flip points, holding costs, 70% rule MAO & net profit',
-      path: '/hard-money-calculator',
-      icon: Hammer,
-      badge: '70% Rule'
+      title: 'Commercial Loan & Balloon',
+      description: 'Amortization, balloon balance & debt coverage',
+      path: '/commercial-loan-calculator',
+      icon: Building2,
+      badge: 'Commercial'
+    },
+    {
+      title: '1031 Exchange Tax Shield',
+      description: 'Capital gains deferral & replacement boot analysis',
+      path: '/section-1031-exchange-calculator',
+      icon: Scale,
+      badge: 'Tax Deferral'
+    },
+    {
+      title: 'Loan Comparison (Side-by-Side)',
+      description: 'Compare 2 loans: APR, monthly & lifetime interest',
+      path: '/loan-comparison-calculator',
+      icon: Scale,
+      badge: 'Compare'
     },
     {
       title: 'Mortgage Calculator',
@@ -272,31 +296,48 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
     },
     {
       title: 'Refinance Break-Even',
-      description: 'Compare current vs new loan, monthly savings & closing payoff',
+      description: 'Compare current vs new loan & closing payoff',
       path: '/refinance-calculator',
       icon: ArrowRightLeft,
       badge: 'Refinance'
+    },
+    {
+      title: 'Hard Money & Fix-Flip',
+      description: 'Fix & flip points, holding costs & 70% rule MAO',
+      path: '/hard-money-calculator',
+      icon: Hammer,
+      badge: '70% Rule'
+    }
+  ];
+
+  const payrollCalcs = [
+    {
+      title: 'Salary to Hourly & Payroll',
+      description: 'Convert annual salary to hourly, bi-weekly & overtime',
+      path: '/salary-to-hourly-calculator',
+      icon: DollarSign,
+      badge: 'Payroll'
     }
   ];
 
   const cloudFinOpsCalcs = [
     {
       title: 'Snowflake Warehouse Cost',
-      description: 'Warehouse compute credits, autoscaling & FinOps suspend savings',
+      description: 'Warehouse compute credits & autoscaling suspend savings',
       path: '/snowflake-cost-calculator',
       icon: Server,
       badge: 'FinOps'
     },
     {
       title: 'Parquet Cloud Savings',
-      description: 'S3 byte reduction & Athena / BigQuery per-query scan cut',
+      description: 'S3 byte reduction & Athena / BigQuery scan cut',
       path: '/parquet-storage-calculator',
       icon: Zap,
       badge: 'S3 & Athena'
     }
   ];
 
-  const calculatorItems = [...realEstateCalcs, ...cloudFinOpsCalcs];
+  const calculatorItems = [...realEstateCalcs, ...payrollCalcs, ...cloudFinOpsCalcs];
 
   return (
     <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50 transition-colors">
@@ -511,22 +552,22 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
 
               {/* Calculators Flyout Panel */}
               {calcDropdownOpen && (
-                <div className="absolute left-0 top-full pt-1.5 w-[420px] z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-2.5">
+                <div className="absolute left-0 top-full pt-1.5 w-[680px] z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-3">
                     <div className="px-3 pt-2 pb-2 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80">
                       <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
-                        Financial & FinOps Calculators
+                        Financial, Real Estate & FinOps Calculators
                       </span>
                       <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                        100% Client-Side
+                        100% Client-Side · Zero Server Math
                       </span>
                     </div>
 
-                    <div className="py-2 space-y-3">
-                      {/* Real Estate Group */}
+                    <div className="grid grid-cols-2 gap-3 py-2">
+                      {/* Column 1: Real Estate & Commercial Loans */}
                       <div className="space-y-0.5">
-                        <div className="px-3 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold mb-1">
-                          Real Estate & Loans
+                        <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold mb-1">
+                          Real Estate & Commercial Debt
                         </div>
                         {realEstateCalcs.map((calc) => (
                           <a
@@ -557,38 +598,81 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                         ))}
                       </div>
 
-                      {/* Cloud FinOps Group */}
-                      <div className="space-y-0.5 pt-1.5 border-t border-slate-100 dark:border-slate-800/60">
-                        <div className="px-3 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold mb-1">
-                          Cloud & Data FinOps
-                        </div>
-                        {cloudFinOpsCalcs.map((calc) => (
-                          <a
-                            key={calc.path}
-                            href={calc.path}
-                            onClick={(e) => handleNav(e, calc.path)}
-                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
-                          >
-                            <div className="size-7 rounded-lg bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-slate-700/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
-                              <calc.icon className="size-3.5" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
-                                  {calc.title}
-                                </span>
-                                {calc.badge && (
-                                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
-                                    {calc.badge}
-                                  </span>
-                                )}
+                      {/* Column 2: Payroll, Compensation & Cloud FinOps */}
+                      <div className="space-y-3">
+                        {/* Payroll & Compensation */}
+                        <div className="space-y-0.5">
+                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold mb-1">
+                            Payroll & Compensation
+                          </div>
+                          {payrollCalcs.map((calc) => (
+                            <a
+                              key={calc.path}
+                              href={calc.path}
+                              onClick={(e) => handleNav(e, calc.path)}
+                              className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                            >
+                              <div className="size-7 rounded-lg bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-slate-700/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                                <calc.icon className="size-3.5" />
                               </div>
-                              <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug truncate mt-0.5">
-                                {calc.description}
-                              </p>
-                            </div>
-                          </a>
-                        ))}
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                    {calc.title}
+                                  </span>
+                                  {calc.badge && (
+                                    <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                      {calc.badge}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug truncate mt-0.5">
+                                  {calc.description}
+                                </p>
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+
+                        {/* Cloud FinOps */}
+                        <div className="space-y-0.5 pt-2 border-t border-slate-100 dark:border-slate-800/60">
+                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold mb-1">
+                            Cloud & Data FinOps
+                          </div>
+                          {cloudFinOpsCalcs.map((calc) => (
+                            <a
+                              key={calc.path}
+                              href={calc.path}
+                              onClick={(e) => handleNav(e, calc.path)}
+                              className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                            >
+                              <div className="size-7 rounded-lg bg-cyan-50 dark:bg-slate-800 text-cyan-600 dark:text-cyan-400 border border-cyan-100 dark:border-slate-700/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                                <calc.icon className="size-3.5" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-1.5">
+                                  <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                                    {calc.title}
+                                  </span>
+                                  {calc.badge && (
+                                    <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
+                                      {calc.badge}
+                                    </span>
+                                  )}
+                                </div>
+                                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug truncate mt-0.5">
+                                  {calc.description}
+                                </p>
+                              </div>
+                            </a>
+                          ))}
+                        </div>
+
+                        {/* Trust card */}
+                        <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800/80 text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
+                          <span className="font-semibold text-slate-700 dark:text-slate-300 block mb-0.5">100% Private In-Browser</span>
+                          Interest amortization, tax deferral, and wage math run client-side in WebAssembly. No sensitive numbers touch a server.
+                        </div>
                       </div>
                     </div>
 
@@ -601,7 +685,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                       >
                         <span className="flex items-center gap-1.5">
                           <Calculator className="size-3.5" />
-                          <span>Browse All 10+ Calculators Hub</span>
+                          <span>Browse All 10+ Financial & FinOps Calculators</span>
                         </span>
                         <ArrowRight className="size-3.5" />
                       </a>
@@ -630,7 +714,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
         {/* Right action buttons */}
         <div className="flex items-center gap-2.5">
 
-          {onTrySample && (
+          {onTrySample && !isCalculatorSection && (
             <button
               onClick={onTrySample}
               disabled={isLoading}
@@ -768,7 +852,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             </button>
 
             {mobileCalcsExpanded && (
-              <div className="px-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-800/60 pt-1.5">
+              <div className="px-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-800/60 pt-1.5 max-h-72 overflow-y-auto">
                 {calculatorItems.map((c) => (
                   <a
                     key={c.path}
@@ -785,7 +869,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                   onClick={(e) => handleNav(e, '/finance-calculator')}
                   className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-indigo-400 hover:bg-indigo-500/10 transition-colors"
                 >
-                  <span>All 8+ Calculators Hub</span>
+                  <span>All 10+ Calculators Hub</span>
                   <ArrowRight className="size-3" />
                 </a>
               </div>

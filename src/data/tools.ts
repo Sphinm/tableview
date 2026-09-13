@@ -1084,6 +1084,286 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
         a: 'If you have paid 7 years into a 30-year loan and refinance into a brand-new 30-year loan, you restart interest amortization and may pay thousands more overall.'
       }
     ]
+  },
+
+  'loan-comparison-calculator': {
+    slug: 'loan-comparison-calculator',
+    path: '/loan-comparison-calculator',
+    badge: '100% In-Browser · Side-by-Side Comparison',
+    title: 'Loan Comparison Calculator',
+    shortTitle: 'Loan Comparison',
+    metaTitle: 'Loan Comparison Calculator — Side-by-Side Payment & Interest Analysis | TableView.dev',
+    metaDescription: 'Compare two loans side-by-side. Calculate monthly payment differences, lifetime interest savings, break-even on discount points, and total costs with Excel export.',
+    h1: 'Side-by-Side Loan',
+    h1Highlight: 'Comparison Calculator',
+    subtitle: 'Compare interest rates, loan terms, origination fees, discount points, and early payoff schedules to find the cheapest borrowing option.',
+    category: 'calculator',
+    tag: 'Popular',
+    color: 'indigo',
+    iconType: 'calculator',
+    acceptExtensions: 'Interactive Loan Model',
+    acceptLabel: 'No file upload required · Side-by-side comparison & Excel export',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Side-by-Side Visual Modeling',
+        description: 'Compare two loans head-to-head on monthly payment, lifetime interest, upfront points, and payoff dates.'
+      },
+      {
+        icon: 'zap',
+        title: 'Discount Points Break-Even',
+        description: 'Computes exact months required to recoup upfront discount points and lender origination fees.'
+      },
+      {
+        icon: 'download',
+        title: 'Instant Excel Deal Sheet',
+        description: 'Download the full side-by-side comparison schedule directly into Excel with 1 click.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How do discount points affect my loan comparison?',
+        a: 'One mortgage point costs 1% of the loan amount and typically lowers your interest rate by 0.25%. To determine if paying points is worthwhile, divide the upfront cost of the points by the monthly payment savings. If you plan to keep the loan longer than the break-even period (typically 36 to 60 months), buying points saves money.'
+      },
+      {
+        q: 'Why can a 15-year loan save hundreds of thousands in interest?',
+        a: 'A 15-year loan features higher monthly principal and interest payments than a 30-year loan, but cuts the compounding timeline in half and usually carries a lower interest rate (0.5% to 1.0% lower). This combination drastically reduces total lifetime interest payments.'
+      },
+      {
+        q: 'How is the break-even point on loan upfront fees calculated?',
+        a: 'Break-even in months = (Total Upfront Closing Costs of Loan B - Total Upfront Costs of Loan A) / (Monthly Payment of Loan A - Monthly Payment of Loan B). It tells you how many months you must hold the loan before lower monthly payments compensate for higher upfront origination fees.'
+      },
+      {
+        q: 'What is the benefit of making extra monthly principal payments?',
+        a: 'Any extra dollar paid directly toward principal shortens the repayment schedule and eliminates the compound interest that would have accrued on that dollar across remaining years. Even an extra $100/month can shave 3 to 5 years off a 30-year term.'
+      }
+    ]
+  },
+
+  'commercial-loan-calculator': {
+    slug: 'commercial-loan-calculator',
+    path: '/commercial-loan-calculator',
+    badge: '100% In-Browser · Commercial Real Estate',
+    title: 'Commercial Real Estate Loan & Balloon Payment Calculator',
+    shortTitle: 'Commercial Loan',
+    metaTitle: 'Commercial Real Estate Loan & Balloon Payment Calculator | TableView.dev',
+    metaDescription: 'Calculate commercial mortgage payments, balloon payment at maturity, interest-only options, and loan balance with instant Excel schedule export.',
+    h1: 'Commercial Loan &',
+    h1Highlight: 'Balloon Calculator',
+    subtitle: 'Model commercial property debt with 20/25/30-year amortization, 5/7/10-year balloon maturity terms, and interest-only periods.',
+    category: 'calculator',
+    tag: 'CRE Debt',
+    color: 'cyan',
+    iconType: 'building',
+    acceptExtensions: 'Interactive CRE Loan Model',
+    acceptLabel: 'No file upload required · Balloon maturity & refinance risk calculator',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Balloon Maturity Lump Sum',
+        description: 'Calculates the exact balloon balance due at year 5, 7, or 10 against a 25-30 year amortization schedule.'
+      },
+      {
+        icon: 'zap',
+        title: 'Interest-Only (IO) Structuring',
+        description: 'Simulate initial 12 to 36 month interest-only periods during property stabilization or lease-up.'
+      },
+      {
+        icon: 'shield',
+        title: 'Refinance Risk Assessment',
+        description: 'Assesses maturity refinance risk level based on loan paydown and remaining balloon debt.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is a balloon payment on a commercial real estate loan?',
+        a: 'A balloon payment is the remaining lump-sum principal balance due at the end of a commercial loan term (often 5, 7, or 10 years) when the amortization schedule is longer (typically 20, 25, or 30 years). The borrower must pay off, refinance, or sell the property before the balloon maturity date.'
+      },
+      {
+        q: 'Why do commercial mortgages have 20 or 25-year amortizations with 5 or 10-year terms?',
+        a: 'Commercial lenders avoid locking in long-term fixed interest rates for 30 years due to interest rate risk. Structuring loans with a 25-year amortization keeps monthly debt service manageable while a 5-to-10-year maturity allows the bank to re-evaluate underwriting and reset interest rates.'
+      },
+      {
+        q: 'What happens when a commercial balloon loan matures?',
+        a: 'Upon maturity, the borrower must satisfy the balloon payment by refinancing with the current lender or a new lender, paying cash from reserves, or selling the asset. Borrowers should begin the refinancing process 6 to 12 months prior to the balloon maturity date.'
+      },
+      {
+        q: 'What is an Interest-Only (IO) period in commercial financing?',
+        a: 'During an Interest-Only period (e.g. initial 1 to 3 years), the borrower only pays monthly interest and no principal. This maximizes cash flow during property renovations, tenant lease-up, or stabilization before standard amortization commences.'
+      }
+    ]
+  },
+
+  'salary-to-hourly-calculator': {
+    slug: 'salary-to-hourly-calculator',
+    path: '/salary-to-hourly-calculator',
+    badge: '100% In-Browser · Wage Conversion Matrix',
+    title: 'Salary to Hourly & Overtime Calculator',
+    shortTitle: 'Salary to Hourly',
+    metaTitle: 'Salary to Hourly Calculator — Convert Paycheck, Overtime & Wage Matrix | TableView.dev',
+    metaDescription: 'Convert annual salary to hourly wage, daily, weekly, bi-weekly (26x), and monthly paycheck. Compute FLSA 1.5x overtime and PTO value with Excel export.',
+    h1: 'Salary to Hourly &',
+    h1Highlight: 'Overtime Calculator',
+    subtitle: 'Convert between annual salary and hourly wage across bi-weekly (26x), semi-monthly (24x), and monthly cycles. Model FLSA 1.5x overtime and PTO value.',
+    category: 'calculator',
+    tag: 'Payroll',
+    color: 'emerald',
+    iconType: 'calculator',
+    acceptExtensions: 'Interactive Wage Model',
+    acceptLabel: 'No file upload required · Convert salary to hourly, overtime & PTO',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Full Pay Frequency Matrix',
+        description: 'Instant conversion across Hourly, Daily (8h), Weekly (40h), Bi-Weekly (26x), Semi-Monthly (24x), and Monthly (12x).'
+      },
+      {
+        icon: 'zap',
+        title: 'FLSA Overtime Rates',
+        description: 'Calculates statutory 1.5x time-and-a-half and 2.0x double-time rates and annual overtime earnings.'
+      },
+      {
+        icon: 'shield',
+        title: 'Paid Time Off (PTO) Valuation',
+        description: 'Quantifies the monetary cash value of company-sponsored paid holidays, vacation, and sick leave.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is the standard formula to convert salary to hourly?',
+        a: 'Divide your total annual gross salary by the number of hours worked in a year. In a standard full-time role with 40 hours per week and 52 weeks per year (including paid holidays and vacation), there are 2,080 hours. For example, a $75,000 salary equals $75,000 / 2,080 = $36.06/hour.'
+      },
+      {
+        q: 'Why does this calculator not include federal and state income taxes?',
+        a: 'This calculator computes pure gross mathematical conversions. Net take-home pay depends on personal W-4 withholding allowances, pre-tax 401(k) and HSA contributions, health insurance deductions, and state tax brackets (which range from 0% in Florida/Texas/Washington to over 13% in California). Providing an inaccurate net tax estimate would be misleading for contract negotiation.'
+      },
+      {
+        q: 'How does paid time off (PTO) affect my effective hourly wage?',
+        a: 'If you receive 25 days of paid time off (10 holidays + 15 vacation days), you actually work 1,880 hours instead of 2,080. If you divide your annual salary by only the actual hours worked, your "effective working wage" is higher. However, for payroll calculations, your base hourly rate remains calculated over the 2,080 total paid hours.'
+      },
+      {
+        q: 'How is overtime calculated for salaried non-exempt employees?',
+        a: 'For salaried non-exempt employees, the regular hourly rate is determined by dividing the weekly salary by 40 hours. For every hour worked above 40 in that week, the employee receives an extra half-time (0.5x) or time-and-a-half (1.5x) depending on whether the salary was intended to cover all hours worked or standard 40 hours.'
+      }
+    ]
+  },
+
+  'json-formatter': {
+    slug: 'json-formatter',
+    path: '/json-formatter',
+    badge: '100% In-Browser · Private JSON Validator',
+    title: 'Free Online JSON Formatter & Validator',
+    shortTitle: 'JSON Formatter',
+    metaTitle: 'JSON Formatter, Validator & Beautifier Online — 100% Client-Side | TableView.dev',
+    metaDescription: 'Format, indent, validate, and minify JSON online. 100% private in-browser tool with line and column syntax error detection. Zero server uploads.',
+    h1: 'Free Online JSON',
+    h1Highlight: 'Formatter & Validator',
+    subtitle: 'Beautify, validate, fix, and minify JSON files directly in your web browser. 100% client-side privacy with precise syntax error pinpointer.',
+    category: 'converter',
+    tag: 'Popular',
+    color: 'amber',
+    iconType: 'json',
+    acceptExtensions: '.json,.jsonl,.txt',
+    acceptLabel: 'Drop or paste any JSON string or file · Zero server transmission',
+    primaryExport: 'json',
+    defaultTab: 'json',
+    features: [
+      {
+        icon: 'shield',
+        title: '100% Zero-Egress Privacy',
+        description: 'Your JSON payloads never leave your computer. Completely safe for API keys, tokens, and confidential customer records.'
+      },
+      {
+        icon: 'zap',
+        title: 'Line & Column Syntax Error Pinpointer',
+        description: 'Instantly identifies misplaced commas, unquoted keys, and mismatched braces with exact line and column numbers.'
+      },
+      {
+        icon: 'download',
+        title: 'Instant Minify & Beautify',
+        description: 'Toggle between clean 2-space / 4-space / tab indentation and ultra-compact single-line minified JSON.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Does this JSON formatter upload my data to any remote server?',
+        a: 'No! The JSON formatter operates 100% locally in your web browser using JavaScript and WebAssembly. Your data never leaves your computer, making it completely safe for API keys, confidential customer records, and production tokens.'
+      },
+      {
+        q: 'How does the in-browser JSON validator pinpoint syntax errors?',
+        a: 'The parser analyzes JSON character by character. When invalid tokens, unquoted keys, trailing commas, or unclosed braces are encountered, it identifies the exact line number, column offset, and unexpected character snippet.'
+      },
+      {
+        q: 'Can this tool format large JSON files with thousands of lines?',
+        a: 'Yes, modern browser V8 engines can format multi-megabyte JSON payloads in milliseconds. For files exceeding hundreds of megabytes, you can also use TableView\'s DuckDB SQL engine to query NDJSON/JSONL directly.'
+      },
+      {
+        q: 'What is the difference between JSON minification and beautification?',
+        a: 'Beautification adds standard 2-space or 4-space indentation and line breaks for human readability. Minification strips all unnecessary whitespace, comments, and newlines to compress file size for HTTP transmission and API payloads.'
+      }
+    ]
+  },
+
+  'sql-formatter': {
+    slug: 'sql-formatter',
+    path: '/sql-formatter',
+    badge: '100% In-Browser · Multi-Dialect SQL Formatter',
+    title: 'Free Online SQL Formatter & Beautifier',
+    shortTitle: 'SQL Formatter',
+    metaTitle: 'SQL Formatter, Beautifier & Minifier Online — DuckDB, Postgres & MySQL | TableView.dev',
+    metaDescription: 'Beautify, indent, format, and minify SQL queries online. Supports DuckDB, PostgreSQL, MySQL, SQLite, Snowflake, and BigQuery. 100% in-browser.',
+    h1: 'Free Online SQL',
+    h1Highlight: 'Formatter & Beautifier',
+    subtitle: 'Format, indent, beautify, and minify SQL queries across DuckDB, PostgreSQL, MySQL, SQLite, Snowflake, and BigQuery. 100% in-browser.',
+    category: 'sql',
+    tag: 'Dev Tool',
+    color: 'cyan',
+    iconType: 'sql',
+    acceptExtensions: '.sql,.txt',
+    acceptLabel: 'Paste or type SQL queries · Multi-dialect formatting with DuckDB execution',
+    primaryExport: 'any',
+    defaultTab: 'sql',
+    features: [
+      {
+        icon: 'table',
+        title: 'Multi-Dialect Formatting Engine',
+        description: 'Formatted by sql-formatter with support for DuckDB, PostgreSQL, MySQL, SQLite, Snowflake, BigQuery, and Redshift.'
+      },
+      {
+        icon: 'zap',
+        title: '1-Click DuckDB Execution',
+        description: 'Direct shortcut to run formatted queries against local CSV, Parquet, or Excel files in DuckDB-Wasm.'
+      },
+      {
+        icon: 'shield',
+        title: 'Confidential Query Privacy',
+        description: 'Zero database schema or proprietary query logic ever leaves your device. Runs 100% client-side.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Which SQL dialects are supported by this formatter?',
+        a: 'Our SQL formatter supports DuckDB, PostgreSQL, MySQL, SQLite, Snowflake, Amazon Redshift, Google BigQuery, MariaDB, Transact-SQL (T-SQL), Spark SQL, and standard ANSI SQL.'
+      },
+      {
+        q: 'Can I execute queries directly after formatting?',
+        a: 'Yes! You can click "Open in DuckDB SQL Workbench" to immediately execute the formatted SQL query against local CSV, Parquet, or Excel files in your browser with zero database installation.'
+      },
+      {
+        q: 'Is my SQL query or schema sent to external servers?',
+        a: 'No. Formatting is executed entirely on your client device inside browser JavaScript. Confidential database schemas, table names, and proprietary business logic remain 100% private.'
+      },
+      {
+        q: 'What does SQL Minify do?',
+        a: 'SQL Minify removes redundant whitespace, comments, and line breaks to compress queries into a single compact string. This is ideal for embedding queries into source code, application config files, or URL parameters.'
+      }
+    ]
   }
 };
 

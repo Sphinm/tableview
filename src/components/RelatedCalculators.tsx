@@ -1,5 +1,6 @@
 import {
   Building,
+  Building2,
   Hammer,
   Home,
   ArrowRightLeft,
@@ -7,11 +8,12 @@ import {
   PiggyBank,
   Sparkles,
   Scale,
+  DollarSign,
   ArrowRight
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 
-export type CalculatorCategory = 'real-estate' | 'cloud-finops' | 'consumer';
+export type CalculatorCategory = 'real-estate' | 'cloud-finops' | 'consumer' | 'payroll';
 
 interface RelatedCalculatorsProps {
   currentSlug: string;
@@ -29,6 +31,33 @@ interface CalcItem {
 }
 
 const ALL_CALCULATORS: CalcItem[] = [
+  {
+    slug: 'loan-comparison-calculator',
+    path: '/loan-comparison-calculator',
+    title: 'Loan Comparison Calculator',
+    description: 'Compare 2 loans side-by-side: APR, upfront points break-even & lifetime interest.',
+    badge: 'Compare',
+    icon: Scale,
+    category: 'real-estate'
+  },
+  {
+    slug: 'commercial-loan-calculator',
+    path: '/commercial-loan-calculator',
+    title: 'Commercial Loan & Balloon',
+    description: 'Model 5/7/10-yr balloon payoffs, 25-yr amortization & commercial refinance risk.',
+    badge: 'Commercial',
+    icon: Building2,
+    category: 'real-estate'
+  },
+  {
+    slug: 'salary-to-hourly-calculator',
+    path: '/salary-to-hourly-calculator',
+    title: 'Salary to Hourly Calculator',
+    description: 'Convert annual gross salary into hourly wages, bi-weekly checks & FLSA overtime.',
+    badge: 'Payroll',
+    icon: DollarSign,
+    category: 'payroll'
+  },
   {
     slug: 'section-1031-exchange-calculator',
     path: '/section-1031-exchange-calculator',

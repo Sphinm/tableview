@@ -13,9 +13,13 @@ import {
   Hammer,
   Server,
   Zap,
-  HelpCircle
+  HelpCircle,
+  Scale,
+  DollarSign
 } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
+import { CurrencyInput } from '../components/CurrencyInput';
+import { NumericInput } from '../components/NumericInput';
 import {
   calculateAutoLoan,
   calculatePersonalLoan,
@@ -321,6 +325,87 @@ export const FinanceCalculatorHub = () => {
               <ArrowRight className="size-3" />
             </button>
           </div>
+
+          {/* Loan Comparison */}
+          <div className="rounded-2xl border border-indigo-500/30 bg-gradient-to-b from-indigo-950/30 via-slate-900/60 to-slate-950 p-4.5 flex flex-col justify-between gap-3.5 shadow-sm hover:border-indigo-500/50 transition-all">
+            <div className="flex items-start gap-3">
+              <div className="size-10 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0">
+                <Scale className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h2 className="text-sm font-bold text-slate-100 truncate">Loan Comparison</h2>
+                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                    Side-by-Side
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 leading-snug">
+                  Compare two loans head-to-head, discount points break-even, and interest savings.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigateTo('/loan-comparison-calculator')}
+              className="btn-primary w-full py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer shadow-md"
+            >
+              <span>Compare Loans</span>
+              <ArrowRight className="size-3" />
+            </button>
+          </div>
+
+          {/* Commercial Real Estate Loan */}
+          <div className="rounded-2xl border border-cyan-500/30 bg-gradient-to-b from-cyan-950/30 via-slate-900/60 to-slate-950 p-4.5 flex flex-col justify-between gap-3.5 shadow-sm hover:border-cyan-500/50 transition-all">
+            <div className="flex items-start gap-3">
+              <div className="size-10 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0">
+                <Building className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h2 className="text-sm font-bold text-slate-100 truncate">Commercial Loan</h2>
+                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
+                    Balloon
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 leading-snug">
+                  CRE balloon payment at maturity, 20-30yr amortization, and interest-only periods.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigateTo('/commercial-loan-calculator')}
+              className="w-full py-2 rounded-xl text-xs font-semibold bg-cyan-600 hover:bg-cyan-500 text-slate-950 flex items-center justify-center gap-1.5 cursor-pointer shadow-md transition-all font-bold"
+            >
+              <span>Model Commercial Debt</span>
+              <ArrowRight className="size-3" />
+            </button>
+          </div>
+
+          {/* Salary to Hourly Calculator */}
+          <div className="rounded-2xl border border-emerald-500/30 bg-gradient-to-b from-emerald-950/30 via-slate-900/60 to-slate-950 p-4.5 flex flex-col justify-between gap-3.5 shadow-sm hover:border-emerald-500/50 transition-all">
+            <div className="flex items-start gap-3">
+              <div className="size-10 rounded-xl bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0">
+                <DollarSign className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h2 className="text-sm font-bold text-slate-100 truncate">Salary to Hourly</h2>
+                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                    Payroll
+                  </span>
+                </div>
+                <p className="text-xs text-slate-400 mt-1 leading-snug">
+                  Convert annual salary to hourly wage, 26x bi-weekly pay, FLSA overtime & PTO value.
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => navigateTo('/salary-to-hourly-calculator')}
+              className="w-full py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-slate-950 flex items-center justify-center gap-1.5 cursor-pointer shadow-md transition-all font-bold"
+            >
+              <span>Convert Salary</span>
+              <ArrowRight className="size-3" />
+            </button>
+          </div>
         </div>
       </div>
 
@@ -387,87 +472,58 @@ export const FinanceCalculatorHub = () => {
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-slate-300">Vehicle Purchase Price</label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    step="500"
-                    min="0"
-                    value={autoPrice}
-                    onChange={(e) => setAutoPrice(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-sm font-semibold outline-none"
+                <CurrencyInput
+                  value={autoPrice}
+                  onChange={setAutoPrice}
+                  className="py-2 text-base sm:text-sm font-semibold"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300">Cash Down Payment</label>
+                  <CurrencyInput
+                    value={autoDown}
+                    onChange={setAutoDown}
+                    className="py-2 text-base sm:text-xs font-semibold"
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <label className="text-xs font-semibold text-slate-300">Trade-In Allowance</label>
+                  <CurrencyInput
+                    value={autoTradeIn}
+                    onChange={setAutoTradeIn}
+                    className="py-2 text-base sm:text-xs font-semibold"
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Cash Down Payment</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      step="500"
-                      min="0"
-                      value={autoDown}
-                      onChange={(e) => setAutoDown(Number(e.target.value))}
-                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-slate-300">Trade-In Allowance</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      step="500"
-                      min="0"
-                      value={autoTradeIn}
-                      onChange={(e) => setAutoTradeIn(Number(e.target.value))}
-                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-300">Sales Tax Rate</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      step="0.1"
-                      min="0"
-                      max="20"
-                      value={autoTaxRate}
-                      onChange={(e) => setAutoTaxRate(Number(e.target.value))}
-                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
-                  </div>
+                  <NumericInput
+                    value={autoTaxRate}
+                    onChange={setAutoTaxRate}
+                    suffix="%"
+                    step={0.1}
+                    min={0}
+                    max={20}
+                    className="py-2 text-base sm:text-xs font-semibold"
+                  />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-300">Interest Rate (APR)</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      step="0.05"
-                      min="0"
-                      max="30"
-                      value={autoRate}
-                      onChange={(e) => setAutoRate(Number(e.target.value))}
-                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
-                  </div>
+                  <NumericInput
+                    value={autoRate}
+                    onChange={setAutoRate}
+                    suffix="%"
+                    step={0.05}
+                    min={0}
+                    max={30}
+                    className="py-2 text-base sm:text-xs font-semibold"
+                  />
                 </div>
               </div>
 
@@ -549,36 +605,25 @@ export const FinanceCalculatorHub = () => {
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-slate-300">Loan Amount</label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    step="500"
-                    min="500"
-                    value={personalAmount}
-                    onChange={(e) => setPersonalAmount(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-sm font-semibold outline-none"
-                  />
-                </div>
+                <CurrencyInput
+                  value={personalAmount}
+                  onChange={setPersonalAmount}
+                  className="py-2 text-base sm:text-sm font-semibold"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-300">Interest Rate (APR)</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      step="0.1"
-                      min="0"
-                      max="36"
-                      value={personalRate}
-                      onChange={(e) => setPersonalRate(Number(e.target.value))}
-                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
-                  </div>
+                  <NumericInput
+                    value={personalRate}
+                    onChange={setPersonalRate}
+                    suffix="%"
+                    step={0.1}
+                    min={0}
+                    max={36}
+                    className="py-2 text-base sm:text-xs font-semibold"
+                  />
                 </div>
 
                 <div className="space-y-1.5">
@@ -648,65 +693,45 @@ export const FinanceCalculatorHub = () => {
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-slate-300">Initial Starting Deposit</label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    step="500"
-                    min="0"
-                    value={savingsInitial}
-                    onChange={(e) => setSavingsInitial(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-sm font-semibold outline-none"
-                  />
-                </div>
+                <CurrencyInput
+                  value={savingsInitial}
+                  onChange={setSavingsInitial}
+                  className="py-2 text-base sm:text-sm font-semibold"
+                />
               </div>
 
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-slate-300">Monthly Deposit / Contribution</label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    step="50"
-                    min="0"
-                    value={savingsMonthly}
-                    onChange={(e) => setSavingsMonthly(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-sm font-semibold outline-none"
-                  />
-                </div>
+                <CurrencyInput
+                  value={savingsMonthly}
+                  onChange={setSavingsMonthly}
+                  className="py-2 text-base sm:text-sm font-semibold"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-300">Expected Annual Return</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      step="0.25"
-                      min="0"
-                      max="25"
-                      value={savingsReturn}
-                      onChange={(e) => setSavingsReturn(Number(e.target.value))}
-                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
-                  </div>
+                  <NumericInput
+                    value={savingsReturn}
+                    onChange={setSavingsReturn}
+                    suffix="%"
+                    step={0.25}
+                    min={0}
+                    max={25}
+                    className="py-2 text-base sm:text-xs font-semibold"
+                  />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-300">Investment Horizon (Years)</label>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    step="1"
-                    min="1"
-                    max="50"
+                  <NumericInput
                     value={savingsYears}
-                    onChange={(e) => setSavingsYears(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
+                    onChange={setSavingsYears}
+                    step={1}
+                    min={1}
+                    max={50}
+                    className="py-2 text-base sm:text-xs font-semibold"
                   />
                 </div>
               </div>
@@ -760,52 +785,34 @@ export const FinanceCalculatorHub = () => {
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-slate-300">Outstanding Card Balance</label>
-                <div className="relative">
-                  <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 text-sm">$</span>
-                  <input
-                    type="number"
-                    inputMode="numeric"
-                    step="100"
-                    min="0"
-                    value={ccBalance}
-                    onChange={(e) => setCcBalance(Number(e.target.value))}
-                    className="w-full pl-8 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-sm font-semibold outline-none"
-                  />
-                </div>
+                <CurrencyInput
+                  value={ccBalance}
+                  onChange={setCcBalance}
+                  className="py-2 text-base sm:text-sm font-semibold"
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-300">Interest Rate (APR)</label>
-                  <div className="relative">
-                    <input
-                      type="number"
-                      inputMode="decimal"
-                      step="0.1"
-                      min="0"
-                      max="40"
-                      value={ccRate}
-                      onChange={(e) => setCcRate(Number(e.target.value))}
-                      className="w-full pl-3 pr-7 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
-                    />
-                    <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">%</span>
-                  </div>
+                  <NumericInput
+                    value={ccRate}
+                    onChange={setCcRate}
+                    suffix="%"
+                    step={0.1}
+                    min={0}
+                    max={40}
+                    className="py-2 text-base sm:text-xs font-semibold"
+                  />
                 </div>
 
                 <div className="space-y-1.5">
                   <label className="text-xs font-semibold text-slate-300">Planned Monthly Payment</label>
-                  <div className="relative">
-                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">$</span>
-                    <input
-                      type="number"
-                      inputMode="numeric"
-                      step="25"
-                      min="10"
-                      value={ccMonthlyPayment}
-                      onChange={(e) => setCcMonthlyPayment(Number(e.target.value))}
-                      className="w-full pl-7 pr-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-slate-100 text-base sm:text-xs font-semibold outline-none"
-                    />
-                  </div>
+                  <CurrencyInput
+                    value={ccMonthlyPayment}
+                    onChange={setCcMonthlyPayment}
+                    className="py-2 text-base sm:text-xs font-semibold"
+                  />
                 </div>
               </div>
             </div>

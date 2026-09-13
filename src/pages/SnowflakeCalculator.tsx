@@ -4,7 +4,6 @@ import {
   FileSpreadsheet,
   Sparkles,
   TrendingDown,
-  HardDrive,
   CheckCircle2,
   Layers,
   ShieldCheck
@@ -24,6 +23,7 @@ import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
 import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { RelatedCalculators } from '../components/RelatedCalculators';
+import { NumericInput } from '../components/NumericInput';
 
 const snowflakeSchemas = [
   {
@@ -398,15 +398,12 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                     <span>Compressed Storage in Snowflake (TB)</span>
                     <span className="text-slate-100 font-mono font-bold">{storageTb} TB</span>
                   </label>
-                  <div className="relative">
-                    <HardDrive className="size-4 text-slate-400 absolute left-3 top-2.5 pointer-events-none" />
-                    <input
-                      type="number"
-                      value={storageTb || ''}
-                      onChange={(e) => setStorageTb(Math.max(0, Number(e.target.value)))}
-                      className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none"
-                    />
-                  </div>
+                  <NumericInput
+                    value={storageTb}
+                    onChange={(v) => setStorageTb(Math.max(0, v))}
+                    suffix="TB"
+                    className="py-2 text-sm font-mono"
+                  />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2 pt-1">

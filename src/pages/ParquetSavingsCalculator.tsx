@@ -23,6 +23,7 @@ import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
 import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { RelatedCalculators } from '../components/RelatedCalculators';
+import { NumericInput } from '../components/NumericInput';
 
 const parquetSchemas = [
   {
@@ -351,12 +352,13 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                   </span>
                 </label>
                 <div className="flex gap-2">
-                  <input
-                    type="number"
-                    value={rawSizeAmount || ''}
-                    onChange={(e) => setRawSizeAmount(Math.max(0.1, Number(e.target.value)))}
-                    className="flex-1 px-4 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none focus:border-emerald-500"
-                  />
+                  <div className="flex-1">
+                    <NumericInput
+                      value={rawSizeAmount}
+                      onChange={(v) => setRawSizeAmount(Math.max(0.1, v))}
+                      className="py-2 text-sm font-mono focus:border-emerald-500"
+                    />
+                  </div>
                   <select
                     value={rawSizeUnit}
                     onChange={(e) => setRawSizeUnit(e.target.value as any)}
@@ -405,11 +407,11 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                   <label className="block text-xs font-medium text-slate-300 mb-1.5">
                     Growth (%/mo)
                   </label>
-                  <input
-                    type="number"
-                    value={monthlyDataGrowthPercent || ''}
-                    onChange={(e) => setMonthlyDataGrowthPercent(Math.max(0, Number(e.target.value)))}
-                    className="w-full px-2.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 font-mono focus:outline-none"
+                  <NumericInput
+                    value={monthlyDataGrowthPercent}
+                    onChange={(v) => setMonthlyDataGrowthPercent(Math.max(0, v))}
+                    suffix="%"
+                    className="py-2 text-xs font-mono"
                   />
                 </div>
               </div>
@@ -455,11 +457,10 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                       <label className="block text-xs font-medium text-slate-300 mb-1.5">
                         Queries / Day
                       </label>
-                      <input
-                        type="number"
-                        value={queriesPerDay || ''}
-                        onChange={(e) => setQueriesPerDay(Math.max(0, Number(e.target.value)))}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 font-mono focus:outline-none"
+                      <NumericInput
+                        value={queriesPerDay}
+                        onChange={(v) => setQueriesPerDay(Math.max(0, v))}
+                        className="py-2 text-xs font-mono"
                       />
                     </div>
                   </div>

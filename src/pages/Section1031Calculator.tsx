@@ -31,6 +31,8 @@ import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
 import { RelatedCalculators } from '../components/RelatedCalculators';
+import { CurrencyInput } from '../components/CurrencyInput';
+import { NumericInput } from '../components/NumericInput';
 import { getUrlParams } from '../lib/urlState';
 
 const PATH = '/section-1031-exchange-calculator';
@@ -114,22 +116,22 @@ interface FieldProps {
 const Field = ({ label, value, onChange, prefix, suffix, step = 1, hint }: FieldProps) => (
   <label className="block">
     <span className="block text-xs font-medium text-slate-400 mb-1.5">{label}</span>
-    <div className="relative flex items-center">
-      {prefix && (
-        <span className="absolute left-3 text-sm text-slate-500 pointer-events-none">{prefix}</span>
-      )}
-      <input
-        type="number"
-        inputMode="decimal"
-        step={step}
+    {prefix === '$' ? (
+      <CurrencyInput
         value={Number.isFinite(value) ? value : 0}
-        onChange={(e) => onChange(Number(e.target.value))}
-        className={`w-full ${prefix ? 'pl-7' : 'pl-3'} ${suffix ? 'pr-9' : 'pr-3'} py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors`}
+        onChange={onChange}
+        className="py-2.5 rounded-xl text-sm"
       />
-      {suffix && (
-        <span className="absolute right-3 text-sm text-slate-500 pointer-events-none">{suffix}</span>
-      )}
-    </div>
+    ) : (
+      <NumericInput
+        value={Number.isFinite(value) ? value : 0}
+        onChange={onChange}
+        prefix={prefix}
+        suffix={suffix}
+        step={step}
+        className="py-2.5 rounded-xl text-sm"
+      />
+    )}
     {hint && <span className="block text-[11px] text-slate-500 mt-1 leading-snug">{hint}</span>}
   </label>
 );
