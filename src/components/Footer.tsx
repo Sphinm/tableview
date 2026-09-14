@@ -1,6 +1,7 @@
 import { navigateTo } from '../lib/router';
 import { getBugReportMailto } from '../lib/feedback';
 import { openCookieSettings } from '../lib/consent';
+import { isCalculatorRoute } from '../lib/resolveRoute';
 import {
   Table,
   ShieldCheck,
@@ -18,9 +19,13 @@ import {
 
 interface FooterProps {
   onTrySample?: () => void;
+  currentPath?: string;
 }
 
-export const Footer = ({ onTrySample }: FooterProps) => {
+export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
+  const activePath = currentPath ?? (typeof window !== 'undefined' ? window.location.pathname : '/');
+  const isCalculator = isCalculatorRoute(activePath);
+
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
     e.preventDefault();
     navigateTo(path);
@@ -44,8 +49,9 @@ export const Footer = ({ onTrySample }: FooterProps) => {
   return (
     <footer className="w-full bg-slate-950 border-t border-slate-800 text-slate-400 mt-20 pt-16 pb-12 relative transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Pre-Footer Action Banner */}
-        <div className="relative rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900/90 to-slate-950 p-6 sm:p-10 mb-16 shadow-xl overflow-hidden">
+        {/* Pre-Footer Action Banner: Suppressed on financial calculators to eliminate cross-domain clutter */}
+        {!isCalculator && (
+          <div className="relative rounded-2xl border border-slate-800 bg-gradient-to-b from-slate-900/90 to-slate-950 p-6 sm:p-10 mb-16 shadow-xl overflow-hidden">
           {/* Subtle background glow */}
           <div className="absolute top-0 right-0 -mt-10 -mr-10 size-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute bottom-0 left-1/4 -mb-10 size-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
@@ -85,6 +91,7 @@ export const Footer = ({ onTrySample }: FooterProps) => {
             </div>
           </div>
         </div>
+        )}
 
         {/* Brand & Mission Row */}
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-12 border-b border-slate-800 gap-6">

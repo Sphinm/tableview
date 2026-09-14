@@ -388,7 +388,7 @@ export function App() {
       </main>
 
       <div className="print:hidden">
-        <Footer onTrySample={handleTrySample} />
+        <Footer onTrySample={handleTrySample} currentPath={path} />
         <CookieBanner />
       </div>
     </div>
