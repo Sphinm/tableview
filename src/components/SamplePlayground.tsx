@@ -80,7 +80,7 @@ export const SamplePlayground = ({ onSelectSample, isLoading }: SamplePlayground
           Explore Free Sample Datasets (Parquet, CSV & SQL)
         </h2>
         <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto mt-2 leading-relaxed">
-          Don't have a dataset file ready? Launch realistic industry datasets directly into the DuckDB-Wasm engine to test SQL queries, schema inspection, and Excel export—or download them to test your local pipelines.
+          Don't have a dataset file ready? Launch realistic industry datasets directly into the DuckDB-Wasm engine to test SQL queries, schema inspection, and Excel export, or download them to test your local pipelines.
         </p>
       </div>
 

@@ -1,5 +1,5 @@
 /**
- * Crawlable FAQ registry — one entry per canonical calculator path.
+ * Crawlable FAQ registry: one entry per canonical calculator path.
  *
  * Why this file exists
  * --------------------
@@ -7,7 +7,7 @@
  * the page module. That caused two distinct problems:
  *
  *   1. The prerenderer had nothing to emit, so every calculator URL shipped
- *      ZERO words of static content — invisible to crawlers that do not execute
+ *      ZERO words of static content: invisible to crawlers that do not execute
  *      JavaScript (Bing's first pass, and most AI crawlers such as GPTBot).
  *
  *   2. The mortgage and refinance pages declared FAQPage structured data whose
@@ -33,7 +33,7 @@ export const CALCULATOR_FAQS: Record<string, CalcFaq[]> = {
   '/section-1031-exchange-calculator': [
     {
       q: 'What is a 1031 exchange and how does it work?',
-      a: 'A 1031 exchange (named for IRC §1031) lets you defer capital gains tax when you sell investment real property and reinvest the proceeds into replacement property of like kind. You must identify replacement property within 45 days of closing and complete the purchase within 180 days. The gain is not forgiven — it is deferred, and the tax basis carries over into the replacement property, so the deferred gain becomes taxable when you eventually sell without exchanging again.',
+      a: 'A 1031 exchange (named for IRC §1031) lets you defer capital gains tax when you sell investment real property and reinvest the proceeds into replacement property of like kind. You must identify replacement property within 45 days of closing and complete the purchase within 180 days. The gain is not forgiven: it is deferred, and the tax basis carries over into the replacement property, so the deferred gain becomes taxable when you eventually sell without exchanging again.',
     },
     {
       q: 'What is "boot" and when do I have to pay tax on it?',
@@ -45,11 +45,11 @@ export const CALCULATOR_FAQS: Record<string, CalcFaq[]> = {
     },
     {
       q: 'Why might my 180-day deadline be shorter than 180 days?',
-      a: 'The exchange period ends on the earlier of 180 days after closing or the due date of your tax return for the year of the transfer — including extensions. This is the most commonly missed rule in §1031. If you close in December and do not file for an extension, your return is due April 15, so you may have fewer than 135 days rather than 180. Filing for an extension restores the full 180 days.',
+      a: 'The exchange period ends on the earlier of 180 days after closing or the due date of your tax return for the year of the transfer (including extensions). This is the most commonly missed rule in §1031. If you close in December and do not file for an extension, your return is due April 15, so you may have fewer than 135 days rather than 180. Filing for an extension restores the full 180 days.',
     },
     {
       q: 'Do I have to replace the debt on the relinquished property?',
-      a: 'Yes, if you want to avoid mortgage boot. If you pay off a mortgage and do not take on new debt on the replacement property, the debt relief is treated as boot — unless you contribute additional cash at closing equal to the debt relief. You can also replace the debt with cash, or buy a more expensive property using a combination of your proceeds and new financing.',
+      a: 'Yes, if you want to avoid mortgage boot. If you pay off a mortgage and do not take on new debt on the replacement property, the debt relief is treated as boot (unless you contribute additional cash at closing equal to the debt relief). You can also replace the debt with cash, or buy a more expensive property using a combination of your proceeds and new financing.',
     },
     {
       q: 'What are the three identification rules for replacement property?',
@@ -61,7 +61,7 @@ export const CALCULATOR_FAQS: Record<string, CalcFaq[]> = {
     },
     {
       q: 'Do I need a qualified intermediary, and what do they cost?',
-      a: 'Yes, in practice. If you take actual or constructive receipt of the sale proceeds at any point, the exchange is disqualified — your attorney, real estate agent, or accountant cannot act as your intermediary. A qualified intermediary (QI) holds the proceeds in a qualified escrow account between the sale and the purchase. Typical QI fees run roughly $1,000 to $1,500 for a straightforward exchange, plus additional fees for complex structures.',
+      a: 'Yes, in practice. If you take actual or constructive receipt of the sale proceeds at any point, the exchange is disqualified: your attorney, real estate agent, or accountant cannot act as your intermediary. A qualified intermediary (QI) holds the proceeds in a qualified escrow account between the sale and the purchase. Typical QI fees run roughly $1,000 to $1,500 for a straightforward exchange, plus additional fees for complex structures.',
     },
     {
       q: 'How is depreciation recapture taxed in an exchange?',
@@ -69,7 +69,7 @@ export const CALCULATOR_FAQS: Record<string, CalcFaq[]> = {
     },
     {
       q: 'Does every state recognize 1031 exchanges?',
-      a: 'No. Most states conform to federal §1031 treatment, but a few do not. Pennsylvania, for example, does not allow deferral of its state income tax on like-kind exchanges. Several conforming states — including California — impose a claw-back that taxes the deferred gain when you later sell the replacement property if it is located outside that state. This calculator takes your state rate as an input rather than guessing, so you should confirm your state’s treatment with a tax advisor.',
+      a: 'No. Most states conform to federal §1031 treatment, but a few do not. Pennsylvania, for example, does not allow deferral of its state income tax on like-kind exchanges. Several conforming states (including California) impose a claw-back that taxes the deferred gain when you later sell the replacement property if it is located outside that state. This calculator takes your state rate as an input rather than guessing, so you should confirm your state’s treatment with a tax advisor.',
     },
   ],
 
@@ -157,7 +157,7 @@ export const CALCULATOR_FAQS: Record<string, CalcFaq[]> = {
     },
     {
       q: 'What is a hard money loan and how does it work for house flipping?',
-      a: 'A hard money loan is an asset-based, short-term bridge loan provided by private investors or specialized lending companies to fund the purchase and renovation of real estate. Underwriting is primarily collateral-driven—focusing on the property\'s After Repair Value (ARV) and renovation scope—rather than personal W-2 income.',
+      a: 'A hard money loan is an asset-based, short-term bridge loan provided by private investors or specialized lending companies to fund the purchase and renovation of real estate. Underwriting is primarily collateral-driven (focusing on the property\'s After Repair Value (ARV) and renovation scope) rather than personal W-2 income.',
     },
     {
       q: 'What is the 70% Rule in real estate flipping?',

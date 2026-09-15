@@ -99,7 +99,7 @@ export const PrivacyPolicy = () => {
           </h2>
           <p className="mb-3 text-slate-400">
             We use two Google and Sentry services to understand how the site is used and to
-            diagnose faults. <strong>Neither is loaded until you grant analytics consent</strong> —
+            diagnose faults. <strong>Neither is loaded until you grant analytics consent</strong>:
             until then, no request is made to either provider and no script is downloaded.
           </p>
           <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-3 text-xs sm:text-sm text-slate-400 mb-4">
@@ -110,7 +110,7 @@ export const PrivacyPolicy = () => {
               consent is never treated as advertising consent.
             </p>
             <p>
-              • <strong>Sentry</strong> records technical faults, and produces session recordings —
+              • <strong>Sentry</strong> records technical faults, and produces session recordings:
               a replay of on-screen activity such as scrolling, clicking and navigation. Recordings
               mask all text, all form field values and all images by default. In addition, the data
               workspace and every calculator are explicitly masked, because their contents are your

@@ -101,7 +101,8 @@ export const PaymentDonutChart: React.FC<PaymentDonutChartProps> = ({
     `$${Math.round(num).toLocaleString('en-US')}`;
 
   return (
-    <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm flex flex-col xl:flex-row items-center gap-6">
+    <div className="p-[1px] rounded-2xl bg-gradient-to-b from-slate-800/80 via-slate-800/40 to-slate-900/90 shadow-sm">
+      <div className="rounded-[calc(1rem-1px)] p-4 sm:p-5 bg-slate-950/95 shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] flex flex-col xl:flex-row items-center gap-6">
       {/* Donut graphic */}
       <div className="relative shrink-0 flex items-center justify-center">
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
@@ -179,6 +180,7 @@ export const PaymentDonutChart: React.FC<PaymentDonutChartProps> = ({
             </div>
           ))}
         </div>
+      </div>
       </div>
     </div>
   );

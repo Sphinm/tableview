@@ -42,9 +42,9 @@ export const guidesData: GuideItem[] = [
         heading: 'Introduction: The Paradigm Shift to Columnar Storage',
         id: 'introduction',
         paragraphs: [
-          'In traditional relational databases (OLTP), data is typically arranged in a row-oriented format. When a database records a new customer transaction, all fields for that specific row—such as user_id, timestamp, item_name, and price—are written contiguously on physical disk sectors. While this is optimal for single-record inserts and point lookups, it creates massive I/O bottlenecks during analytical workloads (OLAP).',
+          'In traditional relational databases (OLTP), data is typically arranged in a row-oriented format. When a database records a new customer transaction, all fields for that specific row (such as user_id, timestamp, item_name, and price) are written contiguously on physical disk sectors. While this is optimal for single-record inserts and point lookups, it creates massive I/O bottlenecks during analytical workloads (OLAP).',
           'Analytical queries rarely need all columns. If you run a query like "SELECT AVG(price) FROM orders WHERE date >= 2026-01-01", a row-oriented format forces the disk to scan every single byte of every irrelevant column (descriptions, shipping addresses, customer names) just to extract the price and date fields.',
-          'Apache Parquet solves this by pivoting data 90 degrees into a columnar storage model. In Parquet, all values for column A are stored together, followed by all values for column B. This architectural difference allows query engines to skip unreferenced columns entirely—a technique known as column pruning—reducing disk I/O by 80% to 95% on typical analytical datasets.'
+          'Apache Parquet solves this by pivoting data 90 degrees into a columnar storage model. In Parquet, all values for column A are stored together, followed by all values for column B. This architectural difference allows query engines to skip unreferenced columns entirely (a technique known as column pruning), reducing disk I/O by 80% to 95% on typical analytical datasets.'
         ]
       },
       {
@@ -125,7 +125,7 @@ LIMIT 5;`
         id: 'the-dilemma',
         paragraphs: [
           'Data engineering pipelines routinely output gigabytes of analytics in Apache Parquet format. However, marketing managers, financial analysts, and executive stakeholders frequently require reports in Microsoft Excel (.xlsx) format so they can build pivot tables and charts.',
-          'Historically, converting Parquet to Excel required writing custom Python scripts using pandas, PyArrow, and openpyxl. For non-technical team members—or engineers on secure workstations lacking local development environments—this creates unnecessary workflow friction.'
+          'Historically, converting Parquet to Excel required writing custom Python scripts using pandas, PyArrow, and openpyxl. For non-technical team members, or engineers on secure workstations lacking local development environments, this creates unnecessary workflow friction.'
         ],
         code: {
           language: 'python',
@@ -333,7 +333,7 @@ FROM parquet_metadata('production_orders.parquet');`
         heading: 'Storage Footprint Comparison',
         id: 'storage-results',
         paragraphs: [
-          'The storage reduction achieved by Parquet is staggering. By combining columnar alignment with dictionary encoding and Zstandard compression, the 10-million-row dataset shrank from 1,240 MB to just 142 MB—an 88.5% reduction in physical disk space.'
+          'The storage reduction achieved by Parquet is staggering. By combining columnar alignment with dictionary encoding and Zstandard compression, the 10-million-row dataset shrank from 1,240 MB to just 142 MB: an 88.5% reduction in physical disk space.'
         ],
         table: {
           headers: ['Format', 'File Size (MB)', 'Relative Size', 'Disk Savings'],
@@ -521,8 +521,8 @@ function calculateDSCR(grossRent: number, pitia: number): { dscr: number; tier: 
         heading: 'Strategic Play: Interest-Only (I/O) DSCR Loans',
         id: 'interest-only-dscr',
         paragraphs: [
-          'One of the most powerful tactical structures in real estate syndication is the 10-Year Interest-Only DSCR loan. During the initial 10-year IO period, you pay only the accrued interest each month—principal repayment is deferred.',
-          'Why does this matter for DSCR qualification? Because principal is removed from PITIA, your mandatory monthly debt service drops substantially. For example, on a $300,000 loan at 6.85%, standard 30-year amortizing principal and interest is $1,966 / mo. An interest-only payment is just $1,712 / mo—a monthly savings of $254.',
+          'One of the most powerful tactical structures in real estate syndication is the 10-Year Interest-Only DSCR loan. During the initial 10-year IO period, you pay only the accrued interest each month: principal repayment is deferred.',
+          'Why does this matter for DSCR qualification? Because principal is removed from PITIA, your mandatory monthly debt service drops substantially. For example, on a $300,000 loan at 6.85%, standard 30-year amortizing principal and interest is $1,966 / mo. An interest-only payment is just $1,712 / mo, a monthly savings of $254.',
           'This $254 reduction reduces your denominator, instantly lifting your calculated DSCR from 1.15x into the premium 1.25x+ bracket, unlocking lower interest rate margins and enabling higher loan proceeds.'
         ]
       },
@@ -671,7 +671,7 @@ function calculateBreakEven(
         id: 'cost-crisis',
         paragraphs: [
           'In modern cloud enterprise analytics (AWS S3, Google Cloud Storage, Azure Blob, Snowflake, BigQuery, Databricks), cloud data costs fall into two major categories: at-rest byte storage, and analytical scan compute.',
-          'While object storage pricing appears relatively cheap on surface—AWS S3 Standard charges $0.023 per GB per month—uncompressed raw text formats like CSV, TSV, and JSON quickly create staggering operational expenses when accumulating terabytes of production logs, clickstreams, and IoT sensor metrics.',
+          'While object storage pricing appears relatively cheap on the surface ($0.023 per GB per month on AWS S3 Standard), uncompressed raw text formats like CSV, TSV, and JSON quickly create staggering operational expenses when accumulating terabytes of production logs, clickstreams, and IoT sensor metrics.',
           'Far more punitive than raw storage, however, is query scanning pricing. Engines like Amazon Athena charge $5.00 per terabyte of data scanned from S3. Snowflake charges warehouse credits ($2.00 to $4.00+ per credit hour) proportionally to how long micro-partitions take to pull from remote storage over the network. Scanning uncompressed CSV files forces query engines to read 100% of bytes for every column, causing monthly cloud bills to spiral out of control.'
         ]
       },
@@ -698,7 +698,7 @@ function calculateBreakEven(
         id: 'column-pruning-athena',
         paragraphs: [
           'The real game-changer in Parquet economics is Column Pruning. In a wide dataset containing 50 columns, if an analytical query only references 3 columns ("SELECT customer_id, SUM(order_total) FROM orders WHERE date = 2026-09-10"), Parquet query engines read ONLY the bytes allocated to those 3 columns. The remaining 47 columns are never pulled from S3 storage.',
-          'Combined with Predicate Pushdown—where query engines inspect min/max statistics in the Parquet footer to skip reading entire row groups that fall outside filter ranges—network byte transfer drops by over 90%, directly saving enterprise teams tens of thousands of dollars each billing cycle.'
+          'Combined with Predicate Pushdown (where query engines inspect min/max statistics in the Parquet footer to skip reading entire row groups outside filter ranges), network byte transfer drops by over 90%, directly saving enterprise teams tens of thousands of dollars each billing cycle.'
         ],
         code: {
           language: 'sql',
@@ -742,6 +742,814 @@ GROUP BY 1;
       {
         q: 'How does DuckDB-Wasm eliminate cloud compute costs?',
         a: 'DuckDB-Wasm executes queries directly inside the user browser tab using client-side CPU and memory via WebAssembly. For files under several gigabytes, data exploration incurs exactly $0.00 in cloud server or database fees.'
+      }
+    ]
+  }
+,
+  {
+    id: '10',
+    slug: 'commercial-real-estate-loan-types',
+    title: 'Commercial Real Estate Loan Types: CMBS, SBA 504, Bridge, and Balance Sheet Mortgages Compared',
+    excerpt: 'Navigate the complex commercial debt landscape. Compare Conduit (CMBS) loans, SBA 504 owner-occupied financing, private bridge debt, and balance sheet bank mortgages across LTV, DSCR thresholds, recourse rules, and prepayment penalties.',
+    category: 'Commercial Debt',
+    readTime: '13 min read',
+    date: 'September 12, 2026',
+    author: 'TableView Research Team',
+    tags: ['Commercial Real Estate', 'CMBS', 'SBA 504', 'Bridge Loans', 'CRE Underwriting'],
+    sections: [
+      {
+        heading: 'Introduction: The Institutional Commercial Debt Landscape',
+        id: 'cre-debt-landscape',
+        paragraphs: [
+          'Financing commercial real estate (CRE) involves navigating an entirely distinct debt market compared to residential lending. Residential mortgages are largely standardized and securitized through government-sponsored enterprises (Fannie Mae and Freddie Mac). In contrast, commercial loans are underwritten primarily on property income, asset-level cash flow, tenant creditworthiness, and lease term structures.',
+          'Borrowers must evaluate a multidimensional set of trade-offs: maximum Loan-to-Value (LTV), minimum Debt Service Coverage Ratio (DSCR), recourse vs non-recourse personal liability, amortization periods (typically 20 to 30 years) paired with short balloon maturities (typically 5 to 10 years), and punitive prepayment penalties like yield maintenance and defeasance.'
+        ]
+      },
+      {
+        heading: 'CMBS (Conduit) Loans: Non-Recourse Securitized Debt',
+        id: 'cmbs-conduit-loans',
+        paragraphs: [
+          'Commercial Mortgage-Backed Securities (CMBS), commonly known as conduit loans, are fixed-rate commercial mortgages packaged into pools and sold to institutional bond investors. Conduit loans are available for stabilized income-producing properties including multifamily complexes, industrial logistics parks, suburban retail strips, and Class-A office buildings.',
+          'Key Advantages: CMBS loans are structured almost universally as non-recourse debt, meaning the lender has no claim against the borrower personal assets in the event of default (subject only to standard bad-boy carveouts for fraud, bankruptcy, or environmental contamination). They offer fixed interest rates for 5, 7, or 10-year terms with 30-year amortization, maximizing cash-on-cash returns.',
+          'Key Limitations: Defeasance and yield maintenance make early payoff or refinancing prohibitively expensive. Furthermore, servicing is handled by rigid third-party master and special servicers who offer zero flexibility for lease modifications or capital structure adjustments.'
+        ]
+      },
+      {
+        heading: 'SBA 504 and 7(a) Loans: High-Leverage Owner-Occupied Financing',
+        id: 'sba-loans',
+        paragraphs: [
+          'For business owners purchasing or expanding properties that their own operating company occupies (requiring at least 51% occupancy for existing buildings and 60% for new construction), the Small Business Administration (SBA) offers unmatched financing leverage.',
+          'The SBA 504 program pairs a senior bank loan (50% LTV) with a junior Certified Development Company (CDC) debenture backed by the SBA (up to 40% LTV), requiring as little as 10% equity down from the small business owner. The debenture portion carries a 20- or 25-year fixed interest rate pegged to US Treasuries, protecting operators from rate spikes.'
+        ],
+        table: {
+          headers: ['Program', 'Max LTV', 'Interest Rate Structure', 'Amortization', 'Recourse Requirement'],
+          rows: [
+            ['SBA 504', '90% (10% down)', 'Blended (Bank prime + CDC fixed)', '25 Years (Fully amortizing)', 'Full personal guaranty (>20% owners)'],
+            ['SBA 7(a)', '85% (15% down)', 'Variable (SOFR / Prime + spread)', '25 Years (Real estate)', 'Full personal guaranty (>20% owners)'],
+            ['CMBS Conduit', '75%', 'Fixed (Swap spread + margin)', '30 Years (with 5-10 yr balloon)', 'Non-recourse (bad-boy carveouts)'],
+            ['Bank Balance Sheet', '65% - 75%', 'Fixed or Floating (5-year reset)', '20 - 25 Years', 'Full or partial recourse']
+          ]
+        }
+      },
+      {
+        heading: 'Bridge and Mezzanine Debt: Transitional Capital for Value-Add Deals',
+        id: 'bridge-mezzanine-debt',
+        paragraphs: [
+          'When acquiring distressed assets, vacant warehouses, or un-stabilized properties requiring heavy capital expenditures (CapEx), traditional banks and CMBS conduits refuse to underwrite because the current DSCR is negative or below 1.0x.',
+          'Bridge lenders provide short-term (12 to 36 month) floating-rate capital based on the prospective After-Repair Value (ARV) and stabilized Net Operating Income (Pro Forma NOI). Bridge loans typically feature interest-only payments, upfront renovation holdbacks, and minimum debt yield covenants (8% to 10%), allowing sponsors to renovate, re-tenant, and subsequently refinance into permanent debt.'
+        ]
+      },
+      {
+        heading: 'Underwriting Criteria: DSCR, Debt Yield, and LTV Constraints',
+        id: 'underwriting-criteria',
+        paragraphs: [
+          'Commercial underwriters test a deal against three strict constraints simultaneously; the loan proceeds are capped by whichever metric produces the lowest dollar figure:',
+          '1. Debt Service Coverage Ratio (DSCR): Net Operating Income divided by annual principal and interest payments. Standard minimums range from 1.20x to 1.35x.',
+          '2. Debt Yield: Net Operating Income divided by total loan amount. Lenders use debt yield to evaluate risk independent of interest rates. Most lenders require an 8.5% to 10.5% debt yield.',
+          '3. Loan-to-Value (LTV): Total loan amount divided by appraised property value, typically capped at 65% to 75% for non-recourse loans.'
+        ],
+        code: {
+          language: 'sql',
+          code: `-- SQL model to compute maximum allowable loan by DSCR and Debt Yield:\nSELECT \n  property_name,\n  noi,\n  ROUND(noi / 0.095, 2) AS max_loan_by_debt_yield,\n  ROUND(noi / 1.25, 2) AS max_annual_debt_service\nFROM commercial_properties;`
+        }
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is the difference between recourse and non-recourse commercial loans?',
+        a: 'In a recourse loan, the borrower is personally liable for any deficiency balance if the property forecloses for less than the debt amount. In a non-recourse loan, the lender can only seize the pledged collateral property, unless the borrower triggers a bad-boy carveout violation such as fraud or voluntary bankruptcy.'
+      },
+      {
+        q: 'What is a commercial balloon payment?',
+        a: 'A balloon payment is the remaining principal balance due in a lump sum at the end of a commercial loan term (e.g. at year 10) because the loan payments were amortized over a longer period (e.g. 25 or 30 years).'
+      },
+      {
+        q: 'How does defeasance differ from yield maintenance in CMBS prepayment?',
+        a: 'Yield maintenance requires paying a cash penalty to the lender equal to the present value of the remaining interest payments. Defeasance is a legal process where the borrower replaces the commercial real estate collateral with a portfolio of US Treasury bonds that replicate the loan cash flow.'
+      },
+      {
+        q: 'Can I use TableView commercial loan calculator to model balloon payments?',
+        a: 'Yes, our Commercial Real Estate & Balloon Payment Calculator calculates monthly debt service, amortization schedules, and the exact lump-sum maturity balance 100% in your browser.'
+      }
+    ]
+  },
+  {
+    id: '11',
+    slug: 'section-1031-exchange-rules-timeline',
+    title: 'IRC Section 1031 Exchange: Complete Rules, 45-Day Identification Deadlines & Tax Deferral Mechanics',
+    excerpt: 'Master Internal Revenue Code Section 1031 like-kind exchanges. Learn the strict 45-day identification rules, 180-day closing deadlines, Qualified Intermediary requirements, and how to calculate boot and deferred capital gains taxes.',
+    category: 'Tax & Real Estate',
+    readTime: '12 min read',
+    date: 'September 11, 2026',
+    author: 'TableView Tax & Valuation Desk',
+    tags: ['1031 Exchange', 'Tax Deferral', 'Capital Gains', 'Real Estate Investing', 'IRS Regulations'],
+    sections: [
+      {
+        heading: 'Introduction: The Power of Tax-Deferred Compounding Under IRC §1031',
+        id: 'section-1031-overview',
+        paragraphs: [
+          'Under Section 1031 of the Internal Revenue Code (IRC), real estate investors can defer 100% of federal capital gains taxes, state taxes, and depreciation recapture taxes when selling an investment or business property, provided the proceeds are reinvested into a like-kind replacement property of equal or greater value.',
+          'By deferring taxes that could otherwise consume 25% to 40% of net equity upon sale, investors retain their entire gross equity pool to acquire larger, more productive commercial assets, compounding wealth uninterrupted across decades.'
+        ]
+      },
+      {
+        heading: 'The Strict IRS Statutory Timeline: 45 Days and 180 Days',
+        id: 'statutory-timeline',
+        paragraphs: [
+          'The IRS enforces rigid, non-negotiable statutory timelines for delayed (Starker) exchanges. Missing a deadline by even one minute disqualifies the entire exchange, triggering immediate tax recognition on the entire gain:',
+          '1. The 45-Day Identification Period: Starting on the calendar day the relinquished property deed is recorded, the exchanger has exactly 45 calendar days to formally identify prospective replacement properties in writing. Weekends and federal holidays do NOT extend this deadline.',
+          '2. The 180-Day Exchange Period: The exchanger must complete the acquisition and take legal title to the replacement property within 180 calendar days from the sale of the relinquished property, or by the due date of the tax return for that year (including extensions), whichever comes first.'
+        ]
+      },
+      {
+        heading: 'The Three Identification Rules: Navigating Selection Limits',
+        id: 'identification-rules',
+        paragraphs: [
+          'To satisfy IRS regulations during the 45-day window, identified replacement properties must comply with one of three statutory rules:',
+          '• The 3-Property Rule: The investor may identify up to 3 replacement properties of any dollar value, regardless of their aggregate market price.',
+          '• The 200% Rule: If identifying 4 or more properties, the total combined fair market value of all identified properties cannot exceed 200% (double) of the gross sales price of the relinquished property.',
+          '• The 95% Rule: If the investor identifies more than 3 properties whose combined value exceeds 200%, the exchange is only valid if the investor actually purchases and closes on at least 95% of the aggregate value of all identified properties.'
+        ],
+        table: {
+          headers: ['Identification Rule', 'Max Properties', 'Value Ceiling', 'Closing Requirement'],
+          rows: [
+            ['3-Property Rule', '3 properties', 'No value limit', 'Can purchase any combination'],
+            ['200% Rule', 'Unlimited', '200% of relinquished sales price', 'Can purchase any combination'],
+            ['95% Rule', 'Unlimited', 'Unlimited (>200% allowed)', 'Must close on >=95% of total identified value']
+          ]
+        }
+      },
+      {
+        heading: 'Understanding Taxable "Boot": Cash Boot vs Mortgage Boot',
+        id: 'taxable-boot',
+        paragraphs: [
+          'To achieve a completely tax-free exchange, the investor must satisfy two cardinal rules: (1) purchase replacement property of equal or greater fair market value, and (2) roll all net cash proceeds into the new asset while taking on equal or greater debt.',
+          'Any net economic value received by the investor during the transaction is called "Boot" and is taxed to the extent of realized gain:',
+          '• Cash Boot: Excess cash proceeds withheld or distributed to the taxpayer instead of being transferred to the replacement escrow.',
+          '• Mortgage Boot (Debt Relief): If the replacement property mortgage is smaller than the retired mortgage on the relinquished property, the debt reduction constitutes taxable boot unless offset by contributing additional fresh out-of-pocket cash.'
+        ]
+      },
+      {
+        heading: 'The Qualified Intermediary (QI) and Constructive Receipt Trap',
+        id: 'qualified-intermediary',
+        paragraphs: [
+          'A taxpayer cannot touch, deposit, or hold the sales proceeds at any point during the exchange. Under the IRS "Doctrine of Constructive Receipt", if the seller or their agent (such as their personal attorney, CPA, or real estate broker) receives control of the funds, the entire exchange fails immediately.',
+          'An independent, bonded Qualified Intermediary (QI) must be retained before closing on the sale of the relinquished property. The QI signs an exchange agreement, holds proceeds in a segregated escrow account, and wires funds directly to the closing agent for the replacement purchase.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'What qualifies as like-kind property under Section 1031?',
+        a: 'The definition of like-kind is very broad for real estate. Any real property held for productive use in a trade or business or for investment qualifies. An investor can exchange raw land for an apartment complex, or an industrial warehouse for retail shopping centers. Personal residences do NOT qualify.'
+      },
+      {
+        q: 'Can Section 1031 exchange defer depreciation recapture taxes?',
+        a: 'Yes. When real estate is sold traditionally, cumulative depreciation taken during ownership is taxed at a federal recapture rate of 25%. A 1031 exchange defers both standard capital gains taxes and the 25% depreciation recapture tax.'
+      },
+      {
+        q: 'What happens if the replacement property closes on day 181?',
+        a: 'The exchange completely fails. The IRS grants virtually no extensions for the 45-day or 180-day deadlines, with rare exceptions only for federally declared disaster areas or active military deployment in a combat zone.'
+      },
+      {
+        q: 'How does the TableView Section 1031 Calculator work?',
+        a: 'Our in-browser 1031 Calculator computes realized gain, recognized gain, cash boot, mortgage boot, federal capital gains tax, state tax, and the adjusted basis of your replacement property in real-time.'
+      }
+    ]
+  },
+  {
+    id: '12',
+    slug: 'how-to-calculate-dscr',
+    title: 'How to Calculate Debt Service Coverage Ratio (DSCR): Formulas, Underwriting Tiers, and Real Estate Examples',
+    excerpt: 'Step-by-step guide to calculating DSCR for commercial mortgages and residential investor loans. Learn how lenders calculate Net Operating Income (NOI), evaluate qualification tiers, and stress-test rental cash flows.',
+    category: 'Real Estate Underwriting',
+    readTime: '11 min read',
+    date: 'September 10, 2026',
+    author: 'TableView Research Team',
+    tags: ['DSCR', 'Mortgage Underwriting', 'Rental Property', 'Cash Flow', 'Real Estate Investing'],
+    sections: [
+      {
+        heading: 'What is Debt Service Coverage Ratio (DSCR)?',
+        id: 'what-is-dscr',
+        paragraphs: [
+          'Debt Service Coverage Ratio (DSCR) is the single most critical underwriting metric used by commercial banks, private credit funds, and non-QM residential lenders to assess property debt repayment capacity.',
+          'DSCR measures the relationship between a property net operating income and its total annual debt obligations. Unlike conventional residential mortgages that rely on personal W-2 income and debt-to-income (DTI) ratios, DSCR loans underwrite the asset itself. If the property produces sufficient operating cash flow to service its debt with an adequate margin of safety, the loan is approved.'
+        ]
+      },
+      {
+        heading: 'The Mathematical Formula and Component Breakdown',
+        id: 'dscr-formula',
+        paragraphs: [
+          'The core mathematical formula is straightforward:',
+          'DSCR = Net Operating Income (NOI) / Total Annual Debt Service',
+          'Where: Net Operating Income (NOI) = Gross Effective Income minus Operating Expenses (excluding mortgage interest, depreciation, and amortization). Annual Debt Service = Total yearly principal and interest (P&I) payments, plus escrowed property taxes, insurance, and HOA fees (PITIA).'
+        ],
+        code: {
+          language: 'sql',
+          code: `-- SQL query to calculate DSCR across a rental portfolio:\nSELECT \n  property_id,\n  gross_rental_revenue,\n  operating_expenses,\n  (gross_rental_revenue - operating_expenses) AS noi,\n  annual_debt_service,\n  ROUND((gross_rental_revenue - operating_expenses) / annual_debt_service, 2) AS dscr\nFROM rental_portfolio;`
+        }
+      },
+      {
+        heading: 'Lender Qualification Tiers and Minimum Ratios',
+        id: 'lender-qualification-tiers',
+        paragraphs: [
+          'Lenders establish strict minimum DSCR thresholds to guard against tenant vacancies, market rent declines, and unexpected maintenance spikes:',
+          '• Prime Tier (DSCR >= 1.35x): Highly desirable cash-flowing assets. Lenders offer the most aggressive pricing, lowest interest rate spreads, and maximum leverage (up to 80% LTV).',
+          '• Standard Tier (DSCR 1.20x to 1.34x): The conventional institutional benchmark for most commercial real estate and non-QM investor loans.',
+          '• Marginal Tier (DSCR 1.00x to 1.19x): The property cash flow barely covers debt service. Lenders typically require lower LTVs (65% to 70%), higher reserve funds (6 to 12 months PITIA in escrow), and personal guarantees.',
+          '• Sub-1.00x Programs: Negative cash flow loans where debt service exceeds current rents. Approved only for short-term rehabs or high-net-worth investors with substantial global cash flow.'
+        ],
+        table: {
+          headers: ['DSCR Range', 'Tier Rating', 'Typical Max LTV', 'Interest Rate Impact', 'Reserve Requirements'],
+          rows: [
+            ['>= 1.35x', 'Prime Quality', '75% - 80%', 'Lowest available rate', '3 - 6 months PITIA'],
+            ['1.20x - 1.34x', 'Standard Commercial', '70% - 75%', 'Standard spread (+0.25%)', '6 months PITIA'],
+            ['1.00x - 1.19x', 'Marginal / Strict', '65% - 70%', 'Higher spread (+0.50% - +1.00%)', '9 - 12 months PITIA'],
+            ['< 1.00x', 'Deficit Cash Flow', '60% - 65%', 'Specialty private rate (+1.50%+)', '12+ months PITIA']
+          ]
+        }
+      },
+      {
+        heading: 'Step-by-Step Worked Example: Underwriting a Small Multifamily Property',
+        id: 'worked-example',
+        paragraphs: [
+          'Let us underwrite a 6-unit apartment building listed at $1,000,000 with a $750,000 proposed loan at 6.75% interest over 30 years:',
+          '1. Gross Scheduled Rent: 6 units * $1,600/month = $115,200/year.',
+          '2. Vacancy & Credit Loss: 5% allowance = -$5,760.',
+          '3. Effective Gross Income (EGI): $109,440.',
+          '4. Operating Expenses: Property taxes ($14,000), insurance ($4,500), management at 8% ($8,755), maintenance & reserves ($7,000), utilities ($3,000) = $37,255.',
+          '5. Net Operating Income (NOI): $109,440 - $37,255 = $72,185.',
+          '6. Annual Debt Service: Monthly P&I ($4,865) * 12 = $58,380.',
+          '7. DSCR Calculation: $72,185 / $58,380 = 1.236x (Meets the 1.20x Standard Tier threshold).'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'Why do lenders exclude capital expenditures (CapEx) from NOI when calculating DSCR?',
+        a: 'Lenders focus on ongoing operational cash flow. Routine maintenance is included in operating expenses, but large one-time capital expenditures (such as a roof replacement) are treated as balance sheet investments rather than recurring operating deductions.'
+      },
+      {
+        q: 'Can personal debt affect a DSCR loan approval?',
+        a: 'For pure asset-based DSCR loans, your personal debt-to-income (DTI) ratio is not considered. Lenders do pull personal credit scores (typically requiring a 660+ FICO) to evaluate financial reliability, but loan sizing is dictated entirely by property income.'
+      },
+      {
+        q: 'What is a DSCR interest-only loan?',
+        a: 'An interest-only DSCR loan requires the borrower to pay only monthly interest during the initial period (e.g. 5 or 10 years), with no principal amortization. This lowers the monthly debt service significantly, artificially boosting the DSCR during underwriting.'
+      },
+      {
+        q: 'How does the TableView DSCR calculator assist investors?',
+        a: 'Our DSCR calculator instantly computes your monthly debt service, NOI, exact coverage ratio, and qualification tier, allowing you to test interest rate sensitivity and loan sizing client-side.'
+      }
+    ]
+  },
+  {
+    id: '13',
+    slug: 'loan-amortization-math-explained',
+    title: 'The Mathematics of Loan Amortization: Formulas, Compound Interest, and Accelerated Payoff Mechanics',
+    excerpt: 'Deconstruct the exact mathematical formulas behind fixed-rate mortgage amortization schedules. Understand compound interest front-loading, bi-weekly accelerated schedules, loan recasting, and extra principal payoff velocity.',
+    category: 'Financial Mathematics',
+    readTime: '13 min read',
+    date: 'September 9, 2026',
+    author: 'TableView Quantitative Modeling Desk',
+    tags: ['Amortization', 'Mortgage Math', 'Compound Interest', 'Financial Engineering', 'Debt Payoff'],
+    sections: [
+      {
+        heading: 'Deriving the Standard Amortization Payment Formula',
+        id: 'amortization-formula-derivation',
+        paragraphs: [
+          'A fixed-rate amortizing loan is structured so that every monthly payment is identical in dollar amount, while the internal allocation between principal repayment and interest shifts continuously over time.',
+          'The monthly payment (M) is derived using the standard annuity formula for the present value of ordinary annuities:',
+          'M = P * [ r(1 + r)^n ] / [ (1 + r)^n - 1 ]',
+          'Where: P = Initial loan principal amount. r = Periodic monthly interest rate (Annual Percentage Rate / 12). n = Total number of monthly payment periods (e.g., 360 for a 30-year term, 180 for a 15-year term).'
+        ],
+        code: {
+          language: 'python',
+          code: `def calculate_monthly_payment(principal: float, annual_rate: float, years: int) -> float:\n    monthly_rate = (annual_rate / 100) / 12\n    n_payments = years * 12\n    numerator = monthly_rate * ((1 + monthly_rate) ** n_payments)\n    denominator = ((1 + monthly_rate) ** n_payments) - 1\n    return principal * (numerator / denominator)\n\n# Example: $400,000 mortgage at 6.5% for 30 years\npayment = calculate_monthly_payment(400000, 6.5, 30)\nprint(f"Monthly P&I Payment: $\{payment:.2f}") # Output: $2,528.27`
+        }
+      },
+      {
+        heading: 'The Front-Loaded Interest Phenomenon: The Banker Amortization Curve',
+        id: 'front-loaded-interest',
+        paragraphs: [
+          'Many borrowers are surprised to discover that during the first several years of a 30-year mortgage, roughly 75% to 85% of each monthly payment goes straight to interest, with very little reducing the principal balance.',
+          'This is not due to lender malice; it is a purely mathematical consequence of compound interest applied to a large outstanding balance. In Month 1 of a $400,000 loan at 6.5%, the interest is $400,000 * (0.065 / 12) = $2,166.67. Out of the $2,528.27 total payment, only $361.60 reduces principal.',
+          'Not until Year 16 does the monthly principal portion surpass the interest portion. This mathematical reality explains why frequent refinancing every 3 to 5 years resets the amortization clock, keeping borrowers trapped in the highest-interest phase of the debt curve.'
+        ]
+      },
+      {
+        heading: 'Accelerated Bi-Weekly Payments: The Secret 13th Payment',
+        id: 'biweekly-amortization-mechanics',
+        paragraphs: [
+          'Under a true bi-weekly payment schedule, the borrower pays exactly half of the normal monthly payment every two weeks. Because there are 52 weeks in a calendar year, the borrower makes 26 half-payments, which equals 13 full monthly payments per year.',
+          'That extra full payment goes 100% toward principal reduction. On a $400,000 mortgage at 6.5%, switching to accelerated bi-weekly payments shaves roughly 5.5 years off a 30-year term and saves over $88,000 in total lifetime interest.'
+        ]
+      },
+      {
+        heading: 'Loan Recasting vs Refinancing: The Fee-Free Balance Reset',
+        id: 'recasting-vs-refinancing',
+        paragraphs: [
+          'When a borrower makes a substantial lump-sum payment toward principal (e.g. $50,000 from an inheritance or asset sale), standard loan terms do not automatically lower the monthly payment; instead, the loan simply pays off earlier.',
+          'A Loan Recast allows the borrower to preserve their existing interest rate and remaining term while the lender re-amortizes the remaining lower principal balance. For a nominal administrative fee (typically $250 to $500), the monthly payment is permanently reduced without paying thousands of dollars in closing costs required for a formal refinance.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is negative amortization?',
+        a: 'Negative amortization occurs when the scheduled loan payment is smaller than the monthly interest accrued. The unpaid interest is added to the principal loan balance, causing total debt to increase rather than decrease over time.'
+      },
+      {
+        q: 'How does an extra $200 per month affect a 30-year fixed mortgage?',
+        a: 'On a $400,000 mortgage at 6.5% interest, paying an extra $200 principal monthly eliminates over $52,000 in compound interest and pays off the loan 4.5 years ahead of schedule.'
+      },
+      {
+        q: 'Does loan recasting change my interest rate or loan terms?',
+        a: 'No. Recasting keeps your existing interest rate, note terms, and maturity date intact. It purely recalculates the monthly payment based on the newly reduced principal balance.'
+      },
+      {
+        q: 'Where can I run these amortization simulations in my browser?',
+        a: 'TableView features an interactive Mortgage Calculator and Loan Comparison Calculator that plot interactive amortization curves and export complete schedules to Excel.'
+      }
+    ]
+  },
+  {
+    id: '14',
+    slug: 'flsa-overtime-rules-and-exemptions',
+    title: 'FLSA Overtime Rules & Wage Calculations: Exempt vs Non-Exempt Employees and Regular Rate Math',
+    excerpt: 'Comprehensive compliance guide to the Fair Labor Standards Act (FLSA). Master the salary threshold tests, duties tests for executive and professional exemptions, regular rate of pay formulas, and 1.5x overtime calculations.',
+    category: 'Compensation & Payroll',
+    readTime: '11 min read',
+    date: 'September 8, 2026',
+    author: 'TableView Payroll & Compensation Desk',
+    tags: ['FLSA', 'Overtime Rules', 'Salary to Hourly', 'Payroll Compliance', 'Wage & Hour'],
+    sections: [
+      {
+        heading: 'The Fair Labor Standards Act (FLSA) Overview',
+        id: 'flsa-overview',
+        paragraphs: [
+          'Enacted by the federal government and enforced by the Department of Labor (DOL) Wage and Hour Division, the Fair Labor Standards Act (FLSA) governs minimum wage, overtime pay, recordkeeping, and youth employment standards for over 140 million American workers.',
+          'The fundamental rule of the FLSA is straightforward: unless an employee meets specific statutory exemption criteria, they must receive overtime pay for all hours worked over 40 in a single workweek at a rate not less than time-and-a-half (1.5x) their regular rate of pay.'
+        ]
+      },
+      {
+        heading: 'Exempt vs Non-Exempt Status: The Three Statutory Tests',
+        id: 'exemption-tests',
+        paragraphs: [
+          'Classifying an employee as "exempt" from overtime requires satisfying three independent legal tests simultaneously. Paying someone a fixed salary does NOT automatically make them exempt:',
+          '1. The Salary Basis Test: The employee must be paid a predetermined, fixed salary that cannot be reduced based on the quality or quantity of work performed in any given workweek.',
+          '2. The Salary Level Test: The employee salary must meet or exceed the federal minimum statutory threshold (updated periodically by the US Department of Labor).',
+          '3. The Job Duties Test: The employee actual day-to-day job responsibilities (not their title) must primarily involve Executive, Administrative, Professional, Outside Sales, or Computer duties.'
+        ],
+        table: {
+          headers: ['Exemption Category', 'Primary Duties Requirement', 'Discretion & Independent Judgment', 'Minimum Level'],
+          rows: [
+            ['Executive Exemption', 'Customarily manage an enterprise/department, direct 2+ workers', 'Authority to hire/fire or significant weight in decisions', 'DOL Salary Threshold'],
+            ['Administrative Exemption', 'Office/non-manual work directly related to management or operations', 'Discretion and independent judgment on matters of significance', 'DOL Salary Threshold'],
+            ['Professional Exemption', 'Work requiring advanced knowledge in a specialized field of science/learning', 'Intellectual character, prolonged course of specialized instruction', 'DOL Salary Threshold'],
+            ['Computer Employee', 'Systems analysis, software engineering, programming, or database architecture', 'High-level software design and operational architecture', 'Salary or >=$27.63/hr']
+          ]
+        }
+      },
+      {
+        heading: 'Calculating the "Regular Rate of Pay" for Overtime',
+        id: 'regular-rate-math',
+        paragraphs: [
+          'A frequent compliance mistake is calculating overtime solely on an employee base hourly wage while ignoring other compensation. The FLSA requires overtime to be computed against the Regular Rate of Pay, which includes all remuneration paid to the employee with narrow statutory exclusions.',
+          'Inclusions: Hourly wages, non-discretionary bonuses (such as attendance, safety, or production bonuses), shift differentials, and commissions.',
+          'Exclusions: Discretionary holiday gifts, reimbursable business expenses, paid time off (PTO, vacation, sick days), and employer contributions to retirement or healthcare benefits.'
+        ],
+        code: {
+          language: 'python',
+          code: `def calculate_flsa_paycheck(base_rate: float, hours: float, bonus: float) -> dict:\n    total_hours = hours\n    regular_hours = min(40, total_hours)\n    overtime_hours = max(0, total_hours - 40)\n    total_straight_time = (base_rate * total_hours) + bonus\n    regular_rate = total_straight_time / total_hours\n    overtime_premium = overtime_hours * (regular_rate * 0.5)\n    gross_pay = total_straight_time + overtime_premium\n    return {"regular_rate": round(regular_rate, 2), "gross_pay": round(gross_pay, 2)}`
+        }
+      },
+      {
+        heading: 'Common Employer Pitfalls and Liquidated Damages',
+        id: 'compliance-pitfalls',
+        paragraphs: [
+          'FLSA wage and hour lawsuits remain one of the largest litigation risks for employers. Frequent violations include:',
+          '• Off-the-clock work: Expecting non-exempt employees to respond to Slack messages, emails, or phone calls outside their scheduled shifts without recording time.',
+          '• Misclassifying independent contractors (1099 vs W-2): Applying behavioural control while treating workers as non-employees.',
+          '• Inappropriate comp time: Private employers cannot offer compensatory time off in lieu of cash overtime pay; comp time is restricted to public sector government entities.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'Can a salaried employee be eligible for overtime pay under the FLSA?',
+        a: 'Yes. Being paid a fixed salary does not exempt an employee from overtime. If an employee earns less than the statutory salary threshold or does not meet the specific executive, administrative, or professional job duties tests, they are non-exempt and must receive overtime pay.'
+      },
+      {
+        q: 'How does TableView Salary to Hourly Calculator handle FLSA overtime?',
+        a: 'Our calculator translates annual salary into exact hourly wage equivalents based on 2,080 annual working hours and computes the mandatory 1.5x FLSA overtime rate instantly.'
+      },
+      {
+        q: 'Can overtime be calculated over a two-week period (80 hours)?',
+        a: 'No, for most private employers. The FLSA mandates that overtime be calculated on a 7-consecutive-day (40-hour) workweek basis. Averaging hours across two weeks (e.g. 50 hours in week 1 and 30 hours in week 2) is illegal.'
+      },
+      {
+        q: 'Are bonuses included in overtime calculations?',
+        a: 'Non-discretionary bonuses (performance bonuses, production incentives, commissions) must be included when calculating the regular rate of pay for overtime. True discretionary bonuses (unannounced holiday gifts) can be excluded.'
+      }
+    ]
+  },
+  {
+    id: '15',
+    slug: 'hard-money-loans-for-fix-and-flip',
+    title: 'The Complete Guide to Hard Money Lending for Real Estate Fix-and-Flip Investors',
+    excerpt: 'Master private real estate debt financing. Learn how hard money loans work, the 70% Rule Maximum Allowable Offer (MAO) formula, construction draw escrow holdbacks, points, and transition strategies into long-term DSCR loans.',
+    category: 'Real Estate Investing',
+    readTime: '11 min read',
+    date: 'September 7, 2026',
+    author: 'TableView Research Team',
+    tags: ['Hard Money', 'Fix and Flip', 'Bridge Financing', 'Real Estate Investing', '70 Percent Rule'],
+    sections: [
+      {
+        heading: 'What is a Hard Money Loan and Who Are Private Lenders?',
+        id: 'what-is-hard-money',
+        paragraphs: [
+          'A hard money loan is a short-term, asset-based debt instrument funded by private investment companies or private debt syndicates rather than traditional commercial banks or government-backed programs.',
+          'While banks scrutinize a borrower tax returns, debt-to-income (DTI) ratios, and historical liquidity, hard money lenders prioritize the collateral real estate asset: its current purchase price, scope of renovation, and projected After-Repair Value (ARV). Because private lenders make autonomous credit decisions, loans can be funded in 5 to 10 business days, giving investors a critical advantage in competitive property auctions.'
+        ]
+      },
+      {
+        heading: 'The 70% Rule and the Maximum Allowable Offer (MAO) Formula',
+        id: '70-percent-rule-mao',
+        paragraphs: [
+          'Professional real estate flippers rely on the 70% Rule to evaluate acquisition feasibility and prevent overpaying for distressed inventory:',
+          'Maximum Allowable Offer (MAO) = (After-Repair Value * 70%) - Estimated Repair Costs',
+          'The 30% margin encompasses lender financing costs (points and interest), closing fees, property taxes, insurance, realtor disposition commissions (5% to 6%), and the investor net target profit. In hyper-competitive metro markets, investors sometimes adjust the rule to 75% or 80%, but this narrows the margin of safety.'
+        ],
+        code: {
+          language: 'sql',
+          code: `-- SQL model to compute MAO and deal viability:\nSELECT \n  property_address,\n  after_repair_value AS arv,\n  estimated_repairs,\n  ROUND((after_repair_value * 0.70) - estimated_repairs, 2) AS max_allowable_offer,\n  asking_price\nFROM flip_pipeline;`
+        }
+      },
+      {
+        heading: 'Loan Terms Breakdown: Interest Rates, Points, and Draw Schedules',
+        id: 'loan-terms-draws',
+        paragraphs: [
+          'Hard money loans carry distinct pricing structures reflecting short investment horizons and higher underwriting risk:',
+          '• Interest Rates: Typically range from 9.0% to 13.5%, structured as interest-only monthly payments.',
+          '• Origination Points: Upfront fees ranging from 1 to 3 points (1% to 3% of the total loan commitment), paid at settlement.',
+          '• Construction Escrow Holdbacks: Lenders do not disburse the renovation budget at closing. Funds are held in an escrow account and released in "draws" after verified completion of construction milestones via third-party site inspections.'
+        ]
+      },
+      {
+        heading: 'Exit Strategies: Retail Disposition vs BRRRR Refinance',
+        id: 'exit-strategies',
+        paragraphs: [
+          'Every hard money loan requires a clearly defined, documented exit strategy prior to loan origination:',
+          '1. Retail Flip Sale: Upon completing renovations and staging, the property is listed on the MLS and sold to an owner-occupant buyer, completely retiring the hard money debt and distributing cash profits.',
+          '2. The BRRRR Strategy (Buy, Rehab, Rent, Refinance, Repeat): Instead of selling, the sponsor leases the property to stabilized tenants and executes a cash-out refinance into a 30-year fixed DSCR loan, pulling out their initial capital while retaining a cash-flowing asset.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'Can a first-time investor qualify for a hard money loan?',
+        a: 'Yes, but lenders often require higher equity skin-in-the-game (e.g. 20% to 25% down on purchase price instead of 10% to 15%) and will heavily scrutinize the licensed general contractor bids and credentials.'
+      },
+      {
+        q: 'What is Dutch Interest in hard money lending?',
+        a: 'Dutch Interest occurs when a lender charges interest on the entire loan commitment (including undisbursed renovation holdbacks) from Day 1, rather than charging interest only on funds actually drawn. Savvy investors negotiate for non-Dutch interest terms.'
+      },
+      {
+        q: 'How long does it take to close a hard money loan?',
+        a: 'While traditional bank loans take 45 to 60 days, experienced hard money lenders can close and fund deals within 7 to 14 days once title search and appraisal/valuation reports are completed.'
+      },
+      {
+        q: 'How does the TableView Hard Money Calculator help investors?',
+        a: 'Our calculator computes total acquisition cost, holding costs, origination points, MAO compliance, and projected net profit/ROI in real-time.'
+      }
+    ]
+  },
+  {
+    id: '16',
+    slug: 'commercial-balloon-mortgages-risks',
+    title: 'Commercial Balloon Mortgages: How Balloon Payments Work and Refinancing Risk Mitigation',
+    excerpt: 'Understand the mechanics of commercial balloon mortgages. Learn why commercial debt uses 5-to-10-year balloon maturities with 25-year amortization, how to calculate maturity principal, and strategies to hedge refinancing risk.',
+    category: 'Commercial Finance',
+    readTime: '10 min read',
+    date: 'September 6, 2026',
+    author: 'TableView Research Team',
+    tags: ['Balloon Payment', 'Commercial Mortgages', 'CRE Debt', 'Maturity Wall', 'Refinancing'],
+    sections: [
+      {
+        heading: 'The Structure of Commercial Balloon Mortgages',
+        id: 'balloon-structure',
+        paragraphs: [
+          'In the residential mortgage market, the 30-year fully amortizing fixed-rate loan reigns supreme. In the commercial real estate (CRE) market, however, fully amortizing long-term loans are rare.',
+          'Instead, the vast majority of bank, credit union, and CMBS commercial loans are structured as Balloon Mortgages: payments are calculated on a long amortization schedule (typically 20, 25, or 30 years) to keep monthly debt service manageable, but the loan matures in full after a much shorter period (typically 5, 7, or 10 years).'
+        ]
+      },
+      {
+        heading: 'Why Commercial Lenders Require Balloon Terms',
+        id: 'why-lenders-use-balloons',
+        paragraphs: [
+          'Commercial lenders avoid locking in long-term fixed rates for 30 years due to interest rate risk, bank asset-liability matching constraints, and property risk:',
+          '1. Asset-Liability Matching: Commercial banks fund loans with short-term deposits. Holding a 30-year fixed mortgage exposes the bank to massive duration mismatch risk if interest rates climb.',
+          '2. Property Re-Underwriting: Commercial buildings experience tenant turnover, lease expirations, and deferred maintenance. A 5-to-10-year balloon forces a mandatory re-assessment of property performance, tenant creditworthiness, and market value before extending credit.'
+        ]
+      },
+      {
+        heading: 'Calculating the Balloon Payment: Principal Paydown Formula',
+        id: 'calculating-balloon-balance',
+        paragraphs: [
+          'The balloon payment due at maturity equals the unpaid principal balance (B_m) at month m. It is computed as:',
+          'B_m = P * [ (1 + r)^n - (1 + r)^m ] / [ (1 + r)^n - 1 ]',
+          'Where P is initial principal, r is monthly rate, n is total amortization months (300 for 25-yr), and m is the maturity month (120 for 10-yr balloon). On a $2,000,000 commercial loan at 6.75% amortized over 25 years with a 10-year balloon, the remaining principal balance due in month 120 is approximately $1,553,000.'
+        ]
+      },
+      {
+        heading: 'Refinancing Risk and the Commercial Maturity Wall',
+        id: 'refinancing-risk-maturity-wall',
+        paragraphs: [
+          'Refinancing risk (often called the "Maturity Wall") occurs when a balloon mortgage reaches its maturity date during an adverse economic environment: interest rates have risen, property values have softened, or local capitalization rates (cap rates) have expanded.',
+          'If property net operating income has stagnated while market interest rates rose from 4.5% to 7.5%, the property may no longer qualify for a new loan large enough to pay off the existing balloon balance under standard 1.25x DSCR limits. Borrowers must either inject fresh equity ("cash-in refinance"), negotiate a loan modification/extension, or face foreclosure.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'What happens if I cannot pay off a commercial balloon payment at maturity?',
+        a: 'If you cannot refinance or pay off the balloon balance, the loan goes into technical default. Most lenders prefer not to foreclose and will offer a short-term extension (6 to 12 months) in exchange for an extension fee, a higher interest rate, or an additional principal paydown.'
+      },
+      {
+        q: 'How far in advance should I prepare for a commercial balloon maturity?',
+        a: 'Commercial real estate sponsors should begin the refinancing or recapitalization process 9 to 12 months prior to the balloon maturity date to account for debt broker selection, appraisals, environmental Phase I reports, and lender credit committee approval.'
+      },
+      {
+        q: 'Can a sinking fund mitigate balloon mortgage risk?',
+        a: 'Yes. A sinking fund involves setting aside monthly or quarterly cash reserves into a dedicated interest-bearing account throughout the loan term, ensuring liquid cash is available to pay down the principal upon maturity.'
+      },
+      {
+        q: 'Where can I calculate commercial balloon balances online?',
+        a: 'TableView Commercial Real Estate & Balloon Payment Calculator computes exact monthly payments, amortization trajectories, and the balloon lump sum due at any maturity year.'
+      }
+    ]
+  },
+  {
+    id: '17',
+    slug: 'duckdb-wasm-memory-and-performance',
+    title: 'Inside DuckDB-Wasm: Architecture, SIMD Vectorization, and In-Browser Memory Management',
+    excerpt: 'An engineering deep dive into DuckDB-Wasm. Learn how analytical SQL queries run at native CPU speeds inside web browsers using WebAssembly SIMD128 vectorization, the Origin Private File System (OPFS), and memory buffer tuning.',
+    category: 'Engineering Architecture',
+    readTime: '14 min read',
+    date: 'September 5, 2026',
+    author: 'TableView Engineering Team',
+    tags: ['DuckDB', 'WebAssembly', 'SIMD', 'Data Architecture', 'In-Browser OLAP'],
+    sections: [
+      {
+        heading: 'The Evolution of In-Browser Data Engines',
+        id: 'browser-engines-evolution',
+        paragraphs: [
+          'For over a decade, client-side relational storage in browsers was dominated by SQLite compiled to asm.js or WebAssembly. While SQLite is an exceptional transactional (OLTP) engine for point lookups and row inserts, its row-oriented execution model becomes a massive bottleneck when processing analytical queries over millions of records.',
+          'DuckDB-Wasm represents an architectural paradigm shift. By compiling DuckDB modern columnar vectorized execution engine to WebAssembly, analytical queries (aggregations, joins, window functions) execute directly in the browser tab at speeds rivaling native C++ benchmarks.'
+        ]
+      },
+      {
+        heading: 'WASM64, Web Workers, and SIMD128 Vectorization',
+        id: 'simd-and-web-workers',
+        paragraphs: [
+          'DuckDB-Wasm achieves near-native performance through three key browser capabilities:',
+          '1. SIMD128 (Single Instruction, Multiple Data): DuckDB vectorizes execution loops so modern CPUs execute vector operations across multiple numbers in a single clock cycle.',
+          '2. Dedicated Web Workers: All DuckDB processing runs off the main browser thread. Complex queries scanning millions of rows do not block UI rendering, keeping the interface responsive at 60 FPS.',
+          '3. Multi-threading with SharedArrayBuffer: In secure contexts (configured with Cross-Origin Opener Policy and Cross-Origin Embedder Policy headers), DuckDB utilizes web workers for parallel query execution.'
+        ],
+        code: {
+          language: 'typescript',
+          code: `import * as duckdb from '@duckdb/duckdb-wasm';\n\n// Initialize DuckDB-Wasm with modern bundle and SIMD support:\nconst JSDELIVR_BUNDLES = duckdb.getJsDelivrBundles();\nconst bundle = await duckdb.selectBundle(JSDELIVR_BUNDLES);\nconst worker = new Worker(bundle.mainWorker!);\nconst logger = new duckdb.ConsoleLogger();\nconst db = new duckdb.AsyncDuckDB(logger, worker);\nawait db.instantiate(bundle.mainModule, bundle.pthreadWorker);`
+        }
+      },
+      {
+        heading: 'Virtual File System (VFS) and Memory Allocation',
+        id: 'vfs-and-memory',
+        paragraphs: [
+          'WebAssembly programs operate inside a sandboxed linear memory space. In 32-bit WebAssembly, total memory is strictly capped at 4 GB per browser tab, requiring sophisticated buffer allocation strategies.',
+          'DuckDB-Wasm implements a custom Virtual File System (VFS) that supports both in-memory buffers and persistent storage via the browser Origin Private File System (OPFS). When you drag and drop a 500 MB Apache Parquet file into TableView, the file is mounted as a virtual file descriptor. DuckDB reads only the metadata footer and the specific byte ranges required for the active query, completely bypassing the need to load the entire dataset into memory.'
+        ]
+      },
+      {
+        heading: 'Why TableView Runs 100% Client-Side with Zero Server Uploads',
+        id: 'zero-server-advantage',
+        paragraphs: [
+          'Because DuckDB-Wasm executes entirely within the browser tab sandbox, confidential customer databases, healthcare datasets, and financial statements are never transmitted over the network.',
+          'This client-side architecture delivers two transformative advantages: (1) Absolute enterprise privacy and compliance with GDPR, HIPAA, and SOC 2; (2) Zero server cloud infrastructure costs, allowing TableView to offer free, high-performance data inspection without paywalls or usage quotas.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is the maximum file size DuckDB-Wasm can open in a browser?',
+        a: 'Due to 32-bit WebAssembly memory constraints (4 GB address space), in-memory operations are optimal for datasets under 1.5 GB to 2 GB. For larger datasets, DuckDB utilizes the Origin Private File System (OPFS) to stream row groups without exhausting RAM.'
+      },
+      {
+        q: 'Does DuckDB-Wasm support all standard SQL functions?',
+        a: 'Yes. DuckDB-Wasm supports the complete DuckDB SQL dialect, including complex analytical functions, window functions (ROW_NUMBER, RANK), Common Table Expressions (WITH), JSON manipulation, and full Parquet/CSV file querying.'
+      },
+      {
+        q: 'Do I need an internet connection to use TableView DuckDB console?',
+        a: 'No. Once the application and DuckDB-Wasm web assembly bundle are cached by the browser Service Worker, TableView functions 100% offline in air-gapped environments.'
+      },
+      {
+        q: 'How does DuckDB-Wasm read Parquet files so quickly?',
+        a: 'It decodes Parquet columnar pages directly using SIMD vectorization and column pruning, reading only the requested columns rather than decompressing irrelevant fields.'
+      }
+    ]
+  },
+  {
+    id: '18',
+    slug: 'apache-parquet-encodings-deep-dive',
+    title: 'Deep Dive into Parquet Encodings: RLE, Bit-Packing, Dictionary, and Delta Compression',
+    excerpt: 'An in-depth technical analysis of Apache Parquet encoding mechanisms. Understand how Dictionary Encoding, Run-Length Encoding (RLE), Bit-Packing, and Delta Encoding shrink big data footprints before compression.',
+    category: 'Storage Architecture',
+    readTime: '13 min read',
+    date: 'September 4, 2026',
+    author: 'TableView Engineering Team',
+    tags: ['Parquet', 'Compression', 'Data Engineering', 'Encodings', 'Big Data'],
+    sections: [
+      {
+        heading: 'The Two-Stage Compression Pipeline in Columnar Formats',
+        id: 'compression-pipeline',
+        paragraphs: [
+          'A common misconception in data engineering is that Parquet compact file size is primarily due to generic compression algorithms like Snappy, Gzip, or Zstandard.',
+          'In reality, generic byte compression is merely the final step in a two-stage pipeline. The true foundation of Parquet efficiency is domain-specific Columnar Encoding. Because all values in a column share the exact same data type, Parquet applies mathematical encodings that exploit data distribution and cardinality, drastically collapsing data volume before passing bytes to a general-purpose compressor.'
+        ]
+      },
+      {
+        heading: 'Dictionary Encoding: Eliminating String Redundancy',
+        id: 'dictionary-encoding',
+        paragraphs: [
+          'When a column contains repetitive values (such as state abbreviations, country codes, or product category names), storing the full string repeatedly wastes massive disk and memory bandwidth.',
+          'Dictionary Encoding builds a small dictionary table containing each unique string once, assigning each an integer index (0, 1, 2...). The column data is then stored simply as a sequence of tiny bit-packed integer keys. If the number of distinct values exceeds a preset threshold (typically 40,000 unique values per row group), the encoder automatically falls back to PLAIN encoding.'
+        ]
+      },
+      {
+        heading: 'Run-Length Encoding (RLE) and Bit-Packing',
+        id: 'rle-and-bitpacking',
+        paragraphs: [
+          'Run-Length Encoding (RLE) replaces consecutive sequences of identical values with a single count-value pair. For example, the boolean sequence [True, True, True, True, True] is encoded simply as (5, True).',
+          'Bit-Packing eliminates unused bits in integer representations. If an integer column has a maximum value of 3, standard 32-bit or 64-bit integer allocations waste 30 to 62 bits per row. Bit-packing stores each value using exactly 2 bits (since 2 bits can represent 0, 1, 2, and 3), packing 16 values into a single 32-bit word.'
+        ]
+      },
+      {
+        heading: 'Delta Encoding: Monotonically Increasing Data and Timestamps',
+        id: 'delta-encoding',
+        paragraphs: [
+          'Timestamp columns and auto-incrementing database primary keys often consume substantial storage. Delta Encoding stores only the differences (deltas) between consecutive values rather than the full multi-byte numbers.',
+          'In a sequence like [1000000, 1000002, 1000005, 1000008], storing the deltas [0, 2, 3, 3] compresses multi-byte numbers down to single bytes, enabling dramatic space reduction.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'Why does Parquet write column metadata at the end of the file?',
+        a: 'The metadata footer is written at the end of the file because single-pass file writers do not know the final byte offsets, compression sizes, or column min/max statistics of row groups until all data has been fully processed and written.'
+      },
+      {
+        q: 'What is Byte-Stream Split encoding in Parquet?',
+        a: 'Byte-Stream Split encoding is a specialized encoding for floating-point data (FLOAT and DOUBLE). It separates the individual bytes of floating-point numbers into contiguous byte streams, dramatically improving the compression ratios of subsequent codecs like ZSTD.'
+      },
+      {
+        q: 'How can I inspect Parquet encodings without installing Python?',
+        a: 'TableView In-Browser Parquet Schema Inspector parses and displays row group metadata, compression codecs, and encoding types client-side in seconds.'
+      },
+      {
+        q: 'Which compression codec offers the fastest decompression speed in Parquet?',
+        a: 'Snappy is engineered specifically for ultra-high decompression throughput with minimal CPU overhead, making it the industry default for interactive OLAP and distributed computing.'
+      }
+    ]
+  },
+  {
+    id: '19',
+    slug: 'cloud-finops-snowflake-storage-optimization',
+    title: 'Cloud FinOps: Strategies for Reducing Snowflake Storage and Compute Spend by 40%+',
+    excerpt: 'Actionable cloud financial operations (FinOps) strategies for modern data warehouses. Master Snowflake compute warehouse right-sizing, auto-suspend timers, Time Travel storage governance, and partition pruning.',
+    category: 'Cloud FinOps',
+    readTime: '12 min read',
+    date: 'September 3, 2026',
+    author: 'TableView FinOps Team',
+    tags: ['Snowflake', 'Cloud FinOps', 'Cost Optimization', 'Data Engineering', 'Data Warehousing'],
+    sections: [
+      {
+        heading: 'The Triad of Snowflake Costs: Compute, Storage, and Cloud Services',
+        id: 'snowflake-cost-structure',
+        paragraphs: [
+          'Snowflake architecture decouples compute from storage, charging customers across three independent billing dimensions: (1) Virtual Warehouse Compute Credits; (2) Data Storage (compressed bytes stored in cloud stages, tables, Time Travel, and Fail-Safe); (3) Cloud Services (query compilation, metadata management, and access control).',
+          'In enterprise deployments, compute credits typically represent 80% to 90% of monthly spending, while runaway storage and unpruned queries drive the remaining variance. Implementing proactive FinOps controls consistently reduces monthly bills by 30% to 50%.'
+        ]
+      },
+      {
+        heading: 'Warehouse Right-Sizing and Aggressive Auto-Suspend',
+        id: 'warehouse-sizing-auto-suspend',
+        paragraphs: [
+          'Every step up in Snowflake warehouse size (X-Small to Small, Medium, Large...) doubles credit consumption per hour (1, 2, 4, 8 credits/hr). A frequent mistake is running large warehouses for lightweight transformations or BI dashboards.',
+          'Two immediate interventions yield major savings: (1) Set AUTO_SUSPEND = 60 (or 120 seconds) on all warehouses, preventing idle credits from burning after query completion; (2) Split workloads by functional workload: isolate ingest tasks, heavy transformations (dbt), and ad-hoc BI queries into dedicated right-sized warehouses.'
+        ]
+      },
+      {
+        heading: 'Micro-Partition Pruning and Clustering Keys',
+        id: 'partition-pruning',
+        paragraphs: [
+          'Snowflake automatically partitions data into proprietary 50 MB to 500 MB columnar micro-partitions. When queries execute, the query optimizer evaluates partition metadata to read only relevant partitions.',
+          'If queries frequently filter on dates or tenant IDs across un-clustered tables, Snowflake is forced to scan 100% of micro-partitions. Defining explicit clustering keys on multi-terabyte tables concentrates query filters into minimal partitions, slashing warehouse runtimes and credit burn.'
+        ]
+      },
+      {
+        heading: 'Storage Governance: Managing Time Travel and Fail-Safe',
+        id: 'time-travel-and-failsafe',
+        paragraphs: [
+          'Snowflake Time Travel feature enables point-in-time historical data querying, but every modified or deleted row is retained as billable storage. Enterprise accounts default to 1 day of Time Travel, expandable up to 90 days.',
+          'Best Practice: For transient staging tables and scratch data, set DATA_RETENTION_TIME_IN_DAYS = 0 or use TRANSIENT tables. Transient tables incur zero Fail-Safe storage costs, preventing temporary data lakes from driving persistent monthly storage invoices.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is the difference between a Transient table and a Permanent table in Snowflake?',
+        a: 'Permanent tables include up to 90 days of Time Travel plus 7 days of Fail-Safe disaster recovery storage (which is billable). Transient tables support up to 1 day of Time Travel and ZERO Fail-Safe storage, saving significant costs for temporary data.'
+      },
+      {
+        q: 'When should I enable Snowflake Search Optimization Service (SOS)?',
+        a: 'SOS is optimal for point lookups on large tables (multi-terabytes) where users filter on high-cardinality non-clustering keys (like email addresses or user UUIDs). For analytical range scans or small tables, SOS creates unnecessary maintenance compute overhead.'
+      },
+      {
+        q: 'How does TableView Snowflake Calculator help with FinOps?',
+        a: 'Our Snowflake Warehouse Cost Calculator allows data platform leaders to simulate credit consumption, multi-cluster scaling, and storage costs across standard, enterprise, and business-critical tiers in real-time.'
+      },
+      {
+        q: 'How much does Snowflake charge for Cloud Services?',
+        a: 'Cloud Services usage is free up to 10% of your daily virtual warehouse compute credit consumption. You are only billed for Cloud Services credits that exceed the 10% daily threshold.'
+      }
+    ]
+  },
+  {
+    id: '20',
+    slug: 'zero-server-data-processing-security',
+    title: 'Why Zero-Server In-Browser Processing is the Future of Enterprise Data Privacy',
+    excerpt: 'Analyze the security, compliance, and architectural advantages of client-side WebAssembly data tooling. How zero-server processing eliminates data exfiltration risks and guarantees instant GDPR, HIPAA, and SOC 2 compliance.',
+    category: 'Data Security',
+    readTime: '11 min read',
+    date: 'September 2, 2026',
+    author: 'TableView Security & Compliance Desk',
+    tags: ['Data Security', 'WebAssembly', 'Zero Trust', 'GDPR Compliance', 'Data Privacy'],
+    sections: [
+      {
+        heading: 'The Hidden Risks of Cloud File Converters and Online Parsers',
+        id: 'cloud-converter-risks',
+        paragraphs: [
+          'When data analysts, financial underwriters, and engineers need to quickly inspect a CSV, Parquet, or Excel file, they frequently turn to free online converter websites. Most users fail to realize that clicking "Upload" transmits proprietary spreadsheets, confidential customer lists, PII, and financial records to unknown third-party cloud servers.',
+          'These files are stored in temporary server directories, logged in web access logs, and potentially exposed to data leaks, sub-processors, or unauthorized scraping. For enterprises subject to GDPR, HIPAA, or strict confidentiality agreements, uploading data to generic web tools represents a severe compliance violation.'
+        ]
+      },
+      {
+        heading: 'The Zero-Egress Architecture: Sandboxed In-Browser Execution',
+        id: 'zero-egress-architecture',
+        paragraphs: [
+          'TableView pioneers a zero-egress security model powered by WebAssembly (Wasm). When a user drops a file onto TableView:',
+          '1. The file is accessed exclusively through the browser native File API (HTML5 FileReader or FileSystemSyncAccessHandle).',
+          '2. Data is mounted directly into the WebAssembly virtual memory space running on the local device CPU.',
+          '3. Parsing, SQL query execution via DuckDB-Wasm, format conversion, and chart rendering happen 100% locally in client RAM.',
+          '4. Exactly zero bytes of dataset payload leave the client computer. No remote API calls are made, no server-side temporary files exist, and no cloud storage buckets are touched.'
+        ]
+      },
+      {
+        heading: 'Compliance Alignment: Instant GDPR, HIPAA, and SOC 2 Compatibility',
+        id: 'compliance-alignment',
+        paragraphs: [
+          'Because TableView operates on a zero-server processing model, organizations eliminate the overhead of vendor risk assessments and Data Processing Agreements (DPAs):',
+          '• GDPR / CCPA: No personal data is transferred to TableView as a data processor. The data never leaves the data controller local environment.',
+          '• HIPAA / HITECH: Healthcare providers and research teams can inspect clinical datasets and patient logs without executing a Business Associate Agreement (BAA).',
+          '• SOC 2 Type II: Enterprise security teams can permit TableView on managed workstations because network telemetry confirms zero outbound data exfiltration.'
+        ]
+      },
+      {
+        heading: 'Offline and Air-Gapped Workflows',
+        id: 'air-gapped-workflows',
+        paragraphs: [
+          'The ultimate test of data privacy is whether an application functions in an air-gapped environment with no internet connection. TableView leverages modern Service Worker technology to cache application assets offline.',
+          'Data engineers working on classified networks, defense infrastructure, or offline field laptops can open TableView, inspect multi-gigabyte files, execute SQL queries, and export reports with network cables disconnected or Wi-Fi disabled.'
+        ]
+      }
+    ],
+    faqs: [
+      {
+        q: 'How can I verify that TableView does not upload my files to a server?',
+        a: 'You can verify this in seconds: open your browser Developer Tools (F12), switch to the Network tab, and drop any file into TableView. You will see exactly zero outbound POST or PUT requests containing your data payload.'
+      },
+      {
+        q: 'Can TableView work without an active internet connection?',
+        a: 'Yes. Once loaded, our Service Worker caches all WebAssembly binaries and application assets locally, allowing TableView to operate completely offline.'
+      },
+      {
+        q: 'Is client-side processing slower than cloud server processing?',
+        a: 'For files under 1 GB, in-browser processing is often significantly faster because it completely eliminates network upload and download latency. DuckDB-Wasm executes analytical queries at near-native CPU speeds using SIMD vectorization.'
+      },
+      {
+        q: 'Does TableView store or retain any cookies related to dataset contents?',
+        a: 'No. TableView never stores dataset contents in cookies or localStorage. Datasets reside strictly in transient browser RAM during your active session and are wiped immediately upon closing or reloading the tab.'
       }
     ]
   }

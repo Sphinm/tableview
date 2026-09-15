@@ -49,13 +49,13 @@ export const HeroSection = ({
       {/* Hero Header Area (iLovePDF Style) */}
       <section className="pt-12 pb-6 md:pt-16 md:pb-8 text-center max-w-4xl mx-auto px-4 sm:px-6">
         {/* Version / Trust badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium bg-slate-900/90 border border-slate-800 text-slate-300 shadow-sm mb-6">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] font-medium tracking-wide bg-slate-900/90 border border-slate-800 text-slate-300 shadow-sm mb-6">
           <span className="size-2 rounded-full bg-emerald-400 animate-pulse" />
           <span>100% In-Browser Privacy · DuckDB-Wasm SIMD Engine · Zero Server Uploads</span>
         </div>
 
         {/* Main Headline */}
-        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-100 tracking-tight leading-[1.15] mb-5">
+        <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold text-slate-100 tracking-tight leading-[1.12] [text-wrap:balance] mb-5">
           The 100% Private In-Browser{' '}
           <span className="bg-gradient-to-r from-emerald-400 via-indigo-300 to-cyan-400 bg-clip-text text-transparent">
             Spreadsheet & Analytical Modeling
@@ -64,7 +64,7 @@ export const HeroSection = ({
         </h1>
 
         {/* Subtitle */}
-        <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto mb-7">
+        <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl mx-auto mb-7 [text-wrap:pretty]">
           Fast, zero-server-egress workspace for inspecting CSV, Excel, Parquet, and JSON, running DuckDB SQL analytics, and modeling commercial loans, mortgages, and payroll directly in browser memory.
         </p>
 
@@ -80,22 +80,24 @@ export const HeroSection = ({
           ))}
         </div>
 
-        {/* Primary CTAs */}
+        {/* Primary CTAs with Button-in-Button Island Architecture */}
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3.5 mb-8">
           <button
             onClick={() => fileInputRef.current?.click()}
             disabled={isLoading}
-            className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold text-sm flex items-center justify-center gap-2.5 shadow-lg shadow-indigo-600/25 hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
+            className="group w-full sm:w-auto pl-6 pr-3.5 py-2.5 rounded-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold text-sm flex items-center justify-center gap-3 shadow-lg shadow-indigo-600/25 active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] cursor-pointer"
           >
-            <FolderOpen className="size-4.5" />
             <span>Select Local Data File</span>
+            <span className="size-7 rounded-full bg-white/15 group-hover:bg-white/25 flex items-center justify-center text-white transition-transform duration-200 group-hover:scale-105">
+              <FolderOpen className="size-3.5" />
+            </span>
           </button>
 
           <button
             onClick={onTrySample}
             disabled={isLoading}
             title={isLoading ? loadingStatus : 'Generate 1,000-row sample dataset in memory'}
-            className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-slate-100 font-semibold text-sm flex items-center justify-center gap-2 border border-slate-800 hover:border-slate-700 shadow-sm transition-all cursor-pointer disabled:opacity-75"
+            className="group w-full sm:w-auto pl-5 pr-3 py-2.5 rounded-full bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-slate-100 font-medium text-sm flex items-center justify-center gap-3 border border-slate-800 hover:border-slate-700 shadow-sm active:scale-[0.98] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] cursor-pointer disabled:opacity-75"
           >
             {isLoading ? (
               <>
@@ -104,9 +106,13 @@ export const HeroSection = ({
               </>
             ) : (
               <>
-                <Sparkles className="size-4 text-amber-400" />
-                <span>Try 1-Click Sample Dataset</span>
-                <ArrowRight className="size-3.5 opacity-70" />
+                <span className="flex items-center gap-2">
+                  <Sparkles className="size-4 text-amber-400" />
+                  <span>Try 1-Click Sample Dataset</span>
+                </span>
+                <span className="size-7 rounded-full bg-slate-800 border border-slate-700/80 group-hover:border-slate-600 group-hover:bg-slate-700/80 flex items-center justify-center text-slate-400 group-hover:text-slate-100 transition-all duration-200 group-hover:translate-x-0.5">
+                  <ArrowRight className="size-3.5" />
+                </span>
               </>
             )}
           </button>

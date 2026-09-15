@@ -1,6 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
 import {
-  Calculator,
   DollarSign,
   Calendar,
   ShieldCheck,
@@ -37,7 +36,7 @@ import { PaymentDonutChart } from '../components/PaymentDonutChart';
 import { AmortizationChart } from '../components/AmortizationChart';
 import { PrintableMortgageReport } from '../components/PrintableMortgageReport';
 import { RelatedCalculators } from '../components/RelatedCalculators';
-import { CalculatorPresetsBar, PrintReportButton } from '../components/calculator-kit';
+import { CalculatorPresetsBar, PrintReportButton, PageHeader } from '../components/calculator-kit';
 
 // Sourced from the shared registry so the rendered page, the JSON-LD and the
 // prerendered HTML can never disagree. This page previously declared FAQPage
@@ -367,34 +366,30 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
   return (
     <>
       {/* data-sentry-mask: every field on this page is the user's own financial position. */}
-      <div data-sentry-mask="true" className="print:hidden max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 pb-24 lg:pb-12 space-y-10">
-      {/* Top Banner & Header */}
-      <div className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400">
-            <ShieldCheck className="size-3.5" />
-            <span>100% In-Browser Private Calculator · Zero Cloud Egress</span>
-          </div>
-
-          <div className="flex items-center gap-2">
+      <div data-sentry-mask="true" className="print:hidden w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 pb-24 lg:pb-12 space-y-10">
+      {/* Canonical Page Header */}
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Calculators', path: '/finance-calculator' },
+          { label: 'Mortgage Calculator' }
+        ]}
+        badge={{
+          icon: ShieldCheck,
+          label: '100% In-Browser Private · Zero Cloud Egress',
+          tone: 'emerald'
+        }}
+        title="Home Mortgage & Loan Calculator"
+        description="Accurately calculate your total monthly mortgage payment including principal, interest, real estate taxes, homeowner insurance, PMI, and HOA fees. Includes real-time amortization schedules and bi-weekly savings analysis."
+        actions={
+          <>
             <button
-              onClick={() => navigateTo('/mortgage-calculator')}
-              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold btn-primary shadow-sm cursor-pointer"
-            >
-              Purchase Loan
-            </button>
-            <button
+              type="button"
               onClick={() => navigateTo('/refinance-calculator')}
-              className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 border border-slate-800 text-slate-300 hover:text-slate-100 hover:border-slate-700 transition-all cursor-pointer flex items-center gap-1.5"
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-slate-100 border border-slate-700/80 transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0"
+              title="Compare refinancing rates and break-even horizon"
             >
               <span>Refinance Break-Even</span>
               <ArrowRight className="size-3 text-indigo-400" />
-            </button>
-            <button
-              onClick={() => navigateTo('/finance-calculator')}
-              className="hidden sm:flex px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 transition-all cursor-pointer"
-            >
-              All Calcs
             </button>
             <ShareCalculationButton
               params={{
@@ -411,35 +406,26 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             <button
               type="button"
               onClick={() => setShowScenariosModal(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-slate-100 text-xs font-medium border border-slate-700 shadow-sm transition-all active:scale-95 cursor-pointer"
+              className="h-9 px-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-slate-100 text-xs font-semibold border border-slate-700/80 shadow-sm transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
               title="Save or compare deal scenarios locally in your browser"
             >
               <Bookmark className="size-3.5 text-indigo-400" />
               <span>Saved Scenarios</span>
             </button>
             <PrintReportButton onPrint={handleExportPdf} label="Print / PDF" />
-          </div>
-        </div>
-
-        <div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-100 tracking-tight flex items-center gap-3">
-            <Calculator className="size-8 text-indigo-400" />
-            <span>Home Mortgage & Loan Calculator</span>
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-400 max-w-3xl mt-1 leading-relaxed">
-            Accurately calculate your total monthly mortgage payment including principal, interest, real estate taxes, homeowner insurance, PMI, and HOA fees. Includes real-time amortization schedules and bi-weekly savings analysis.
-          </p>
-        </div>
-
-        <CalculatorPresetsBar
-          presets={MORTGAGE_PRESETS}
-          activePresetId={activePreset}
-          onSelectPreset={(preset) => {
-            setActivePreset(preset.id);
-            preset.apply?.();
-          }}
-        />
-      </div>
+          </>
+        }
+        presets={
+          <CalculatorPresetsBar
+            presets={MORTGAGE_PRESETS}
+            activePresetId={activePreset}
+            onSelectPreset={(preset) => {
+              setActivePreset(preset.id);
+              preset.apply?.();
+            }}
+          />
+        }
+      />
 
       {/* Main 2-Column Calculator Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -1332,7 +1318,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
           <div className="space-y-2">
             <h4 className="font-semibold text-slate-200 text-sm">How Bi-Weekly Payments Save Money</h4>
             <p>
-              Making half-payments every two weeks results in 26 half-payments per year—the equivalent of 13 monthly payments instead of 12. That extra payment goes entirely toward your principal, shortening a 30-year mortgage by 4 to 6 years and saving tens of thousands of dollars in interest.
+              Making half-payments every two weeks results in 26 half-payments per year (the equivalent of 13 monthly payments instead of 12). That extra payment goes entirely toward your principal, shortening a 30-year mortgage by 4 to 6 years and saving tens of thousands of dollars in interest.
             </p>
           </div>
 

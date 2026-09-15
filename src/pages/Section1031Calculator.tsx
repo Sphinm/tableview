@@ -34,6 +34,7 @@ import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
 import { getUrlParams } from '../lib/urlState';
+import { PageHeader, PrintReportButton } from '../components/calculator-kit';
 
 const PATH = '/section-1031-exchange-calculator';
 const faqs = getCalculatorFaqs(PATH);
@@ -422,23 +423,39 @@ export const Section1031Calculator = () => {
 
   return (
     // data-sentry-mask: this page collects adjusted basis, accumulated
-    // depreciation and mortgage balances — effectively the user's tax position.
-    <div data-sentry-mask="true" className="w-full max-w-7xl mx-auto px-4 py-8">
-      {/* ---- Header ---- */}
-      <header className="text-center max-w-3xl mx-auto mb-10">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-4">
-          <Scale className="size-3.5" />
-          <span>IRC §1031 · Like-Kind Exchange</span>
-        </div>
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-100 mb-4">
-          1031 Exchange Calculator
-        </h1>
-        <p className="text-sm sm:text-base text-slate-400 leading-relaxed">
-          Compute your realized gain, cash and mortgage boot, and the tax you actually owe — plus
-          the 45-day identification and 180-day exchange deadlines that decide whether the exchange
-          qualifies at all. Every figure is calculated in your browser; nothing is uploaded.
-        </p>
-      </header>
+    // depreciation and mortgage balances: effectively the user's tax position.
+    <div data-sentry-mask="true" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+      {/* Canonical Page Header */}
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Calculators', path: '/finance-calculator' },
+          { label: '1031 Exchange' }
+        ]}
+        badge={{
+          icon: Scale,
+          label: 'IRC §1031 Like-Kind Exchange Modeler',
+          tone: 'indigo'
+        }}
+        title="1031 Exchange Calculator"
+        description="Compute realized gain, cash and mortgage boot, and net tax liability under IRC §1031. Tracks 45-day identification and 180-day exchange closing deadlines with 100% private in-browser math."
+        actions={
+          <>
+            <PrintReportButton label="Print Deal Summary" />
+            <ShareCalculationButton
+              params={shareParams}
+              title="Share Deal"
+            />
+            <button
+              type="button"
+              onClick={handleExportExcel}
+              className="btn-primary h-9 px-4 rounded-xl text-xs font-semibold inline-flex items-center gap-2 shadow-sm cursor-pointer transition-transform active:scale-95 shrink-0"
+            >
+              <Download className="size-4" />
+              <span>Export Deal (.xlsx)</span>
+            </button>
+          </>
+        }
+      />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* ---- Inputs ---- */}
@@ -663,7 +680,7 @@ export const Section1031Calculator = () => {
                 <span className="text-xs text-slate-300 leading-snug">
                   I will file a tax-return extension
                   <span className="block text-[11px] text-slate-500 mt-0.5">
-                    Without one, the exchange period can end on April 15 — long before day 180.
+                    Without one, the exchange period can end on April 15 (long before day 180).
                   </span>
                 </span>
               </label>
@@ -780,7 +797,7 @@ export const Section1031Calculator = () => {
                   {result.identificationRule === '95-percent' &&
                     'Neither the three-property nor the 200% rule applies, but the 95% rule saves the exchange because you are acquiring at least 95% of the value you identified.'}
                   {result.identificationRule === 'exceeded' &&
-                    'This identification exceeds both the three-property and 200% limits, and you are acquiring less than 95% of the value identified — the exchange will not qualify as to the excess.'}
+                    'This identification exceeds both the three-property and 200% limits, and you are acquiring less than 95% of the value identified: the exchange will not qualify as to the excess.'}
                 </p>
               </div>
             </div>
@@ -846,7 +863,7 @@ export const Section1031Calculator = () => {
                   </label>
                 </div>
                 <p className="text-[11px] text-slate-500 mt-4 leading-relaxed">
-                  State treatment of §1031 varies widely — a few states do not conform at all, and
+                  State treatment of §1031 varies widely: a few states do not conform at all, and
                   several impose a claw-back on a later sale of out-of-state replacement property.
                   Enter your own rate rather than relying on a default.
                 </p>
@@ -964,7 +981,7 @@ export const Section1031Calculator = () => {
               />
               {result.recapturePortion > 0 && (
                 <StatRow
-                  label="— of which §1250 recapture"
+                  label="· of which §1250 recapture"
                   value={fmt2(result.recapturePortion)}
                   tone="muted"
                 />

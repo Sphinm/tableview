@@ -1,5 +1,5 @@
 /**
- * AdSense configuration — the single place to change ad unit IDs.
+ * AdSense configuration: the single place to change ad unit IDs.
  *
  * These IDs come from the AdSense dashboard (Ads -> By ad unit). Until a unit is
  * approved and its ID is pasted here, the slot keeps the PLACEHOLDER value and
@@ -15,7 +15,7 @@
 
 export const ADSENSE_CLIENT = 'ca-pub-3414270480046504';
 
-/** The value AdSense assigns to nothing — treated as "not configured". */
+/** The value AdSense assigns to nothing: treated as "not configured". */
 export const PLACEHOLDER_SLOT = '0000000000';
 
 /**
@@ -27,7 +27,7 @@ export const AD_UNITS = {
   toolInArticle: '0000000000',
   /** Guides hub listing and guide article body. */
   guideInArticle: '0000000000',
-  /** Directly beneath a calculator's result summary — highest commercial intent. */
+  /** Directly beneath a calculator's result summary: highest commercial intent. */
   calculatorResult: '0000000000',
   /** Between FAQ entries on a calculator page. */
   calculatorFaq: '0000000000',

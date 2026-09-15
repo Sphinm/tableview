@@ -19,6 +19,17 @@ export const GUIDE_SLUGS: readonly string[] = [
   'dscr-loans-complete-investor-guide',
   'mortgage-refinance-break-even-guide',
   'cloud-data-lake-storage-economics',
+  'commercial-real-estate-loan-types',
+  'section-1031-exchange-rules-timeline',
+  'how-to-calculate-dscr',
+  'loan-amortization-math-explained',
+  'flsa-overtime-rules-and-exemptions',
+  'hard-money-loans-for-fix-and-flip',
+  'commercial-balloon-mortgages-risks',
+  'duckdb-wasm-memory-and-performance',
+  'apache-parquet-encodings-deep-dive',
+  'cloud-finops-snowflake-storage-optimization',
+  'zero-server-data-processing-security',
 ];
 
 const GUIDE_SLUG_SET = new Set<string>(GUIDE_SLUGS);

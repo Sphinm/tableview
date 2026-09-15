@@ -8,6 +8,7 @@ import { SALARY_LONG_TAIL_MAP } from '../../data/salaryLongTail';
 /** Route keys the app actually renders (mirrors App.tsx's switch). */
 const APP_ROUTES = new Set([
   '/',
+  '/data-tools',
   '/tools/:toolSlug',
   '/guides',
   '/guides/:slug',

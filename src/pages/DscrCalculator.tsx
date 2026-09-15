@@ -11,7 +11,9 @@ import {
   BookOpen,
   ShieldCheck,
   Printer,
-  Bookmark
+  Bookmark,
+  Share2,
+  Check
 } from 'lucide-react';
 import {
   calculateDscr,
@@ -32,6 +34,8 @@ import {
   CalculatorPresetsBar,
   type CalculatorPreset,
   CashFlowDonutChart,
+  PageHeader,
+  PrintReportButton,
 } from '../components/calculator-kit';
 
 interface DscrPresetValues {
@@ -500,39 +504,61 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      {/* Hero Header */}
-      <section className="relative pt-12 pb-8 border-b border-slate-800 bg-gradient-to-b from-indigo-950/20 via-slate-950 to-slate-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-xs font-mono text-indigo-400 mb-3">
-            <span className="px-2 py-0.5 rounded bg-indigo-950/80 border border-indigo-800/60 font-semibold">
-              REAL ESTATE INVESTOR TOOLS
-            </span>
-            <span>•</span>
-            <span className="text-slate-400">100% Private In-Browser Calculation</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-100">
-            DSCR Loan <span className="text-indigo-400">Calculator</span>
-          </h1>
-
-          <p className="mt-3 max-w-3xl text-sm sm:text-base text-slate-400 leading-relaxed">
-            Calculate your <strong>Debt-Service Coverage Ratio (DSCR)</strong>, net cash flow, and maximum eligible loan amount for residential rental properties (1-4 units and commercial). Zero personal income verification required.
-          </p>
-
-          {/* DSCR Scenario Presets */}
-          <div className="mt-6">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+        <PageHeader
+          breadcrumbs={[
+            { label: 'Calculators', path: '/finance-calculator' },
+            { label: 'DSCR Loan' }
+          ]}
+          badge={{
+            icon: Building,
+            label: 'Real Estate Investor Debt Modeler',
+            tone: 'indigo'
+          }}
+          title="DSCR Loan Calculator"
+          description="Calculate your Debt-Service Coverage Ratio (DSCR), net cash flow, and maximum eligible loan amount for residential rental properties (1-4 units and commercial). 100% private in-browser math with zero personal income verification."
+          actions={
+            <>
+              <PrintReportButton onPrint={handleExportPdf} />
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm active:scale-95 shrink-0"
+                title="Copy shareable link with current deal parameters"
+              >
+                {copiedLink ? (
+                  <>
+                    <Check className="size-4 text-emerald-400" />
+                    <span className="text-emerald-400">Link Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="size-4 text-indigo-400" />
+                    <span>Share Deal</span>
+                  </>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={handleExportExcel}
+                className="btn-primary h-9 px-4 rounded-xl text-xs font-semibold inline-flex items-center gap-2 shadow-sm cursor-pointer transition-transform active:scale-95 shrink-0"
+              >
+                <Download className="size-4" />
+                <span>Export Schedule (.xlsx)</span>
+              </button>
+            </>
+          }
+          presets={
             <CalculatorPresetsBar
               presets={DSCR_INVESTOR_PRESETS}
               activeId={activePresetId}
               onSelect={handleSelectPreset}
               title="DSCR Scenarios"
             />
-          </div>
-        </div>
-      </section>
+          }
+        />
 
-      {/* Main Calculator Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        {/* Main Calculator Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Form Controls (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
@@ -1405,7 +1431,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
           <RelatedCalculators currentSlug="dscr-loan-calculator" category="real-estate" />
         </div>
-      </section>
+      </div>
 
       {/* Mobile Sticky Summary Bottom Bar */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-4 py-2.5 shadow-2xl flex items-center justify-between gap-3">

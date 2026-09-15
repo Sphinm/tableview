@@ -1,24 +1,23 @@
 import { useState, useMemo, useEffect } from 'react';
 import {
-  Calculator,
   DollarSign,
-  TrendingDown,
-  TrendingUp,
+  Calendar,
+  ShieldCheck,
   Download,
   FileSpreadsheet,
-  HelpCircle,
-  Sparkles,
-  ShieldCheck,
-  PiggyBank,
   CheckCircle2,
   AlertTriangle,
+  TrendingDown,
+  TrendingUp,
   Info,
-  Calendar,
+  Sparkles,
   Percent,
-  RefreshCw,
   Home,
+  RefreshCw,
   Printer,
-  Bookmark
+  Bookmark,
+  PiggyBank,
+  HelpCircle
 } from 'lucide-react';
 import {
   type RefinanceInputs,
@@ -41,9 +40,9 @@ import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
-import { CalculatorPresetsBar, PrintReportButton } from '../components/calculator-kit';
+import { CalculatorPresetsBar, PrintReportButton, PageHeader } from '../components/calculator-kit';
 
-// Sourced from the shared registry — see the note in MortgageCalculator.tsx.
+// Sourced from the shared registry: see the note in MortgageCalculator.tsx.
 const refinanceFaqs = getCalculatorFaqs('/refinance-calculator');
 
 const refinanceSchemas = [
@@ -359,101 +358,69 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
   return (
     <>
       {/* data-sentry-mask: balances, rates and closing costs are the user's own finances. */}
-      <div data-sentry-mask="true" className="print:hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-10">
-      {/* Sub-Navigation Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-slate-800/80">
-        <div className="flex items-center gap-2 text-xs text-slate-400">
-          <a
-            href="/"
-            onClick={(e) => {
-              e.preventDefault();
-              navigateTo('/');
+      <div data-sentry-mask="true" className="print:hidden w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10 space-y-10">
+      {/* Canonical Page Header */}
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Calculators', path: '/finance-calculator' },
+          { label: 'Refinance Break-Even' }
+        ]}
+        badge={{
+          icon: ShieldCheck,
+          label: '100% In-Browser Private · Zero Cloud Egress',
+          tone: 'emerald'
+        }}
+        title="Home Mortgage Refinance Calculator"
+        description="Unsure if you should refinance? Calculate whether refinancing makes financial sense based on interest rate reductions, discount points, upfront closing costs, income tax shift, and multi-year homeowner equity growth."
+        actions={
+          <>
+            <button
+              type="button"
+              onClick={() => navigateTo('/mortgage-calculator')}
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-slate-100 border border-slate-700/80 transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-sm active:scale-95 shrink-0"
+              title="Switch to Purchase Mortgage Calculator"
+            >
+              <Home className="size-3.5 text-indigo-400" />
+              <span>Purchase Mortgage</span>
+            </button>
+            <ShareCalculationButton
+              params={{
+                homePrice,
+                downPayment,
+                origLoan: originalLoanAmount,
+                curRate: currentInterestRate,
+                monthsPaid: monthsAlreadyPaid,
+                newRate: newInterestRate,
+                newTerm: newTermYears,
+                otherCosts: otherClosingCosts,
+                points: discountPoints,
+                cashOut: cashOutAmount
+              }}
+              title="Share Deal"
+            />
+            <button
+              type="button"
+              onClick={() => setShowScenariosModal(true)}
+              className="h-9 px-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-slate-100 text-xs font-semibold border border-slate-700/80 shadow-sm transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+              title="Save or compare refinance deal scenarios locally in your browser"
+            >
+              <Bookmark className="size-3.5 text-indigo-400" />
+              <span>Saved Scenarios</span>
+            </button>
+            <PrintReportButton onPrint={handleExportPdf} label="Print / PDF" />
+          </>
+        }
+        presets={
+          <CalculatorPresetsBar
+            presets={REFINANCE_PRESETS}
+            activePresetId={activePreset}
+            onSelectPreset={(preset) => {
+              setActivePreset(preset.id);
+              preset.apply?.();
             }}
-            className="hover:text-slate-200 transition-colors"
-          >
-            Home
-          </a>
-          <span>/</span>
-          <a
-            href="/finance-calculator"
-            onClick={(e) => {
-              e.preventDefault();
-              navigateTo('/finance-calculator');
-            }}
-            className="hover:text-slate-200 transition-colors"
-          >
-            Calculators
-          </a>
-          <span>/</span>
-          <span className="text-slate-200 font-medium">Refinance Break-Even</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={() => navigateTo('/mortgage-calculator')}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-100 transition-all cursor-pointer flex items-center gap-1.5"
-          >
-            <Home className="size-3.5" />
-            <span>Purchase Mortgage Calc</span>
-          </button>
-          <button
-            onClick={() => navigateTo('/finance-calculator')}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-100 transition-all cursor-pointer flex items-center gap-1.5"
-          >
-            <Calculator className="size-3.5" />
-            <span>All Financial Calcs</span>
-          </button>
-          <ShareCalculationButton
-            params={{
-              homePrice,
-              downPayment,
-              origLoan: originalLoanAmount,
-              curRate: currentInterestRate,
-              monthsPaid: monthsAlreadyPaid,
-              newRate: newInterestRate,
-              newTerm: newTermYears,
-              otherCosts: otherClosingCosts,
-              points: discountPoints,
-              cashOut: cashOutAmount
-            }}
-            title="Share Refinance Deal"
           />
-          <button
-            type="button"
-            onClick={() => setShowScenariosModal(true)}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-slate-100 text-xs font-medium border border-slate-700 shadow-sm transition-all active:scale-95 cursor-pointer"
-            title="Save or compare refinance deal scenarios locally in your browser"
-          >
-            <Bookmark className="size-3.5 text-indigo-400" />
-            <span>Saved Scenarios</span>
-          </button>
-          <PrintReportButton onPrint={handleExportPdf} label="Print / PDF" />
-        </div>
-      </div>
-
-      {/* Hero Header */}
-      <div className="space-y-3">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
-          <ShieldCheck className="size-3.5" />
-          <span>100% Private In-Browser Calculation · Modeled after MortgageCalculator.org</span>
-        </div>
-        <h1 className="text-2xl sm:text-4xl font-extrabold text-slate-100 tracking-tight flex items-center gap-3">
-          <RefreshCw className="size-8 text-indigo-400" />
-          <span>Home Mortgage Refinance Calculator</span>
-        </h1>
-        <p className="text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed">
-          Unsure if you should refinance? Calculate whether refinancing makes financial sense based on interest rate reductions, discount points, upfront closing costs, income tax shift, and multi-year homeowner equity growth.
-        </p>
-
-        <CalculatorPresetsBar
-          presets={REFINANCE_PRESETS}
-          activePresetId={activePreset}
-          onSelectPreset={(preset) => {
-            setActivePreset(preset.id);
-            preset.apply?.();
-          }}
-        />
-      </div>
+        }
+      />
 
       {/* Main Grid: Inputs vs Results */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

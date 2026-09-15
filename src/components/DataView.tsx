@@ -872,7 +872,7 @@ export const DataView = ({
                         <td className="p-3 text-slate-400 truncate max-w-xs">{s.min}</td>
                         <td className="p-3 text-slate-400 truncate max-w-xs">{s.max}</td>
                         <td className="p-3 text-slate-400">
-                          {s.avg !== '—' ? `${s.avg} ± ${s.std}` : '—'}
+                          {s.avg !== '-' ? `${s.avg} ± ${s.std}` : '-'}
                         </td>
                       </tr>
                     ))

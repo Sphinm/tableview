@@ -25,6 +25,7 @@ import {
   PrintReportButton,
   PrintableReportHeader,
   ComparisonBarChart,
+  PageHeader,
 } from '../components/calculator-kit';
 
 const LOAN_PRESETS: CalculatorPreset<{ a: LoanParameters; b: LoanParameters }>[] = [
@@ -95,7 +96,7 @@ const loanComparisonSchemas = [
 export const LoanComparisonCalculator = () => {
   useEffect(() => {
     updatePageMeta(
-      'Loan Comparison Calculator — Side-by-Side Payment & Interest Analysis',
+      'Loan Comparison Calculator: Side-by-Side Payment & Interest Analysis',
       'Compare two loans side-by-side. Calculate monthly payment differences, lifetime interest savings, break-even on discount points, and total costs. Free in-browser tool with zero registration.',
       '/loan-comparison-calculator',
       loanComparisonSchemas
@@ -242,35 +243,25 @@ export const LoanComparisonCalculator = () => {
       />
 
       {/* Header & Breadcrumb */}
-      <div className="mb-8">
-        <div className="flex items-center gap-2 text-xs font-medium text-slate-400 mb-3">
-          <button onClick={() => navigateTo('/')} className="hover:text-indigo-400 transition-colors cursor-pointer">Home</button>
-          <span>/</span>
-          <button onClick={() => navigateTo('/finance-calculator')} className="hover:text-indigo-400 transition-colors cursor-pointer">Calculators</button>
-          <span>/</span>
-          <span className="text-slate-200">Loan Comparison</span>
-        </div>
-
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 mb-3">
-              <Scale className="size-3.5" />
-              <span>Side-by-Side Comparison Modeler</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-100 tracking-tight">
-              Loan Comparison Calculator
-            </h1>
-            <p className="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl leading-relaxed">
-              Compare two loans side-by-side in real time. Analyze monthly payment differences, lifetime interest savings, points break-even timelines, and total cost with 100% private in-browser math.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2.5 shrink-0">
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Calculators', path: '/finance-calculator' },
+          { label: 'Loan Comparison' }
+        ]}
+        badge={{
+          icon: Scale,
+          label: 'Side-by-Side Comparison Modeler',
+          tone: 'indigo'
+        }}
+        title="Loan Comparison Calculator"
+        description="Compare two loans side-by-side in real time. Analyze monthly payment differences, lifetime interest savings, points break-even timelines, and total cost with 100% private in-browser math."
+        actions={
+          <>
             <PrintReportButton />
-
             <button
+              type="button"
               onClick={handleCopyLink}
-              className="px-3.5 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm"
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm active:scale-95 shrink-0"
               title="Copy shareable link with current loan parameters"
             >
               {copied ? (
@@ -285,26 +276,17 @@ export const LoanComparisonCalculator = () => {
                 </>
               )}
             </button>
-
             <button
+              type="button"
               onClick={handleExportExcel}
-              className="btn-primary px-4 py-2.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 shadow-md cursor-pointer transition-transform active:scale-95"
+              className="btn-primary h-9 px-4 rounded-xl text-xs font-semibold inline-flex items-center gap-2 shadow-sm cursor-pointer transition-transform active:scale-95 shrink-0"
             >
               <Download className="size-4" />
               <span>Export Comparison (.xlsx)</span>
             </button>
-
-            <a
-              href="/excel-viewer"
-              onClick={(e) => { e.preventDefault(); navigateTo('/excel-viewer'); }}
-              className="text-[11px] text-slate-400 hover:text-indigo-400 transition-colors flex items-center gap-1 sm:self-center"
-            >
-              <span>No Excel? Free In-Browser Viewer</span>
-              <ArrowRight className="size-3" />
-            </a>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Main Verdict Recommendation Banner */}
       <div className={`p-6 rounded-2xl border mb-8 shadow-xl transition-all ${
@@ -691,6 +673,19 @@ export const LoanComparisonCalculator = () => {
               </tr>
             </tbody>
           </table>
+        </div>
+
+        {/* In-Browser Excel Viewer contextual link */}
+        <div className="p-3.5 bg-slate-950/80 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+          <span>Need to inspect or customize your exported comparison spreadsheet?</span>
+          <a
+            href="/excel-viewer"
+            onClick={(e) => { e.preventDefault(); navigateTo('/excel-viewer'); }}
+            className="text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1 font-semibold"
+          >
+            <span>Open in Free In-Browser Excel Viewer</span>
+            <ArrowRight className="size-3" />
+          </a>
         </div>
       </div>
 

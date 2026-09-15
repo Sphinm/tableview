@@ -10,8 +10,9 @@ import {
   Minimize2,
   Maximize2
 } from 'lucide-react';
-import { updatePageMeta, navigateTo } from '../lib/router';
+import { updatePageMeta } from '../lib/router';
 import { AdSlot } from '../components/AdSlot';
+import { PageHeader } from '../components/calculator-kit';
 
 const jsonFormatterSchemas = [
   {
@@ -53,7 +54,7 @@ const sampleJson = {
 export const JsonFormatter = () => {
   useEffect(() => {
     updatePageMeta(
-      'Online JSON Formatter & Validator — 100% Private In-Browser Tool',
+      'Online JSON Formatter & Validator: 100% Private In-Browser Tool',
       'Format, beautify, validate, and minify JSON data directly in your browser. Zero server uploads guarantee security for confidential enterprise payloads and API responses.',
       '/json-formatter',
       jsonFormatterSchemas
@@ -143,46 +144,38 @@ export const JsonFormatter = () => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Header & Breadcrumb */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 text-xs font-medium text-slate-400 mb-3">
-          <button onClick={() => navigateTo('/')} className="hover:text-indigo-400 transition-colors cursor-pointer">Home</button>
-          <span>/</span>
-          <button onClick={() => navigateTo('/')} className="hover:text-indigo-400 transition-colors cursor-pointer">Developer Tools</button>
-          <span>/</span>
-          <span className="text-slate-200">JSON Formatter</span>
-        </div>
-
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 mb-3">
-              <ShieldCheck className="size-3.5" />
-              <span>100% Client-Side · Zero Server Telemetry</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-100 tracking-tight">
-              Online JSON Formatter & Validator
-            </h1>
-            <p className="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl leading-relaxed">
-              Format, beautify, and validate JSON payloads instantly. All parsing runs 100% locally in your browser memory—safe for confidential tokens, database dumps, and internal API responses.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Developer Tools', path: '/' },
+          { label: 'JSON Formatter' }
+        ]}
+        badge={{
+          icon: ShieldCheck,
+          label: '100% Client-Side · Zero Server Telemetry',
+          tone: 'emerald'
+        }}
+        title="Online JSON Formatter & Validator"
+        description="Format, beautify, and validate JSON payloads instantly. All parsing runs 100% locally in your browser memory: safe for confidential tokens, database dumps, and internal API responses."
+        actions={
+          <>
             <button
+              type="button"
               onClick={handleLoadSample}
-              className="px-3 py-2 rounded-xl text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 transition-colors cursor-pointer"
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 transition-all shadow-sm active:scale-95 cursor-pointer shrink-0"
             >
               Load Sample
             </button>
             <button
+              type="button"
               onClick={() => setInputJson('')}
-              className="px-3 py-2 rounded-xl text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-red-400 border border-slate-800 transition-colors cursor-pointer flex items-center gap-1.5"
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-red-400 border border-slate-700/80 transition-all shadow-sm active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
             >
               <Trash2 className="size-3.5" />
               <span>Clear</span>
             </button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Control Toolbar */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-4 mb-4 flex flex-wrap items-center justify-between gap-3 shadow-md">

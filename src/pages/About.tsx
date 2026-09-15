@@ -14,7 +14,7 @@ export const About = () => {
           About TableView.dev
         </h1>
         <p className="text-base sm:text-lg text-slate-400 leading-relaxed max-w-2xl">
-          TableView.dev is a private, client-side data workspace built for data engineers, analysts, and operators: inspect, query with SQL, and convert CSV, Excel (.xlsx), Apache Parquet, and JSON files directly in your browser tab—plus run institutional-grade financial and FinOps calculations—with zero cloud uploads.
+          TableView.dev is a private, client-side data workspace built for data engineers, analysts, and operators: inspect, query with SQL, and convert CSV, Excel (.xlsx), Apache Parquet, and JSON files directly in your browser tab (plus run institutional-grade financial and FinOps calculations) with zero cloud uploads.
         </p>
       </div>
 
@@ -92,24 +92,35 @@ export const About = () => {
           <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800">
             <h4 className="text-slate-100 font-semibold mb-2">1. Privacy First</h4>
             <p className="text-slate-400">
-              We never inspect, save, or log user data. If you unplug your internet connection, the app continues functioning seamlessly.
+              We never inspect, save, or log user data. If you unplug your internet connection, the app continues functioning seamlessly in offline mode.
             </p>
           </div>
 
           <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800">
-            <h4 className="text-slate-100 font-semibold mb-2">2. Open & Free</h4>
+            <h4 className="text-slate-100 font-semibold mb-2">2. Mathematical Rigor</h4>
             <p className="text-slate-400">
-              TableView is completely free to use and open-sourced under the MIT license, empowering data teams worldwide.
+              All financial algorithms (DSCR, 1031 exchange, amortization curves, FLSA overtime) adhere strictly to IRS, CFPB, and statutory federal rules.
             </p>
           </div>
 
           <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800">
             <h4 className="text-slate-100 font-semibold mb-2">3. Maximum Speed</h4>
             <p className="text-slate-400">
-              No bloated UI libraries. Built with modern React 19, Tailwind CSS v4, and minimal runtime dependencies for instant page loads.
+              Zero bloated UI libraries. Built with modern React 19, Tailwind CSS v4, and SIMD-accelerated WebAssembly for near-native CPU throughput.
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Editorial & Authorship Disclosure */}
+      <div className="mb-16 p-6 rounded-2xl bg-slate-900/60 border border-slate-800">
+        <h3 className="text-base font-bold text-slate-100 mb-2">Editorial & Authorship Standards</h3>
+        <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mb-3">
+          Our technical guides, financial models, and documentation are authored and maintained by senior data engineers and quantitative analysts. We review algorithms against standard Fannie Mae/Freddie Mac guidelines, CFPB disclosure rules, and IRS Treasury regulations.
+        </p>
+        <p className="text-xs text-slate-400 leading-relaxed">
+          TableView.dev provides models for educational and informational purposes. While we strive for zero-roundoff precision matching commercial bank ledgers, users should always verify transaction specifics with licensed financial advisors, CPAs, or attorneys.
+        </p>
       </div>
 
       {/* Feedback & Product Evolution */}

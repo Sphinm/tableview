@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { AdSlot } from '../components/AdSlot';
+import { PageHeader } from '../components/calculator-kit';
 
 const sqlFormatterSchemas = [
   {
@@ -39,7 +40,7 @@ select * from user_orders where region_rank <= 5 order by lifetime_spend desc li
 export const SqlFormatter = () => {
   useEffect(() => {
     updatePageMeta(
-      'Online SQL Formatter & Minifier — Multi-Dialect Query Beautifier',
+      'Online SQL Formatter & Minifier: Multi-Dialect Query Beautifier',
       'Format, indent, and minify SQL queries online for DuckDB, PostgreSQL, MySQL, Snowflake, and BigQuery. Free in-browser tool with zero tracking.',
       '/sql-formatter',
       sqlFormatterSchemas
@@ -93,46 +94,38 @@ export const SqlFormatter = () => {
   return (
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Header & Breadcrumb */}
-      <div className="mb-6">
-        <div className="flex items-center gap-2 text-xs font-medium text-slate-400 mb-3">
-          <button onClick={() => navigateTo('/')} className="hover:text-indigo-400 transition-colors cursor-pointer">Home</button>
-          <span>/</span>
-          <button onClick={() => navigateTo('/')} className="hover:text-indigo-400 transition-colors cursor-pointer">Developer Tools</button>
-          <span>/</span>
-          <span className="text-slate-200">SQL Formatter</span>
-        </div>
-
-        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 mb-3">
-              <Terminal className="size-3.5" />
-              <span>Multi-Dialect SQL Beautifier & Minifier</span>
-            </div>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-100 tracking-tight">
-              Online SQL Formatter
-            </h1>
-            <p className="text-sm sm:text-base text-slate-400 mt-2 max-w-2xl leading-relaxed">
-              Format, indent, and clean complex SQL queries across DuckDB, PostgreSQL, MySQL, BigQuery, and Snowflake. 100% private in-browser processing.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-2">
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Developer Tools', path: '/' },
+          { label: 'SQL Formatter' }
+        ]}
+        badge={{
+          icon: Terminal,
+          label: 'Multi-Dialect SQL Beautifier & Minifier',
+          tone: 'cyan'
+        }}
+        title="Online SQL Formatter"
+        description="Format, indent, and clean complex SQL queries across DuckDB, PostgreSQL, MySQL, BigQuery, and Snowflake. 100% private in-browser processing."
+        actions={
+          <>
             <button
+              type="button"
               onClick={() => setInputSql(sampleSql)}
-              className="px-3 py-2 rounded-xl text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-800 transition-colors cursor-pointer"
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 transition-all shadow-sm active:scale-95 cursor-pointer shrink-0"
             >
               Load Sample
             </button>
             <button
+              type="button"
               onClick={() => setInputSql('')}
-              className="px-3 py-2 rounded-xl text-xs font-medium bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-red-400 border border-slate-800 transition-colors cursor-pointer flex items-center gap-1.5"
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-red-400 border border-slate-700/80 transition-all shadow-sm active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
             >
               <Trash2 className="size-3.5" />
               <span>Clear</span>
             </button>
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
       {/* Control Toolbar */}
       <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-4 mb-4 flex flex-wrap items-center justify-between gap-3 shadow-md">

@@ -10,7 +10,9 @@ import {
   ArrowRight,
   BookOpen,
   Sparkles,
-  Printer
+  Printer,
+  Share2,
+  Check
 } from 'lucide-react';
 import {
   calculateHardMoney,
@@ -30,6 +32,8 @@ import {
   CalculatorPresetsBar,
   type CalculatorPreset,
   CashFlowDonutChart,
+  PageHeader,
+  PrintReportButton,
 } from '../components/calculator-kit';
 
 const HARD_MONEY_PRESETS: CalculatorPreset<HardMoneyInputs>[] = [
@@ -174,7 +178,7 @@ const hardMoneySchemas = [
         name: 'What is a hard money loan and how does it work for house flipping?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'A hard money loan is an asset-based, short-term bridge loan provided by private investors or specialized lending companies to fund the purchase and renovation of real estate. Underwriting is primarily collateral-driven—focusing on the property\'s After Repair Value (ARV) and renovation scope—rather than personal W-2 income.'
+          text: 'A hard money loan is an asset-based, short-term bridge loan provided by private investors or specialized lending companies to fund the purchase and renovation of real estate. Underwriting is primarily collateral-driven (focusing on the property\'s After Repair Value (ARV) and renovation scope) rather than personal W-2 income.'
         }
       },
       {
@@ -409,39 +413,53 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
     <>
       {/* data-sentry-mask: purchase price, ARV and rehab budget are the user's own deal. */}
       <div data-sentry-mask="true" className="print:hidden min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
-      {/* Hero Header */}
-      <section className="relative pt-12 pb-8 border-b border-slate-800 bg-gradient-to-b from-amber-950/20 via-slate-950 to-slate-950">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-xs font-mono text-amber-400 mb-3">
-            <span className="px-2 py-0.5 rounded bg-amber-950/80 border border-amber-800/60 font-semibold">
-              FIX & FLIP INVESTOR SUITE
-            </span>
-            <span>•</span>
-            <span className="text-slate-400">Private Bridge Lending Analysis</span>
-          </div>
-
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-100">
-            Hard Money <span className="text-amber-400">Loan Calculator</span>
-          </h1>
-
-          <p className="mt-3 max-w-3xl text-sm sm:text-base text-slate-400 leading-relaxed">
-            Analyze short-term bridge financing, upfront points, monthly interest-only payments, and rehab budget draws. Accurately verify the <strong>70% Rule of House Flipping</strong> and net cash-on-cash ROI.
-          </p>
-
-          {/* Flip Scenario Presets */}
-          <div className="mt-6">
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+        <PageHeader
+          breadcrumbs={[
+            { label: 'Calculators', path: '/finance-calculator' },
+            { label: 'Hard Money Loan' }
+          ]}
+          badge={{
+            icon: Hammer,
+            label: 'Fix & Flip Bridge Lending Suite',
+            tone: 'amber'
+          }}
+          title="Hard Money Loan Calculator"
+          description="Analyze short-term bridge financing, upfront points, monthly interest-only payments, and rehab budget draws. Accurately verify the 70% Rule of House Flipping and net cash-on-cash ROI with 100% private in-browser math."
+          actions={
+            <>
+              <PrintReportButton onPrint={handleExportPdf} label="Print Deal Sheet" />
+              <button
+                type="button"
+                onClick={handleCopyLink}
+                className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm active:scale-95 shrink-0"
+                title="Copy shareable link with current deal parameters"
+              >
+                {copiedLink ? (
+                  <>
+                    <Check className="size-4 text-emerald-400" />
+                    <span className="text-emerald-400">Link Copied!</span>
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="size-4 text-amber-400" />
+                    <span>Share Deal</span>
+                  </>
+                )}
+              </button>
+            </>
+          }
+          presets={
             <CalculatorPresetsBar
               presets={HARD_MONEY_PRESETS}
               activeId={activePresetId}
               onSelect={handleSelectPreset}
               title="Flip Scenarios"
             />
-          </div>
-        </div>
-      </section>
+          }
+        />
 
-      {/* Main Grid */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Form Inputs (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
@@ -1101,7 +1119,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
           <RelatedCalculators currentSlug="hard-money-calculator" category="real-estate" />
         </div>
-      </section>
+      </div>
 
       {/* Mobile Sticky Summary Bottom Bar */}
       <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-4 py-2.5 shadow-2xl flex items-center justify-between gap-3">

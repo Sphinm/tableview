@@ -107,8 +107,8 @@ const STATIC_ALIASES: { pattern: RegExp; path: string }[] = [
 const GUIDE_HUB_PATTERN = /^\/(?:guides|guide|docs|blog|articles?)$/;
 const GUIDE_DETAIL_PATTERN = /^\/(?:guides|guide|docs|blog|articles?)\/([a-zA-Z0-9_-]+)$/;
 
-/** Workbench aliases. */
-const WORKBENCH_PATTERN = /^\/(?:tools|converters|viewers)$/;
+/** Data Workbench aliases. */
+const WORKBENCH_PATTERN = /^\/(?:data-tools|data-workbench|workbench|tools|converters|viewers)$/;
 
 /**
  * Pure path -> route resolution. No window, no DOM: safe to run in the browser,
@@ -154,7 +154,7 @@ export function resolveRoutePath(cleanPath: string): RouteState {
   }
 
   if (WORKBENCH_PATTERN.test(raw)) {
-    return { path: '/' };
+    return { path: '/data-tools' };
   }
 
   return { path: raw };
@@ -171,6 +171,7 @@ export function resolveRoutePath(cleanPath: string): RouteState {
  */
 export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/',
+  '/data-tools',
   '/tools/:toolSlug',
   '/guides',
   '/guides/:slug',
@@ -232,8 +233,15 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
     if (!targets.has(url)) targets.set(url, canonical);
   };
 
-  // Workbench
+  // Homepage (Financial Modeling Engine)
   add('/', '/');
+
+  // Secondary Data Tools Workbench & Aliases
+  add('/data-tools', '/data-tools');
+  add('/workbench', '/data-tools');
+  add('/tools', '/data-tools');
+  add('/viewers', '/data-tools');
+  add('/converters', '/data-tools');
 
   // Tool landing pages (canonical paths)
   for (const slug of Object.keys(TOOLS_CONFIG)) {

@@ -124,8 +124,8 @@ export const DropZone = ({
                   onClick={() => navigateTo(tool.path)}
                   className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm transition-all whitespace-nowrap cursor-pointer ${
                     isActive
-                      ? 'bg-white text-slate-950 font-semibold shadow-sm border border-slate-300 dark:bg-slate-800 dark:text-slate-100 dark:border-slate-700/80'
-                      : 'text-slate-500 hover:text-slate-900 hover:bg-slate-200/60 dark:text-slate-400 dark:hover:text-slate-200 dark:hover:bg-slate-800/60'
+                      ? 'bg-slate-800 text-slate-100 font-semibold shadow-sm border border-slate-700/80'
+                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60 border border-transparent'
                   }`}
                 >
                   {tool.name}
@@ -190,10 +190,12 @@ export const DropZone = ({
                       e.stopPropagation();
                       fileInputRef.current?.click();
                     }}
-                    className="btn-primary inline-flex items-center gap-2.5 px-6 py-3 rounded-xl text-sm font-bold shadow-md transition-all cursor-pointer"
+                    className="btn-primary inline-flex items-center gap-2.5 pl-5 pr-3.5 py-2.5 rounded-xl text-sm font-bold shadow-md transition-all active:scale-95 cursor-pointer"
                   >
-                    <FolderOpen className="size-4.5" />
-                    Choose Local File
+                    <span>Choose Local File</span>
+                    <span className="p-1 rounded-lg bg-white/15 text-white">
+                      <FolderOpen className="size-4" />
+                    </span>
                   </button>
 
                   <button

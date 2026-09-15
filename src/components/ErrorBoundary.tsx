@@ -82,7 +82,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           </h1>
           <p className="text-sm text-slate-400 leading-relaxed mb-6">
             {staleChunk
-              ? 'TableView was updated while this tab was open, so part of the app is out of date. Reloading will fix it — your files were never uploaded and nothing was lost.'
+              ? 'TableView was updated while this tab was open, so part of the app is out of date. Reloading will fix it: your files were never uploaded and nothing was lost.'
               : 'An unexpected error stopped this page from rendering. Your files stay on your device and were not uploaded. Reloading usually resolves it.'}
           </p>
 

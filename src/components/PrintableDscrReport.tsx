@@ -188,7 +188,7 @@ export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
         <div className="text-xs text-slate-800 space-y-2 leading-relaxed">
           <p>
             <span className="font-bold text-slate-950">Coverage Rating:</span>{' '}
-            <span className="font-bold text-indigo-700">{result.statusLabel}</span> — {result.statusDescription}
+            <span className="font-bold text-indigo-700">{result.statusLabel}</span>: {result.statusDescription}
           </p>
           <p>
             <span className="font-bold text-slate-950">Max Supported Loan at {inputs.targetDscr.toFixed(2)}x DSCR:</span>{' '}

@@ -127,13 +127,13 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
 
   // Active state checkers
   const isToolsSection =
+    currentPath.startsWith('/data-tools') ||
     currentPath.startsWith('/csv-') ||
     currentPath.startsWith('/excel-') ||
     currentPath.startsWith('/parquet-') ||
     currentPath.startsWith('/json-') ||
     currentPath.startsWith('/sql-') ||
     currentPath.startsWith('/tools');
-  const isWorkbench = !isToolsSection && (currentPath === '/' || currentPath === '');
   const isCalculatorSection = isCalculatorRoute(currentPath);
   const isGuides = currentPath.startsWith('/guides');
   const isAbout = currentPath === '/about';
@@ -341,7 +341,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
 
   return (
     <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50 transition-colors">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Left: Brand + Grouped Nav */}
         <div className="flex items-center gap-7">
           <a
@@ -360,171 +360,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-1.5 text-sm">
-            {/* 1. Parquet Tools Dropdown Menu */}
-            <div
-              ref={parquetDropdownRef}
-              className="relative"
-              onMouseEnter={handleParquetEnter}
-              onMouseLeave={handleParquetLeave}
-            >
-              <button
-                type="button"
-                onClick={toggleParquetDropdown}
-                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
-                  isToolsSection || parquetDropdownOpen
-                    ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
-                }`}
-                aria-expanded={parquetDropdownOpen}
-              >
-                <Table className="size-4 text-emerald-400" />
-                <span>Data Tools</span>
-                <ChevronDown
-                  className={`size-3.5 transition-transform duration-200 opacity-70 ${
-                    parquetDropdownOpen ? 'rotate-180' : ''
-                  }`}
-                />
-              </button>
-
-              {/* Data Tools Mega Dropdown Panel (iLovePDF Style) */}
-              {parquetDropdownOpen && (
-                <div className="absolute left-0 top-full pt-1.5 w-[760px] z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/98 dark:bg-slate-900/98 text-slate-900 dark:text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-3">
-                    <div className="px-3 pt-2 pb-2.5 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80">
-                      <span className="text-xs font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-bold">
-                        All In-Browser Data Tools
-                      </span>
-                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                        DuckDB-Wasm SIMD · 100% Client-Side
-                      </span>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-3 py-2">
-                      {/* Column 1: Viewers */}
-                      <div className="space-y-1">
-                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
-                          Viewers
-                        </p>
-                        {viewerItems.map((tool) => (
-                          <a
-                            key={tool.path}
-                            href={tool.path}
-                            onClick={(e) => handleNav(e, tool.path)}
-                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
-                          >
-                            <div className="size-7 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                              <tool.icon className="size-3.5" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-400 transition-colors">
-                                  {tool.title}
-                                </span>
-                                {tool.badge && (
-                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                    {tool.badge}
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
-                                {tool.description}
-                              </p>
-                            </div>
-                          </a>
-                        ))}
-                      </div>
-
-                      {/* Column 2: Converters */}
-                      <div className="space-y-1 border-x border-slate-100 dark:border-slate-800/60 px-2">
-                        <p className="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
-                          Converters
-                        </p>
-                        {converterItems.slice(0, 5).map((tool) => (
-                          <a
-                            key={tool.path}
-                            href={tool.path}
-                            onClick={(e) => handleNav(e, tool.path)}
-                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
-                          >
-                            <div className="size-7 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                              <tool.icon className="size-3.5" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-400 transition-colors">
-                                  {tool.title}
-                                </span>
-                                {tool.badge && (
-                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
-                                    {tool.badge}
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
-                                {tool.description}
-                              </p>
-                            </div>
-                          </a>
-                        ))}
-                      </div>
-
-                      {/* Column 3: SQL & Analytics */}
-                      <div className="space-y-1">
-                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-1">
-                          SQL & Analytics
-                        </p>
-                        {analyticsItems.map((tool) => (
-                          <a
-                            key={tool.path}
-                            href={tool.path}
-                            onClick={(e) => handleNav(e, tool.path)}
-                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
-                          >
-                            <div className="size-7 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0 mt-0.5">
-                              <tool.icon className="size-3.5" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-cyan-400 transition-colors">
-                                  {tool.title}
-                                </span>
-                                {tool.badge && (
-                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                                    {tool.badge}
-                                  </span>
-                                )}
-                              </div>
-                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
-                                {tool.description}
-                              </p>
-                            </div>
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Bottom Link: Main Workbench */}
-                    <div className="mt-1 pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between px-3">
-                      <a
-                        href="/"
-                        onClick={(e) => handleNav(e, '/')}
-                        className="text-xs font-semibold text-indigo-400 hover:text-indigo-300 flex items-center gap-1.5 transition-colors"
-                      >
-                        <Sparkles className="size-3.5" />
-                        <span>View All 15+ Data Tools on Homepage</span>
-                        <ArrowRight className="size-3" />
-                      </a>
-
-                      <span className="text-[11px] text-slate-500 font-mono">
-                        Zero server telemetry
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* 3. Calculators Dropdown Menu */}
+            {/* 1. Calculators Dropdown Menu (Primary Focus) */}
             <div
               ref={calcDropdownRef}
               className="relative"
@@ -543,6 +379,9 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               >
                 <Calculator className="size-4 text-indigo-400" />
                 <span>Calculators</span>
+                <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                  High-Precision
+                </span>
                 <ChevronDown
                   className={`size-3.5 transition-transform duration-200 opacity-70 ${
                     calcDropdownOpen ? 'rotate-180' : ''
@@ -553,12 +392,12 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               {/* Calculators Flyout Panel */}
               {calcDropdownOpen && (
                 <div className="absolute left-0 top-full pt-1.5 w-[680px] z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="rounded-2xl border border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 text-slate-900 dark:text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-3">
-                    <div className="px-3 pt-2 pb-2 flex items-center justify-between border-b border-slate-100 dark:border-slate-800/80">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 dark:text-slate-400 font-semibold">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/98 text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-3">
+                    <div className="px-3 pt-2 pb-2 flex items-center justify-between border-b border-slate-800/80">
+                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
                         Financial, Real Estate & FinOps Calculators
                       </span>
-                      <span className="text-[10px] text-emerald-600 dark:text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      <span className="text-[10px] text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
                         100% Client-Side · Zero Server Math
                       </span>
                     </div>
@@ -566,7 +405,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                     <div className="grid grid-cols-2 gap-3 py-2">
                       {/* Column 1: Real Estate & Commercial Loans */}
                       <div className="space-y-0.5">
-                        <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold mb-1">
+                        <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">
                           Real Estate & Commercial Debt
                         </div>
                         {realEstateCalcs.map((calc) => (
@@ -574,23 +413,23 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                             key={calc.path}
                             href={calc.path}
                             onClick={(e) => handleNav(e, calc.path)}
-                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
                           >
-                            <div className="size-7 rounded-lg bg-indigo-50 dark:bg-slate-800 text-indigo-600 dark:text-indigo-400 border border-indigo-100 dark:border-slate-700/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <div className="size-7 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               <calc.icon className="size-3.5" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                                <span className="text-xs font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">
                                   {calc.title}
                                 </span>
                                 {calc.badge && (
-                                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-indigo-500/15 text-indigo-600 dark:text-indigo-400 border border-indigo-500/30">
+                                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
                                     {calc.badge}
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug truncate mt-0.5">
+                              <p className="text-[10px] text-slate-400 leading-snug truncate mt-0.5">
                                 {calc.description}
                               </p>
                             </div>
@@ -602,7 +441,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                       <div className="space-y-3">
                         {/* Payroll & Compensation */}
                         <div className="space-y-0.5">
-                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold mb-1">
+                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">
                             Payroll & Compensation
                           </div>
                           {payrollCalcs.map((calc) => (
@@ -610,23 +449,23 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                               key={calc.path}
                               href={calc.path}
                               onClick={(e) => handleNav(e, calc.path)}
-                              className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                              className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
                             >
-                              <div className="size-7 rounded-lg bg-emerald-50 dark:bg-slate-800 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-slate-700/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                              <div className="size-7 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                                 <calc.icon className="size-3.5" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                                  <span className="text-xs font-bold text-slate-100 group-hover:text-emerald-400 transition-colors">
                                     {calc.title}
                                   </span>
                                   {calc.badge && (
-                                    <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                                    <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                                       {calc.badge}
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug truncate mt-0.5">
+                                <p className="text-[10px] text-slate-400 leading-snug truncate mt-0.5">
                                   {calc.description}
                                 </p>
                               </div>
@@ -635,8 +474,8 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                         </div>
 
                         {/* Cloud FinOps */}
-                        <div className="space-y-0.5 pt-2 border-t border-slate-100 dark:border-slate-800/60">
-                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 dark:text-slate-500 font-bold mb-1">
+                        <div className="space-y-0.5 pt-2 border-t border-slate-800/60">
+                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">
                             Cloud & Data FinOps
                           </div>
                           {cloudFinOpsCalcs.map((calc) => (
@@ -644,23 +483,23 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                               key={calc.path}
                               href={calc.path}
                               onClick={(e) => handleNav(e, calc.path)}
-                              className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-800/80 transition-colors"
+                              className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
                             >
-                              <div className="size-7 rounded-lg bg-cyan-50 dark:bg-slate-800 text-cyan-600 dark:text-cyan-400 border border-cyan-100 dark:border-slate-700/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                              <div className="size-7 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                                 <calc.icon className="size-3.5" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-xs font-bold text-slate-900 dark:text-slate-100 group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors">
+                                  <span className="text-xs font-bold text-slate-100 group-hover:text-cyan-400 transition-colors">
                                     {calc.title}
                                   </span>
                                   {calc.badge && (
-                                    <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30">
+                                    <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
                                       {calc.badge}
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-[10px] text-slate-500 dark:text-slate-400 leading-snug truncate mt-0.5">
+                                <p className="text-[10px] text-slate-400 leading-snug truncate mt-0.5">
                                   {calc.description}
                                 </p>
                               </div>
@@ -669,19 +508,19 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                         </div>
 
                         {/* Trust card */}
-                        <div className="p-2.5 rounded-xl bg-slate-100/80 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-800/80 text-[11px] text-slate-500 dark:text-slate-400 leading-relaxed">
-                          <span className="font-semibold text-slate-700 dark:text-slate-300 block mb-0.5">100% Private In-Browser</span>
+                        <div className="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800/80 text-[11px] text-slate-400 leading-relaxed">
+                          <span className="font-semibold text-slate-300 block mb-0.5">100% Private In-Browser</span>
                           Interest amortization, tax deferral, and wage math run client-side in WebAssembly. No sensitive numbers touch a server.
                         </div>
                       </div>
                     </div>
 
                     {/* Bottom Link: View all */}
-                    <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80">
+                    <div className="pt-2 border-t border-slate-800/80">
                       <a
                         href="/finance-calculator"
                         onClick={(e) => handleNav(e, '/finance-calculator')}
-                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors"
+                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-indigo-400 hover:bg-indigo-500/10 transition-colors"
                       >
                         <span className="flex items-center gap-1.5">
                           <Calculator className="size-3.5" />
@@ -689,6 +528,173 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                         </span>
                         <ArrowRight className="size-3.5" />
                       </a>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 2. Data Tools Dropdown Menu (Secondary Focus) */}
+            <div
+              ref={parquetDropdownRef}
+              className="relative"
+              onMouseEnter={handleParquetEnter}
+              onMouseLeave={handleParquetLeave}
+            >
+              <button
+                type="button"
+                onClick={(e) => {
+                  if (e.metaKey || e.ctrlKey) return;
+                  toggleParquetDropdown();
+                }}
+                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
+                  isToolsSection || parquetDropdownOpen
+                    ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+                }`}
+                aria-expanded={parquetDropdownOpen}
+              >
+                <Table className="size-4 text-emerald-400" />
+                <span>Data Tools</span>
+                <ChevronDown
+                  className={`size-3.5 transition-transform duration-200 opacity-70 ${
+                    parquetDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {/* Data Tools Mega Dropdown Panel */}
+              {parquetDropdownOpen && (
+                <div className="absolute left-0 top-full pt-1.5 w-[760px] z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/98 text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-3">
+                    <div className="px-3 pt-2 pb-2.5 flex items-center justify-between border-b border-slate-800/80">
+                      <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">
+                        All In-Browser Data Tools & Workbench
+                      </span>
+                      <span className="text-[10px] text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                        DuckDB-Wasm SIMD · 100% Client-Side
+                      </span>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-3 py-2">
+                      {/* Column 1: Viewers */}
+                      <div className="space-y-1">
+                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                          Viewers
+                        </p>
+                        {viewerItems.map((tool) => (
+                          <a
+                            key={tool.path}
+                            href={tool.path}
+                            onClick={(e) => handleNav(e, tool.path)}
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
+                          >
+                            <div className="size-7 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                              <tool.icon className="size-3.5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-bold text-slate-100 group-hover:text-emerald-400 transition-colors">
+                                  {tool.title}
+                                </span>
+                                {tool.badge && (
+                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    {tool.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                                {tool.description}
+                              </p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+
+                      {/* Column 2: Converters */}
+                      <div className="space-y-1 border-x border-slate-800/60 px-2">
+                        <p className="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                          Converters
+                        </p>
+                        {converterItems.map((tool) => (
+                          <a
+                            key={tool.path}
+                            href={tool.path}
+                            onClick={(e) => handleNav(e, tool.path)}
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
+                          >
+                            <div className="size-7 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                              <tool.icon className="size-3.5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">
+                                  {tool.title}
+                                </span>
+                                {tool.badge && (
+                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                                    {tool.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                                {tool.description}
+                              </p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+
+                      {/* Column 3: SQL & Analytics */}
+                      <div className="space-y-1">
+                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                          SQL & Analytics
+                        </p>
+                        {analyticsItems.map((tool) => (
+                          <a
+                            key={tool.path}
+                            href={tool.path}
+                            onClick={(e) => handleNav(e, tool.path)}
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
+                          >
+                            <div className="size-7 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                              <tool.icon className="size-3.5" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-1.5">
+                                <span className="text-xs font-bold text-slate-100 group-hover:text-cyan-400 transition-colors">
+                                  {tool.title}
+                                </span>
+                                {tool.badge && (
+                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                    {tool.badge}
+                                  </span>
+                                )}
+                              </div>
+                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                                {tool.description}
+                              </p>
+                            </div>
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Bottom Link: Main Workbench */}
+                    <div className="mt-1 pt-2 border-t border-slate-800/80 flex items-center justify-between px-3">
+                      <a
+                        href="/data-tools"
+                        onClick={(e) => handleNav(e, '/data-tools')}
+                        className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors"
+                      >
+                        <Sparkles className="size-3.5" />
+                        <span>Open In-Browser Data Workbench</span>
+                        <ArrowRight className="size-3" />
+                      </a>
+
+                      <span className="text-[11px] text-slate-500 font-mono">
+                        Zero server telemetry
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -779,66 +785,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             </button>
           )}
 
-          {/* Workbench */}
-          <a
-            href="/"
-            onClick={(e) => handleNav(e, '/')}
-            className={`block px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 ${
-              isWorkbench
-                ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900'
-            }`}
-          >
-            <Table className="size-4 text-slate-400" />
-            <span>Workbench (Studio)</span>
-          </a>
-
-          {/* Data Tools Accordion */}
-          <div className="border border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-900/40">
-            <button
-              onClick={() => setMobileParquetExpanded(!mobileParquetExpanded)}
-              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-700 dark:text-slate-200 text-sm font-semibold cursor-pointer"
-            >
-              <span className="flex items-center gap-2.5">
-                <Table className="size-4 text-emerald-600 dark:text-emerald-400" />
-                <span>Data Tools (Viewers, Converters, SQL)</span>
-              </span>
-              <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileParquetExpanded ? 'rotate-180' : ''}`} />
-            </button>
-
-            {mobileParquetExpanded && (
-              <div className="px-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-800/60 pt-1.5 max-h-72 overflow-y-auto">
-                {[...viewerItems, ...converterItems, ...analyticsItems].map((p) => (
-                  <a
-                    key={p.path}
-                    href={p.path}
-                    onClick={(e) => handleNav(e, p.path)}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80 transition-colors"
-                  >
-                    <div className="flex items-center gap-2">
-                      <p.icon className="size-3.5 text-indigo-400" />
-                      <span>{p.title}</span>
-                    </div>
-                    {p.badge && (
-                      <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded border bg-indigo-500/10 text-indigo-400 border-indigo-500/20">
-                        {p.badge}
-                      </span>
-                    )}
-                  </a>
-                ))}
-                <a
-                  href="/"
-                  onClick={(e) => handleNav(e, '/')}
-                  className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-500/10 transition-colors"
-                >
-                  <span>Open Main Workbench Studio</span>
-                  <ArrowRight className="size-3" />
-                </a>
-              </div>
-            )}
-          </div>
-
-          {/* Calculators Accordion */}
+          {/* 1. Calculators Accordion (Primary Focus) */}
           <div className="border border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-900/40">
             <button
               onClick={() => setMobileCalcsExpanded(!mobileCalcsExpanded)}
@@ -858,20 +805,75 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                     key={c.path}
                     href={c.path}
                     onClick={(e) => handleNav(e, c.path)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80 transition-colors"
+                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80 transition-colors"
                   >
-                    <c.icon className="size-3.5 text-indigo-600 dark:text-indigo-400" />
-                    <span>{c.title}</span>
+                    <div className="flex items-center gap-2">
+                      <c.icon className="size-3.5 text-indigo-400" />
+                      <span>{c.title}</span>
+                    </div>
+                    {c.badge && (
+                      <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded border bg-indigo-500/10 text-indigo-400 border-indigo-500/20">
+                        {c.badge}
+                      </span>
+                    )}
                   </a>
                 ))}
                 <a
                   href="/finance-calculator"
                   onClick={(e) => handleNav(e, '/finance-calculator')}
-                  className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-indigo-400 hover:bg-indigo-500/10 transition-colors"
+                  className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors"
                 >
-                  <span>All 10+ Calculators Hub</span>
+                  <span>Browse All Calculators Hub</span>
                   <ArrowRight className="size-3" />
                 </a>
+              </div>
+            )}
+          </div>
+
+          {/* 2. Data Tools Accordion (Secondary Focus) */}
+          <div className="border border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+            <button
+              onClick={() => setMobileParquetExpanded(!mobileParquetExpanded)}
+              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-700 dark:text-slate-200 text-sm font-semibold cursor-pointer"
+            >
+              <span className="flex items-center gap-2.5">
+                <Table className="size-4 text-emerald-600 dark:text-emerald-400" />
+                <span>Data Tools (Viewers, Converters, SQL)</span>
+              </span>
+              <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileParquetExpanded ? 'rotate-180' : ''}`} />
+            </button>
+
+            {mobileParquetExpanded && (
+              <div className="px-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-800/60 pt-1.5 max-h-72 overflow-y-auto">
+                <a
+                  href="/data-tools"
+                  onClick={(e) => handleNav(e, '/data-tools')}
+                  className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 transition-colors mb-1"
+                >
+                  <div className="flex items-center gap-2">
+                    <Sparkles className="size-3.5" />
+                    <span>Open Data Workbench</span>
+                  </div>
+                  <ArrowRight className="size-3" />
+                </a>
+                {[...viewerItems, ...converterItems, ...analyticsItems].map((p) => (
+                  <a
+                    key={p.path}
+                    href={p.path}
+                    onClick={(e) => handleNav(e, p.path)}
+                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <p.icon className="size-3.5 text-emerald-400" />
+                      <span>{p.title}</span>
+                    </div>
+                    {p.badge && (
+                      <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                        {p.badge}
+                      </span>
+                    )}
+                  </a>
+                ))}
               </div>
             )}
           </div>

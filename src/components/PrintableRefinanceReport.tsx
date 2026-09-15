@@ -104,7 +104,7 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
             </tr>
             <tr>
               <td className="py-2 px-4 text-slate-600">Upfront Refinancing Closing Costs</td>
-              <td className="py-2 px-4 text-right font-mono text-slate-400">—</td>
+              <td className="py-2 px-4 text-right font-mono text-slate-400">-</td>
               <td className="py-2 px-4 text-right font-mono text-slate-900">{fmt(summary.totalClosingCosts)}</td>
               <td className="py-2 px-4 text-right font-mono text-slate-600">
                 {inputs.rollCostsIntoLoan ? 'Financed into loan' : 'Paid out-of-pocket'}

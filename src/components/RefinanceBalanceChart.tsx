@@ -54,7 +54,8 @@ export const RefinanceBalanceChart: React.FC<RefinanceBalanceChartProps> = ({
   };
 
   return (
-    <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm space-y-3">
+    <div className="p-[1px] rounded-2xl bg-gradient-to-b from-slate-800/80 via-slate-800/40 to-slate-900/90 shadow-sm">
+      <div className="rounded-[calc(1rem-1px)] p-4 sm:p-5 bg-slate-950/95 shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] space-y-3">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
         <div>
           <h3 className="text-sm sm:text-base font-bold text-slate-100">{title}</h3>
@@ -153,6 +154,7 @@ export const RefinanceBalanceChart: React.FC<RefinanceBalanceChartProps> = ({
             </div>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

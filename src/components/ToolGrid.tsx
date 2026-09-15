@@ -319,74 +319,80 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
               onDragOver={(e) => handleCardDragOver(e, tool)}
               onDragLeave={handleCardDragLeave}
               onDrop={(e) => handleCardDrop(e, tool)}
-              className={`group relative rounded-2xl p-5 transition-all duration-200 cursor-pointer flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl ${
+              className={`group relative rounded-2xl p-[1px] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] cursor-pointer flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl ${
                 isDraggingThis
-                  ? `border-2 scale-[1.02] ${colors.dropGlow}`
-                  : `border border-slate-800/90 hover:border-slate-700 bg-slate-900/70 hover:bg-slate-900 hover:-translate-y-1 ${colors.glow}`
+                  ? `scale-[1.02] bg-indigo-500 ${colors.dropGlow}`
+                  : `bg-gradient-to-b from-slate-800/80 via-slate-800/40 to-slate-900/90 hover:from-indigo-500/40 hover:via-slate-700/60 hover:to-indigo-500/20 hover:-translate-y-1 ${colors.glow}`
               }`}
             >
-              {/* Card Header: Icon + Badge */}
-              <div>
-                <div className="flex items-start justify-between gap-2 mb-3.5">
-                  <div
-                    className={`size-11 rounded-xl border flex items-center justify-center transition-transform group-hover:scale-110 duration-200 shadow-inner ${colors.iconBg}`}
-                  >
-                    {getToolIcon(tool.iconType)}
+              <div className="rounded-[calc(1rem-1px)] p-4 sm:p-5 bg-slate-950/95 group-hover:bg-slate-900/90 transition-colors duration-200 flex flex-col justify-between h-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)]">
+                {/* Card Header: Icon + Badge */}
+                <div>
+                  <div className="flex items-start justify-between gap-2 mb-3.5">
+                    <div
+                      className={`size-11 rounded-xl border flex items-center justify-center transition-transform group-hover:scale-105 duration-200 shadow-inner ${colors.iconBg}`}
+                    >
+                      {getToolIcon(tool.iconType)}
+                    </div>
+
+                    <div className="flex items-center gap-1.5">
+                      {tool.tag && (
+                        <span
+                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border shadow-xs uppercase tracking-wider ${colors.badge}`}
+                        >
+                          {tool.tag}
+                        </span>
+                      )}
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5">
-                    {tool.tag && (
-                      <span
-                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border shadow-xs uppercase tracking-wider ${colors.badge}`}
-                      >
-                        {tool.tag}
+                  {/* Card Title & Short Description */}
+                  <h3 className="text-base font-bold text-slate-100 group-hover:text-white transition-colors mb-1.5 tracking-tight flex items-center justify-between">
+                    <span>{tool.shortTitle || tool.title}</span>
+                  </h3>
+
+                  <p className="text-xs text-slate-400 group-hover:text-slate-300 leading-relaxed line-clamp-2 transition-colors mb-4">
+                    {tool.subtitle}
+                  </p>
+                </div>
+
+                {/* Card Footer: Accepted Exts & Button-in-Button Action */}
+                {tool.category === 'calculator' ? (
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-300">
+                    <span className="text-[11px] text-slate-400 flex items-center gap-1.5 truncate pr-2">
+                      <span className="inline-block size-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+                      <span className="truncate">{tool.acceptExtensions}</span>
+                    </span>
+
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-300 group-hover:text-indigo-300 transition-colors shrink-0">
+                      <span>Launch</span>
+                      <span className="size-5 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-300 group-hover:border-indigo-500/40 group-hover:translate-x-0.5 transition-all duration-200">
+                        <ArrowRight className="size-2.5" />
                       </span>
-                    )}
+                    </span>
                   </div>
-                </div>
+                ) : (
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-300">
+                    <span className="font-mono text-[11px] text-slate-400">
+                      {tool.acceptExtensions.split(',')[0]}
+                      {tool.acceptExtensions.split(',').length > 1 && (
+                        <span className="text-slate-400"> +{tool.acceptExtensions.split(',').length - 1}</span>
+                      )}
+                    </span>
 
-                {/* Card Title & Short Description */}
-                <h3 className="text-base font-bold text-slate-100 group-hover:text-white transition-colors mb-1.5 tracking-tight flex items-center justify-between">
-                  <span>{tool.shortTitle || tool.title}</span>
-                </h3>
-
-                <p className="text-xs text-slate-400 group-hover:text-slate-300 leading-relaxed line-clamp-2 transition-colors mb-4">
-                  {tool.subtitle}
-                </p>
+                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-300 group-hover:text-indigo-300 transition-colors shrink-0">
+                      <span>Open</span>
+                      <span className="size-5 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-300 group-hover:border-indigo-500/40 group-hover:translate-x-0.5 transition-all duration-200">
+                        <ArrowRight className="size-2.5" />
+                      </span>
+                    </span>
+                  </div>
+                )}
               </div>
-
-              {/* Card Footer: Accepted Exts & Hover Action Prompt */}
-              {tool.category === 'calculator' ? (
-                <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-300">
-                  <span className="text-[11px] text-slate-400 flex items-center gap-1.5 truncate pr-2">
-                    <span className="inline-block size-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                    <span className="truncate">{tool.acceptExtensions}</span>
-                  </span>
-
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-400 group-hover:text-indigo-300 group-hover:translate-x-0.5 transition-transform shrink-0">
-                    <span>Launch</span>
-                    <ArrowRight className="size-3" />
-                  </span>
-                </div>
-              ) : (
-                <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-300">
-                  <span className="font-mono text-[11px] text-slate-400">
-                    {tool.acceptExtensions.split(',')[0]}
-                    {tool.acceptExtensions.split(',').length > 1 && (
-                      <span className="text-slate-400"> +{tool.acceptExtensions.split(',').length - 1}</span>
-                    )}
-                  </span>
-
-                  <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-indigo-400 group-hover:text-indigo-300 group-hover:translate-x-0.5 transition-transform">
-                    <span>Open</span>
-                    <ArrowRight className="size-3" />
-                  </span>
-                </div>
-              )}
 
               {/* Drag over overlay hint (only for file tools) */}
               {isDraggingThis && tool.category !== 'calculator' && (
-                <div className="absolute inset-0 bg-indigo-950/90 backdrop-blur-xs flex flex-col items-center justify-center p-4 text-center z-10 animate-fade-in">
+                <div className="absolute inset-0 bg-indigo-950/90 backdrop-blur-xs flex flex-col items-center justify-center p-4 text-center z-10 animate-fade-in rounded-2xl">
                   <Sparkles className="size-8 text-amber-400 mb-2 animate-bounce" />
                   <p className="text-sm font-bold text-slate-100">Drop file to open in</p>
                   <p className="text-xs text-indigo-300 font-semibold">{tool.shortTitle || tool.title}</p>

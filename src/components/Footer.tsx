@@ -103,8 +103,9 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-slate-100 text-lg tracking-tight">TableView.dev</span>
-                  <span className="px-2 py-0.5 rounded-md bg-slate-800 border border-slate-700/80 text-[11px] font-mono font-medium text-slate-300">
-                    v1.2.0 Wasm
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-[11px] font-mono font-medium text-emerald-400">
+                    <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    In-Browser Engine
                   </span>
                 </div>
               </div>
@@ -142,7 +143,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
             </div>
             <div className="text-[11px] text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-2">
               <span>Your data egress:</span>
-              <span className="font-mono font-medium text-slate-200">0 B — files never uploaded</span>
+              <span className="font-mono font-medium text-slate-200">0 B (Zero data egress)</span>
             </div>
             <div className="text-[11px] text-slate-400 flex items-center justify-between">
               <span>Execution Target:</span>
@@ -153,13 +154,166 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
         {/* 5-column link grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-8 sm:gap-6 py-12 text-sm">
-          {/* Column 1: Parquet & Data Tools */}
+          {/* Column 1: Financial & Commercial Debt Calculators */}
+          <div>
+            <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
+              <Calculator className="size-3.5 text-indigo-400" />
+              Real Estate & Debt
+            </h4>
+            <ul className="space-y-2.5">
+              <li>
+                <a
+                  href="/dscr-loan-calculator"
+                  onClick={(e) => handleNav(e, '/dscr-loan-calculator')}
+                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
+                >
+                  <span>DSCR Loan Calculator</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                    High ROI
+                  </span>
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/commercial-loan-calculator"
+                  onClick={(e) => handleNav(e, '/commercial-loan-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Commercial Loan & Balloon
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/section-1031-exchange-calculator"
+                  onClick={(e) => handleNav(e, '/section-1031-exchange-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  1031 Exchange Tax Deferral
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/loan-comparison-calculator"
+                  onClick={(e) => handleNav(e, '/loan-comparison-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Loan Comparison (Side-by-Side)
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/mortgage-calculator"
+                  onClick={(e) => handleNav(e, '/mortgage-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Mortgage & Extra Payments
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/refinance-calculator"
+                  onClick={(e) => handleNav(e, '/refinance-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Refinance Break-Even
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/hard-money-calculator"
+                  onClick={(e) => handleNav(e, '/hard-money-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Hard Money (70% Rule MAO)
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 2: Payroll & Cloud FinOps */}
+          <div>
+            <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
+              <Zap className="size-3.5 text-emerald-400" />
+              Payroll & FinOps
+            </h4>
+            <ul className="space-y-2.5">
+              <li>
+                <a
+                  href="/salary-to-hourly-calculator"
+                  onClick={(e) => handleNav(e, '/salary-to-hourly-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Salary to Hourly Matrix
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/snowflake-cost-calculator"
+                  onClick={(e) => handleNav(e, '/snowflake-cost-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Snowflake Warehouse Cost
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/parquet-storage-calculator"
+                  onClick={(e) => handleNav(e, '/parquet-storage-calculator')}
+                  className="hover:text-slate-100 transition-colors block"
+                >
+                  Parquet Storage Savings
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/60000-a-year-is-how-much-an-hour"
+                  onClick={(e) => handleNav(e, '/60000-a-year-is-how-much-an-hour')}
+                  className="hover:text-slate-100 transition-colors block text-xs"
+                >
+                  $60k/yr is How Much/Hour?
+                </a>
+              </li>
+              <li>
+                <a
+                  href="/100000-a-year-is-how-much-an-hour"
+                  onClick={(e) => handleNav(e, '/100000-a-year-is-how-much-an-hour')}
+                  className="hover:text-slate-100 transition-colors block text-xs"
+                >
+                  $100k/yr is How Much/Hour?
+                </a>
+              </li>
+              <li className="pt-2">
+                <a
+                  href="/finance-calculator"
+                  onClick={(e) => handleNav(e, '/finance-calculator')}
+                  className="text-slate-200 hover:text-slate-100 transition-colors font-medium flex items-center gap-1.5 group"
+                >
+                  <span>All 10+ Calculators</span>
+                  <ArrowRight className="size-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Column 3: Data Tools & Workbench */}
           <div>
             <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
               <Table className="size-3.5 text-slate-400" />
-              Data Tools
+              Data Workbench
             </h4>
             <ul className="space-y-2.5">
+              <li>
+                <a
+                  href="/data-tools"
+                  onClick={(e) => handleNav(e, '/data-tools')}
+                  className="group flex items-center justify-between text-emerald-400 hover:text-emerald-300 font-semibold transition-colors"
+                >
+                  <span>Data Workbench</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                    Studio
+                  </span>
+                </a>
+              </li>
               <li>
                 <a
                   href="/csv-viewer"
@@ -167,18 +321,6 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   className="hover:text-slate-100 transition-colors block"
                 >
                   CSV Viewer
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/csv-to-excel"
-                  onClick={(e) => handleNav(e, '/csv-to-excel')}
-                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
-                >
-                  <span>CSV to Excel</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
-                    Popular
-                  </span>
                 </a>
               </li>
               <li>
@@ -210,22 +352,13 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
               </li>
               <li>
                 <a
-                  href="/excel-to-csv"
-                  onClick={(e) => handleNav(e, '/excel-to-csv')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Excel to CSV
-                </a>
-              </li>
-              <li>
-                <a
                   href="/sql-workbench"
                   onClick={(e) => handleNav(e, '/sql-workbench')}
                   className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
                 >
-                  <span>SQL Workbench</span>
+                  <span>DuckDB SQL Console</span>
                   <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">
-                    DuckDB
+                    Wasm
                   </span>
                 </a>
               </li>
@@ -245,119 +378,6 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   className="hover:text-slate-100 transition-colors block"
                 >
                   SQL Formatter
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {/* Column 2: Financial Calculators */}
-          <div>
-            <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-4 flex items-center gap-2">
-              <Calculator className="size-3.5 text-indigo-400" />
-              Calculators & FinOps
-            </h4>
-            <ul className="space-y-2.5">
-              <li>
-                <a
-                  href="/dscr-loan-calculator"
-                  onClick={(e) => handleNav(e, '/dscr-loan-calculator')}
-                  className="group flex items-center justify-between text-slate-400 hover:text-slate-100 transition-colors"
-                >
-                  <span>DSCR Loan Calculator</span>
-                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-mono">
-                    High ROI
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/commercial-loan-calculator"
-                  onClick={(e) => handleNav(e, '/commercial-loan-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Commercial Loan & Balloon
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/section-1031-exchange-calculator"
-                  onClick={(e) => handleNav(e, '/section-1031-exchange-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  1031 Exchange Tax Shield
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/loan-comparison-calculator"
-                  onClick={(e) => handleNav(e, '/loan-comparison-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Loan Comparison (Side-by-Side)
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/salary-to-hourly-calculator"
-                  onClick={(e) => handleNav(e, '/salary-to-hourly-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Salary to Hourly & Payroll
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/mortgage-calculator"
-                  onClick={(e) => handleNav(e, '/mortgage-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Mortgage Calculator
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/refinance-calculator"
-                  onClick={(e) => handleNav(e, '/refinance-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Refinance Break-Even
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/hard-money-calculator"
-                  onClick={(e) => handleNav(e, '/hard-money-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Hard Money & Flip
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/snowflake-cost-calculator"
-                  onClick={(e) => handleNav(e, '/snowflake-cost-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Snowflake Warehouse
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/parquet-storage-calculator"
-                  onClick={(e) => handleNav(e, '/parquet-storage-calculator')}
-                  className="hover:text-slate-100 transition-colors block"
-                >
-                  Parquet Cloud Savings
-                </a>
-              </li>
-              <li className="pt-1">
-                <a
-                  href="/finance-calculator"
-                  onClick={(e) => handleNav(e, '/finance-calculator')}
-                  className="text-slate-200 hover:text-slate-100 transition-colors font-medium flex items-center gap-1.5 group"
-                >
-                  <span>All 10+ Calculators</span>
-                  <ArrowRight className="size-3 text-slate-400 group-hover:translate-x-0.5 transition-transform" />
                 </a>
               </li>
             </ul>

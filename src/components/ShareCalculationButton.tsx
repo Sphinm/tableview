@@ -39,8 +39,9 @@ export const ShareCalculationButton = ({
 
   return (
     <button
+      type="button"
       onClick={handleShare}
-      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-slate-100 text-xs font-medium border border-slate-700 shadow-sm transition-all active:scale-95 cursor-pointer ${className}`}
+      className={`inline-flex items-center gap-2 h-9 px-3.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-200 hover:text-slate-100 text-xs font-semibold border border-slate-700/80 shadow-sm transition-all active:scale-95 cursor-pointer shrink-0 ${className}`}
       title="Copy shareable link with pre-filled parameters to clipboard"
     >
       {copied ? (

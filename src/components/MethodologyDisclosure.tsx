@@ -85,7 +85,7 @@ export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosu
             {
               icon: Clock,
               title: 'Statutory Deadlines Modelled Exactly',
-              desc: 'The 45-day identification and 180-day exchange periods run from the closing date. The exchange period ends on the earlier of day 180 or the due date of that year\'s return, including extensions — a rule that shortens many December closings well below 180 days.'
+              desc: 'The 45-day identification and 180-day exchange periods run from the closing date. The exchange period ends on the earlier of day 180 or the due date of that year\'s return, including extensions: a rule that shortens many December closings well below 180 days.'
             },
             {
               icon: BookOpen,

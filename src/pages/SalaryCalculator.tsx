@@ -21,7 +21,7 @@ import { NumericInput } from '../components/NumericInput';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { AdSlot } from '../components/AdSlot';
-import { PrintReportButton, PrintableReportHeader } from '../components/calculator-kit';
+import { PrintReportButton, PrintableReportHeader, PageHeader } from '../components/calculator-kit';
 
 const salaryCalculatorSchemas = [
   {
@@ -74,7 +74,7 @@ export const SalaryCalculator = ({
   useEffect(() => {
     const metaTitle = customTitle
       ? (customTitle.includes('TableView.dev') ? customTitle : `${customTitle} | TableView.dev`)
-      : 'Salary to Hourly Calculator — Convert Paycheck, Overtime & Wage Matrix | TableView.dev';
+      : 'Salary to Hourly Calculator: Convert Paycheck, Overtime & Wage Matrix | TableView.dev';
     const description = customDescription || 'Convert annual salary to hourly wage, daily, weekly, bi-weekly (26x), and monthly paycheck. Compute FLSA 1.5x overtime and PTO value. 100% private in-browser calculator.';
     const path = canonicalPath || '/salary-to-hourly-calculator';
     updatePageMeta(metaTitle, description, path, salaryCalculatorSchemas);
@@ -108,7 +108,7 @@ export const SalaryCalculator = ({
         displayBadge: undefined
       };
     }
-    const clean = customTitle.split('|')[0].split('—')[0].trim();
+    const clean = customTitle.split('|')[0].split(':')[0].trim();
     if (clean.includes('?')) {
       const parts = clean.split('?');
       const question = `${parts[0].trim()}?`;
@@ -210,99 +210,82 @@ export const SalaryCalculator = ({
     <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       {/* Printable Executive Brief Header */}
       <PrintableReportHeader
-        title={`${displayTitle} — Comprehensive Pay Analysis`}
+        title={`${displayTitle}: Comprehensive Pay Analysis`}
         subtitle="100% Private In-Browser FLSA Gross Wage Conversion & Overtime Breakdown"
         referenceId={`PAY-${Math.round(summary.annualSalary / 1000)}k-${summary.hoursPerWeek}hrs`}
       />
 
-      {/* Breadcrumb & Actions Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-        <div className="flex items-center gap-2 text-xs font-medium text-slate-400">
-          <button onClick={() => navigateTo('/')} className="hover:text-emerald-400 transition-colors cursor-pointer">Home</button>
-          <span>/</span>
-          <button onClick={() => navigateTo('/finance-calculator')} className="hover:text-emerald-400 transition-colors cursor-pointer">Calculators</button>
-          <span>/</span>
-          <span className="text-slate-200">Salary to Hourly</span>
-        </div>
-
-        <div className="flex items-center gap-2.5 self-start sm:self-auto">
-          <PrintReportButton />
-
-          <button
-            onClick={handleCopyLink}
-            className="px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm"
-            title="Copy shareable link with current wage inputs"
-          >
-            {copied ? (
-              <>
-                <Check className="size-3.5 text-emerald-400" />
-                <span className="text-emerald-400">Copied!</span>
-              </>
-            ) : (
-              <>
-                <Share2 className="size-3.5 text-emerald-400" />
-                <span>Share</span>
-              </>
-            )}
-          </button>
-
-          <button
-            onClick={handleExportExcel}
-            className="btn-primary px-3.5 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 shadow-md cursor-pointer transition-transform active:scale-95"
-          >
-            <Download className="size-3.5" />
-            <span>Export Excel</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Header Info Area */}
-      <div className="mb-6 space-y-3">
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-medium">
-            <Sparkles className="size-3" />
-            <span>100% In-Browser Wage Engine</span>
+      {/* Canonical Page Header */}
+      <PageHeader
+        breadcrumbs={[
+          { label: 'Calculators', path: '/finance-calculator' },
+          { label: 'Salary to Hourly' }
+        ]}
+        badge={{
+          icon: Sparkles,
+          label: displayBadge ? `100% In-Browser Wage Engine · ${displayBadge}` : '100% In-Browser Wage Engine',
+          tone: 'emerald'
+        }}
+        title={displayTitle}
+        description={subtitle}
+        actions={
+          <>
+            <PrintReportButton />
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm active:scale-95 shrink-0"
+              title="Copy shareable link with current wage inputs"
+            >
+              {copied ? (
+                <>
+                  <Check className="size-3.5 text-emerald-400" />
+                  <span className="text-emerald-400">Copied!</span>
+                </>
+              ) : (
+                <>
+                  <Share2 className="size-3.5 text-emerald-400" />
+                  <span>Share</span>
+                </>
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={handleExportExcel}
+              className="btn-primary h-9 px-4 rounded-xl text-xs font-semibold inline-flex items-center gap-2 shadow-sm cursor-pointer transition-transform active:scale-95 shrink-0"
+            >
+              <Download className="size-3.5" />
+              <span>Export Excel</span>
+            </button>
+          </>
+        }
+        presets={
+          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
+            <span className="text-xs text-slate-400 font-medium shrink-0 mr-1.5">Quick Presets:</span>
+            {SALARY_PRESETS.map((preset) => {
+              const isSelected = mode === 'salary-to-hourly' && amount === preset.value;
+              return (
+                <button
+                  key={preset.value}
+                  type="button"
+                  onClick={() => {
+                    setMode('salary-to-hourly');
+                    setAmount(preset.value);
+                    navigateTo(preset.path);
+                  }}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer border shrink-0 ${
+                    isSelected
+                      ? 'bg-emerald-500 text-slate-950 font-bold border-emerald-400 shadow-sm shadow-emerald-500/20'
+                      : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800 hover:border-slate-700'
+                  }`}
+                >
+                  {preset.label}
+                </button>
+              );
+            })}
           </div>
-          {displayBadge && (
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 text-xs font-mono font-medium border border-slate-700">
-              {displayBadge}
-            </span>
-          )}
-        </div>
-
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
-          {displayTitle}
-        </h1>
-
-        <p className="text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed">
-          {subtitle}
-        </p>
-
-        {/* Quick Salary Presets Pills */}
-        <div className="flex items-center gap-1.5 pt-1 overflow-x-auto scrollbar-none pb-1">
-          <span className="text-xs text-slate-500 font-medium shrink-0 mr-1">Quick Presets:</span>
-          {SALARY_PRESETS.map((preset) => {
-            const isSelected = mode === 'salary-to-hourly' && amount === preset.value;
-            return (
-              <button
-                key={preset.value}
-                onClick={() => {
-                  setMode('salary-to-hourly');
-                  setAmount(preset.value);
-                  navigateTo(preset.path);
-                }}
-                className={`px-2.5 py-1 rounded-lg text-xs font-mono transition-all cursor-pointer border shrink-0 ${
-                  isSelected
-                    ? 'bg-emerald-500 text-slate-950 font-bold border-emerald-400 shadow-sm shadow-emerald-500/20'
-                    : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800 hover:border-slate-700'
-                }`}
-              >
-                {preset.label}
-              </button>
-            );
-          })}
-        </div>
-      </div>
+        }
+      />
 
       {/* Hero Answer Banner - Instantly answers the search intent */}
       <div className="relative overflow-hidden rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900/90 p-5 sm:p-6 shadow-xl mb-8">

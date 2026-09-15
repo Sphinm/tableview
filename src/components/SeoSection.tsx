@@ -37,7 +37,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
     },
     {
       q: 'Can I execute custom SQL queries against my local files?',
-      a: 'Yes. Switch to the "SQL Console" tab in the workbench to run standard analytical SQL queries—including WHERE filters, GROUP BY aggregations, window functions, and JOINs—directly over your local dataset.'
+      a: 'Yes. Switch to the "SQL Console" tab in the workbench to run standard analytical SQL queries (including WHERE filters, GROUP BY aggregations, window functions, and JOINs) directly over your local dataset.'
     },
     {
       q: 'Are the financial and FinOps calculators free and private?',
@@ -168,7 +168,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 Multi-Format Conversion
               </h3>
               <p className="text-sm text-slate-400 leading-relaxed mb-4">
-                Convert seamlessly between CSV, Microsoft Excel (.xlsx), Apache Parquet, and JSON—or compress bulky flat files into high-ratio ZSTD Parquet directly in your browser.
+                Convert seamlessly between CSV, Microsoft Excel (.xlsx), Apache Parquet, and JSON, or compress bulky flat files into high-ratio ZSTD Parquet directly in your browser.
               </p>
             </div>
 

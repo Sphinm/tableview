@@ -353,7 +353,7 @@ export function calculateSection1031(
       )} of gain stays deferred.`,
     },
     taxable: {
-      label: 'Taxable — No Deferral',
+      label: 'Taxable: No Deferral',
       color: 'rose',
       description:
         'Boot equals or exceeds your entire realized gain, so nothing is deferred. This is economically a taxable sale rather than an exchange.',

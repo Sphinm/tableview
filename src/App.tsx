@@ -3,7 +3,10 @@ import { useEffect, useState, lazy, Suspense } from 'react';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { DropZone } from './components/DropZone';
-import { HeroSection } from './components/HeroSection';
+import { FinancialHero } from './components/FinancialHero';
+import { QuickModelerWidget } from './components/QuickModelerWidget';
+import { FinancialBentoGrid } from './components/FinancialBentoGrid';
+import { DataWorkbenchBanner } from './components/DataWorkbenchBanner';
 import { CompareSection } from './components/CompareSection';
 import { SeoSection } from './components/SeoSection';
 import { CookieBanner } from './components/CookieBanner';
@@ -14,6 +17,7 @@ import type { SamplePreset } from './lib/duckdb';
 
 // Lazy-loaded heavy components & pages for bundle optimization & instant FCP
 const DataView = lazy(() => import('./components/DataView').then(m => ({ default: m.DataView })));
+const DataToolsWorkbench = lazy(() => import('./pages/DataToolsWorkbench').then(m => ({ default: m.DataToolsWorkbench })));
 const GuidesHub = lazy(() => import('./pages/GuidesHub').then(m => ({ default: m.GuidesHub })));
 const GuideDetail = lazy(() => import('./pages/GuideDetail').then(m => ({ default: m.GuideDetail })));
 const About = lazy(() => import('./pages/About').then(m => ({ default: m.About })));
@@ -203,75 +207,98 @@ export function App() {
     // Check if on dedicated tool landing page
     const activeToolConfig = (path === '/tools/:toolSlug' && slug) ? TOOLS_CONFIG[slug] : undefined;
 
-    if (path === '/' || activeToolConfig) {
+    // Common error banner component
+    const errorBanner = errorMessage && (
+      <div className="max-w-4xl mx-auto px-4 mt-6 w-full">
+        <div className="p-4 rounded-2xl bg-red-950/60 border border-red-800 text-red-300 text-sm flex items-start gap-3">
+          <AlertCircle className="size-5 text-red-400 shrink-0 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-semibold text-red-200">Error opening file</p>
+            <p className="text-xs text-red-300/90 mt-0.5">{errorMessage}</p>
+            <div className="mt-2 pt-2 border-t border-red-900/60 flex items-center gap-3">
+              <a
+                href={getBugReportMailto({ errorMessage })}
+                className="inline-flex items-center gap-1.5 text-xs text-red-200 hover:text-white underline font-medium cursor-pointer"
+              >
+                <Mail className="size-3.5" />
+                <span>Report this issue via email</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+
+    // If a file is opened anywhere in the application, mount the DuckDB DataView
+    if (currentTable) {
       return (
         <>
-          {errorMessage && (
-            <div className="max-w-4xl mx-auto px-4 mt-6 w-full">
-              <div className="p-4 rounded-2xl bg-red-950/60 border border-red-800 text-red-300 text-sm flex items-start gap-3">
-                <AlertCircle className="size-5 text-red-400 shrink-0 mt-0.5" />
-                <div className="flex-1">
-                  <p className="font-semibold text-red-200">Error opening file</p>
-                  <p className="text-xs text-red-300/90 mt-0.5">{errorMessage}</p>
-                  <div className="mt-2 pt-2 border-t border-red-900/60 flex items-center gap-3">
-                    <a
-                      href={getBugReportMailto({ errorMessage })}
-                      className="inline-flex items-center gap-1.5 text-xs text-red-200 hover:text-white underline font-medium cursor-pointer"
-                    >
-                      <Mail className="size-3.5" />
-                      <span>Report this issue via email</span>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+          {errorBanner}
+          <DataView
+            key={currentTable}
+            tableName={currentTable}
+            fileType={fileType}
+            onReset={handleReset}
+            toolConfig={activeToolConfig}
+            sheets={sheets}
+            onSelectSheet={(nextTable) => {
+              setCurrentTable(nextTable);
+              setFileType('csv');
+            }}
+          />
+        </>
+      );
+    }
 
-          {currentTable ? (
-            <DataView
-              // Remount per table: otherwise the schema summary, applied search
-              // filter and sort from the previous file would leak into the next.
-              key={currentTable}
-              tableName={currentTable}
-              fileType={fileType}
-              onReset={handleReset}
-              toolConfig={activeToolConfig}
-              sheets={sheets}
-              onSelectSheet={(nextTable) => {
-                setCurrentTable(nextTable);
-                // Keep fileType in sync: workbooks are always materialised as CSV.
-                setFileType('csv');
-              }}
-            />
-          ) : (
-            <>
-              {activeToolConfig ? (
-                <DropZone
-                  onFileSelected={handleFileSelected}
-                  onTrySample={handleTrySample}
-                  isLoading={isLoading}
-                  loadingStatus={loadingStatus}
-                  toolConfig={activeToolConfig}
-                />
-              ) : (
-                <HeroSection
-                  onFileSelected={handleFileSelected}
-                  onTrySample={handleTrySample}
-                  isLoading={isLoading}
-                  loadingStatus={loadingStatus}
-                />
-              )}
-              {/* Below the drop zone, above the fold-line content people scroll past next. */}
-              <div className="max-w-4xl mx-auto px-4">
-                <AdSlot unit="workbenchLeaderboard" format="horizontal" />
-              </div>
+    // 1. Primary Homepage: Financial & Commercial Modeling Engine
+    if (path === '/') {
+      return (
+        <>
+          {errorBanner}
+          <FinancialHero />
+          <QuickModelerWidget />
+          <FinancialBentoGrid />
+          <div className="max-w-4xl mx-auto px-4 my-6">
+            <AdSlot unit="workbenchLeaderboard" format="horizontal" />
+          </div>
+          <DataWorkbenchBanner />
+        </>
+      );
+    }
 
-              <SamplePlayground onSelectSample={handleTrySample} isLoading={isLoading} />
-              <CompareSection />
-            </>
-          )}
+    // 2. Secondary In-Browser Data Workbench Hub (/data-tools)
+    if (path === '/data-tools') {
+      return (
+        <>
+          {errorBanner}
+          <DataToolsWorkbench
+            onFileSelected={handleFileSelected}
+            onTrySample={handleTrySample}
+            isLoading={isLoading}
+            loadingStatus={loadingStatus}
+          />
+        </>
+      );
+    }
 
-          {!currentTable && <SeoSection toolConfig={activeToolConfig} />}
+    // 3. Specialized Single-Format Tool Landing Pages (/csv-viewer, /excel-viewer, etc.)
+    if (activeToolConfig) {
+      return (
+        <>
+          {errorBanner}
+          <DropZone
+            onFileSelected={handleFileSelected}
+            onTrySample={handleTrySample}
+            isLoading={isLoading}
+            loadingStatus={loadingStatus}
+            toolConfig={activeToolConfig}
+          />
+          <div className="max-w-4xl mx-auto px-4">
+            <AdSlot unit="workbenchLeaderboard" format="horizontal" />
+          </div>
+          <SamplePlayground onSelectSample={handleTrySample} isLoading={isLoading} />
+          <CompareSection />
+          <SeoSection toolConfig={activeToolConfig} />
         </>
       );
     }
@@ -345,6 +372,16 @@ export function App() {
       case '/finance-calculator':
       case '/calculator':
         return <FinanceCalculatorHub />;
+
+      case '/data-tools':
+        return (
+          <DataToolsWorkbench
+            onFileSelected={handleFileSelected}
+            onTrySample={handleTrySample}
+            isLoading={isLoading}
+            loadingStatus={loadingStatus}
+          />
+        );
 
       case '/disclaimer':
         return <Disclaimer />;
