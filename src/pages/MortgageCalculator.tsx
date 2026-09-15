@@ -1329,8 +1329,19 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             </p>
           </div>
         </div>
+      </div>
 
-        {/* Related Calculators Cross-Sell */}
+      {/* FAQ rendered from the shared registry so the prerendered markup matches. */}
+      <CalculatorFaqSection
+        path="/mortgage-calculator"
+        title="Frequently Asked Questions About Mortgage Payments"
+      />
+
+      {/* Closing unit at the end of the editorial content. */}
+      <AdSlot unit="calculatorFaq" format="horizontal" />
+
+      {/* Related Calculators Cross-Sell */}
+      <div className="mb-8">
         <RelatedCalculators currentSlug="mortgage-calculator" category="real-estate" />
       </div>
 
@@ -1390,15 +1401,6 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
         if (data.monthlyHoa !== undefined) setMonthlyHoa(data.monthlyHoa);
       }}
     />
-
-    {/* Rendered so the FAQPage structured data above has visible content behind it. */}
-    <CalculatorFaqSection
-      path="/mortgage-calculator"
-      title="Frequently Asked Questions About Mortgage Payments"
-    />
-
-    {/* Closing unit at the end of the editorial content. */}
-    <AdSlot unit="calculatorFaq" format="horizontal" />
 
     <PrintableMortgageReport
       homeValue={homeValue}

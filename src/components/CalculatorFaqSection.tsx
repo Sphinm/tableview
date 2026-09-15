@@ -31,7 +31,7 @@ export const CalculatorFaqSection = ({
   if (faqs.length === 0) return null;
 
   return (
-    <section className={`space-y-4 ${className}`}>
+    <section className={`w-full max-w-7xl mx-auto space-y-4 ${className}`}>
       <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
         <HelpCircle className="size-5 text-indigo-400" />
         {title}
