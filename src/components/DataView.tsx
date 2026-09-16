@@ -988,7 +988,7 @@ export const DataView = ({
                   <span className="text-xs font-bold text-slate-900 tracking-tight flex items-center gap-1.5">
                     Gemini AI SQL Copilot
                     <span className="px-1.5 py-0.5 rounded-md bg-indigo-100/90 text-[10px] font-medium text-indigo-700">
-                      gemini-2.0-flash
+                      gemini-3.8-flash
                     </span>
                   </span>
                 </div>
@@ -1543,7 +1543,7 @@ export const DataView = ({
                 </div>
                 <div className="flex items-center justify-between text-[11px]">
                   <span className="text-slate-500">Model:</span>
-                  <span className="font-mono text-slate-700">gemini-2.0-flash</span>
+                  <span className="font-mono text-slate-700">gemini-3.8-flash</span>
                 </div>
               </div>
 

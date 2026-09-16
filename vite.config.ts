@@ -89,7 +89,7 @@ function devAuthPlugin() {
           res.end(
             JSON.stringify({
               available: hasKey,
-              model: 'gemini-2.0-flash',
+              model: 'gemini-3.8-flash',
               hasServerKey: hasKey,
             })
           );
@@ -123,7 +123,7 @@ function devAuthPlugin() {
             return;
           }
 
-          const model = body.model?.trim() || 'gemini-2.0-flash';
+          const model = body.model?.trim() || 'gemini-3.8-flash';
           const isStream = body.stream !== false;
 
           const googlePayload: Record<string, any> = { contents };
@@ -290,6 +290,100 @@ function devAuthPlugin() {
         if (pathname === '/api/auth/logout' && req.method === 'POST') {
           res.statusCode = 200;
           res.end(JSON.stringify({ success: true }));
+          return;
+        }
+
+        if (pathname === '/api/tools/is-it-down' && req.method === 'GET') {
+          const parsedUrl = new URL(req.url, 'http://localhost');
+          const rawTarget = parsedUrl.searchParams.get('url');
+
+          if (!rawTarget) {
+            res.statusCode = 400;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: 'URL parameter is required' }));
+            return;
+          }
+
+          let cleanUrl = rawTarget.trim();
+          if (!/^https?:\/\//i.test(cleanUrl)) {
+            cleanUrl = `https://${cleanUrl}`;
+          }
+
+          let parsed: URL;
+          try {
+            parsed = new URL(cleanUrl);
+          } catch {
+            res.statusCode = 400;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(JSON.stringify({ error: 'Invalid URL format' }));
+            return;
+          }
+
+          const startTime = performance.now();
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+          try {
+            const probeRes = await fetch(parsed.toString(), {
+              method: 'GET',
+              headers: {
+                'User-Agent':
+                  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Range': 'bytes=0-2048',
+              },
+              redirect: 'follow',
+              signal: controller.signal,
+            });
+            clearTimeout(timeoutId);
+
+            const latencyMs = Math.round(performance.now() - startTime);
+            let status: 'UP' | 'RESTRICTED' | 'DOWN' = 'UP';
+            if (probeRes.status >= 500) {
+              status = 'DOWN';
+            } else if (probeRes.status === 401 || probeRes.status === 403) {
+              status = 'RESTRICTED';
+            }
+
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(
+              JSON.stringify({
+                domain: parsed.hostname,
+                targetUrl: parsed.toString(),
+                finalUrl: probeRes.url,
+                status,
+                httpStatus: probeRes.status,
+                httpStatusText: probeRes.statusText || 'OK',
+                responseTimeMs: latencyMs,
+                server: probeRes.headers.get('server') || 'Hidden',
+                checkedFrom: 'Vite Local Dev',
+                timestamp: Date.now(),
+              })
+            );
+          } catch (err: any) {
+            clearTimeout(timeoutId);
+            const latencyMs = Math.round(performance.now() - startTime);
+            const isTimeout = err.name === 'AbortError';
+
+            res.statusCode = 200;
+            res.setHeader('Content-Type', 'application/json');
+            res.end(
+              JSON.stringify({
+                domain: parsed.hostname,
+                targetUrl: parsed.toString(),
+                finalUrl: parsed.toString(),
+                status: 'DOWN',
+                httpStatus: isTimeout ? 504 : 0,
+                httpStatusText: isTimeout ? 'Gateway Timeout' : 'Connection Failed',
+                errorDetails: isTimeout ? 'Connection timed out after 8s' : err.message,
+                responseTimeMs: latencyMs,
+                server: 'Unavailable',
+                checkedFrom: 'Vite Local Dev',
+                timestamp: Date.now(),
+              })
+            );
+          }
           return;
         }
 

@@ -233,7 +233,7 @@ async function handleAiGenerate(request: Request, env: Env, origin: string): Pro
     return jsonResponse({ error: 'Either prompt or contents array is required' }, 400, origin);
   }
 
-  const model = body.model?.trim() || 'gemini-2.0-flash';
+  const model = body.model?.trim() || 'gemini-3.8-flash';
   const isStream = body.stream !== false;
 
   const googlePayload: Record<string, any> = {
@@ -871,7 +871,7 @@ export default {
         return jsonResponse(
           {
             available: hasKey,
-            model: 'gemini-2.0-flash',
+            model: 'gemini-3.8-flash',
             hasServerKey: hasKey,
           },
           200,

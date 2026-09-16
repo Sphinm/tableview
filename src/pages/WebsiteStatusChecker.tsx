@@ -67,12 +67,16 @@ export const WebsiteStatusChecker: React.FC = () => {
 
     try {
       const response = await fetch(`/api/tools/is-it-down?url=${encodeURIComponent(cleanTarget)}`);
-      if (!response.ok) {
-        const errJson = (await response.json().catch(() => ({}))) as { error?: string };
-        throw new Error(errJson.error || `Server returned status ${response.status}`);
+      const contentType = response.headers.get('content-type') || '';
+      if (!contentType.includes('application/json')) {
+        throw new Error('Received non-JSON response from server. Please refresh or check server status.');
       }
 
       const data: ProbeResult = await response.json();
+      if (!response.ok) {
+        throw new Error((data as any).error || `Server returned status ${response.status}`);
+      }
+
       setResult(data);
     } catch (err: any) {
       console.error('Probe failed:', err);

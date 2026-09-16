@@ -6,7 +6,6 @@ import {
   getStoredGeminiApiKey,
   setStoredGeminiApiKey,
   clearStoredGeminiApiKey,
-  GEMINI_API_KEY_STORAGE_KEY,
 } from '../gemini';
 
 describe('Gemini AI SQL Client Engine', () => {

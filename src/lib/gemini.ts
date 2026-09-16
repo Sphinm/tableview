@@ -85,7 +85,7 @@ export async function checkAiStatus(): Promise<AiStatus> {
       const hasServerKey = Boolean(data.hasServerKey || data.available);
       return {
         available: hasServerKey || Boolean(localKey),
-        model: data.model || 'gemini-2.0-flash',
+        model: data.model || 'gemini-3.8-flash',
         hasServerKey,
       };
     }
@@ -95,7 +95,7 @@ export async function checkAiStatus(): Promise<AiStatus> {
 
   return {
     available: Boolean(localKey),
-    model: 'gemini-2.0-flash',
+    model: 'gemini-3.8-flash',
     hasServerKey: false,
   };
 }
@@ -218,7 +218,7 @@ export async function streamGenerateDuckDbSql(params: GenerateSqlParams): Promis
       prompt,
       systemInstruction,
       stream: true,
-      model: 'gemini-2.0-flash',
+      model: 'gemini-3.8-flash',
       generationConfig: {
         temperature: 0.1, // Low temperature for deterministic, correct SQL syntax
         maxOutputTokens: 1024,
