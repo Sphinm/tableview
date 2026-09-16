@@ -266,29 +266,29 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
 
   return (
     // data-sentry-mask: storage volumes and spend are the user's own cloud bill.
-    <div data-sentry-mask="true" className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div data-sentry-mask="true" className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-indigo-500 selection:text-white">
       {/* Hero Header */}
-      <section className="relative pt-12 pb-8 border-b border-slate-800 bg-gradient-to-b from-indigo-950/20 via-slate-950 to-slate-950">
+      <section className="relative pt-10 pb-8 border-b border-slate-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-xs font-mono text-emerald-400 mb-3">
-            <span className="px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800/60 font-semibold">
+          <div className="flex items-center gap-2 text-xs font-mono text-emerald-800 mb-3">
+            <span className="px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-200 font-semibold">
               CLOUD STORAGE & QUERY OPTIMIZER
             </span>
             <span>•</span>
-            <span className="text-slate-400">AWS S3, Athena & BigQuery FinOps</span>
+            <span className="text-slate-500">AWS S3, Athena & BigQuery FinOps</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-100">
-            Parquet Storage & Query <span className="text-emerald-400">Savings Calculator</span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
+            Parquet Storage & Query <span className="text-emerald-600">Savings Calculator</span>
           </h1>
 
-          <p className="mt-3 max-w-3xl text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="mt-3 max-w-3xl text-sm sm:text-base text-slate-600 leading-relaxed">
             See how much your organization saves by converting uncompressed CSV, JSON, or log streams into columnar <strong>Apache Parquet (.parquet)</strong>. Cuts cloud storage by <strong>75% to 85%</strong> and Athena query scan costs by up to <strong>90%</strong>.
           </p>
 
           {/* Quick Presets */}
           <div className="flex items-center gap-2 mt-6 flex-wrap">
-            <span className="text-xs text-slate-400">Common Data Volumes:</span>
+            <span className="text-xs text-slate-500 font-medium">Common Data Volumes:</span>
             {sizePresets.map((preset, idx) => (
               <button
                 key={idx}
@@ -296,10 +296,10 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                   setRawSizeAmount(preset.amount);
                   setRawSizeUnit(preset.unit);
                 }}
-                className={`px-3 py-1 rounded-lg text-xs font-mono border transition-colors cursor-pointer ${
+                className={`px-3 py-1.5 rounded-xl text-xs font-mono border transition-all cursor-pointer ${
                   rawSizeAmount === preset.amount && rawSizeUnit === preset.unit
-                    ? 'bg-emerald-600 text-white border-emerald-500 font-bold'
-                    : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800'
+                    ? 'bg-slate-900 text-white border-slate-900 font-bold shadow-xs'
+                    : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
                 }`}
               >
                 {preset.label}
@@ -314,15 +314,15 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Inputs (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-5">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-3">
-                <Database className="size-4.5 text-emerald-400" />
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-5">
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                <Database className="size-4.5 text-emerald-600" />
                 <span>Dataset Specifications</span>
               </h2>
 
               {/* Data Format */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-2">
+                <label className="block text-xs font-medium text-slate-700 mb-2">
                   Current Raw Data Format
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -333,8 +333,8 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                       onClick={() => setDataFormat(fmt)}
                       className={`p-2 rounded-xl text-xs font-mono border transition-all cursor-pointer uppercase ${
                         dataFormat === fmt
-                          ? 'bg-emerald-950 text-emerald-300 border-emerald-500 font-bold'
-                          : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700'
+                          ? 'bg-emerald-50 text-emerald-800 border-emerald-500 font-bold shadow-2xs'
+                          : 'bg-white text-slate-700 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                       }`}
                     >
                       {fmt.replace('_', ' ')}
@@ -345,9 +345,9 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
 
               {/* Data Volume Amount & Unit */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5 flex justify-between">
+                <label className="block text-xs font-medium text-slate-700 mb-1.5 flex justify-between">
                   <span>Current Raw Volume</span>
-                  <span className="text-emerald-400 font-mono font-bold">
+                  <span className="text-emerald-700 font-mono font-bold">
                     {rawSizeAmount} {rawSizeUnit}
                   </span>
                 </label>
@@ -362,7 +362,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                   <select
                     value={rawSizeUnit}
                     onChange={(e) => setRawSizeUnit(e.target.value as any)}
-                    className="w-24 px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 font-mono focus:outline-none"
+                    className="w-24 px-3 py-2 rounded-xl bg-white border border-slate-200 text-sm text-slate-900 font-mono focus:outline-none focus:border-emerald-500 shadow-2xs cursor-pointer"
                   >
                     <option value="GB">GB</option>
                     <option value="TB">TB</option>
@@ -374,13 +374,13 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
               {/* Compression Codec & Cloud Provider */}
               <div className="grid grid-cols-3 gap-2.5">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">
                     Target Codec
                   </label>
                   <select
                     value={compressionCodec}
                     onChange={(e) => setCompressionCodec(e.target.value as any)}
-                    className="w-full px-2.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 font-mono focus:outline-none"
+                    className="w-full px-2.5 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500 shadow-2xs cursor-pointer"
                   >
                     <option value="zstd">ZSTD (Optimal)</option>
                     <option value="snappy">Snappy (Fast)</option>
@@ -389,13 +389,13 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">
                     Cloud Storage
                   </label>
                   <select
                     value={cloudProvider}
                     onChange={(e) => setCloudProvider(e.target.value as any)}
-                    className="w-full px-2.5 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 font-mono focus:outline-none"
+                    className="w-full px-2.5 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500 shadow-2xs cursor-pointer"
                   >
                     <option value="aws_s3">AWS S3</option>
                     <option value="google_cloud">GCP Cloud</option>
@@ -404,7 +404,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">
                     Growth (%/mo)
                   </label>
                   <NumericInput
@@ -417,21 +417,21 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
               </div>
 
               {/* Athena / BigQuery Querying Settings */}
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pt-3 pb-3">
-                <Zap className="size-4.5 text-amber-400" />
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pt-3 pb-3">
+                <Zap className="size-4.5 text-amber-600" />
                 <span>Query Engine & Scan Workload</span>
               </h2>
 
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+              <div className="flex items-center justify-between p-3.5 rounded-xl bg-slate-50 border border-slate-200">
                 <div>
-                  <span className="text-xs font-semibold text-slate-200 block">Querying (Athena / BigQuery)</span>
-                  <span className="text-[11px] text-slate-400">Include serverless query scan cost savings</span>
+                  <span className="text-xs font-semibold text-slate-900 block">Querying (Athena / BigQuery)</span>
+                  <span className="text-[11px] text-slate-500">Include serverless query scan cost savings</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={runsAthenaOrBigQuery}
                   onChange={(e) => setRunsAthenaOrBigQuery(e.target.checked)}
-                  className="size-4.5 rounded text-emerald-600 bg-slate-900 border-slate-700 cursor-pointer"
+                  className="size-4.5 rounded text-emerald-600 accent-emerald-600 border-slate-300 cursor-pointer"
                 />
               </div>
 
@@ -439,13 +439,13 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                 <div className="space-y-4 pt-1">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                      <label className="block text-xs font-medium text-slate-700 mb-1.5">
                         Query Engine
                       </label>
                       <select
                         value={queryEngine}
                         onChange={(e) => setQueryEngine(e.target.value as any)}
-                        className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 font-mono focus:outline-none"
+                        className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-900 font-mono focus:outline-none focus:border-emerald-500 shadow-2xs cursor-pointer"
                       >
                         <option value="athena">AWS Athena ($5/TB)</option>
                         <option value="bigquery">Google BigQuery ($6.25/TB)</option>
@@ -454,7 +454,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                     </div>
 
                     <div>
-                      <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                      <label className="block text-xs font-medium text-slate-700 mb-1.5">
                         Queries / Day
                       </label>
                       <NumericInput
@@ -467,10 +467,10 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
 
                   <div>
                     <div className="flex justify-between items-center mb-1.5">
-                      <label className="text-xs font-medium text-slate-300">
+                      <label className="text-xs font-medium text-slate-700">
                         Avg Columns Scanned in SELECT
                       </label>
-                      <span className="text-xs font-mono text-emerald-400 font-bold">
+                      <span className="text-xs font-mono text-emerald-700 font-bold">
                         {avgColumnsScannedPercent}% of columns
                       </span>
                     </div>
@@ -480,7 +480,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                       max={60}
                       value={avgColumnsScannedPercent}
                       onChange={(e) => setAvgColumnsScannedPercent(Number(e.target.value))}
-                      className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                      className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                     />
                     <p className="text-[11px] text-slate-500 mt-1">
                       Parquet column pruning only reads queried columns, eliminating {100 - avgColumnsScannedPercent}% of data scan fees.
@@ -494,25 +494,25 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
           {/* Right Column: Savings & ROI Dashboard (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             {/* Total Annual Savings Hero Card */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/40 border border-slate-800 shadow-2xl">
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold block">
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold block">
                     Estimated Annual Cloud Cost Savings
                   </span>
                   <div className="flex items-baseline gap-3 mt-1">
-                    <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-emerald-400">
+                    <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-emerald-700">
                       {currencyFmt(result.totalAnnualSavings)}
                     </span>
-                    <span className="text-xs font-mono text-emerald-400 font-semibold px-2 py-0.5 rounded bg-emerald-950/80 border border-emerald-800">
+                    <span className="text-xs font-mono text-emerald-800 font-semibold px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200">
                       {result.compressionRatioPercent}% REDUCTION
                     </span>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-xs text-slate-400 block">Monthly Savings</span>
-                  <span className="text-2xl font-black font-mono text-slate-100 mt-0.5 block">
+                  <span className="text-xs text-slate-500 block">Monthly Savings</span>
+                  <span className="text-2xl font-black font-mono text-slate-900 mt-0.5 block">
                     {currencyFmt(result.totalMonthlySavings)}/mo
                   </span>
                   <span className="text-[11px] text-slate-500">
@@ -522,22 +522,22 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
               </div>
 
               {/* Visual Footprint Comparison Bar */}
-              <div className="mt-6 pt-4 border-t border-slate-800 space-y-3">
+              <div className="mt-6 pt-4 border-t border-slate-100 space-y-3">
                 <div className="flex justify-between items-center text-xs font-mono">
-                  <span className="text-slate-400">
-                    Raw {dataFormat.toUpperCase()}: <strong className="text-slate-200">{result.rawSizeFormatted}</strong>
+                  <span className="text-slate-600">
+                    Raw {dataFormat.toUpperCase()}: <strong className="text-slate-900">{result.rawSizeFormatted}</strong>
                   </span>
-                  <span className="text-emerald-400 font-bold">
+                  <span className="text-emerald-700 font-bold">
                     Parquet {compressionCodec.toUpperCase()}: <strong>{result.parquetSizeFormatted}</strong> ({result.sizeReductionFactor}x smaller)
                   </span>
                 </div>
 
                 <div className="space-y-1.5">
-                  <div className="w-full h-3 bg-slate-800 rounded-full overflow-hidden flex items-center px-1 text-[10px] text-slate-400">
+                  <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden flex items-center px-1 text-[10px] text-slate-500 border border-slate-200/80">
                     <span>Raw Dataset (100%)</span>
                   </div>
                   <div
-                    className="h-3 bg-emerald-500 rounded-full transition-all duration-300"
+                    className="h-3 bg-emerald-600 rounded-full transition-all duration-300"
                     style={{ width: `${Math.max(6, 100 - result.compressionRatioPercent)}%` }}
                     title={`Compressed to ${100 - result.compressionRatioPercent}% of original footprint`}
                   />
@@ -547,101 +547,101 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
 
             {/* Savings Breakdown Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-200 mb-1">
-                  <HardDrive className="size-4 text-indigo-400" />
+              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-900 mb-1">
+                  <HardDrive className="size-4 text-indigo-600" />
                   S3 Storage Cost Savings
                 </div>
-                <div className="text-2xl font-black font-mono text-indigo-300">
+                <div className="text-2xl font-black font-mono text-indigo-700">
                   {currencyFmt(result.annualStorageSavings)}/yr
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1">
+                <p className="text-[11px] text-slate-500 mt-1">
                   From {currencyFmt(result.monthlyRawStorageCost)}/mo down to {currencyFmt(result.monthlyParquetStorageCost)}/mo on cloud storage.
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-900 border border-slate-800">
-                <div className="flex items-center gap-2 text-xs font-bold text-slate-200 mb-1">
-                  <Zap className="size-4 text-amber-400" />
+              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
+                <div className="flex items-center gap-2 text-xs font-bold text-slate-900 mb-1">
+                  <Zap className="size-4 text-amber-600" />
                   Athena / Query Scan Savings
                 </div>
-                <div className="text-2xl font-black font-mono text-amber-400">
+                <div className="text-2xl font-black font-mono text-amber-700">
                   {currencyFmt(result.annualQuerySavings)}/yr
                 </div>
-                <p className="text-[11px] text-slate-400 mt-1">
+                <p className="text-[11px] text-slate-500 mt-1">
                   Eliminates unneeded row and column scans through dictionary encoding and predicate pushdown.
                 </p>
               </div>
             </div>
 
             {/* Detailed Line Items */}
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-3">
-              <h3 className="text-sm font-bold text-slate-100 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center justify-between">
                 <span>Cost Comparison: Raw vs Apache Parquet</span>
-                <span className="text-xs font-mono text-emerald-400">
+                <span className="text-xs font-mono text-emerald-700">
                   ~{result.querySpeedupFactor}x Faster Execution
                 </span>
               </h3>
 
               <div className="space-y-2 text-xs font-mono">
-                <div className="flex justify-between items-center py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-300">Monthly Cloud Storage (S3 / Blob)</span>
+                <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                  <span className="text-slate-600">Monthly Cloud Storage (S3 / Blob)</span>
                   <div className="space-x-3 text-right">
                     <span className="text-slate-400 line-through">{currencyDecFmt(result.monthlyRawStorageCost)}</span>
-                    <span className="text-emerald-400 font-bold">{currencyDecFmt(result.monthlyParquetStorageCost)}</span>
+                    <span className="text-emerald-700 font-bold">{currencyDecFmt(result.monthlyParquetStorageCost)}</span>
                   </div>
                 </div>
 
                 {runsAthenaOrBigQuery && (
-                  <div className="flex justify-between items-center py-1.5 border-b border-slate-800/80">
-                    <span className="text-slate-300">Monthly Query Scanning Fees</span>
+                  <div className="flex justify-between items-center py-2 border-b border-slate-100">
+                    <span className="text-slate-600">Monthly Query Scanning Fees</span>
                     <div className="space-x-3 text-right">
                       <span className="text-slate-400 line-through">{currencyDecFmt(result.monthlyRawQueryCost)}</span>
-                      <span className="text-emerald-400 font-bold">{currencyDecFmt(result.monthlyParquetQueryCost)}</span>
+                      <span className="text-emerald-700 font-bold">{currencyDecFmt(result.monthlyParquetQueryCost)}</span>
                     </div>
                   </div>
                 )}
 
                 <div className="flex justify-between items-center pt-2 text-sm font-bold">
-                  <span className="text-slate-200">Total Net Monthly Savings</span>
-                  <span className="text-emerald-400">+{currencyFmt(result.totalMonthlySavings)} / month</span>
+                  <span className="text-slate-900">Total Net Monthly Savings</span>
+                  <span className="text-emerald-700 font-mono">+{currencyFmt(result.totalMonthlySavings)} / month</span>
                 </div>
               </div>
             </div>
 
             {/* Action Card: Excel Export & Share */}
-            <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900 border border-slate-800">
+            <div className="flex flex-wrap items-center justify-between gap-4 p-4 rounded-2xl bg-slate-50 border border-slate-200">
               <button
                 onClick={handleExportExcel}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-800 text-xs font-semibold text-emerald-300 cursor-pointer transition-colors"
+                className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white hover:bg-slate-100 border border-slate-200 text-xs font-semibold text-slate-800 cursor-pointer transition-colors shadow-2xs"
               >
-                <FileSpreadsheet className="size-4" />
+                <FileSpreadsheet className="size-4 text-emerald-600" />
                 <span>Export Cloud FinOps Excel (.xlsx)</span>
               </button>
 
               <button
                 onClick={handleCopyLink}
-                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-xs font-semibold text-white cursor-pointer transition-colors"
+                className="btn-primary px-4 py-2.5 rounded-xl text-xs font-semibold cursor-pointer transition-all active:scale-95"
               >
                 {copiedLink ? 'Link Copied!' : 'Share ROI Estimate'}
               </button>
             </div>
 
             {/* Direct Conversion Call to Action */}
-            <div className="p-5 rounded-2xl bg-gradient-to-r from-indigo-950/80 via-slate-900 to-emerald-950/80 border border-indigo-800/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div className="p-6 rounded-2xl bg-indigo-50/60 border border-indigo-200/80 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h4 className="text-sm font-bold text-slate-100 flex items-center gap-2">
-                  <Sparkles className="size-4 text-amber-400" />
+                <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                  <Sparkles className="size-4 text-amber-500" />
                   Ready to convert your {dataFormat.toUpperCase()} to Parquet?
                 </h4>
-                <p className="text-xs text-slate-300 mt-0.5">
+                <p className="text-xs text-slate-600 mt-0.5">
                   Convert immediately inside your browser. Zero file upload, 100% private with DuckDB-Wasm.
                 </p>
               </div>
 
               <button
                 onClick={() => navigateTo('/csv-to-parquet')}
-                className="btn-primary flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold shadow-lg whitespace-nowrap cursor-pointer"
+                className="btn-primary flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold shadow-xs whitespace-nowrap cursor-pointer"
               >
                 <span>Convert to Parquet Now</span>
                 <ArrowRight className="size-3.5" />
@@ -651,54 +651,54 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
         </div>
 
         {/* Section 3: Architecture Deep Dive, 10 TB Benchmark Matrix & Educational Guide */}
-        <div className="mt-16 pt-10 border-t border-slate-800 space-y-12">
+        <div className="mt-16 pt-10 border-t border-slate-200 space-y-12">
           {/* Subsection 1: Why Parquet Saves Money */}
           <div className="space-y-4">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2">
-              <Zap className="size-6 text-emerald-400" />
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
+              <Zap className="size-6 text-emerald-600" />
               Why Apache Parquet Cuts Cloud Storage & Query Bills by 80% to 95%
             </h2>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-4xl">
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-4xl">
               Traditional data formats like CSV, TSV, and JSON store data row-by-row in plain text. When your cloud data lake grows into tens or hundreds of terabytes, row-based formats cause massive cloud spend because analytical queries scan every single character from beginning to end. Apache Parquet completely revolutionizes cloud data economics through four architectural pillars:
             </p>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-2">
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-emerald-400 text-xs sm:text-sm">
+              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-2 font-bold text-emerald-700 text-xs sm:text-sm">
                   <Database className="size-4 shrink-0" />
                   <span>1. Columnar Projection</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  In a table with 50 columns, running <code className="text-indigo-300 font-mono text-[11px]">SELECT user_id, amount</code> reads ONLY those 2 columns from S3. The remaining 48 columns are completely skipped on disk, slashing Athena/BigQuery scan costs by 95%.
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  In a table with 50 columns, running <code className="bg-slate-100 text-indigo-700 font-mono text-[11px] px-1 py-0.5 rounded border border-slate-200">SELECT user_id, amount</code> reads ONLY those 2 columns from S3. The remaining 48 columns are completely skipped on disk, slashing Athena/BigQuery scan costs by 95%.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-emerald-400 text-xs sm:text-sm">
+              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-2 font-bold text-emerald-700 text-xs sm:text-sm">
                   <HardDrive className="size-4 shrink-0" />
                   <span>2. Dictionary Encoding</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Repeating strings (e.g. status codes, state names, browser agents) are assigned a compact integer index in a local dictionary table, collapsing gigabytes of redundant characters into tiny byte arrays.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-emerald-400 text-xs sm:text-sm">
+              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-2 font-bold text-emerald-700 text-xs sm:text-sm">
                   <BookOpen className="size-4 shrink-0" />
                   <span>3. Predicate Pushdown</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Parquet files contain header and footer metadata recording the minimum and maximum values for each 128 MB Row Group. Query engines use these statistics to skip reading unneeded chunks entirely.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-emerald-400 text-xs sm:text-sm">
+              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-2 font-bold text-emerald-700 text-xs sm:text-sm">
                   <Sparkles className="size-4 shrink-0" />
                   <span>4. Modern Codecs (ZSTD)</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Because similar data types and values are stored contiguous to one another, compression algorithms like Zstandard (ZSTD) and Snappy achieve compression factors of 5x to 10x over raw text.
                 </p>
               </div>
@@ -709,20 +709,20 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
-                  <ShieldCheck className="size-5 text-emerald-400" />
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <ShieldCheck className="size-5 text-emerald-600" />
                   10 TB Cloud Cost Benchmark: Raw CSV vs Snappy vs ZSTD Parquet
                 </h3>
-                <p className="text-xs text-slate-400">Modeled with standard AWS S3 Standard ($0.023/GB) and Athena ($5.00/TB scanned) running 50 queries/day.</p>
+                <p className="text-xs text-slate-500">Modeled with standard AWS S3 Standard ($0.023/GB) and Athena ($5.00/TB scanned) running 50 queries/day.</p>
               </div>
-              <span className="text-[11px] px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700 w-fit">
+              <span className="text-[11px] px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200 w-fit font-medium">
                 Based on 10 TB Raw Telemetry
               </span>
             </div>
 
-            <div className="overflow-x-auto rounded-2xl border border-slate-800 shadow-xl">
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-white shadow-xs">
               <table className="w-full text-left text-xs border-collapse">
-                <thead className="bg-slate-900 border-b border-slate-800 text-slate-300 font-semibold">
+                <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold">
                   <tr>
                     <th className="p-3.5">Storage Format & Codec</th>
                     <th className="p-3.5">Stored Size</th>
@@ -732,41 +732,41 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                     <th className="p-3.5">Annual FinOps Savings</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 bg-slate-950">
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-rose-400">Raw Uncompressed CSV</td>
-                    <td className="p-3.5 font-mono text-slate-200">10,000 GB (10 TB)</td>
-                    <td className="p-3.5 font-mono text-slate-300">$230.00 / mo</td>
-                    <td className="p-3.5 font-mono text-rose-400 font-medium">$7,500.00 / mo</td>
-                    <td className="p-3.5 font-mono text-rose-400 font-bold">$7,730.00 / mo</td>
-                    <td className="p-3.5 text-slate-400">Baseline ($0 saved)</td>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3.5 font-bold text-rose-600">Raw Uncompressed CSV</td>
+                    <td className="p-3.5 font-mono text-slate-800">10,000 GB (10 TB)</td>
+                    <td className="p-3.5 font-mono text-slate-700">$230.00 / mo</td>
+                    <td className="p-3.5 font-mono text-rose-600 font-semibold">$7,500.00 / mo</td>
+                    <td className="p-3.5 font-mono text-rose-700 font-bold">$7,730.00 / mo</td>
+                    <td className="p-3.5 text-slate-500 font-medium">Baseline ($0 saved)</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-amber-300">GZIP Compressed CSV (.csv.gz)</td>
-                    <td className="p-3.5 font-mono text-slate-200">3,000 GB (3 TB)</td>
-                    <td className="p-3.5 font-mono text-slate-300">$69.00 / mo</td>
-                    <td className="p-3.5 font-mono text-amber-400 font-medium">$2,250.00 / mo</td>
-                    <td className="p-3.5 font-mono text-amber-300 font-bold">$2,319.00 / mo</td>
-                    <td className="p-3.5 text-emerald-400 font-mono font-semibold">+$64,932 / year</td>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3.5 font-bold text-amber-700">GZIP Compressed CSV (.csv.gz)</td>
+                    <td className="p-3.5 font-mono text-slate-800">3,000 GB (3 TB)</td>
+                    <td className="p-3.5 font-mono text-slate-700">$69.00 / mo</td>
+                    <td className="p-3.5 font-mono text-amber-700 font-semibold">$2,250.00 / mo</td>
+                    <td className="p-3.5 font-mono text-amber-800 font-bold">$2,319.00 / mo</td>
+                    <td className="p-3.5 text-emerald-700 font-mono font-bold">+$64,932 / year</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-cyan-300">Parquet + Snappy (Standard)</td>
-                    <td className="p-3.5 font-mono text-slate-200">2,200 GB (2.2 TB)</td>
-                    <td className="p-3.5 font-mono text-slate-300">$50.60 / mo</td>
-                    <td className="p-3.5 font-mono text-cyan-300 font-medium">$247.50 / mo</td>
-                    <td className="p-3.5 font-mono text-cyan-300 font-bold">$298.10 / mo</td>
-                    <td className="p-3.5 text-emerald-400 font-mono font-bold">+$89,182 / year</td>
+                  <tr className="hover:bg-slate-50">
+                    <td className="p-3.5 font-bold text-sky-700">Parquet + Snappy (Standard)</td>
+                    <td className="p-3.5 font-mono text-slate-800">2,200 GB (2.2 TB)</td>
+                    <td className="p-3.5 font-mono text-slate-700">$50.60 / mo</td>
+                    <td className="p-3.5 font-mono text-sky-700 font-semibold">$247.50 / mo</td>
+                    <td className="p-3.5 font-mono text-sky-800 font-bold">$298.10 / mo</td>
+                    <td className="p-3.5 text-emerald-700 font-mono font-bold">+$89,182 / year</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50 bg-emerald-950/20">
-                    <td className="p-3.5 font-bold text-emerald-400 flex items-center gap-1.5">
-                      <Sparkles className="size-3.5 text-amber-400" />
+                  <tr className="hover:bg-emerald-50/60 bg-emerald-50/30">
+                    <td className="p-3.5 font-bold text-emerald-800 flex items-center gap-1.5">
+                      <Sparkles className="size-3.5 text-amber-500" />
                       <span>Parquet + ZSTD Level 3 (Recommended)</span>
                     </td>
-                    <td className="p-3.5 font-mono text-emerald-300 font-bold">1,400 GB (1.4 TB)</td>
-                    <td className="p-3.5 font-mono text-emerald-400">$32.20 / mo</td>
-                    <td className="p-3.5 font-mono text-emerald-400 font-medium">$157.50 / mo</td>
-                    <td className="p-3.5 font-mono text-emerald-400 font-bold">$189.70 / mo</td>
-                    <td className="p-3.5 text-emerald-300 font-mono font-bold">+$90,483 / year (97.5% Cut)</td>
+                    <td className="p-3.5 font-mono text-emerald-800 font-bold">1,400 GB (1.4 TB)</td>
+                    <td className="p-3.5 font-mono text-emerald-800">$32.20 / mo</td>
+                    <td className="p-3.5 font-mono text-emerald-800 font-semibold">$157.50 / mo</td>
+                    <td className="p-3.5 font-mono text-emerald-900 font-bold">$189.70 / mo</td>
+                    <td className="p-3.5 text-emerald-700 font-mono font-bold">+$90,483 / year (97.5% Cut)</td>
                   </tr>
                 </tbody>
               </table>
@@ -775,41 +775,41 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
 
           {/* Subsection 3: Compression Codec Selection Guide */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-              <h4 className="text-sm font-bold text-cyan-400 flex items-center gap-2">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+              <h4 className="text-sm font-bold text-sky-700 flex items-center gap-2">
                 <Zap className="size-4" />
                 Snappy Codec (Fastest Decompression)
               </h4>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Default for Apache Spark, Trino, and Hive. Prioritizes maximum CPU decompression throughput over raw ratio. Ideal for real-time streaming queries where query latency must remain below 100 milliseconds.
               </p>
-              <div className="text-[11px] text-slate-400 font-mono bg-slate-950 p-2 rounded-lg border border-slate-800">
+              <div className="text-[11px] text-slate-600 font-mono bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                 Avg Ratio: 70% – 78% reduction<br />CPU Decompression: Blazing fast
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-900 border border-emerald-800/80 bg-emerald-950/10 space-y-3">
-              <h4 className="text-sm font-bold text-emerald-400 flex items-center gap-2">
-                <Sparkles className="size-4 text-amber-400" />
+            <div className="p-5 rounded-2xl bg-white border border-emerald-300 shadow-xs space-y-3">
+              <h4 className="text-sm font-bold text-emerald-800 flex items-center gap-2">
+                <Sparkles className="size-4 text-amber-500" />
                 Zstandard / ZSTD (Best Overall)
               </h4>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 The modern gold standard created by Meta. Provides near-GZIP compression density while retaining near-Snappy decompression speed. Supported natively across DuckDB, Snowflake, Athena, and BigQuery.
               </p>
-              <div className="text-[11px] text-slate-400 font-mono bg-slate-950 p-2 rounded-lg border border-slate-800">
+              <div className="text-[11px] text-emerald-800 font-mono bg-emerald-50/60 p-2.5 rounded-xl border border-emerald-200">
                 Avg Ratio: 85% – 92% reduction<br />CPU Decompression: Ultra balanced
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-              <h4 className="text-sm font-bold text-slate-300 flex items-center gap-2">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+              <h4 className="text-sm font-bold text-slate-800 flex items-center gap-2">
                 <HardDrive className="size-4" />
                 GZIP Codec (Cold Archival)
               </h4>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Maximum bit-packing compression. However, GZIP suffers from significant CPU decompression latency and cannot be split as efficiently across threads. Recommended exclusively for write-once cold archival storage.
               </p>
-              <div className="text-[11px] text-slate-400 font-mono bg-slate-950 p-2 rounded-lg border border-slate-800">
+              <div className="text-[11px] text-slate-600 font-mono bg-slate-50 p-2.5 rounded-xl border border-slate-200">
                 Avg Ratio: 82% – 88% reduction<br />CPU Decompression: High latency
               </div>
             </div>

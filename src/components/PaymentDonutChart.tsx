@@ -33,40 +33,40 @@ export const PaymentDonutChart: React.FC<PaymentDonutChartProps> = ({
         label: 'Principal & Interest',
         amount: principalAndInterest,
         color: '#6366f1', // indigo-500
-        textColor: 'text-indigo-400',
-        bgBadge: 'bg-indigo-500/10 border-indigo-500/30'
+        textColor: 'text-indigo-700',
+        bgBadge: 'bg-indigo-50/60 border-indigo-200/80'
       },
       {
         id: 'tax',
         label: 'Property Tax',
         amount: propertyTax,
         color: '#10b981', // emerald-500
-        textColor: 'text-emerald-400',
-        bgBadge: 'bg-emerald-500/10 border-emerald-500/30'
+        textColor: 'text-emerald-700',
+        bgBadge: 'bg-emerald-50/60 border-emerald-200/80'
       },
       {
         id: 'insurance',
         label: 'Home Insurance',
         amount: homeInsurance,
         color: '#0ea5e9', // sky-500
-        textColor: 'text-sky-400',
-        bgBadge: 'bg-sky-500/10 border-sky-500/30'
+        textColor: 'text-sky-700',
+        bgBadge: 'bg-sky-50/60 border-sky-200/80'
       },
       {
         id: 'hoa',
         label: 'HOA Fees',
         amount: hoa,
         color: '#f59e0b', // amber-500
-        textColor: 'text-amber-400',
-        bgBadge: 'bg-amber-500/10 border-amber-500/30'
+        textColor: 'text-amber-800',
+        bgBadge: 'bg-amber-50/60 border-amber-200/80'
       },
       {
         id: 'pmi',
         label: 'PMI Insurance',
         amount: pmi,
         color: '#f43f5e', // rose-500
-        textColor: 'text-rose-400',
-        bgBadge: 'bg-rose-500/10 border-rose-500/30'
+        textColor: 'text-rose-700',
+        bgBadge: 'bg-rose-50/60 border-rose-200/80'
       }
     ].filter((s) => s.amount > 0);
   }, [principalAndInterest, propertyTax, homeInsurance, hoa, pmi]);
@@ -101,8 +101,7 @@ export const PaymentDonutChart: React.FC<PaymentDonutChartProps> = ({
     `$${Math.round(num).toLocaleString('en-US')}`;
 
   return (
-    <div className="p-[1px] rounded-2xl bg-gradient-to-b from-slate-800/80 via-slate-800/40 to-slate-900/90 shadow-sm">
-      <div className="rounded-[calc(1rem-1px)] p-4 sm:p-5 bg-slate-950/95 shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] flex flex-col xl:flex-row items-center gap-6">
+    <div className="rounded-2xl bg-white border border-slate-200 shadow-xs p-5 flex flex-col xl:flex-row items-center gap-6">
       {/* Donut graphic */}
       <div className="relative shrink-0 flex items-center justify-center">
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
@@ -111,7 +110,7 @@ export const PaymentDonutChart: React.FC<PaymentDonutChartProps> = ({
             cy={center}
             r={radius}
             fill="transparent"
-            stroke="#1e293b"
+            stroke="#f1f5f9"
             strokeWidth={strokeWidth}
           />
           {renderedSlices.map((s) => (
@@ -133,25 +132,25 @@ export const PaymentDonutChart: React.FC<PaymentDonutChartProps> = ({
 
         {/* Center Label */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
-          <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider">Total Monthly</span>
-          <span className="text-xl sm:text-2xl font-black text-slate-100 mt-0.5 tracking-tight">{fmt(total)}</span>
-          <span className="text-[10px] text-slate-500 font-mono">/month</span>
+          <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Total Monthly</span>
+          <span className="text-xl sm:text-2xl font-black text-slate-900 mt-0.5 tracking-tight">{fmt(total)}</span>
+          <span className="text-[10px] text-slate-400 font-mono">/month</span>
         </div>
       </div>
 
       {/* Legend & Breakdown details */}
       <div className="flex-1 w-full space-y-2.5 min-w-0">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+          <span className="text-xs font-semibold text-slate-700 uppercase tracking-wider">
             Monthly PITI Breakdown
           </span>
-          <span className="text-[11px] font-mono text-slate-400">
+          <span className="text-[11px] font-mono text-slate-500">
             {fmt(total)}/mo
           </span>
         </div>
 
         {/* Stacked mini bar preview */}
-        <div className="w-full h-1.5 rounded-full overflow-hidden flex bg-slate-800">
+        <div className="w-full h-1.5 rounded-full overflow-hidden flex bg-slate-100">
           {renderedSlices.map((s) => (
             <div
               key={s.id}
@@ -171,16 +170,15 @@ export const PaymentDonutChart: React.FC<PaymentDonutChartProps> = ({
             >
               <div className="flex items-center gap-2 min-w-0">
                 <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
-                <span className="font-medium text-slate-200 truncate">{s.label}</span>
+                <span className="font-semibold text-slate-800 truncate">{s.label}</span>
               </div>
               <div className="text-right shrink-0 font-mono whitespace-nowrap">
                 <span className={`font-bold ${s.textColor}`}>{fmt(s.amount)}</span>
-                <span className="text-[10px] text-slate-400 ml-1.5">({s.percentage}%)</span>
+                <span className="text-[10px] text-slate-500 ml-1.5">({s.percentage}%)</span>
               </div>
             </div>
           ))}
         </div>
-      </div>
       </div>
     </div>
   );

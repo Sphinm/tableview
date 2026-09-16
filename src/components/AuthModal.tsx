@@ -100,7 +100,7 @@ export function AuthModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
       <div
         className="relative w-full max-w-md overflow-hidden bg-white border border-slate-200 rounded-3xl shadow-2xl transition-all"
         role="dialog"
@@ -121,8 +121,8 @@ export function AuthModal() {
         <div className="p-6 sm:p-8">
           {/* Header */}
           <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-slate-950 text-white mb-3.5 border border-slate-800 shadow-xs">
-              <Sparkles className="size-5 text-indigo-400" />
+            <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-indigo-50 text-indigo-600 mb-3.5 border border-indigo-100 shadow-xs">
+              <Sparkles className="size-5 text-indigo-600" />
             </div>
             <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
               Sign In to TableView

@@ -526,8 +526,8 @@ export const QuickModelerWidget = () => {
                   </div>
 
                   {/* Code Editor Box */}
-                  <div className="rounded-xl bg-slate-950 p-3.5 font-mono text-xs text-slate-200 shadow-inner border border-slate-800 overflow-x-auto leading-relaxed">
-                    <pre className="text-emerald-400 select-all">
+                  <div className="rounded-xl bg-slate-50 p-3.5 font-mono text-xs text-slate-800 shadow-2xs border border-slate-200 overflow-x-auto leading-relaxed">
+                    <pre className="text-emerald-700 font-medium select-all">
                       {sqlQueries[selectedSqlIndex].query}
                     </pre>
                   </div>

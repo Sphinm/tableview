@@ -91,32 +91,32 @@ const JsonTreeNode: React.FC<TreeNodeProps> = ({
   if (!isExpandable) {
     return (
       <div
-        className={`flex items-baseline gap-2 py-0.5 px-1.5 rounded hover:bg-slate-800/40 group font-mono text-xs transition-colors ${
+        className={`flex items-baseline gap-2 py-0.5 px-1.5 rounded hover:bg-slate-100/70 group font-mono text-xs transition-colors ${
           isMatch ? 'bg-amber-500/15 ring-1 ring-amber-500/30' : ''
         }`}
         style={{ paddingLeft: `${Math.max(depth * 18, 6)}px` }}
       >
         {keyName !== undefined && (
-          <span className="text-indigo-300 font-semibold select-none flex-shrink-0">
+          <span className="text-indigo-600 font-semibold select-none flex-shrink-0">
             "{keyName}":
           </span>
         )}
 
         {/* Primitive Value Representation */}
         {value === null ? (
-          <span className="text-rose-400/80 italic">null</span>
+          <span className="text-rose-600 font-medium italic">null</span>
         ) : value === undefined ? (
-          <span className="text-slate-500 italic">undefined</span>
+          <span className="text-slate-400 italic">undefined</span>
         ) : typeof value === 'string' ? (
           (() => {
             const { preview, isTruncated } = formatStringPreview(value);
             return (
-              <span className="text-emerald-300 break-all">
+              <span className="text-emerald-700 break-all">
                 "{showFullString ? value : preview}"
                 {isTruncated && (
                   <button
                     onClick={() => setShowFullString(!showFullString)}
-                    className="ml-1 text-[10px] text-slate-400 hover:text-indigo-300 underline cursor-pointer"
+                    className="ml-1 text-[10px] text-slate-400 hover:text-indigo-600 underline cursor-pointer"
                   >
                     {showFullString ? 'less' : `+${value.length - 80} chars`}
                   </button>
@@ -125,11 +125,11 @@ const JsonTreeNode: React.FC<TreeNodeProps> = ({
             );
           })()
         ) : typeof value === 'number' ? (
-          <span className="text-amber-300">{value}</span>
+          <span className="text-amber-700 font-medium">{value}</span>
         ) : typeof value === 'boolean' ? (
-          <span className="text-purple-300 font-bold">{value ? 'true' : 'false'}</span>
+          <span className="text-purple-700 font-bold">{value ? 'true' : 'false'}</span>
         ) : (
-          <span className="text-slate-300">{String(value)}</span>
+          <span className="text-slate-800">{String(value)}</span>
         )}
 
         {/* Hover Actions */}
@@ -137,14 +137,14 @@ const JsonTreeNode: React.FC<TreeNodeProps> = ({
           <button
             onClick={() => onCopyValue(value)}
             title="Copy Value"
-            className="hover:text-slate-100 p-0.5 rounded hover:bg-slate-700/60 cursor-pointer"
+            className="hover:text-slate-900 p-0.5 rounded hover:bg-slate-200/70 cursor-pointer"
           >
             Copy
           </button>
           <button
             onClick={() => onCopyPath(path)}
             title={`Copy JSON Path (${path})`}
-            className="hover:text-indigo-300 p-0.5 rounded hover:bg-slate-700/60 cursor-pointer"
+            className="hover:text-indigo-600 p-0.5 rounded hover:bg-slate-200/70 cursor-pointer"
           >
             Path
           </button>
@@ -161,13 +161,13 @@ const JsonTreeNode: React.FC<TreeNodeProps> = ({
     <div className="font-mono text-xs select-text">
       {/* Node Header */}
       <div
-        className={`flex items-center gap-1.5 py-1 px-1.5 rounded hover:bg-slate-800/50 group transition-colors cursor-pointer ${
+        className={`flex items-center gap-1.5 py-1 px-1.5 rounded hover:bg-slate-100/70 group transition-colors cursor-pointer ${
           isMatch ? 'bg-amber-500/15 ring-1 ring-amber-500/30' : ''
         }`}
         style={{ paddingLeft: `${Math.max(depth * 18, 6)}px` }}
         onClick={() => togglePath(path)}
       >
-        <span className="text-slate-400 hover:text-slate-100 p-0.5 rounded transition-transform">
+        <span className="text-slate-400 hover:text-slate-700 p-0.5 rounded transition-transform">
           {isExpanded ? (
             <ChevronDown className="size-3.5 text-slate-400" />
           ) : (
@@ -176,27 +176,27 @@ const JsonTreeNode: React.FC<TreeNodeProps> = ({
         </span>
 
         {keyName !== undefined && (
-          <span className="text-indigo-300 font-semibold">
+          <span className="text-indigo-600 font-semibold">
             "{keyName}":
           </span>
         )}
 
         {/* Structural badges */}
         {isArray ? (
-          <span className="text-slate-400">
+          <span className="text-slate-500">
             [
             {!isExpanded && (
-              <span className="text-slate-400 px-1.5 py-0.2 rounded bg-slate-800 text-[11px] mx-1 border border-slate-700">
+              <span className="text-slate-500 px-1.5 py-0.2 rounded bg-slate-100 text-[11px] mx-1 border border-slate-200">
                 {itemCount} {itemCount === 1 ? 'item' : 'items'}
               </span>
             )}
             {!isExpanded && ']'}
           </span>
         ) : (
-          <span className="text-slate-400">
+          <span className="text-slate-500">
             {'{'}
             {!isExpanded && (
-              <span className="text-slate-400 px-1.5 py-0.2 rounded bg-slate-800 text-[11px] mx-1 border border-slate-700">
+              <span className="text-slate-500 px-1.5 py-0.2 rounded bg-slate-100 text-[11px] mx-1 border border-slate-200">
                 {itemCount} {itemCount === 1 ? 'key' : 'keys'}
               </span>
             )}
@@ -211,10 +211,10 @@ const JsonTreeNode: React.FC<TreeNodeProps> = ({
               e.stopPropagation();
               onOpenTable(keyName || path, value);
             }}
-            className="flex items-center gap-1 ml-2 px-2 py-0.5 rounded-md bg-indigo-950/80 hover:bg-indigo-900 border border-indigo-700/70 text-indigo-200 text-[11px] font-sans font-medium transition-colors cursor-pointer"
+            className="flex items-center gap-1 ml-2 px-2 py-0.5 rounded-md bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 text-indigo-700 text-[11px] font-sans font-medium transition-colors cursor-pointer"
             title={`View ${keyName || 'this array'} as relational table in Grid View`}
           >
-            <Table className="size-3 text-indigo-400" />
+            <Table className="size-3 text-indigo-600" />
             <span>View as Table</span>
           </button>
         )}
@@ -227,14 +227,14 @@ const JsonTreeNode: React.FC<TreeNodeProps> = ({
           <button
             onClick={() => onCopyValue(value)}
             title="Copy formatted JSON subtree"
-            className="hover:text-slate-100 p-0.5 rounded hover:bg-slate-700/60 cursor-pointer"
+            className="hover:text-slate-900 p-0.5 rounded hover:bg-slate-200/70 cursor-pointer"
           >
             Copy
           </button>
           <button
             onClick={() => onCopyPath(path)}
             title={`Copy JSON Path: ${path}`}
-            className="hover:text-indigo-300 p-0.5 rounded hover:bg-slate-700/60 cursor-pointer"
+            className="hover:text-indigo-600 p-0.5 rounded hover:bg-slate-200/70 cursor-pointer"
           >
             Path
           </button>
@@ -243,7 +243,7 @@ const JsonTreeNode: React.FC<TreeNodeProps> = ({
 
       {/* Expanded Children */}
       {isExpanded && (
-        <div className="relative border-l border-slate-800/80 ml-3.5 my-0.5">
+        <div className="relative border-l border-slate-200 ml-3.5 my-0.5">
           {isArray ? (
             <>
               {value.slice(0, arrayLimit).map((item: any, idx: number) => (
@@ -263,7 +263,7 @@ const JsonTreeNode: React.FC<TreeNodeProps> = ({
               ))}
               {value.length > arrayLimit && (
                 <div
-                  className="py-1 px-4 text-xs font-sans text-indigo-400"
+                  className="py-1 px-4 text-xs font-sans text-indigo-600"
                   style={{ paddingLeft: `${Math.max((depth + 1) * 18, 12)}px` }}
                 >
                   <button
@@ -274,7 +274,7 @@ const JsonTreeNode: React.FC<TreeNodeProps> = ({
                   </button>
                   <button
                     onClick={() => setArrayLimit(value.length)}
-                    className="ml-3 text-slate-400 hover:text-slate-200 underline cursor-pointer"
+                    className="ml-3 text-slate-500 hover:text-slate-800 underline cursor-pointer"
                   >
                     Show all {value.length} items
                   </button>
@@ -456,47 +456,47 @@ export const JsonView: React.FC<JsonViewProps> = ({
     // the source text pane. None of it may reach session recording.
     <div
       data-sentry-mask="true"
-      className="relative rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl overflow-hidden flex flex-col min-h-[500px]"
+      className="relative rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden flex flex-col min-h-[500px]"
     >
       {/* Toast Notification */}
       {copiedToast && (
-        <div className="absolute top-4 right-4 z-50 px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-semibold shadow-2xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute top-4 right-4 z-50 px-3.5 py-1.5 rounded-xl bg-indigo-600 text-white text-xs font-semibold shadow-xl flex items-center gap-2 animate-in fade-in slide-in-from-top-2 duration-200">
           <Check className="size-3.5" />
           <span>{copiedToast}</span>
         </div>
       )}
 
       {/* JSON Viewer Toolbar */}
-      <div className="p-3.5 bg-slate-950/80 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+      <div className="p-3.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-3">
         {/* Left: View Mode Tabs & Quick Stats */}
         <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center p-1 rounded-xl bg-slate-900 border border-slate-800 text-xs">
+          <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs">
             <button
               onClick={() => setViewMode('tree')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                 viewMode === 'tree'
-                  ? 'bg-slate-800 text-slate-100 font-semibold shadow-sm border border-slate-700'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-white text-slate-900 font-semibold shadow-2xs border border-slate-200'
+                  : 'text-slate-500 hover:text-slate-800'
               }`}
             >
-              <Braces className="size-3.5 text-indigo-400" />
+              <Braces className="size-3.5 text-indigo-600" />
               <span>Interactive Tree</span>
             </button>
             <button
               onClick={() => setViewMode('raw')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg font-medium transition-all cursor-pointer ${
                 viewMode === 'raw'
-                  ? 'bg-slate-800 text-slate-100 font-semibold shadow-sm border border-slate-700'
-                  : 'text-slate-400 hover:text-slate-200'
+                  ? 'bg-white text-slate-900 font-semibold shadow-2xs border border-slate-200'
+                  : 'text-slate-500 hover:text-slate-800'
               }`}
             >
-              <Code2 className="size-3.5 text-emerald-400" />
+              <Code2 className="size-3.5 text-emerald-600" />
               <span>Raw JSON Code</span>
             </button>
           </div>
 
-          <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-400 px-2.5 py-1 rounded-lg bg-slate-900/60 border border-slate-800">
-            <span className="text-slate-300 font-semibold">{stats.type}</span>
+          <div className="hidden sm:flex items-center gap-2 text-xs font-mono text-slate-600 px-2.5 py-1 rounded-lg bg-white border border-slate-200">
+            <span className="text-slate-800 font-semibold">{stats.type}</span>
             <span>·</span>
             <span>{stats.count}</span>
           </div>
@@ -511,12 +511,12 @@ export const JsonView: React.FC<JsonViewProps> = ({
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
               placeholder="Filter keys or values..."
-              className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-200 placeholder-slate-500 focus:outline-none focus:border-indigo-500 transition-colors"
+              className="w-full pl-8 pr-7 py-1.5 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 shadow-2xs transition-colors"
             />
             {searchFilter && (
               <button
                 onClick={() => setSearchFilter('')}
-                className="absolute right-2 top-2 text-slate-400 hover:text-slate-200 cursor-pointer"
+                className="absolute right-2 top-2 text-slate-400 hover:text-slate-600 cursor-pointer"
               >
                 <X className="size-3.5" />
               </button>
@@ -530,14 +530,14 @@ export const JsonView: React.FC<JsonViewProps> = ({
             <>
               <button
                 onClick={handleExpandAll}
-                className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-100 border border-slate-700 cursor-pointer transition-colors"
+                className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 cursor-pointer transition-colors shadow-2xs"
                 title="Expand up to 4 levels"
               >
                 Expand All
               </button>
               <button
                 onClick={handleCollapseAll}
-                className="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-slate-100 border border-slate-700 cursor-pointer transition-colors"
+                className="px-2.5 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 cursor-pointer transition-colors shadow-2xs"
               >
                 Collapse All
               </button>
@@ -546,26 +546,26 @@ export const JsonView: React.FC<JsonViewProps> = ({
 
           <button
             onClick={handleCopyAll}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-slate-100 border border-slate-700 cursor-pointer transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 cursor-pointer transition-colors shadow-2xs"
             title="Copy formatted JSON to clipboard"
           >
-            <Copy className="size-3.5 text-slate-400" />
+            <Copy className="size-3.5 text-slate-500" />
             <span>Copy JSON</span>
           </button>
 
           <button
             onClick={handleDownload}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 hover:text-slate-100 border border-slate-700 cursor-pointer transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 cursor-pointer transition-colors shadow-2xs"
             title="Download formatted JSON file"
           >
-            <Download className="size-3.5 text-slate-400" />
+            <Download className="size-3.5 text-slate-500" />
             <span>Download</span>
           </button>
         </div>
       </div>
 
       {/* Main Content Area */}
-      <div className="p-4 overflow-auto max-h-[680px] bg-slate-900/60 font-mono">
+      <div className="p-4 overflow-auto max-h-[680px] bg-white font-mono">
         {viewMode === 'tree' ? (
           <div className="space-y-0.5">
             <JsonTreeNode
@@ -582,7 +582,7 @@ export const JsonView: React.FC<JsonViewProps> = ({
           </div>
         ) : (
           <div className="relative">
-            <pre className="text-xs text-slate-200 leading-relaxed font-mono whitespace-pre select-text p-2">
+            <pre className="text-xs text-slate-800 leading-relaxed font-mono whitespace-pre select-text p-2">
               {formattedRawJson}
             </pre>
           </div>
@@ -591,28 +591,28 @@ export const JsonView: React.FC<JsonViewProps> = ({
 
       {/* Tree View Footer Hint */}
       {viewMode === 'tree' && (
-        <div className="px-4 py-2 bg-slate-950/90 border-t border-slate-800 flex items-center justify-between text-[11px] text-slate-400 font-sans">
+        <div className="px-4 py-2 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-[11px] text-slate-600 font-sans">
           <div className="flex items-center gap-3">
             <span className="flex items-center gap-1">
-              <span className="size-1.5 rounded-full bg-emerald-400" />
+              <span className="size-1.5 rounded-full bg-emerald-500" />
               "string"
             </span>
             <span className="flex items-center gap-1">
-              <span className="size-1.5 rounded-full bg-amber-400" />
+              <span className="size-1.5 rounded-full bg-amber-500" />
               number
             </span>
             <span className="flex items-center gap-1">
-              <span className="size-1.5 rounded-full bg-purple-400" />
+              <span className="size-1.5 rounded-full bg-purple-500" />
               boolean
             </span>
             <span className="flex items-center gap-1">
-              <span className="size-1.5 rounded-full bg-rose-400" />
+              <span className="size-1.5 rounded-full bg-rose-500" />
               null
             </span>
           </div>
 
-          <div className="flex items-center gap-1 text-slate-400">
-            <ListFilter className="size-3 text-indigo-400" />
+          <div className="flex items-center gap-1 text-slate-500">
+            <ListFilter className="size-3 text-indigo-600" />
             <span>Click any node to expand/collapse · Click "Path" to copy selector</span>
           </div>
         </div>

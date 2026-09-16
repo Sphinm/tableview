@@ -215,24 +215,24 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
 
             {/* Code Block if available */}
             {section.code && (
-              <div className="mt-5 rounded-xl border border-slate-800 bg-slate-950 overflow-hidden shadow-sm">
-                <div className="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-xs text-slate-300">
+              <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50/80 overflow-hidden shadow-2xs">
+                <div className="px-4 py-2 bg-slate-100 border-b border-slate-200 flex items-center justify-between text-xs text-slate-700">
                   <span className="font-mono text-[11px] uppercase tracking-wider font-semibold">{section.code.language}</span>
                   <button
                     onClick={() => handleCopyCode(section.code!.code, sectionIdx)}
-                    className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer text-[11px] font-medium"
+                    className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer text-[11px] font-medium"
                   >
                     {copiedCodeIndex === sectionIdx ? (
                       <>
-                        <Check className="size-3 text-emerald-400" />
-                        <span className="text-emerald-400 font-semibold">Copied</span>
+                        <Check className="size-3 text-emerald-600" />
+                        <span className="text-emerald-600 font-semibold">Copied</span>
                       </>
                     ) : (
                       <span>Copy Code</span>
                     )}
                   </button>
                 </div>
-                <pre className="p-4 text-xs font-mono text-slate-100 overflow-x-auto leading-relaxed">
+                <pre className="p-4 text-xs font-mono text-slate-800 overflow-x-auto leading-relaxed">
                   <code>{section.code.code}</code>
                 </pre>
               </div>

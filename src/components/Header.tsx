@@ -8,7 +8,6 @@ import {
   BookOpen,
   Info,
   MessageSquare,
-  RefreshCw,
   Calculator,
   Home,
   ArrowRightLeft,
@@ -43,7 +42,7 @@ interface HeaderProps {
   currentPath?: string;
 }
 
-export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProps) => {
+export const Header = ({ onTrySample: _onTrySample, isLoading: _isLoading, currentPath = '/' }: HeaderProps) => {
   const { user, openAuthModal, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [parquetDropdownOpen, setParquetDropdownOpen] = useState(false);
@@ -177,7 +176,6 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
   const isGuides = currentPath.startsWith('/guides');
   const isAbout = currentPath === '/about';
   const isContact = currentPath === '/contact';
-  const isDataWorkbench = currentPath === '/' || isToolsSection;
 
   const viewerItems = [
     {
@@ -406,8 +404,8 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
             onClick={(e) => handleNav(e, '/')}
             className="flex items-center gap-2.5 group shrink-0"
           >
-            <div className="brand-icon size-8.5 rounded-xl flex items-center justify-center shadow-xs group-hover:scale-105 transition-all bg-slate-950 text-white border border-slate-800">
-              <Table className="size-4.5 text-indigo-400" />
+            <div className="brand-icon size-8.5 rounded-xl flex items-center justify-center shadow-xs group-hover:scale-105 transition-all bg-indigo-600 text-white shadow-indigo-600/20">
+              <Table className="size-4.5 text-white" />
             </div>
             <div className="flex items-center gap-1.5">
               <span className="text-base font-extrabold text-slate-900 tracking-tight">TableView</span>
@@ -840,24 +838,6 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
 
         {/* Right action buttons */}
         <div className="flex items-center gap-2">
-
-          {onTrySample && isDataWorkbench && (
-            <button
-              onClick={onTrySample}
-              disabled={isLoading}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-slate-100 border border-slate-300 transition-all cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap"
-            >
-              {isLoading ? (
-                <>
-                  <RefreshCw className="size-3.5 animate-spin text-slate-500" />
-                  <span>Loading...</span>
-                </>
-              ) : (
-                <span>Try Sample</span>
-              )}
-            </button>
-          )}
-
           {/* Auth: User Account / Sign In */}
           {user ? (
             <div ref={userMenuRef} className="relative">
@@ -874,7 +854,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className="size-6 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[10px]">
+                  <div className="size-6 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-[10px]">
                     {user.name ? user.name[0].toUpperCase() : 'U'}
                   </div>
                 )}
@@ -900,7 +880,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                         referrerPolicy="no-referrer"
                       />
                     ) : (
-                      <div className="size-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shrink-0">
+                      <div className="size-11 rounded-full bg-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0">
                         {user.name ? user.name[0].toUpperCase() : 'U'}
                       </div>
                     )}

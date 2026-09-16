@@ -78,37 +78,36 @@ export const CommercialBalloonChart = ({
   };
 
   return (
-    <div className="p-[1px] rounded-2xl bg-gradient-to-b from-slate-800/80 via-slate-800/40 to-slate-900/90 shadow-sm print-avoid-break">
-      <div className="rounded-[calc(1rem-1px)] p-4 sm:p-5 bg-slate-950/95 shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-3">
+    <div className="rounded-2xl bg-white border border-slate-200 shadow-xs p-5 space-y-4 print-avoid-break">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1 rounded-md bg-amber-500/10 text-amber-400">
+            <span className="p-1 rounded-md bg-amber-50 text-amber-600 border border-amber-200">
               <CalendarClock className="size-4" />
             </span>
-            <h3 className="text-sm sm:text-base font-bold text-slate-100 flex items-center gap-2">
+            <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
               <span>{title}</span>
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300">
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 border border-amber-200 text-amber-800">
                 Balloon Maturity: Year {balloonYears}
               </span>
             </h3>
           </div>
-          <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>
+          <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
         </div>
 
         {/* Legend */}
         <div className="flex flex-wrap items-center gap-3 text-xs">
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-indigo-400 rounded" />
-            <span className="text-slate-300">Remaining Debt</span>
+            <span className="w-3 h-0.5 bg-indigo-500 rounded" />
+            <span className="text-slate-600 font-medium">Remaining Debt</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-emerald-400 rounded" />
-            <span className="text-slate-300">Principal Paid (Equity)</span>
+            <span className="w-3 h-0.5 bg-emerald-500 rounded" />
+            <span className="text-slate-600 font-medium">Principal Paid (Equity)</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-amber-400" />
-            <span className="text-amber-300 font-medium">Balloon Due</span>
+            <span className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+            <span className="text-amber-800 font-semibold">Balloon Due</span>
           </div>
         </div>
       </div>
@@ -141,10 +140,9 @@ export const CommercialBalloonChart = ({
                   y1={y}
                   x2={width - padRight}
                   y2={y}
-                  stroke="#334155"
+                  stroke="#e2e8f0"
                   strokeWidth="1"
                   strokeDasharray="2 2"
-                  opacity="0.35"
                 />
                 <text
                   x={padLeft - 8}
@@ -172,10 +170,9 @@ export const CommercialBalloonChart = ({
                     y1={padTop}
                     x2={x}
                     y2={padTop + chartH}
-                    stroke="#334155"
+                    stroke="#e2e8f0"
                     strokeWidth="1"
                     strokeDasharray="2 2"
-                    opacity="0.25"
                   />
                   <text
                     x={x}
@@ -195,14 +192,14 @@ export const CommercialBalloonChart = ({
           <path
             d={`${balancePath} L ${getX(totalYears)} ${padTop + chartH} L ${getX(0)} ${padTop + chartH} Z`}
             fill="#6366f1"
-            fillOpacity="0.08"
+            fillOpacity="0.06"
           />
 
           {/* Remaining Debt Curve */}
           <path
             d={balancePath}
             fill="none"
-            stroke="#818cf8"
+            stroke="#4f46e5"
             strokeWidth="2.5"
             strokeLinecap="round"
           />
@@ -211,7 +208,7 @@ export const CommercialBalloonChart = ({
           <path
             d={equityPath}
             fill="none"
-            stroke="#34d399"
+            stroke="#10b981"
             strokeWidth="2"
             strokeLinecap="round"
             strokeDasharray="4 2"
@@ -227,45 +224,25 @@ export const CommercialBalloonChart = ({
                 y2={padTop + chartH}
                 stroke="#f59e0b"
                 strokeWidth="2"
-                strokeDasharray="4 4"
+                strokeDasharray="4 3"
               />
               <circle
                 cx={balloonX}
                 cy={balloonY}
                 r="6"
                 fill="#f59e0b"
-                stroke="#0f172a"
+                stroke="#ffffff"
                 strokeWidth="2"
               />
-              {/* Balloon Label Callout */}
-              <rect
-                x={balloonX + 8}
-                y={Math.max(padTop + 4, balloonY - 24)}
-                width={130}
-                height={34}
-                rx="6"
-                fill="#1e1b4b"
-                stroke="#f59e0b"
-                strokeWidth="1"
-              />
               <text
-                x={balloonX + 16}
-                y={Math.max(padTop + 18, balloonY - 10)}
-                fill="#fcd34d"
-                fontSize="9"
+                x={balloonX}
+                y={padTop - 8}
+                fill="#b45309"
+                fontSize="10"
                 fontWeight="700"
+                textAnchor="middle"
               >
-                Year {balloonYears} Balloon Due:
-              </text>
-              <text
-                x={balloonX + 16}
-                y={Math.max(padTop + 30, balloonY + 2)}
-                fill="#ffffff"
-                fontSize="11"
-                fontWeight="800"
-                fontFamily="monospace"
-              >
-                {fmtCurrency(balloonBalance)}
+                ${Math.round(balloonBalance / 1000)}k Due
               </text>
             </g>
           )}
@@ -286,7 +263,7 @@ export const CommercialBalloonChart = ({
                 cx={getX(activeYearData.year)}
                 cy={getY(activeYearData.endingBalance)}
                 r="4"
-                fill="#818cf8"
+                fill="#4f46e5"
                 stroke="#ffffff"
                 strokeWidth="1.5"
               />
@@ -297,11 +274,11 @@ export const CommercialBalloonChart = ({
 
       {/* Dynamic Hover/Year Context Pill */}
       {activeYearData && (
-        <div className="flex flex-wrap items-center justify-between gap-3 p-3 rounded-xl bg-slate-950/70 border border-slate-800 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs">
           <div className="flex items-center gap-2">
-            <span className="font-bold text-slate-200">
+            <span className="font-bold text-slate-900">
               {activeYearData.year === balloonYears ? (
-                <span className="text-amber-400">★ Maturity Year {activeYearData.year} (Balloon Refi Date)</span>
+                <span className="text-amber-800">★ Maturity Year {activeYearData.year} (Balloon Refi Date)</span>
               ) : (
                 `Year ${activeYearData.year} Milestone`
               )}
@@ -310,23 +287,22 @@ export const CommercialBalloonChart = ({
 
           <div className="flex items-center gap-4 font-mono">
             <div>
-              <span className="text-slate-400 mr-1.5 text-[11px]">Ending Balance:</span>
-              <strong className="text-indigo-300">{fmtCurrency(activeYearData.endingBalance)}</strong>
+              <span className="text-slate-500 mr-1.5 text-[11px]">Ending Balance:</span>
+              <strong className="text-indigo-700">{fmtCurrency(activeYearData.endingBalance)}</strong>
             </div>
             <div>
-              <span className="text-slate-400 mr-1.5 text-[11px]">Cumulative Equity:</span>
-              <strong className="text-emerald-400">{fmtCurrency(originalLoanAmount - activeYearData.endingBalance)}</strong>
+              <span className="text-slate-500 mr-1.5 text-[11px]">Cumulative Equity:</span>
+              <strong className="text-emerald-700">{fmtCurrency(originalLoanAmount - activeYearData.endingBalance)}</strong>
             </div>
             {activeYearData.interestTotal > 0 && (
               <div className="hidden sm:block">
-                <span className="text-slate-400 mr-1.5 text-[11px]">Interest Paid:</span>
-                <strong className="text-rose-300">{fmtCurrency(activeYearData.interestTotal)}</strong>
+                <span className="text-slate-500 mr-1.5 text-[11px]">Interest Paid:</span>
+                <strong className="text-rose-700">{fmtCurrency(activeYearData.interestTotal)}</strong>
               </div>
             )}
           </div>
         </div>
       )}
-      </div>
     </div>
   );
 };

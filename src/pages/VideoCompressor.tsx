@@ -86,19 +86,6 @@ export function VideoCompressor() {
     }
   };
 
-  // Load sample video
-  const handleLoadSample = async () => {
-    try {
-      setStatusMessage('Loading sample video...');
-      const response = await fetch('/samples/sample.mp4');
-      if (!response.ok) throw new Error('Sample not found');
-      const blob = await response.blob();
-      await handleFile(blob, 'sample_3mb.mp4');
-    } catch {
-      setErrorMessage('Failed to load sample video. Please drag and drop a video file.');
-    }
-  };
-
   // Run Compression
   const handleStartCompression = async () => {
     if (!file || !metadata) return;
@@ -179,62 +166,51 @@ export function VideoCompressor() {
     : 70;
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 text-slate-900 py-10 px-4 sm:px-6 lg:px-8">
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Hero Section */}
         <div className="text-center space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-semibold">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 text-xs font-semibold">
             <Sparkles className="w-3.5 h-3.5" />
             <span>100% In-Browser Privacy • Zero Server Upload</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight">
             Free Online Video Compressor
           </h1>
-          <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-600 dark:text-slate-400">
+          <p className="max-w-2xl mx-auto text-base sm:text-lg text-slate-600">
             Fast client-side video compression without watermarks. Reduce MP4, WebM, MOV, and MKV file size with preset quality or exact target MB.
           </p>
         </div>
 
         {/* Dual-Panel Workspace */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-4 sm:p-6 shadow-xl shadow-slate-200/50 dark:shadow-none">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-white border border-slate-200/80 rounded-3xl p-4 sm:p-6 shadow-xl shadow-slate-200/50">
           {/* Left Panel: Preview & Upload Area (col-span-7) */}
-          <div className="lg:col-span-7 flex flex-col min-h-[460px] rounded-2xl bg-slate-100/70 dark:bg-slate-950/60 border border-slate-200/60 dark:border-slate-800/80 overflow-hidden relative">
+          <div className="lg:col-span-7 flex flex-col min-h-[460px] rounded-2xl bg-slate-100/70 border border-slate-200/60 overflow-hidden relative">
             {!file ? (
               // Empty / Dropzone State
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={handleDrop}
                 onClick={() => fileInputRef.current?.click()}
-                className="flex-1 flex flex-col items-center justify-center p-8 text-center cursor-pointer hover:bg-blue-50/40 dark:hover:bg-blue-950/20 transition-all border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-blue-500 rounded-2xl m-3 relative group"
+                className="flex-1 flex flex-col items-center justify-center p-8 text-center cursor-pointer hover:bg-blue-50/40 transition-all border-2 border-dashed border-slate-300 hover:border-blue-500 rounded-2xl m-3 relative group"
               >
-                {/* Try Sample Button in Top Right */}
-                <div className="absolute top-4 right-4 z-10" onClick={(e) => e.stopPropagation()}>
-                  <button
-                    onClick={handleLoadSample}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-white dark:bg-slate-800 hover:bg-blue-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-xs font-semibold text-slate-700 dark:text-slate-300 rounded-xl shadow-sm transition-all active:scale-95"
-                  >
-                    <Film className="w-3.5 h-3.5 text-blue-500" />
-                    <span>Try Sample (3.02MB)</span>
-                  </button>
-                </div>
-
-                <div className="w-16 h-16 rounded-3xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                <div className="w-16 h-16 rounded-3xl bg-blue-500/10 text-blue-600 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                   <Upload className="w-8 h-8" />
                 </div>
 
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">
+                <h3 className="text-lg font-bold text-slate-900 mb-1">
                   Drag and drop a video file to start
                 </h3>
-                <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 max-w-sm">
+                <p className="text-sm text-slate-500 mb-4 max-w-sm">
                   Or click to browse from your device. 100% private — your file never leaves your browser.
                 </p>
 
-                <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-400 dark:text-slate-500">
-                  <span className="px-2 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800">MP4</span>
-                  <span className="px-2 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800">WebM</span>
-                  <span className="px-2 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800">MOV</span>
-                  <span className="px-2 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800">MKV</span>
-                  <span className="px-2 py-0.5 rounded bg-slate-200/60 dark:bg-slate-800">AVI</span>
+                <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-slate-400">
+                  <span className="px-2 py-0.5 rounded bg-slate-200/60">MP4</span>
+                  <span className="px-2 py-0.5 rounded bg-slate-200/60">WebM</span>
+                  <span className="px-2 py-0.5 rounded bg-slate-200/60">MOV</span>
+                  <span className="px-2 py-0.5 rounded bg-slate-200/60">MKV</span>
+                  <span className="px-2 py-0.5 rounded bg-slate-200/60">AVI</span>
                 </div>
 
                 <input
@@ -257,31 +233,31 @@ export function VideoCompressor() {
                 <div className="flex items-center justify-between gap-2 mb-3">
                   <div className="flex items-center gap-2 min-w-0">
                     <Film className="w-4 h-4 text-blue-500 shrink-0" />
-                    <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 truncate">
+                    <span className="text-xs font-semibold text-slate-800 truncate">
                       {metadata?.name}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-2">
                     {result && (
-                      <div className="flex items-center bg-slate-200 dark:bg-slate-800 p-0.5 rounded-lg text-xs">
+                      <div className="flex items-center bg-slate-200 p-0.5 rounded-lg text-xs">
                         <button
                           onClick={() => setCompareTab('compressed')}
                           className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
-                            compareTab === 'compressed'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-900 hover:bg-slate-300/60'
-                          }`}
+ compareTab === 'compressed'
+ ? 'bg-blue-600 text-white shadow-sm'
+ : 'text-slate-900 hover:bg-slate-300/60'
+ }`}
                         >
                           Compressed
                         </button>
                         <button
                           onClick={() => setCompareTab('original')}
                           className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
-                            compareTab === 'original'
-                              ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-900 hover:bg-slate-300/60'
-                          }`}
+ compareTab === 'original'
+ ? 'bg-blue-600 text-white shadow-sm'
+ : 'text-slate-900 hover:bg-slate-300/60'
+ }`}
                         >
                           Original
                         </button>
@@ -291,7 +267,7 @@ export function VideoCompressor() {
                     <button
                       onClick={handleReset}
                       disabled={isProcessing}
-                      className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors"
+                      className="p-1.5 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
                       title="Choose another video"
                     >
                       <RotateCcw className="w-4 h-4" />
@@ -334,23 +310,23 @@ export function VideoCompressor() {
 
                 {/* Metadata & Result Pills */}
                 {metadata && (
-                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2 p-3 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl text-xs">
-                    <div className="flex flex-wrap items-center gap-3 text-slate-500 dark:text-slate-400">
+                  <div className="mt-3 flex flex-wrap items-center justify-between gap-2 p-3 bg-white border border-slate-200 rounded-xl text-xs">
+                    <div className="flex flex-wrap items-center gap-3 text-slate-500">
                       <span>
-                        Size: <strong className="text-slate-800 dark:text-slate-200">{formatBytes(metadata.size)}</strong>
+                        Size: <strong className="text-slate-800">{formatBytes(metadata.size)}</strong>
                       </span>
                       <span>•</span>
                       <span>
-                        Res: <strong className="text-slate-800 dark:text-slate-200">{metadata.width}×{metadata.height}</strong>
+                        Res: <strong className="text-slate-800">{metadata.width}×{metadata.height}</strong>
                       </span>
                       <span>•</span>
                       <span>
-                        Duration: <strong className="text-slate-800 dark:text-slate-200">{Math.round(metadata.duration)}s</strong>
+                        Duration: <strong className="text-slate-800">{Math.round(metadata.duration)}s</strong>
                       </span>
                     </div>
 
                     {result && (
-                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 rounded-lg font-bold">
+                      <div className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 rounded-lg font-bold">
                         <CheckCircle2 className="w-3.5 h-3.5" />
                         <span>Saved {result.savedPercentage}% ({formatBytes(result.size)})</span>
                       </div>
@@ -365,24 +341,24 @@ export function VideoCompressor() {
           <div className="lg:col-span-5 flex flex-col justify-between space-y-6">
             <div>
               {/* Tab Switcher: Basic vs Advanced */}
-              <div className="flex p-1 bg-slate-100 dark:bg-slate-800/80 rounded-xl mb-5">
+              <div className="flex p-1 bg-slate-100 rounded-xl mb-5">
                 <button
                   onClick={() => setActiveTab('basic')}
                   className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-                    activeTab === 'basic'
-                      ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm'
-                      : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                  }`}
+ activeTab === 'basic'
+ ? 'bg-white text-blue-600 shadow-sm'
+ : 'text-slate-500 hover:text-slate-800'
+ }`}
                 >
                   Basic Compression
                 </button>
                 <button
                   onClick={() => setActiveTab('advanced')}
                   className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${
-                    activeTab === 'advanced'
-                      ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm'
-                      : 'text-slate-500 hover:text-slate-800 dark:hover:text-slate-200'
-                  }`}
+ activeTab === 'advanced'
+ ? 'bg-white text-blue-600 shadow-sm'
+ : 'text-slate-500 hover:text-slate-800'
+ }`}
                 >
                   Advanced Compression
                 </button>
@@ -393,7 +369,7 @@ export function VideoCompressor() {
                 <div className="space-y-5">
                   {/* Preset Cards */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-2.5">
+                    <label className="block text-xs font-bold text-slate-700 mb-2.5">
                       Compression Presets
                     </label>
                     <div className="grid grid-cols-2 gap-2.5">
@@ -414,13 +390,13 @@ export function VideoCompressor() {
                             }
                           }}
                           className={`p-3 rounded-xl border text-left transition-all ${
-                            presetPercentage === item.pct && !customTargetMB
-                              ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 ring-1 ring-blue-500'
-                              : 'border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 bg-white dark:bg-slate-900 text-slate-700 dark:text-slate-300'
-                          }`}
+ presetPercentage === item.pct && !customTargetMB
+ ? 'border-blue-500 bg-blue-50/50 text-blue-600 ring-1 ring-blue-500'
+ : 'border-slate-200 hover:border-slate-300 bg-white text-slate-700'
+ }`}
                         >
                           <div className="text-xs font-bold">{item.label}</div>
-                          <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">
+                          <div className="text-[10px] text-slate-400 mt-0.5">
                             {item.desc}
                           </div>
                         </button>
@@ -431,7 +407,7 @@ export function VideoCompressor() {
                   {/* Target File Size Input */}
                   <div>
                     <div className="flex items-center justify-between mb-1.5">
-                      <label className="text-xs font-bold text-slate-700 dark:text-slate-300">
+                      <label className="text-xs font-bold text-slate-700">
                         Target File Size (Optional)
                       </label>
                       <span className="text-[11px] text-slate-400">e.g. 25MB for Discord</span>
@@ -444,7 +420,7 @@ export function VideoCompressor() {
                         value={customTargetMB}
                         onChange={(e) => setCustomTargetMB(e.target.value)}
                         placeholder="e.g. 20"
-                        className="w-full pl-3.5 pr-12 py-2 bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
+                        className="w-full pl-3.5 pr-12 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500 transition-all"
                       />
                       <span className="absolute inset-y-0 right-0 pr-3.5 flex items-center text-xs font-bold text-slate-400 pointer-events-none">
                         MB
@@ -457,7 +433,7 @@ export function VideoCompressor() {
                 <div className="space-y-4">
                   {/* Resolution Selector */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
                       Target Resolution
                     </label>
                     <div className="grid grid-cols-4 gap-1.5">
@@ -467,10 +443,10 @@ export function VideoCompressor() {
                           type="button"
                           onClick={() => setResolution(res)}
                           className={`py-2 px-1 text-center text-xs font-semibold rounded-lg border transition-all ${
-                            resolution === res
-                              ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400'
-                              : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300'
-                          }`}
+ resolution === res
+ ? 'border-blue-500 bg-blue-50/50 text-blue-600'
+ : 'border-slate-200 text-slate-600 hover:border-slate-300'
+ }`}
                         >
                           {res === 'original' ? 'Original' : res}
                         </button>
@@ -481,7 +457,7 @@ export function VideoCompressor() {
                   {/* CRF Quality Slider */}
                   <div>
                     <div className="flex items-center justify-between mb-1 text-xs">
-                      <label className="font-bold text-slate-700 dark:text-slate-300">
+                      <label className="font-bold text-slate-700">
                         Quality (CRF: {crf})
                       </label>
                       <span className="text-slate-400 text-[11px]">
@@ -494,7 +470,7 @@ export function VideoCompressor() {
                       max="35"
                       value={crf}
                       onChange={(e) => setCrf(parseInt(e.target.value))}
-                      className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                      className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
                     />
                     <div className="flex justify-between text-[10px] text-slate-400 mt-1">
                       <span>18 (Near Lossless)</span>
@@ -505,7 +481,7 @@ export function VideoCompressor() {
 
                   {/* Encoding Speed Preset */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">
+                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
                       Encoding Speed
                     </label>
                     <div className="grid grid-cols-3 gap-1.5">
@@ -515,10 +491,10 @@ export function VideoCompressor() {
                           type="button"
                           onClick={() => setSpeedPreset(preset)}
                           className={`py-1.5 px-1 text-center text-xs font-semibold rounded-lg border capitalize transition-all ${
-                            speedPreset === preset
-                              ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400'
-                              : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300'
-                          }`}
+ speedPreset === preset
+ ? 'border-blue-500 bg-blue-50/50 text-blue-600'
+ : 'border-slate-200 text-slate-600 hover:border-slate-300'
+ }`}
                         >
                           {preset}
                         </button>
@@ -527,16 +503,16 @@ export function VideoCompressor() {
                   </div>
 
                   {/* Audio Mute Option */}
-                  <div className="p-3 bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-800 rounded-xl">
+                  <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl">
                     <label className="flex items-center gap-3 cursor-pointer">
                       <input
                         type="checkbox"
                         checked={muteAudio}
                         onChange={(e) => setMuteAudio(e.target.checked)}
-                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300 dark:border-slate-700"
+                        className="w-4 h-4 rounded text-blue-600 focus:ring-blue-500 border-slate-300"
                       />
                       <div className="text-xs">
-                        <div className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-1.5">
+                        <div className="font-semibold text-slate-800 flex items-center gap-1.5">
                           {muteAudio ? <VolumeX className="w-3.5 h-3.5 text-amber-500" /> : <Volume2 className="w-3.5 h-3.5" />}
                           <span>Mute Audio Track</span>
                         </div>
@@ -550,17 +526,17 @@ export function VideoCompressor() {
               )}
 
               {/* Real-time Output File Size Estimate */}
-              <div className="mt-5 p-3.5 bg-slate-100/80 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-2xl">
+              <div className="mt-5 p-3.5 bg-slate-100/80 border border-slate-200 rounded-2xl">
                 <div className="flex items-center justify-between text-xs">
-                  <span className="text-slate-500 dark:text-slate-400 font-medium">
+                  <span className="text-slate-500 font-medium">
                     Estimated Output Size:
                   </span>
                   <div className="flex items-center gap-1.5 font-bold">
-                    <span className="text-slate-900 dark:text-white">
+                    <span className="text-slate-900">
                       {metadata ? formatBytes(estimatedBytes) : '—'}
                     </span>
                     {metadata && (
-                      <span className="text-emerald-600 dark:text-emerald-400">
+                      <span className="text-emerald-600">
                         (-{estimatedSavedPct}%)
                       </span>
                     )}
@@ -571,7 +547,7 @@ export function VideoCompressor() {
 
             {/* Error Message */}
             {errorMessage && (
-              <div className="p-3 bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 rounded-xl text-xs text-red-600 dark:text-red-400">
+              <div className="p-3 bg-red-50 border border-red-200 rounded-xl text-xs text-red-600">
                 {errorMessage}
               </div>
             )}
@@ -621,69 +597,69 @@ export function VideoCompressor() {
 
         {/* Feature Highlights Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-6">
-          <div className="p-5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl space-y-2">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+          <div className="p-5 bg-white border border-slate-200/80 rounded-2xl space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center">
               <Shield className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-sm text-slate-900 dark:text-white">100% In-Browser Privacy</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <h3 className="font-bold text-sm text-slate-900">100% In-Browser Privacy</h3>
+            <p className="text-xs text-slate-500">
               Unlike cloud services that require uploading gigabytes of private footage, your video is encoded entirely inside your browser's WebAssembly sandbox.
             </p>
           </div>
 
-          <div className="p-5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl space-y-2">
-            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+          <div className="p-5 bg-white border border-slate-200/80 rounded-2xl space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-indigo-500/10 text-indigo-600 flex items-center justify-center">
               <Sliders className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-sm text-slate-900 dark:text-white">Custom Target File Size</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <h3 className="font-bold text-sm text-slate-900">Custom Target File Size</h3>
+            <p className="text-xs text-slate-500">
               Need to send a video through Discord (25MB limit) or email (20MB limit)? Enter your target MB and our engine auto-calculates the exact bitrate.
             </p>
           </div>
 
-          <div className="p-5 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-2xl space-y-2">
-            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+          <div className="p-5 bg-white border border-slate-200/80 rounded-2xl space-y-2">
+            <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center">
               <Sparkles className="w-5 h-5" />
             </div>
-            <h3 className="font-bold text-sm text-slate-900 dark:text-white">Zero Watermark Guaranteed</h3>
-            <p className="text-xs text-slate-500 dark:text-slate-400">
+            <h3 className="font-bold text-sm text-slate-900">Zero Watermark Guaranteed</h3>
+            <p className="text-xs text-slate-500">
               Export pristine, crystal-clear MP4 videos with zero forced branding, intros, or watermarks. Always clean and ready for sharing.
             </p>
           </div>
         </div>
 
         {/* FAQ Section */}
-        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800 rounded-3xl p-6 sm:p-8 space-y-6">
+        <div className="bg-white border border-slate-200/80 rounded-3xl p-6 sm:p-8 space-y-6">
           <div className="text-center space-y-1">
-            <h2 className="text-xl font-bold text-slate-900 dark:text-white">Frequently Asked Questions</h2>
+            <h2 className="text-xl font-bold text-slate-900">Frequently Asked Questions</h2>
             <p className="text-xs text-slate-500">Everything you need to know about video compression on TableView.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl space-y-1.5 border border-slate-200/60 dark:border-slate-800">
-              <h4 className="font-bold text-slate-900 dark:text-slate-100">Are my videos uploaded to any server?</h4>
-              <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div className="p-4 bg-slate-50 rounded-xl space-y-1.5 border border-slate-200/60">
+              <h4 className="font-bold text-slate-900">Are my videos uploaded to any server?</h4>
+              <p className="text-slate-500 leading-relaxed">
                 No. We use FFmpeg compiled to WebAssembly. The compression happens locally in your device's memory. No video data ever touches an external server.
               </p>
             </div>
 
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl space-y-1.5 border border-slate-200/60 dark:border-slate-800">
-              <h4 className="font-bold text-slate-900 dark:text-slate-100">How do I compress a video for Discord?</h4>
-              <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div className="p-4 bg-slate-50 rounded-xl space-y-1.5 border border-slate-200/60">
+              <h4 className="font-bold text-slate-900">How do I compress a video for Discord?</h4>
+              <p className="text-slate-500 leading-relaxed">
                 Discord imposes a 25MB attachment limit for non-Nitro users. Simply type "25" in the Target File Size box, and the video will be resized to fit.
               </p>
             </div>
 
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl space-y-1.5 border border-slate-200/60 dark:border-slate-800">
-              <h4 className="font-bold text-slate-900 dark:text-slate-100">Which formats can I compress?</h4>
-              <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div className="p-4 bg-slate-50 rounded-xl space-y-1.5 border border-slate-200/60">
+              <h4 className="font-bold text-slate-900">Which formats can I compress?</h4>
+              <p className="text-slate-500 leading-relaxed">
                 You can upload MP4, MOV, WebM, MKV, AVI, and WMV files. Output is exported as universally compatible H.264 MP4 with AAC audio.
               </p>
             </div>
 
-            <div className="p-4 bg-slate-50 dark:bg-slate-800/40 rounded-xl space-y-1.5 border border-slate-200/60 dark:border-slate-800">
-              <h4 className="font-bold text-slate-900 dark:text-slate-100">Does it cost money to compress videos?</h4>
-              <p className="text-slate-500 dark:text-slate-400 leading-relaxed">
+            <div className="p-4 bg-slate-50 rounded-xl space-y-1.5 border border-slate-200/60">
+              <h4 className="font-bold text-slate-900">Does it cost money to compress videos?</h4>
+              <p className="text-slate-500 leading-relaxed">
                 It is free to use with no watermark. Registered members receive 30 free monthly credits to process longer high-resolution videos.
               </p>
             </div>

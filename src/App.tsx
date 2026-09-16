@@ -12,7 +12,7 @@ import { SeoSection } from './components/SeoSection';
 import { CookieBanner } from './components/CookieBanner';
 import { AdSlot } from './components/AdSlot';
 import { SamplePlayground } from './components/SamplePlayground';
-import { PageSkeleton } from './components/PageSkeleton';
+import { GlobalLoading } from './components/GlobalLoading';
 import type { SamplePreset } from './lib/duckdb';
 
 // Lazy-loaded heavy components & pages for bundle optimization & instant FCP
@@ -414,6 +414,13 @@ export function App() {
   return (
     <AuthProvider>
       <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-indigo-500 selection:text-white">
+        {/* Global Loading Top Bar (active during background DuckDB queries or file processing) */}
+        {isLoading && (
+          <div className="fixed top-0 left-0 right-0 z-[100] h-[2.5px] bg-slate-200/80 overflow-hidden pointer-events-none">
+            <div className="h-full bg-gradient-to-r from-indigo-500 via-sky-500 to-indigo-600 animate-top-progress shadow-[0_0_8px_rgba(99,102,241,0.6)]" />
+          </div>
+        )}
+
         <div className="print:hidden">
           <Header
             onTrySample={handleTrySample}
@@ -423,7 +430,7 @@ export function App() {
         </div>
 
         <main className="flex-1 flex flex-col">
-          <Suspense fallback={<PageSkeleton />}>
+          <Suspense fallback={<GlobalLoading />}>
             {renderCurrentView()}
           </Suspense>
         </main>

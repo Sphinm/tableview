@@ -66,34 +66,33 @@ export const AmortizationChart: React.FC<AmortizationChartProps> = ({
   };
 
   return (
-    <div className="p-[1px] rounded-2xl bg-gradient-to-b from-slate-800/80 via-slate-800/40 to-slate-900/90 shadow-sm">
-      <div className="rounded-[calc(1rem-1px)] p-4 sm:p-5 bg-slate-950/95 shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)] space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+    <div className="rounded-2xl bg-white border border-slate-200 shadow-xs p-5 space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
         <div>
-          <h3 className="text-sm sm:text-base font-bold text-slate-100 flex items-center gap-2">
+          <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
             <span>{title}</span>
             {crossoverIndex > 0 && (
-              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-50 border border-emerald-200 text-emerald-700">
                 Principal Crossover: Yr {Math.round(data[crossoverIndex].monthIndex / 12)}
               </span>
             )}
           </h3>
-          <p className="text-xs text-slate-400 mt-0.5">{subtitle}</p>
+          <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
         </div>
 
         {/* Legend */}
         <div className="flex flex-wrap items-center gap-3 text-xs">
           <div className="flex items-center gap-1.5">
             <span className="w-3 h-0.5 bg-indigo-500 rounded" />
-            <span className="text-slate-300">Remaining Balance</span>
+            <span className="text-slate-600 font-medium">Remaining Balance</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-emerald-400 rounded" />
-            <span className="text-slate-300">Principal Paid</span>
+            <span className="w-3 h-0.5 bg-emerald-500 rounded" />
+            <span className="text-slate-600 font-medium">Principal Paid</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <span className="w-3 h-0.5 bg-rose-400 rounded" />
-            <span className="text-slate-300">Interest Paid</span>
+            <span className="w-3 h-0.5 bg-rose-500 rounded" />
+            <span className="text-slate-600 font-medium">Interest Paid</span>
           </div>
         </div>
       </div>
@@ -118,7 +117,7 @@ export const AmortizationChart: React.FC<AmortizationChartProps> = ({
         >
           <defs>
             <linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.25" />
+              <stop offset="0%" stopColor="#6366f1" stopOpacity="0.15" />
               <stop offset="100%" stopColor="#6366f1" stopOpacity="0.0" />
             </linearGradient>
           </defs>
@@ -129,7 +128,7 @@ export const AmortizationChart: React.FC<AmortizationChartProps> = ({
             const val = p * maxY;
             return (
               <g key={idx}>
-                <line x1={padLeft} y1={y} x2={width - padRight} y2={y} stroke="#1e293b" strokeDasharray="3 3" />
+                <line x1={padLeft} y1={y} x2={width - padRight} y2={y} stroke="#e2e8f0" strokeDasharray="3 3" />
                 <text x={padLeft - 8} y={y + 4} fill="#64748b" fontSize="10" textAnchor="end" fontFamily="monospace">
                   ${Math.round(val / 1000)}k
                 </text>
@@ -153,7 +152,7 @@ export const AmortizationChart: React.FC<AmortizationChartProps> = ({
           <path d={balanceArea} fill="url(#balanceGradient)" />
 
           {/* Curves */}
-          <path d={balancePath} fill="none" stroke="#6366f1" strokeWidth="2.5" strokeLinecap="round" />
+          <path d={balancePath} fill="none" stroke="#4f46e5" strokeWidth="2.5" strokeLinecap="round" />
           <path d={principalPath} fill="none" stroke="#10b981" strokeWidth="2" strokeLinecap="round" />
           <path d={interestPath} fill="none" stroke="#f43f5e" strokeWidth="2" strokeLinecap="round" strokeDasharray="4 2" />
 
@@ -165,7 +164,7 @@ export const AmortizationChart: React.FC<AmortizationChartProps> = ({
                 cy={getY(data[crossoverIndex].totalPrincipalToDate)}
                 r="4.5"
                 fill="#10b981"
-                stroke="#0f172a"
+                stroke="#ffffff"
                 strokeWidth="2"
               />
             </g>
@@ -187,35 +186,34 @@ export const AmortizationChart: React.FC<AmortizationChartProps> = ({
           {/* Active Data Points */}
           {hoverIndex !== null && (
             <g>
-              <circle cx={activeX} cy={getY(activePoint.endingBalance)} r="4" fill="#6366f1" stroke="#0f172a" strokeWidth="2" />
-              <circle cx={activeX} cy={getY(activePoint.totalPrincipalToDate)} r="4" fill="#10b981" stroke="#0f172a" strokeWidth="2" />
-              <circle cx={activeX} cy={getY(activePoint.totalInterestToDate)} r="4" fill="#f43f5e" stroke="#0f172a" strokeWidth="2" />
+              <circle cx={activeX} cy={getY(activePoint.endingBalance)} r="4" fill="#4f46e5" stroke="#ffffff" strokeWidth="2" />
+              <circle cx={activeX} cy={getY(activePoint.totalPrincipalToDate)} r="4" fill="#10b981" stroke="#ffffff" strokeWidth="2" />
+              <circle cx={activeX} cy={getY(activePoint.totalInterestToDate)} r="4" fill="#f43f5e" stroke="#ffffff" strokeWidth="2" />
             </g>
           )}
         </svg>
 
         {/* Hover Floating Details Card */}
         {activePoint && (
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-2 border-t border-slate-800 text-xs">
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-slate-400 text-[10px] block">Timeline Checkpoint</span>
-              <span className="font-bold text-slate-200">{activePoint.label}</span>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-3 border-t border-slate-100 text-xs">
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span className="text-slate-500 text-[10px] block font-medium">Timeline Checkpoint</span>
+              <span className="font-bold text-slate-900">{activePoint.label}</span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-slate-400 text-[10px] block">Remaining Balance</span>
-              <span className="font-bold font-mono text-indigo-400">{fmtCurrency(activePoint.endingBalance)}</span>
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span className="text-slate-500 text-[10px] block font-medium">Remaining Balance</span>
+              <span className="font-bold font-mono text-indigo-700">{fmtCurrency(activePoint.endingBalance)}</span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-slate-400 text-[10px] block">Cumulative Principal</span>
-              <span className="font-bold font-mono text-emerald-400">{fmtCurrency(activePoint.totalPrincipalToDate)}</span>
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span className="text-slate-500 text-[10px] block font-medium">Cumulative Principal</span>
+              <span className="font-bold font-mono text-emerald-700">{fmtCurrency(activePoint.totalPrincipalToDate)}</span>
             </div>
-            <div className="p-2 rounded-lg bg-slate-950 border border-slate-800">
-              <span className="text-slate-400 text-[10px] block">Cumulative Interest</span>
-              <span className="font-bold font-mono text-rose-400">{fmtCurrency(activePoint.totalInterestToDate)}</span>
+            <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200">
+              <span className="text-slate-500 text-[10px] block font-medium">Cumulative Interest</span>
+              <span className="font-bold font-mono text-rose-700">{fmtCurrency(activePoint.totalInterestToDate)}</span>
             </div>
           </div>
         )}
-      </div>
       </div>
     </div>
   );

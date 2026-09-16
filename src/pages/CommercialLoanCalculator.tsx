@@ -267,17 +267,17 @@ export const CommercialLoanCalculator = () => {
             <button
               type="button"
               onClick={handleCopyLink}
-              className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm active:scale-95 shrink-0"
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 cursor-pointer transition-all shadow-xs active:scale-95 shrink-0"
               title="Copy shareable link with current commercial loan parameters"
             >
               {copied ? (
                 <>
-                  <Check className="size-4 text-emerald-400" />
-                  <span className="text-emerald-400">Link Copied!</span>
+                  <Check className="size-4 text-emerald-600" />
+                  <span className="text-emerald-600">Link Copied!</span>
                 </>
               ) : (
                 <>
-                  <Share2 className="size-4 text-cyan-400" />
+                  <Share2 className="size-4 text-cyan-600" />
                   <span>Share Deal</span>
                 </>
               )}
@@ -285,7 +285,7 @@ export const CommercialLoanCalculator = () => {
             <button
               type="button"
               onClick={handleExportExcel}
-              className="btn-primary h-9 px-4 rounded-xl text-xs font-semibold inline-flex items-center gap-2 shadow-sm cursor-pointer transition-transform active:scale-95 shrink-0"
+              className="btn-primary h-9 px-4 rounded-xl text-xs font-semibold inline-flex items-center gap-2 shadow-xs cursor-pointer transition-transform active:scale-95 shrink-0"
             >
               <Download className="size-4" />
               <span>Export Deal Sheet (.xlsx)</span>
@@ -296,33 +296,33 @@ export const CommercialLoanCalculator = () => {
 
       {/* Balloon Maturity Risk Alert Banner */}
       {summary.hasBalloonPayment && (
-        <div className={`p-6 rounded-2xl border mb-8 shadow-xl ${
+        <div className={`p-6 rounded-2xl border mb-8 shadow-xs ${
           summary.refinanceRiskLevel === 'High'
-            ? 'bg-amber-950/20 border-amber-500/40 shadow-amber-500/5'
-            : 'bg-indigo-950/20 border-indigo-500/40'
+            ? 'bg-amber-50/80 border-amber-200 text-slate-900'
+            : 'bg-indigo-50/80 border-indigo-200 text-slate-900'
         }`}>
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-2 max-w-3xl">
               <div className="flex items-center gap-2">
-                <AlertTriangle className={`size-4 ${summary.refinanceRiskLevel === 'High' ? 'text-amber-400' : 'text-indigo-400'}`} />
-                <span className={`text-xs font-bold uppercase tracking-wider ${summary.refinanceRiskLevel === 'High' ? 'text-amber-400' : 'text-indigo-400'}`}>
+                <AlertTriangle className={`size-4 ${summary.refinanceRiskLevel === 'High' ? 'text-amber-600' : 'text-indigo-600'}`} />
+                <span className={`text-xs font-bold uppercase tracking-wider ${summary.refinanceRiskLevel === 'High' ? 'text-amber-700' : 'text-indigo-700'}`}>
                   Year {summary.balloonTermYears} Balloon Due Notice ({summary.refinanceRiskLevel} Refinance Risk)
                 </span>
               </div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-100">
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
                 Lump Sum Balloon Due: ${summary.balloonDueAmount.toLocaleString()} ({summary.balloonDuePercentOfOriginal}% of original principal)
               </h2>
-              <p className="text-sm text-slate-300 leading-relaxed">
+              <p className="text-sm text-slate-600 leading-relaxed">
                 {summary.refinanceAnalysis}
               </p>
             </div>
 
-            <div className="bg-slate-950/80 p-4 rounded-xl border border-slate-800 shrink-0 text-right min-w-[200px]">
-              <span className="text-[11px] text-slate-400 block font-medium">Monthly Debt Service</span>
-              <span className="text-2xl font-bold font-mono text-cyan-300">
+            <div className="bg-white p-4 rounded-xl border border-slate-200 shrink-0 text-right min-w-[200px] shadow-xs">
+              <span className="text-[11px] text-slate-500 block font-medium">Monthly Debt Service</span>
+              <span className="text-2xl font-bold font-mono text-cyan-700">
                 ${summary.regularMonthlyPayment.toLocaleString()}
               </span>
-              <span className="text-[11px] text-slate-400 block mt-1">
+              <span className="text-[11px] text-slate-500 block mt-1">
                 {inputs.amortizationYears}-Yr Amortization
               </span>
             </div>
@@ -352,15 +352,15 @@ export const CommercialLoanCalculator = () => {
       {/* Main Grid: Inputs vs Results */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
         {/* Left Inputs (7 cols) */}
-        <div className="lg:col-span-7 p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm space-y-5">
-          <div className="border-b border-slate-800 pb-3 flex items-center justify-between">
-            <h3 className="text-base font-bold text-slate-100">Commercial Loan Parameters</h3>
-            <span className="text-xs font-mono text-slate-400">Pure Local Processing</span>
+        <div className="lg:col-span-7 p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-5">
+          <div className="border-b border-slate-200 pb-3 flex items-center justify-between">
+            <h3 className="text-base font-bold text-slate-900">Commercial Loan Parameters</h3>
+            <span className="text-xs font-mono text-slate-500">Pure Local Processing</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Property Purchase Price ($)</label>
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">Property Purchase Price ($)</label>
               <CurrencyInput
                 value={inputs.propertyPrice}
                 onChange={(val) => setInputs({ ...inputs, propertyPrice: val })}
@@ -369,14 +369,14 @@ export const CommercialLoanCalculator = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Down Payment (%)</label>
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">Down Payment (%)</label>
               <NumericInput
                 value={inputs.downPaymentPercent}
                 onChange={(val) => setInputs({ ...inputs, downPaymentPercent: val })}
                 suffix="%"
                 className="focus:border-cyan-500"
               />
-              <span className="text-[11px] text-slate-400 mt-1 block">
+              <span className="text-[11px] text-slate-500 mt-1 block">
                 Cash Down: ${summary.downPaymentAmount.toLocaleString()} (Loan: ${summary.loanAmount.toLocaleString()})
               </span>
             </div>
@@ -384,7 +384,7 @@ export const CommercialLoanCalculator = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Interest Rate (APR %)</label>
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">Interest Rate (APR %)</label>
               <NumericInput
                 value={inputs.interestRate}
                 onChange={(val) => setInputs({ ...inputs, interestRate: val })}
@@ -394,11 +394,11 @@ export const CommercialLoanCalculator = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Amortization (Years)</label>
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">Amortization (Years)</label>
               <select
                 value={inputs.amortizationYears}
                 onChange={(e) => setInputs({ ...inputs, amortizationYears: Number(e.target.value) })}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-semibold text-slate-100 focus:border-cyan-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:outline-none"
               >
                 <option value={15}>15 Years</option>
                 <option value={20}>20 Years</option>
@@ -408,11 +408,11 @@ export const CommercialLoanCalculator = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Balloon Term (Due In)</label>
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">Balloon Term (Due In)</label>
               <select
                 value={inputs.balloonTermYears}
                 onChange={(e) => setInputs({ ...inputs, balloonTermYears: Number(e.target.value) })}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-semibold text-slate-100 focus:border-cyan-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:outline-none"
               >
                 <option value={3}>3 Years</option>
                 <option value={5}>5 Years (Typical CRE)</option>
@@ -423,13 +423,13 @@ export const CommercialLoanCalculator = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-800/80">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-200">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Interest-Only Period</label>
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">Interest-Only Period</label>
               <select
                 value={inputs.interestOnlyMonths}
                 onChange={(e) => setInputs({ ...inputs, interestOnlyMonths: Number(e.target.value) })}
-                className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-semibold text-slate-100 focus:border-cyan-500 focus:outline-none"
+                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:border-cyan-500 focus:outline-none"
               >
                 <option value={0}>0 Months (None)</option>
                 <option value={12}>12 Months (1 Year)</option>
@@ -439,7 +439,7 @@ export const CommercialLoanCalculator = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Lender Points (%)</label>
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">Lender Points (%)</label>
               <NumericInput
                 value={inputs.originationPoints ?? 0}
                 onChange={(val) => setInputs({ ...inputs, originationPoints: val })}
@@ -449,7 +449,7 @@ export const CommercialLoanCalculator = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Closing Fees ($)</label>
+              <label className="block text-xs font-medium text-slate-700 mb-1.5">Closing Fees ($)</label>
               <CurrencyInput
                 value={inputs.closingFees ?? 0}
                 onChange={(val) => setInputs({ ...inputs, closingFees: val })}
@@ -460,62 +460,62 @@ export const CommercialLoanCalculator = () => {
         </div>
 
         {/* Right Financial Metrics (5 cols) */}
-        <div className="lg:col-span-5 p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm flex flex-col justify-between">
+        <div className="lg:col-span-5 p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
           <div>
-            <h3 className="text-base font-bold text-slate-100 pb-3 mb-5 border-b border-slate-800">
+            <h3 className="text-base font-bold text-slate-900 pb-3 mb-5 border-b border-slate-200">
               Debt Service & Equity Summary
             </h3>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800/60">
-                <span className="text-xs text-slate-400">Monthly P&I Debt Service</span>
-                <span className="text-lg font-bold font-mono text-cyan-400">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <span className="text-xs text-slate-500">Monthly P&I Debt Service</span>
+                <span className="text-lg font-bold font-mono text-cyan-600">
                   ${summary.regularMonthlyPayment.toLocaleString()}/mo
                 </span>
               </div>
 
               {Boolean(inputs.interestOnlyMonths) && (
-                <div className="flex items-center justify-between pb-3 border-b border-slate-800/60">
-                  <span className="text-xs text-slate-400">Initial IO Payment</span>
-                  <span className="text-sm font-mono text-indigo-300">
+                <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                  <span className="text-xs text-slate-500">Initial IO Payment</span>
+                  <span className="text-sm font-mono text-indigo-600">
                     ${summary.interestOnlyMonthlyPayment.toLocaleString()}/mo
                   </span>
                 </div>
               )}
 
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800/60">
-                <span className="text-xs text-slate-400">Upfront Points & Fees</span>
-                <span className="text-sm font-mono text-slate-300">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <span className="text-xs text-slate-500">Upfront Points & Fees</span>
+                <span className="text-sm font-mono text-slate-800">
                   ${summary.upfrontCosts.toLocaleString()}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800/60">
-                <span className="text-xs text-slate-400">Principal Paid by Balloon</span>
-                <span className="text-sm font-mono text-emerald-400">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <span className="text-xs text-slate-500">Principal Paid by Balloon</span>
+                <span className="text-sm font-mono text-emerald-600 font-medium">
                   ${summary.totalPrincipalBeforeBalloon.toLocaleString()}
                 </span>
               </div>
 
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800/60">
-                <span className="text-xs text-slate-400">Interest Paid by Balloon</span>
-                <span className="text-sm font-mono text-slate-300">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <span className="text-xs text-slate-500">Interest Paid by Balloon</span>
+                <span className="text-sm font-mono text-slate-800">
                   ${summary.totalInterestBeforeBalloon.toLocaleString()}
                 </span>
               </div>
 
               <div className="flex items-center justify-between font-bold pt-1">
-                <span className="text-xs text-slate-200">Balloon Maturity Lump Sum</span>
-                <span className="text-base font-mono text-amber-400">
+                <span className="text-xs text-slate-900">Balloon Maturity Lump Sum</span>
+                <span className="text-base font-mono text-amber-600">
                   ${summary.balloonDueAmount.toLocaleString()}
                 </span>
               </div>
             </div>
           </div>
 
-          <div className="mt-8 p-4 rounded-xl bg-slate-950/80 border border-slate-800/80 text-xs text-slate-400 space-y-1">
-            <div className="flex items-center gap-1.5 text-slate-200 font-medium mb-1">
-              <ShieldCheck className="size-4 text-emerald-400" />
+          <div className="mt-8 p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
+            <div className="flex items-center gap-1.5 text-slate-900 font-medium mb-1">
+              <ShieldCheck className="size-4 text-emerald-600" />
               <span>Institutional CRE Underwriting</span>
             </div>
             <p>Calculates standard US 30/360 commercial bank amortization with full transparency on balloon debt expiration.</p>
@@ -524,16 +524,16 @@ export const CommercialLoanCalculator = () => {
       </div>
 
       {/* Year-by-Year Amortization Schedule Table */}
-      <div className="mb-14 rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden shadow-lg">
-        <div className="p-5 border-b border-slate-800 bg-slate-950/80 flex items-center justify-between">
-          <h3 className="text-base font-bold text-slate-100">Annual Commercial Amortization Matrix</h3>
-          <span className="text-xs text-slate-400 font-mono">Until Year {summary.balloonTermYears} Maturity</span>
+      <div className="mb-14 rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs">
+        <div className="p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+          <h3 className="text-base font-bold text-slate-900">Annual Commercial Amortization Matrix</h3>
+          <span className="text-xs text-slate-500 font-mono">Until Year {summary.balloonTermYears} Maturity</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-slate-800 text-xs text-slate-400 bg-slate-950/40">
+              <tr className="border-b border-slate-200 text-xs text-slate-600 bg-slate-50/50">
                 <th className="p-4 font-semibold">Year</th>
                 <th className="p-4 font-semibold">Annual Payments</th>
                 <th className="p-4 font-semibold">Principal Paid</th>
@@ -541,17 +541,17 @@ export const CommercialLoanCalculator = () => {
                 <th className="p-4 font-semibold text-right">Remaining Loan Balance</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-xs">
+            <tbody className="divide-y divide-slate-100 text-xs">
               {summary.yearlySchedule.map((row) => (
-                <tr key={row.year} className="hover:bg-slate-900/40">
-                  <td className="p-4 font-mono font-medium text-slate-200">Year {row.year}</td>
-                  <td className="p-4 font-mono text-slate-300">${row.paymentsTotal.toLocaleString()}</td>
-                  <td className="p-4 font-mono text-emerald-400 font-medium">${row.principalTotal.toLocaleString()}</td>
-                  <td className="p-4 font-mono text-slate-400">${row.interestTotal.toLocaleString()}</td>
-                  <td className="p-4 font-mono text-right font-bold text-slate-100">
+                <tr key={row.year} className="hover:bg-slate-50/80 transition-colors">
+                  <td className="p-4 font-mono font-medium text-slate-900">Year {row.year}</td>
+                  <td className="p-4 font-mono text-slate-700">${row.paymentsTotal.toLocaleString()}</td>
+                  <td className="p-4 font-mono text-emerald-600 font-medium">${row.principalTotal.toLocaleString()}</td>
+                  <td className="p-4 font-mono text-slate-600">${row.interestTotal.toLocaleString()}</td>
+                  <td className="p-4 font-mono text-right font-bold text-slate-900">
                     ${row.endingBalance.toLocaleString()}
                     {row.year === summary.balloonTermYears && summary.hasBalloonPayment && (
-                      <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 text-amber-400 border border-amber-500/30">
+                      <span className="ml-2 text-[10px] px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 border border-amber-200 font-medium">
                         Balloon Due
                       </span>
                     )}
@@ -563,12 +563,12 @@ export const CommercialLoanCalculator = () => {
         </div>
 
         {/* In-Browser Excel Viewer contextual link */}
-        <div className="p-3.5 bg-slate-950/80 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+        <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
           <span>Need to model custom commercial lease assumptions or stress-test balloon payoffs?</span>
           <a
             href="/excel-viewer"
             onClick={(e) => { e.preventDefault(); navigateTo('/excel-viewer'); }}
-            className="text-cyan-400 hover:text-cyan-300 transition-colors inline-flex items-center gap-1 font-semibold"
+            className="text-cyan-600 hover:text-cyan-700 transition-colors inline-flex items-center gap-1 font-semibold"
           >
             <span>Open in Free In-Browser Excel Viewer</span>
             <ArrowRight className="size-3" />
@@ -578,23 +578,23 @@ export const CommercialLoanCalculator = () => {
 
       {/* FAQs */}
       <div className="max-w-3xl mx-auto mb-12">
-        <h2 className="text-xl sm:text-2xl font-bold text-slate-100 text-center mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 text-center mb-6">
           Commercial Loan & Balloon Payment FAQs
         </h2>
         <div className="space-y-3">
           {faqs.map((faq, index) => {
             const isOpen = openFaq === index;
             return (
-              <div key={index} className="rounded-xl bg-slate-900/80 border border-slate-800 overflow-hidden">
+              <div key={index} className="rounded-xl bg-white border border-slate-200 overflow-hidden shadow-xs">
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : index)}
-                  className="w-full p-4 text-left flex items-center justify-between gap-4 cursor-pointer"
+                  className="w-full p-4 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-slate-50 transition-colors"
                 >
-                  <span className="text-sm font-semibold text-slate-200">{faq.q}</span>
-                  <ChevronDown className={`size-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180 text-cyan-400' : ''}`} />
+                  <span className="text-sm font-semibold text-slate-900">{faq.q}</span>
+                  <ChevronDown className={`size-4 text-slate-500 transition-transform ${isOpen ? 'rotate-180 text-cyan-600' : ''}`} />
                 </button>
                 {isOpen && (
-                  <div className="px-4 pb-4 text-xs text-slate-400 leading-relaxed border-t border-slate-800/60 pt-3">
+                  <div className="px-4 pb-4 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                     {faq.a}
                   </div>
                 )}

@@ -412,7 +412,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
   return (
     <>
       {/* data-sentry-mask: purchase price, ARV and rehab budget are the user's own deal. */}
-      <div data-sentry-mask="true" className="print:hidden min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
+      <div data-sentry-mask="true" className="print:hidden min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-indigo-500 selection:text-white pb-20 lg:pb-0">
       <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
         <PageHeader
           breadcrumbs={[
@@ -432,17 +432,17 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               <button
                 type="button"
                 onClick={handleCopyLink}
-                className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm active:scale-95 shrink-0"
+                className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 cursor-pointer transition-all shadow-xs active:scale-95 shrink-0"
                 title="Copy shareable link with current deal parameters"
               >
                 {copiedLink ? (
                   <>
-                    <Check className="size-4 text-emerald-400" />
-                    <span className="text-emerald-400">Link Copied!</span>
+                    <Check className="size-4 text-emerald-600" />
+                    <span className="text-emerald-600 font-medium">Link Copied!</span>
                   </>
                 ) : (
                   <>
-                    <Share2 className="size-4 text-amber-400" />
+                    <Share2 className="size-4 text-amber-600" />
                     <span>Share Deal</span>
                   </>
                 )}
@@ -463,17 +463,17 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Form Inputs (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-5">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-3">
-                <Hammer className="size-4.5 text-amber-400" />
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-5">
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                <Hammer className="size-4.5 text-amber-600" />
                 <span>Property & Renovation Numbers</span>
               </h2>
 
               {/* Purchase Price */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5 flex justify-between">
+                <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex justify-between">
                   <span>Acquisition / Purchase Price</span>
-                  <span className="text-slate-100 font-mono font-bold">{currencyFmt(purchasePrice)}</span>
+                  <span className="text-slate-900 font-mono font-bold">{currencyFmt(purchasePrice)}</span>
                 </label>
                 <CurrencyInput
                   value={purchasePrice}
@@ -485,7 +485,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               {/* Rehab Budget & ARV */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Rehab Budget ($)
                   </label>
                   <CurrencyInput
@@ -496,26 +496,26 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     After Repair Value (ARV)
                   </label>
                   <CurrencyInput
                     value={afterRepairValue}
                     onChange={(v) => setAfterRepairValue(Math.max(0, v))}
-                    className="py-2 text-base sm:text-sm font-mono font-bold text-amber-300 focus:border-amber-500"
+                    className="py-2 text-base sm:text-sm font-mono font-bold text-amber-700 focus:border-amber-500"
                   />
                 </div>
               </div>
 
               {/* Financing Terms */}
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pt-3 pb-3">
-                <DollarSign className="size-4.5 text-emerald-400" />
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pt-3 pb-3">
+                <DollarSign className="size-4.5 text-emerald-600" />
                 <span>Hard Money Loan Terms</span>
               </h2>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Purchase LTV (%)
                   </label>
                   <NumericInput
@@ -527,7 +527,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Rehab Financed (%)
                   </label>
                   <NumericInput
@@ -541,7 +541,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Interest Rate (%)
                   </label>
                   <NumericInput
@@ -554,7 +554,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Origination Points
                   </label>
                   <NumericInput
@@ -567,7 +567,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Underwriting / Admin ($)
                   </label>
                   <CurrencyInput
@@ -581,13 +581,13 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               {/* Project Timeline & Holding */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Holding Period (Months)
                   </label>
                   <select
                     value={projectDurationMonths}
                     onChange={(e) => setProjectDurationMonths(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-base sm:text-sm text-slate-200 font-mono focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-base sm:text-sm text-slate-900 font-mono focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"
                   >
                     <option value={3}>3 Months (Rapid Flip)</option>
                     <option value={6}>6 Months (Standard)</option>
@@ -597,7 +597,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Monthly Holding Cost ($)
                   </label>
                   <CurrencyInput
@@ -611,7 +611,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               {/* Selling Costs */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Realtor Commission (%)
                   </label>
                   <NumericInput
@@ -624,7 +624,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Exit Closing Cost (%)
                   </label>
                   <NumericInput
@@ -642,16 +642,16 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
           {/* Right Column: Profit & 70% Rule Dashboard (7 cols) */}
           <div id="hardmoney-results" className="lg:col-span-7 space-y-6 scroll-mt-20">
             {/* Net Profit Hero Card */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-amber-950/40 border border-slate-800 shadow-2xl">
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold block">
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold block">
                     Estimated Net Flip Profit
                   </span>
                   <div className="flex items-baseline gap-3 mt-1">
                     <span
                       className={`text-4xl sm:text-5xl font-black font-mono tracking-tight ${
-                        result.netProfit >= 0 ? 'text-emerald-400' : 'text-red-400'
+                        result.netProfit >= 0 ? 'text-emerald-600' : 'text-red-600'
                       }`}
                     >
                       {result.netProfit >= 0 ? '+' : ''}
@@ -660,12 +660,12 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <span
                       className={`text-sm font-semibold px-2.5 py-1 rounded-md border ${
                         result.dealVerdict === 'excellent'
-                          ? 'bg-emerald-950/80 text-emerald-300 border-emerald-800'
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
                           : result.dealVerdict === 'profitable'
-                          ? 'bg-indigo-950/80 text-indigo-300 border-indigo-800'
+                          ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
                           : result.dealVerdict === 'marginal'
-                          ? 'bg-amber-950/80 text-amber-300 border-amber-800'
-                          : 'bg-red-950/80 text-red-300 border-red-800'
+                          ? 'bg-amber-50 text-amber-800 border-amber-200'
+                          : 'bg-red-50 text-red-700 border-red-200'
                       }`}
                     >
                       {result.verdictLabel}
@@ -674,8 +674,8 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div className="text-right">
-                  <span className="text-xs text-slate-400 block">Cash-on-Cash Return</span>
-                  <span className="text-2xl font-black font-mono text-amber-400 mt-0.5 block">
+                  <span className="text-xs text-slate-500 block">Cash-on-Cash Return</span>
+                  <span className="text-2xl font-black font-mono text-amber-600 mt-0.5 block">
                     {result.roiPercent}%
                   </span>
                   <span className="text-[11px] text-slate-500">
@@ -684,37 +684,37 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
               </div>
 
-              <p className="mt-4 text-xs text-slate-300 leading-relaxed bg-slate-950/60 p-3 rounded-xl border border-slate-800">
+              <p className="mt-4 text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200">
                 {result.verdictDescription}
               </p>
 
               {/* 70% Rule Banner */}
-              <div className="mt-5 p-3.5 rounded-xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-3">
+              <div className="mt-5 p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
                   {result.is70RuleCompliant ? (
-                    <div className="p-1.5 rounded-lg bg-emerald-950 text-emerald-400 border border-emerald-800">
+                    <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700 border border-emerald-200">
                       <ShieldCheck className="size-4" />
                     </div>
                   ) : (
-                    <div className="p-1.5 rounded-lg bg-amber-950 text-amber-400 border border-amber-800">
+                    <div className="p-1.5 rounded-lg bg-amber-100 text-amber-800 border border-amber-200">
                       <AlertTriangle className="size-4" />
                     </div>
                   )}
                   <div>
-                    <span className="text-xs font-bold text-slate-200 block">
+                    <span className="text-xs font-bold text-slate-900 block">
                       70% House Flipping Rule Check
                     </span>
-                    <span className="text-[11px] text-slate-400">
-                      Maximum Allowable Offer (MAO): <strong className="text-slate-200">{currencyFmt(result.maxAllowableOffer70Rule)}</strong>
+                    <span className="text-[11px] text-slate-500">
+                      Maximum Allowable Offer (MAO): <strong className="text-slate-900">{currencyFmt(result.maxAllowableOffer70Rule)}</strong>
                     </span>
                   </div>
                 </div>
 
                 <span
-                  className={`text-xs font-bold font-mono px-2 py-1 rounded ${
+                  className={`text-xs font-bold font-mono px-2.5 py-1 rounded-md border ${
                     result.is70RuleCompliant
-                      ? 'bg-emerald-500/20 text-emerald-400'
-                      : 'bg-amber-500/20 text-amber-400'
+                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : 'bg-amber-50 text-amber-800 border-amber-200'
                   }`}
                 >
                   {result.is70RuleCompliant ? 'PASSES 70% RULE' : 'EXCEEDS 70% TARGET'}
@@ -724,36 +724,36 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
             {/* Financial Highlights */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block">Total Loan</span>
-                <span className="text-base font-bold font-mono text-slate-100 mt-0.5 block">
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
+                <span className="text-[11px] text-slate-500 block">Total Loan</span>
+                <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">
                   {currencyFmt(result.totalLoanAmount)}
                 </span>
-                <span className="text-[10px] text-slate-500">Purchase + Rehab</span>
+                <span className="text-[10px] text-slate-400">Purchase + Rehab</span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block">Initial Cash</span>
-                <span className="text-base font-bold font-mono text-amber-400 mt-0.5 block">
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
+                <span className="text-[11px] text-slate-500 block">Initial Cash</span>
+                <span className="text-base font-bold font-mono text-amber-600 mt-0.5 block">
                   {currencyFmt(result.initialCashRequired)}
                 </span>
-                <span className="text-[10px] text-slate-500">Down + Points + Fees</span>
+                <span className="text-[10px] text-slate-400">Down + Points + Fees</span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block">Monthly Interest</span>
-                <span className="text-base font-bold font-mono text-slate-100 mt-0.5 block">
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
+                <span className="text-[11px] text-slate-500 block">Monthly Interest</span>
+                <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">
                   {currencyDecFmt(result.monthlyInterestPayment)}
                 </span>
-                <span className="text-[10px] text-slate-500">Interest-only</span>
+                <span className="text-[10px] text-slate-400">Interest-only</span>
               </div>
 
-              <div className="p-3.5 rounded-xl bg-slate-900 border border-slate-800">
-                <span className="text-[11px] text-slate-400 block">Total Cost</span>
-                <span className="text-base font-bold font-mono text-slate-100 mt-0.5 block">
+              <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
+                <span className="text-[11px] text-slate-500 block">Total Cost</span>
+                <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">
                   {currencyFmt(result.totalProjectCost)}
                 </span>
-                <span className="text-[10px] text-slate-500">All-in basis</span>
+                <span className="text-[10px] text-slate-400">All-in basis</span>
               </div>
             </div>
 
@@ -774,60 +774,60 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
             />
 
             {/* Comprehensive Cost Waterfall Table */}
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-3">
-              <h3 className="text-sm font-bold text-slate-100 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center justify-between">
                 <span>Total Project Cost Waterfall</span>
-                <span className="text-xs font-mono text-slate-400">
+                <span className="text-xs font-mono text-slate-500">
                   Total Holding: {currencyFmt(result.totalInterestPaid + result.totalHoldingCosts)}
                 </span>
               </h3>
 
               <div className="space-y-2 text-xs font-mono">
-                <div className="flex justify-between items-center py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-300">1. Property Acquisition Price</span>
-                  <span className="text-slate-100 font-bold">{currencyFmt(purchasePrice)}</span>
+                <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                  <span className="text-slate-600">1. Property Acquisition Price</span>
+                  <span className="text-slate-900 font-bold">{currencyFmt(purchasePrice)}</span>
                 </div>
-                <div className="flex justify-between items-center py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-300">2. Rehab & Construction Budget</span>
-                  <span className="text-slate-100">{currencyFmt(rehabBudget)}</span>
+                <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                  <span className="text-slate-600">2. Rehab & Construction Budget</span>
+                  <span className="text-slate-900">{currencyFmt(rehabBudget)}</span>
                 </div>
-                <div className="flex justify-between items-center py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-300">
+                <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                  <span className="text-slate-600">
                     3. Lender Origination Points ({originationPoints} pts) & Fees
                   </span>
-                  <span className="text-slate-100">{currencyFmt(result.originationPointsCost + lenderUnderwritingFees)}</span>
+                  <span className="text-slate-900">{currencyFmt(result.originationPointsCost + lenderUnderwritingFees)}</span>
                 </div>
-                <div className="flex justify-between items-center py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-300">
+                <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                  <span className="text-slate-600">
                     4. Holding Interest ({projectDurationMonths} mos @ {interestRate}%)
                   </span>
-                  <span className="text-amber-400">{currencyDecFmt(result.totalInterestPaid)}</span>
+                  <span className="text-amber-600 font-semibold">{currencyDecFmt(result.totalInterestPaid)}</span>
                 </div>
-                <div className="flex justify-between items-center py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-300">
+                <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                  <span className="text-slate-600">
                     5. Utilities, Property Tax, Insurance Holding Costs
                   </span>
-                  <span className="text-slate-100">{currencyFmt(result.totalHoldingCosts)}</span>
+                  <span className="text-slate-900">{currencyFmt(result.totalHoldingCosts)}</span>
                 </div>
-                <div className="flex justify-between items-center py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-300">
+                <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                  <span className="text-slate-600">
                     6. Exit Selling Realtor Commission ({realtorCommissionPercent}%) & Closing
                   </span>
-                  <span className="text-slate-100">{currencyFmt(result.totalExitCosts)}</span>
+                  <span className="text-slate-900">{currencyFmt(result.totalExitCosts)}</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 font-bold text-sm">
-                  <span className="text-emerald-400">Gross Sale Price (ARV)</span>
-                  <span className="text-emerald-400">{currencyFmt(afterRepairValue)}</span>
+                  <span className="text-emerald-700">Gross Sale Price (ARV)</span>
+                  <span className="text-emerald-700">{currencyFmt(afterRepairValue)}</span>
                 </div>
               </div>
             </div>
 
             {/* Action Card */}
-            <div className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900 border border-slate-800">
+            <div className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleExportPdf}
-                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 border border-amber-500/30 text-xs font-semibold text-amber-400 cursor-pointer transition-colors shadow-sm"
+                  className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-amber-50 hover:bg-amber-100 border border-amber-200 text-xs font-semibold text-amber-800 cursor-pointer transition-colors shadow-2xs"
                   title="Print or export Deal Sheet as vector PDF"
                 >
                   <Printer className="size-4" />
@@ -835,14 +835,14 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </button>
                 <button
                   onClick={handleExportExcel}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-800 text-xs font-semibold text-emerald-300 cursor-pointer transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-xs font-semibold text-emerald-800 cursor-pointer transition-colors"
                 >
                   <FileSpreadsheet className="size-4" />
                   <span>Download Deal Sheet (.xlsx)</span>
                 </button>
                 <button
                   onClick={handleExportCsv}
-                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-medium text-slate-300 cursor-pointer transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 border border-slate-200 text-xs font-medium text-slate-700 cursor-pointer transition-colors"
                 >
                   <Download className="size-3.5" />
                   <span>CSV</span>
@@ -851,7 +851,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
               <button
                 onClick={handleCopyLink}
-                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-xs font-semibold text-white cursor-pointer transition-colors"
+                className="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-xs font-semibold text-white cursor-pointer transition-colors shadow-xs"
               >
                 {copiedLink ? 'Link Copied!' : 'Share This Deal'}
               </button>
@@ -860,36 +860,36 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
         </div>
 
         {/* Section 3: The 70% Rule Formula, Underwriting Matrix & Educational Guide */}
-        <div className="mt-16 pt-10 border-t border-slate-800 space-y-12">
+        <div className="mt-16 pt-10 border-t border-slate-200 space-y-12">
           {/* Subsection 1: Mathematical 70% Rule Breakdown */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-100 mb-4 flex items-center gap-2">
-                <BookOpen className="size-6 text-indigo-400" />
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+                <BookOpen className="size-6 text-indigo-600" />
                 The 70% Rule in House Flipping: Formula & Sizing
               </h2>
-              <div className="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+              <div className="space-y-3 text-xs sm:text-sm text-slate-600 leading-relaxed">
                 <p>
                   The <strong>70% Rule</strong> is the quintessential underwriting benchmark used by real estate investors, wholesalers, and hard money lenders to evaluate fix-and-flip acquisitions. It determines the <strong>Maximum Allowable Offer (MAO)</strong> an investor should pay to ensure healthy profit margins and protect against unforeseen market downturns.
                 </p>
-                <div className="p-4 bg-slate-900 border border-slate-800 rounded-xl font-mono text-xs sm:text-sm text-indigo-300">
+                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl font-mono text-xs sm:text-sm text-indigo-700">
                   <div className="text-center font-bold mb-1">MAO = (After Repair Value × 70%) − Rehab Budget</div>
-                  <div className="text-slate-400 text-center text-xs font-normal">Where ARV is the verified post-renovation comparable sales value</div>
+                  <div className="text-slate-500 text-center text-xs font-normal">Where ARV is the verified post-renovation comparable sales value</div>
                 </div>
-                <p className="text-slate-300">
+                <p className="text-slate-700">
                   The remaining <strong>30% margin</strong> is deliberately calibrated to absorb real estate project friction:
                 </p>
                 <ul className="space-y-2 pt-1">
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span><strong>8% – 10% Transaction Costs:</strong> Buy/sell closing costs, title insurance, transfer taxes, and 5%–6% exit realtor commissions.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span><strong>6% – 8% Financing & Holding:</strong> Lender origination points, monthly interest-only payments, property taxes, insurance, and utilities during construction.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
                     <span><strong>12% – 15% Net Investor Profit:</strong> The target profit spread compensating the operator for risk, capital outlay, and general contracting execution.</span>
                   </li>
                 </ul>
@@ -897,38 +897,38 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
             </div>
 
             {/* Practical 70% Rule Example Card */}
-            <div className="p-6 rounded-2xl bg-slate-900/90 border border-slate-800 shadow-xl space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400">70% Rule Case Study</span>
-                <span className="text-xs font-mono px-2 py-0.5 rounded bg-indigo-950 text-indigo-300 border border-indigo-800/60">$390k ARV Model</span>
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-4">
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <span className="text-xs font-semibold uppercase tracking-wider text-indigo-600">70% Rule Case Study</span>
+                <span className="text-xs font-mono px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200">$390k ARV Model</span>
               </div>
               <div className="space-y-2 text-xs font-mono">
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">After Repair Value (ARV)</span>
-                  <span className="text-slate-200 font-semibold">$390,000</span>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">After Repair Value (ARV)</span>
+                  <span className="text-slate-900 font-semibold">$390,000</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">70% Baseline Target ($390k × 0.70)</span>
-                  <span className="text-slate-200">$273,000</span>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">70% Baseline Target ($390k × 0.70)</span>
+                  <span className="text-slate-900">$273,000</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Less: Estimated Rehab Budget</span>
-                  <span className="text-rose-400">−$65,000</span>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">Less: Estimated Rehab Budget</span>
+                  <span className="text-rose-600 font-semibold">−$65,000</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-300 font-bold">Maximum Allowable Offer (MAO)</span>
-                  <span className="text-emerald-400 font-bold">$208,000</span>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-600 font-bold">Maximum Allowable Offer (MAO)</span>
+                  <span className="text-emerald-700 font-bold">$208,000</span>
                 </div>
-                <div className="flex justify-between py-1 border-b border-slate-800/60">
-                  <span className="text-slate-400">Actual Purchase Contract</span>
-                  <span className="text-amber-400">$240,000</span>
+                <div className="flex justify-between py-1 border-b border-slate-100">
+                  <span className="text-slate-500">Actual Purchase Contract</span>
+                  <span className="text-amber-700 font-semibold">$240,000</span>
                 </div>
                 <div className="flex justify-between pt-2 text-sm font-bold">
-                  <span className="text-indigo-300">Purchase vs MAO Variance</span>
-                  <span className="text-amber-400">+$32,000 (Slightly Tight Margin)</span>
+                  <span className="text-indigo-700">Purchase vs MAO Variance</span>
+                  <span className="text-amber-700">+$32,000 (Slightly Tight Margin)</span>
                 </div>
               </div>
-              <p className="text-[11px] text-slate-400 italic">
+              <p className="text-[11px] text-slate-500 italic">
                 Pro tip: When purchasing above the strict 70% MAO, negotiate seller concessions or compress construction duration to prevent carrying interest from eroding net returns.
               </p>
             </div>
@@ -938,17 +938,17 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h3 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
-                  <ShieldCheck className="size-5 text-indigo-400" />
+                <h3 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <ShieldCheck className="size-5 text-indigo-600" />
                   Hard Money vs DSCR vs Private Money vs Conventional Mortgages
                 </h3>
-                <p className="text-xs text-slate-400">Evaluate financing vehicle tradeoffs based on project stage, asset condition, and capital velocity.</p>
+                <p className="text-xs text-slate-600">Evaluate financing vehicle tradeoffs based on project stage, asset condition, and capital velocity.</p>
               </div>
             </div>
 
-            <div className="overflow-x-auto rounded-2xl border border-slate-800 shadow-xl">
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs bg-white">
               <table className="w-full text-left text-xs border-collapse">
-                <thead className="bg-slate-900 border-b border-slate-800 text-slate-300 font-semibold">
+                <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold">
                   <tr>
                     <th className="p-3.5">Loan Category</th>
                     <th className="p-3.5">Primary Use Case</th>
@@ -958,38 +958,38 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <th className="p-3.5">Income / Underwriting Basis</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 bg-slate-950">
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-amber-400">Hard Money Loan</td>
-                    <td className="p-3.5 text-slate-200">Fix & flip, distressed rehab, heavy value-add</td>
-                    <td className="p-3.5 text-emerald-400 font-semibold">5 to 10 Days</td>
-                    <td className="p-3.5 text-slate-300">9.5% – 13.5% (Interest-Only, 6–18 mos)</td>
-                    <td className="p-3.5 text-emerald-400 font-semibold">Up to 100% of Rehab in Escrow</td>
-                    <td className="p-3.5 text-slate-300">Collateral ARV & borrower flip track record</td>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-bold text-amber-700">Hard Money Loan</td>
+                    <td className="p-3.5 text-slate-800">Fix & flip, distressed rehab, heavy value-add</td>
+                    <td className="p-3.5 text-emerald-700 font-semibold">5 to 10 Days</td>
+                    <td className="p-3.5 text-slate-700">9.5% – 13.5% (Interest-Only, 6–18 mos)</td>
+                    <td className="p-3.5 text-emerald-700 font-semibold">Up to 100% of Rehab in Escrow</td>
+                    <td className="p-3.5 text-slate-700">Collateral ARV & borrower flip track record</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-indigo-400">DSCR Rental Loan</td>
-                    <td className="p-3.5 text-slate-200">Turnkey rental buy-and-hold, BRRRR cash-out refinance</td>
-                    <td className="p-3.5 text-slate-300 font-semibold">14 to 21 Days</td>
-                    <td className="p-3.5 text-slate-300">6.8% – 8.5% (30-Year Fixed / 10-Yr I/O)</td>
-                    <td className="p-3.5 text-rose-400">No (Must be habitable)</td>
-                    <td className="p-3.5 text-slate-300">Property gross rental income vs PITIA debt</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-bold text-indigo-700">DSCR Rental Loan</td>
+                    <td className="p-3.5 text-slate-800">Turnkey rental buy-and-hold, BRRRR cash-out refinance</td>
+                    <td className="p-3.5 text-slate-700 font-semibold">14 to 21 Days</td>
+                    <td className="p-3.5 text-slate-700">6.8% – 8.5% (30-Year Fixed / 10-Yr I/O)</td>
+                    <td className="p-3.5 text-rose-600 font-medium">No (Must be habitable)</td>
+                    <td className="p-3.5 text-slate-700">Property gross rental income vs PITIA debt</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-cyan-400">Private Money</td>
-                    <td className="p-3.5 text-slate-200">Gap funding, 2nd position lien, syndications</td>
-                    <td className="p-3.5 text-emerald-400 font-semibold">24 to 72 Hours</td>
-                    <td className="p-3.5 text-slate-300">8.0% – 12.0% (Negotiable equity/debt)</td>
-                    <td className="p-3.5 text-emerald-400 font-semibold">100% Customizable</td>
-                    <td className="p-3.5 text-slate-300">Personal relationship & trust with private lender</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-bold text-cyan-700">Private Money</td>
+                    <td className="p-3.5 text-slate-800">Gap funding, 2nd position lien, syndications</td>
+                    <td className="p-3.5 text-emerald-700 font-semibold">24 to 72 Hours</td>
+                    <td className="p-3.5 text-slate-700">8.0% – 12.0% (Negotiable equity/debt)</td>
+                    <td className="p-3.5 text-emerald-700 font-semibold">100% Customizable</td>
+                    <td className="p-3.5 text-slate-700">Personal relationship & trust with private lender</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-slate-400">Conventional Fannie/Freddie</td>
-                    <td className="p-3.5 text-slate-200">Primary residence or low-leverage turnkey rental</td>
-                    <td className="p-3.5 text-rose-400 font-semibold">30 to 45+ Days</td>
-                    <td className="p-3.5 text-slate-300">6.2% – 7.2% (15 or 30-Year Fixed Amortized)</td>
-                    <td className="p-3.5 text-rose-400">No (Rigid inspection standards)</td>
-                    <td className="p-3.5 text-slate-300">Strict personal W-2 income & &lt;45% DTI ceiling</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-bold text-slate-700">Conventional Fannie/Freddie</td>
+                    <td className="p-3.5 text-slate-800">Primary residence or low-leverage turnkey rental</td>
+                    <td className="p-3.5 text-rose-600 font-semibold">30 to 45+ Days</td>
+                    <td className="p-3.5 text-slate-700">6.2% – 7.2% (15 or 30-Year Fixed Amortized)</td>
+                    <td className="p-3.5 text-rose-600 font-medium">No (Rigid inspection standards)</td>
+                    <td className="p-3.5 text-slate-700">Strict personal W-2 income & &lt;45% DTI ceiling</td>
                   </tr>
                 </tbody>
               </table>
@@ -998,33 +998,33 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
           {/* Subsection 3: Carrying Costs & Draw Mechanics */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-              <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                <DollarSign className="size-5 text-amber-400" />
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <DollarSign className="size-5 text-amber-600" />
                 Dutch Interest vs As-Incurred Interest
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 When shopping hard money lenders, ask whether interest is billed <strong>as-incurred (drawn balance)</strong> or as <strong>Dutch interest (total loan facility)</strong>:
               </p>
               <div className="space-y-2 text-xs">
-                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                  <span className="font-semibold text-emerald-400">As-Incurred Interest:</span> You only pay interest on the purchase loan amount plus the exact rehab funds disbursed so far. This saves $2,000–$6,000 on typical flips.
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                  <span className="font-semibold text-emerald-700">As-Incurred Interest:</span> You only pay interest on the purchase loan amount plus the exact rehab funds disbursed so far. This saves $2,000–$6,000 on typical flips.
                 </div>
-                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800">
-                  <span className="font-semibold text-rose-400">Dutch Interest:</span> The lender charges interest on the full approved loan balance (including unreleased construction funds sitting in escrow) from day one.
+                <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
+                  <span className="font-semibold text-rose-600">Dutch Interest:</span> The lender charges interest on the full approved loan balance (including unreleased construction funds sitting in escrow) from day one.
                 </div>
               </div>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 space-y-3">
-              <h3 className="text-base font-bold text-slate-100 flex items-center gap-2">
-                <Hammer className="size-5 text-indigo-400" />
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+              <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+                <Hammer className="size-5 text-indigo-600" />
                 Mastering the Construction Draw Schedule
               </h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
+              <p className="text-xs text-slate-600 leading-relaxed">
                 Rehab funds are held in escrow and released as work milestones are verified. Follow these steps to prevent contractor delays:
               </p>
-              <ol className="list-decimal list-inside space-y-1.5 text-xs text-slate-300">
+              <ol className="list-decimal list-inside space-y-1.5 text-xs text-slate-600">
                 <li><strong>Draw 1: Demolition & Rough-In:</strong> Tear out, framing, HVAC ducting, plumbing rough, electrical wiring.</li>
                 <li><strong>Draw 2: Insulation & Drywall:</strong> City permits passed, insulation hung, drywall taped and textured.</li>
                 <li><strong>Draw 3: Finishes & Fixtures:</strong> Tile, kitchen cabinets, quartz countertops, plumbing trim, vanities.</li>
@@ -1034,72 +1034,72 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
           </div>
 
           {/* Competitor Comparison: TableView vs DealCheck vs Rehab Financial */}
-          <div className="bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm">
+          <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xs">
             <div className="space-y-1">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/10 border border-indigo-500/30 text-indigo-400 mb-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 border border-indigo-200 text-indigo-700 mb-2">
                 <Sparkles className="size-3.5" />
                 <span>Fix &amp; Flip Tool Comparison</span>
               </div>
-              <h3 className="text-lg sm:text-2xl font-bold text-slate-100">
+              <h3 className="text-lg sm:text-2xl font-bold text-slate-900">
                 Why TableView Hard Money Calculator vs DealCheck &amp; Rehab Financial?
               </h3>
-              <p className="text-xs sm:text-sm text-slate-400 max-w-3xl leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 max-w-3xl leading-relaxed">
                 Analyzing fix-and-flip profitability shouldn't come with property report limits or persistent sales calls from mortgage brokers. Here is how TableView compares against leading alternatives:
               </p>
             </div>
 
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-300">
-                <thead className="bg-slate-950/80 text-slate-400 uppercase tracking-wider font-semibold border-b border-slate-800">
+              <table className="w-full text-left text-xs text-slate-600">
+                <thead className="bg-slate-50 text-slate-700 uppercase tracking-wider font-semibold border-b border-slate-200">
                   <tr>
                     <th className="py-3 px-4">Feature / Capability</th>
-                    <th className="py-3 px-4 text-indigo-400 font-bold">TableView.dev</th>
+                    <th className="py-3 px-4 text-indigo-700 font-bold">TableView.dev</th>
                     <th className="py-3 px-4">DealCheck</th>
                     <th className="py-3 px-4">Rehab Financial / Kiavi</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60">
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-semibold text-slate-200">Pricing &amp; Property Limits</td>
-                    <td className="py-3 px-4 text-emerald-400 font-bold">100% Free (Unlimited Deals)</td>
-                    <td className="py-3 px-4 text-rose-400">Limited to 15, then $14-$29/mo</td>
-                    <td className="py-3 px-4 text-slate-400">Free (Lead Gen Funnel)</td>
+                <tbody className="divide-y divide-slate-100">
+                  <tr className="hover:bg-slate-50/50">
+                    <td className="py-3 px-4 font-semibold text-slate-900">Pricing &amp; Property Limits</td>
+                    <td className="py-3 px-4 text-emerald-700 font-bold">100% Free (Unlimited Deals)</td>
+                    <td className="py-3 px-4 text-rose-600 font-medium">Limited to 15, then $14-$29/mo</td>
+                    <td className="py-3 px-4 text-slate-600">Free (Lead Gen Funnel)</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-semibold text-slate-200">Account Registration Required</td>
-                    <td className="py-3 px-4 text-emerald-400 font-bold">None (Instant In-Browser)</td>
-                    <td className="py-3 px-4 text-rose-400">Mandatory Account</td>
-                    <td className="py-3 px-4 text-rose-400">Mandatory Contact Form</td>
+                  <tr className="hover:bg-slate-50/50">
+                    <td className="py-3 px-4 font-semibold text-slate-900">Account Registration Required</td>
+                    <td className="py-3 px-4 text-emerald-700 font-bold">None (Instant In-Browser)</td>
+                    <td className="py-3 px-4 text-rose-600 font-medium">Mandatory Account</td>
+                    <td className="py-3 px-4 text-rose-600 font-medium">Mandatory Contact Form</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-semibold text-slate-200">70% Rule MAO + Live ROI Analysis</td>
-                    <td className="py-3 px-4 text-emerald-400 font-bold">Instant Dynamic Calculation</td>
-                    <td className="py-3 px-4 text-slate-200">Yes (Under Account Limits)</td>
-                    <td className="py-3 px-4 text-slate-400">Basic Payment Only</td>
+                  <tr className="hover:bg-slate-50/50">
+                    <td className="py-3 px-4 font-semibold text-slate-900">70% Rule MAO + Live ROI Analysis</td>
+                    <td className="py-3 px-4 text-emerald-700 font-bold">Instant Dynamic Calculation</td>
+                    <td className="py-3 px-4 text-slate-700">Yes (Under Account Limits)</td>
+                    <td className="py-3 px-4 text-slate-600">Basic Payment Only</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-semibold text-slate-200">Dutch vs As-Incurred Interest Mode</td>
-                    <td className="py-3 px-4 text-emerald-400 font-bold">Selectable Toggle</td>
-                    <td className="py-3 px-4 text-slate-400">Fixed Baseline</td>
-                    <td className="py-3 px-4 text-slate-400">Lender Default Only</td>
+                  <tr className="hover:bg-slate-50/50">
+                    <td className="py-3 px-4 font-semibold text-slate-900">Dutch vs As-Incurred Interest Mode</td>
+                    <td className="py-3 px-4 text-emerald-700 font-bold">Selectable Toggle</td>
+                    <td className="py-3 px-4 text-slate-600">Fixed Baseline</td>
+                    <td className="py-3 px-4 text-slate-600">Lender Default Only</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-semibold text-slate-200">Full Excel / CSV Workbook Export</td>
-                    <td className="py-3 px-4 text-emerald-400 font-bold">1-Click Full Model Export</td>
-                    <td className="py-3 px-4 text-amber-400">PDF Report (Paid Plan Only)</td>
-                    <td className="py-3 px-4 text-rose-400">Not Supported</td>
+                  <tr className="hover:bg-slate-50/50">
+                    <td className="py-3 px-4 font-semibold text-slate-900">Full Excel / CSV Workbook Export</td>
+                    <td className="py-3 px-4 text-emerald-700 font-bold">1-Click Full Model Export</td>
+                    <td className="py-3 px-4 text-amber-700">PDF Report (Paid Plan Only)</td>
+                    <td className="py-3 px-4 text-rose-600 font-medium">Not Supported</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-semibold text-slate-200">Shareable Pre-filled URL</td>
-                    <td className="py-3 px-4 text-emerald-400 font-bold">Instant 1-Click Link</td>
-                    <td className="py-3 px-4 text-slate-400">Paid Tier Feature</td>
-                    <td className="py-3 px-4 text-rose-400">Not Supported</td>
+                  <tr className="hover:bg-slate-50/50">
+                    <td className="py-3 px-4 font-semibold text-slate-900">Shareable Pre-filled URL</td>
+                    <td className="py-3 px-4 text-emerald-700 font-bold">Instant 1-Click Link</td>
+                    <td className="py-3 px-4 text-slate-600">Paid Tier Feature</td>
+                    <td className="py-3 px-4 text-rose-600 font-medium">Not Supported</td>
                   </tr>
-                  <tr className="hover:bg-slate-800/30">
-                    <td className="py-3 px-4 font-semibold text-slate-200">100% Client-Side Privacy</td>
-                    <td className="py-3 px-4 text-emerald-400 font-bold">Yes (Zero Data Egress)</td>
-                    <td className="py-3 px-4 text-slate-400">Stored in Cloud Database</td>
-                    <td className="py-3 px-4 text-rose-400">Lender Sales Call List</td>
+                  <tr className="hover:bg-slate-50/50">
+                    <td className="py-3 px-4 font-semibold text-slate-900">100% Client-Side Privacy</td>
+                    <td className="py-3 px-4 text-emerald-700 font-bold">Yes (Zero Data Egress)</td>
+                    <td className="py-3 px-4 text-slate-600">Stored in Cloud Database</td>
+                    <td className="py-3 px-4 text-rose-600 font-medium">Lender Sales Call List</td>
                   </tr>
                 </tbody>
               </table>
@@ -1122,16 +1122,16 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
       </div>
 
       {/* Mobile Sticky Summary Bottom Bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 px-4 py-2.5 shadow-2xl flex items-center justify-between gap-3">
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 shadow-lg flex items-center justify-between gap-3">
         <div>
-          <span className="text-[10px] uppercase font-semibold text-slate-400 block leading-tight">
+          <span className="text-[10px] uppercase font-semibold text-slate-500 block leading-tight">
             Net Flip Profit
           </span>
           <div className="text-xl font-black font-mono leading-tight flex items-baseline gap-2">
-            <span className={result.netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
+            <span className={result.netProfit >= 0 ? 'text-emerald-600' : 'text-rose-600'}>
               {currencyFmt(result.netProfit)}
             </span>
-            <span className="text-xs font-semibold text-slate-400 font-sans">
+            <span className="text-xs font-semibold text-slate-500 font-sans">
               ({result.roiPercent.toFixed(1)}% ROI)
             </span>
           </div>
@@ -1144,7 +1144,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               el.scrollIntoView({ behavior: 'smooth' });
             }
           }}
-          className="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 shadow-md active:scale-95 transition-transform cursor-pointer"
+          className="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 shadow-xs active:scale-95 transition-transform cursor-pointer"
         >
           <span>View Analysis</span>
           <ArrowRight className="size-3.5" />

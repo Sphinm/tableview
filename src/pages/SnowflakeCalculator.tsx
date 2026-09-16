@@ -254,23 +254,23 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
 
   return (
     // data-sentry-mask: warehouse sizes and spend figures are the user's own cloud bill.
-    <div data-sentry-mask="true" className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+    <div data-sentry-mask="true" className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-indigo-500 selection:text-white">
       {/* Hero Header */}
-      <section className="relative pt-12 pb-8 border-b border-slate-800 bg-gradient-to-b from-cyan-950/20 via-slate-950 to-slate-950">
+      <section className="relative pt-10 pb-8 border-b border-slate-200 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-2 text-xs font-mono text-cyan-400 mb-3">
-            <span className="px-2 py-0.5 rounded bg-cyan-950/80 border border-cyan-800/60 font-semibold">
+          <div className="flex items-center gap-2 text-xs font-mono text-cyan-700 mb-3">
+            <span className="px-2.5 py-0.5 rounded-full bg-cyan-50 border border-cyan-200 font-semibold">
               DATA ENGINEERING & FINOPS
             </span>
             <span>•</span>
-            <span className="text-slate-400">Cloud Data Warehouse Architecture</span>
+            <span className="text-slate-500">Cloud Data Warehouse Architecture</span>
           </div>
 
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-100">
-            Snowflake Cost <span className="text-cyan-400">Calculator</span>
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-slate-900">
+            Snowflake Cost <span className="text-cyan-600">Calculator</span>
           </h1>
 
-          <p className="mt-3 max-w-3xl text-sm sm:text-base text-slate-400 leading-relaxed">
+          <p className="mt-3 max-w-3xl text-sm sm:text-base text-slate-600 leading-relaxed">
             Estimate Snowflake compute credits, warehouse right-sizing, multi-cluster autoscaling, and storage costs. Simulate <strong>auto-suspend optimization</strong> and enterprise pre-commitment discounts.
           </p>
         </div>
@@ -281,15 +281,15 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Form Controls (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="p-6 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-5">
-              <h2 className="text-base font-bold text-slate-100 flex items-center gap-2 border-b border-slate-800 pb-3">
-                <Server className="size-4.5 text-cyan-400" />
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-5">
+              <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
+                <Server className="size-4.5 text-cyan-600" />
                 <span>Warehouse Configuration</span>
               </h2>
 
               {/* Edition Selector */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-2">
+                <label className="block text-xs font-semibold text-slate-700 mb-2">
                   Snowflake Edition
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -300,8 +300,8 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                       onClick={() => setEdition(ed)}
                       className={`p-2.5 rounded-xl text-xs font-mono border transition-all cursor-pointer text-center ${
                         edition === ed
-                          ? 'bg-cyan-950 text-cyan-300 border-cyan-500 font-bold shadow-sm'
-                          : 'bg-slate-950 text-slate-400 border-slate-800 hover:border-slate-700'
+                          ? 'bg-cyan-50 text-cyan-800 border-cyan-400 font-bold shadow-xs'
+                          : 'bg-white text-slate-600 border-slate-200 hover:border-slate-300 hover:bg-slate-50'
                       }`}
                     >
                       <div className="font-semibold capitalize">{ed.replace('_', ' ')}</div>
@@ -315,9 +315,9 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
 
               {/* Warehouse Size (T-Shirt Size Picker) */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-2 flex justify-between">
+                <label className="block text-xs font-semibold text-slate-700 mb-2 flex justify-between">
                   <span>Warehouse Size</span>
-                  <span className="text-cyan-400 font-mono font-bold">
+                  <span className="text-cyan-700 font-mono font-bold">
                     {warehouseSize} ({WAREHOUSE_CREDITS[warehouseSize]} credits/hr)
                   </span>
                 </label>
@@ -329,8 +329,8 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                       onClick={() => setWarehouseSize(size)}
                       className={`p-2 rounded-xl text-xs font-mono border transition-all cursor-pointer text-center ${
                         warehouseSize === size
-                          ? 'bg-indigo-600 text-white border-indigo-500 font-bold shadow-sm'
-                          : 'bg-slate-950 text-slate-300 border-slate-800 hover:bg-slate-800'
+                          ? 'bg-indigo-600 text-white border-indigo-500 font-bold shadow-xs'
+                          : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
                       }`}
                     >
                       <div className="font-semibold truncate">{size}</div>
@@ -343,10 +343,10 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
               {/* Multi-Cluster Autoscaling */}
               <div>
                 <div className="flex justify-between items-center mb-1.5">
-                  <label className="text-xs font-medium text-slate-300">
+                  <label className="text-xs font-semibold text-slate-700">
                     Average Active Clusters (Multi-Cluster)
                   </label>
-                  <span className="text-xs font-mono text-cyan-400 font-bold">{clusterCount} cluster(s)</span>
+                  <span className="text-xs font-mono text-cyan-700 font-bold">{clusterCount} cluster(s)</span>
                 </div>
                 <input
                   type="range"
@@ -354,20 +354,20 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                   max={8}
                   value={clusterCount}
                   onChange={(e) => setClusterCount(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-950 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600"
                 />
               </div>
 
               {/* Runtime Schedules */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Hours Active / Day
                   </label>
                   <select
                     value={activeHoursPerDay}
                     onChange={(e) => setActiveHoursPerDay(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 font-mono focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 font-mono focus:outline-none focus:border-indigo-500"
                   >
                     <option value={4}>4 Hours (Light Batch)</option>
                     <option value={8}>8 Hours (Business Day)</option>
@@ -377,13 +377,13 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Active Days / Month
                   </label>
                   <select
                     value={activeDaysPerMonth}
                     onChange={(e) => setActiveDaysPerMonth(Number(e.target.value))}
-                    className="w-full px-3 py-2 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 font-mono focus:outline-none"
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-xs text-slate-800 font-mono focus:outline-none focus:border-indigo-500"
                   >
                     <option value={22}>22 Days (Weekdays Only)</option>
                     <option value={30}>30 Days (Every Day)</option>
@@ -394,9 +394,9 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
               {/* Storage in TB & Pricing Model */}
               <div className="space-y-2">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5 flex justify-between">
+                  <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex justify-between">
                     <span>Compressed Storage in Snowflake (TB)</span>
-                    <span className="text-slate-100 font-mono font-bold">{storageTb} TB</span>
+                    <span className="text-slate-900 font-mono font-bold">{storageTb} TB</span>
                   </label>
                   <NumericInput
                     value={storageTb}
@@ -412,8 +412,8 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                     onClick={() => setStoragePricingTier('capacity')}
                     className={`py-1.5 px-3 rounded-xl text-xs font-mono border transition-colors cursor-pointer ${
                       storagePricingTier === 'capacity'
-                        ? 'bg-cyan-950/80 border-cyan-600 text-cyan-300 font-bold'
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                        ? 'bg-cyan-50 border-cyan-400 text-cyan-800 font-bold shadow-xs'
+                        : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`}
                   >
                     Capacity ($23/TB)
@@ -423,8 +423,8 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                     onClick={() => setStoragePricingTier('on_demand')}
                     className={`py-1.5 px-3 rounded-xl text-xs font-mono border transition-colors cursor-pointer ${
                       storagePricingTier === 'on_demand'
-                        ? 'bg-cyan-950/80 border-cyan-600 text-cyan-300 font-bold'
-                        : 'bg-slate-950 border-slate-800 text-slate-400 hover:text-slate-200'
+                        ? 'bg-cyan-50 border-cyan-400 text-cyan-800 font-bold shadow-xs'
+                        : 'bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
                     }`}
                   >
                     On-Demand ($40/TB)
@@ -433,13 +433,13 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
               </div>
 
               {/* FinOps Auto-Suspend Simulator */}
-              <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-2">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 space-y-2">
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-cyan-300 flex items-center gap-1.5">
-                    <Sparkles className="size-3.5 text-amber-400" />
+                  <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <Sparkles className="size-3.5 text-amber-500" />
                     Auto-Suspend Optimization
                   </label>
-                  <span className="text-xs font-mono text-emerald-400 font-bold">
+                  <span className="text-xs font-mono text-emerald-600 font-bold">
                     {autoSuspendEfficiency}% Savings
                   </span>
                 </div>
@@ -450,9 +450,9 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                   step={5}
                   value={autoSuspendEfficiency}
                   onChange={(e) => setAutoSuspendEfficiency(Number(e.target.value))}
-                  className="w-full h-2 bg-slate-900 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
-                <p className="text-[11px] text-slate-400">
+                <p className="text-[11px] text-slate-500">
                   Reduces idle time billing by aggressively tuning auto-suspend down to 60 seconds.
                 </p>
               </div>
@@ -462,23 +462,23 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
           {/* Right Column: Cost Breakdown & FinOps Insights (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             {/* Total Cost Hero Card */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-slate-900 via-slate-900 to-cyan-950/40 border border-slate-800 shadow-2xl">
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-semibold block">
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold block">
                     Estimated Monthly Snowflake Bill
                   </span>
                   <div className="flex items-baseline gap-3 mt-1">
-                    <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-cyan-400">
+                    <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-cyan-600">
                       {currencyFmt(result.totalMonthlyCost)}
                     </span>
-                    <span className="text-xs font-mono text-slate-400">/ month</span>
+                    <span className="text-xs font-mono text-slate-500">/ month</span>
                   </div>
                 </div>
 
                 <div className="text-right">
-                  <span className="text-xs text-slate-400 block">Annualized Spend</span>
-                  <span className="text-2xl font-black font-mono text-slate-100 mt-0.5 block">
+                  <span className="text-xs text-slate-500 block">Annualized Spend</span>
+                  <span className="text-2xl font-black font-mono text-slate-900 mt-0.5 block">
                     {currencyFmt(result.totalAnnualCost)}
                   </span>
                   <span className="text-[11px] text-slate-500">
@@ -488,18 +488,18 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
               </div>
 
               {/* Progress Bar: Compute vs Storage */}
-              <div className="mt-5 pt-4 border-t border-slate-800">
-                <div className="flex justify-between text-xs font-mono text-slate-300 mb-1.5">
+              <div className="mt-5 pt-4 border-t border-slate-100">
+                <div className="flex justify-between text-xs font-mono text-slate-600 mb-1.5">
                   <span className="flex items-center gap-1.5">
-                    <span className="size-2 rounded-full bg-cyan-400" />
+                    <span className="size-2 rounded-full bg-cyan-500" />
                     Compute: {currencyFmt(result.monthlyComputeCost)} ({result.computePercentage}%)
                   </span>
                   <span className="flex items-center gap-1.5">
-                    <span className="size-2 rounded-full bg-indigo-400" />
+                    <span className="size-2 rounded-full bg-indigo-500" />
                     Storage: {currencyFmt(result.monthlyStorageCost)} ({result.storagePercentage}%)
                   </span>
                 </div>
-                <div className="w-full h-3 bg-slate-950 rounded-full overflow-hidden flex border border-slate-800">
+                <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden flex border border-slate-200">
                   <div
                     className="h-full bg-cyan-500 transition-all duration-300"
                     style={{ width: `${result.computePercentage}%` }}
@@ -514,73 +514,73 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
 
             {/* FinOps Savings Opportunities */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-800/60">
-                <div className="flex items-center gap-2 text-xs font-bold text-emerald-300 mb-1">
+              <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200">
+                <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 mb-1">
                   <TrendingDown className="size-4" />
                   Auto-Suspend Waste Saved
                 </div>
-                <div className="text-2xl font-black font-mono text-emerald-400">
+                <div className="text-2xl font-black font-mono text-emerald-600">
                   {currencyFmt(result.potentialAutoSuspendSavingsMonthly)}/mo
                 </div>
-                <p className="text-[11px] text-slate-300 mt-1">
+                <p className="text-[11px] text-slate-600 mt-1">
                   Saved monthly by eliminating idle warehouse runway between scheduled dbt jobs.
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-indigo-950/40 border border-indigo-800/60">
-                <div className="flex items-center gap-2 text-xs font-bold text-indigo-300 mb-1">
-                  <Sparkles className="size-4 text-amber-400" />
+              <div className="p-4 rounded-2xl bg-indigo-50 border border-indigo-200">
+                <div className="flex items-center gap-2 text-xs font-bold text-indigo-800 mb-1">
+                  <Sparkles className="size-4 text-amber-500" />
                   Pre-Commit Discount Potential
                 </div>
-                <div className="text-2xl font-black font-mono text-indigo-300">
+                <div className="text-2xl font-black font-mono text-indigo-600">
                   ~{currencyFmt(result.annualCommittedDiscountSavings)}/yr
                 </div>
-                <p className="text-[11px] text-slate-300 mt-1">
+                <p className="text-[11px] text-slate-600 mt-1">
                   Estimated annual savings if negotiating a 1-year prepaid capacity contract.
                 </p>
               </div>
             </div>
 
             {/* Detailed Line-Item Breakdown Table */}
-            <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-xl space-y-3">
-              <h3 className="text-sm font-bold text-slate-100 flex items-center justify-between">
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+              <h3 className="text-sm font-bold text-slate-900 flex items-center justify-between">
                 <span>Detailed Cost Summary</span>
-                <span className="text-xs font-mono text-slate-400">
+                <span className="text-xs font-mono text-slate-500">
                   Credits consumed: {result.creditsPerMonth} / month
                 </span>
               </h3>
 
               <div className="space-y-2 text-xs font-mono">
-                <div className="flex justify-between items-center py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-300">
+                <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                  <span className="text-slate-600">
                     Warehouse Compute ({warehouseSize} × {clusterCount} cluster @ {result.effectivePricePerCredit.toFixed(2)}/cr)
                   </span>
-                  <span className="text-slate-100 font-bold">{currencyDecFmt(result.monthlyComputeCost)}</span>
+                  <span className="text-slate-900 font-bold">{currencyDecFmt(result.monthlyComputeCost)}</span>
                 </div>
-                <div className="flex justify-between items-center py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-300">
+                <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                  <span className="text-slate-600">
                     Storage ({storageTb} TB @ ${storagePricingTier === 'capacity' ? '23' : '40'}/TB)
                   </span>
-                  <span className="text-slate-100">{currencyDecFmt(result.monthlyStorageCost)}</span>
+                  <span className="text-slate-900 font-bold">{currencyDecFmt(result.monthlyStorageCost)}</span>
                 </div>
-                <div className="flex justify-between items-center py-1.5 border-b border-slate-800/80">
-                  <span className="text-slate-300">
+                <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                  <span className="text-slate-600">
                     Cloud Services Layer (Free pool up to 10% compute)
                   </span>
-                  <span className="text-emerald-400">$0.00 (Covered)</span>
+                  <span className="text-emerald-600 font-bold">$0.00 (Covered)</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 text-sm font-bold">
-                  <span className="text-cyan-400">Total Monthly Cost</span>
-                  <span className="text-cyan-400">{currencyFmt(result.totalMonthlyCost)}</span>
+                  <span className="text-cyan-700">Total Monthly Cost</span>
+                  <span className="text-cyan-700">{currencyFmt(result.totalMonthlyCost)}</span>
                 </div>
               </div>
             </div>
 
             {/* Action Card */}
-            <div className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-slate-900 border border-slate-800">
+            <div className="flex items-center justify-between gap-4 p-4 rounded-2xl bg-white border border-slate-200 shadow-xs">
               <button
                 onClick={handleExportExcel}
-                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-950/80 hover:bg-emerald-900 border border-emerald-800 text-xs font-semibold text-emerald-300 cursor-pointer transition-colors"
+                className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 border border-emerald-300 text-xs font-semibold text-emerald-800 cursor-pointer transition-colors"
               >
                 <FileSpreadsheet className="size-4" />
                 <span>Export FinOps Spreadsheet (.xlsx)</span>
@@ -588,7 +588,7 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
 
               <button
                 onClick={handleCopyLink}
-                className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-semibold text-white cursor-pointer transition-colors"
+                className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-semibold text-white cursor-pointer transition-colors shadow-xs"
               >
                 {copiedLink ? 'Link Copied!' : 'Share Estimate'}
               </button>
@@ -597,25 +597,25 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
         </div>
 
         {/* Section 3: Snowflake Sizing Matrix, FinOps Playbook & Educational Guide */}
-        <div className="mt-16 pt-10 border-t border-slate-800 space-y-12">
+        <div className="mt-16 pt-10 border-t border-slate-200 space-y-12">
           {/* Subsection 1: Warehouse Credit Consumption Matrix */}
           <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h2 className="text-xl sm:text-2xl font-bold text-slate-100 flex items-center gap-2">
-                  <Layers className="size-6 text-cyan-400" />
+                <h2 className="text-xl sm:text-2xl font-bold text-slate-900 flex items-center gap-2">
+                  <Layers className="size-6 text-cyan-600" />
                   Snowflake Warehouse Sizing & Credit Consumption Matrix
                 </h2>
-                <p className="text-xs text-slate-400">Virtual warehouses scale compute power exponentially in powers of 2.</p>
+                <p className="text-xs text-slate-600">Virtual warehouses scale compute power exponentially in powers of 2.</p>
               </div>
-              <span className="text-[11px] px-2.5 py-1 rounded bg-slate-800 text-slate-300 border border-slate-700 w-fit">
+              <span className="text-[11px] px-2.5 py-1 rounded bg-slate-100 text-slate-700 border border-slate-200 w-fit">
                 Billed Per-Second (60s Minimum)
               </span>
             </div>
 
-            <div className="overflow-x-auto rounded-2xl border border-slate-800 shadow-xl">
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs bg-white">
               <table className="w-full text-left text-xs border-collapse">
-                <thead className="bg-slate-900 border-b border-slate-800 text-slate-300 font-semibold">
+                <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold">
                   <tr>
                     <th className="p-3.5">Size</th>
                     <th className="p-3.5">Credits / Hour</th>
@@ -625,54 +625,54 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                     <th className="p-3.5">Optimal Workload Match</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 bg-slate-950">
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-cyan-300">X-Small (XS)</td>
-                    <td className="p-3.5 font-mono text-slate-200">1 credit</td>
-                    <td className="p-3.5 text-slate-400">1 server (8 threads)</td>
-                    <td className="p-3.5 font-mono text-slate-300">$2.00 / hr</td>
-                    <td className="p-3.5 font-mono text-cyan-400 font-medium">$3.00 / hr</td>
-                    <td className="p-3.5 text-slate-300">Lightweight ELT, single-table staging, low-volume tasks</td>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-bold text-cyan-700">X-Small (XS)</td>
+                    <td className="p-3.5 font-mono text-slate-800">1 credit</td>
+                    <td className="p-3.5 text-slate-600">1 server (8 threads)</td>
+                    <td className="p-3.5 font-mono text-slate-700">$2.00 / hr</td>
+                    <td className="p-3.5 font-mono text-cyan-700 font-medium">$3.00 / hr</td>
+                    <td className="p-3.5 text-slate-600">Lightweight ELT, single-table staging, low-volume tasks</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-cyan-300">Small (S)</td>
-                    <td className="p-3.5 font-mono text-slate-200">2 credits</td>
-                    <td className="p-3.5 text-slate-400">2 servers (16 threads)</td>
-                    <td className="p-3.5 font-mono text-slate-300">$4.00 / hr</td>
-                    <td className="p-3.5 font-mono text-cyan-400 font-medium">$6.00 / hr</td>
-                    <td className="p-3.5 text-slate-300">Scheduled dbt models, moderate ingestion pipelines, small team BI</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-bold text-cyan-700">Small (S)</td>
+                    <td className="p-3.5 font-mono text-slate-800">2 credits</td>
+                    <td className="p-3.5 text-slate-600">2 servers (16 threads)</td>
+                    <td className="p-3.5 font-mono text-slate-700">$4.00 / hr</td>
+                    <td className="p-3.5 font-mono text-cyan-700 font-medium">$6.00 / hr</td>
+                    <td className="p-3.5 text-slate-600">Scheduled dbt models, moderate ingestion pipelines, small team BI</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-cyan-300">Medium (M)</td>
-                    <td className="p-3.5 font-mono text-slate-200">4 credits</td>
-                    <td className="p-3.5 text-slate-400">4 servers (32 threads)</td>
-                    <td className="p-3.5 font-mono text-slate-300">$8.00 / hr</td>
-                    <td className="p-3.5 font-mono text-cyan-400 font-medium">$12.00 / hr</td>
-                    <td className="p-3.5 text-slate-300">Production BI reporting (Looker/Tableau), medium data mart transforms</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-bold text-cyan-700">Medium (M)</td>
+                    <td className="p-3.5 font-mono text-slate-800">4 credits</td>
+                    <td className="p-3.5 text-slate-600">4 servers (32 threads)</td>
+                    <td className="p-3.5 font-mono text-slate-700">$8.00 / hr</td>
+                    <td className="p-3.5 font-mono text-cyan-700 font-medium">$12.00 / hr</td>
+                    <td className="p-3.5 text-slate-600">Production BI reporting (Looker/Tableau), medium data mart transforms</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-cyan-300">Large (L)</td>
-                    <td className="p-3.5 font-mono text-slate-200">8 credits</td>
-                    <td className="p-3.5 text-slate-400">8 servers (64 threads)</td>
-                    <td className="p-3.5 font-mono text-slate-300">$16.00 / hr</td>
-                    <td className="p-3.5 font-mono text-cyan-400 font-medium">$24.00 / hr</td>
-                    <td className="p-3.5 text-slate-300">Complex multi-table joins, hourly automated pipelines, heavy aggregations</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-bold text-cyan-700">Large (L)</td>
+                    <td className="p-3.5 font-mono text-slate-800">8 credits</td>
+                    <td className="p-3.5 text-slate-600">8 servers (64 threads)</td>
+                    <td className="p-3.5 font-mono text-slate-700">$16.00 / hr</td>
+                    <td className="p-3.5 font-mono text-cyan-700 font-medium">$24.00 / hr</td>
+                    <td className="p-3.5 text-slate-600">Complex multi-table joins, hourly automated pipelines, heavy aggregations</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-indigo-400">X-Large (XL)</td>
-                    <td className="p-3.5 font-mono text-slate-200">16 credits</td>
-                    <td className="p-3.5 text-slate-400">16 servers (128 threads)</td>
-                    <td className="p-3.5 font-mono text-slate-300">$32.00 / hr</td>
-                    <td className="p-3.5 font-mono text-indigo-300 font-medium">$48.00 / hr</td>
-                    <td className="p-3.5 text-slate-300">Large-scale batch warehouse loads, billion-row customer telemetry</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-bold text-indigo-700">X-Large (XL)</td>
+                    <td className="p-3.5 font-mono text-slate-800">16 credits</td>
+                    <td className="p-3.5 text-slate-600">16 servers (128 threads)</td>
+                    <td className="p-3.5 font-mono text-slate-700">$32.00 / hr</td>
+                    <td className="p-3.5 font-mono text-indigo-700 font-medium">$48.00 / hr</td>
+                    <td className="p-3.5 text-slate-600">Large-scale batch warehouse loads, billion-row customer telemetry</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-bold text-indigo-400">2X-Large to 4X-Large</td>
-                    <td className="p-3.5 font-mono text-slate-200">32 – 128 credits</td>
-                    <td className="p-3.5 text-slate-400">32 – 128 servers</td>
-                    <td className="p-3.5 font-mono text-slate-300">$64 – $256 / hr</td>
-                    <td className="p-3.5 font-mono text-indigo-300 font-medium">$96 – $384 / hr</td>
-                    <td className="p-3.5 text-slate-300">Petabyte-scale enterprise migrations, machine learning feature engineering</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-bold text-indigo-700">2X-Large to 4X-Large</td>
+                    <td className="p-3.5 font-mono text-slate-800">32 – 128 credits</td>
+                    <td className="p-3.5 text-slate-600">32 – 128 servers</td>
+                    <td className="p-3.5 font-mono text-slate-700">$64 – $256 / hr</td>
+                    <td className="p-3.5 font-mono text-indigo-700 font-medium">$96 – $384 / hr</td>
+                    <td className="p-3.5 text-slate-600">Petabyte-scale enterprise migrations, machine learning feature engineering</td>
                   </tr>
                 </tbody>
               </table>
@@ -681,68 +681,68 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
 
           {/* Subsection 2: Top 5 FinOps Strategies */}
           <div className="space-y-4">
-            <h3 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
-              <TrendingDown className="size-5 text-emerald-400" />
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+              <TrendingDown className="size-5 text-emerald-600" />
               Top 5 FinOps Strategies to Cut Snowflake Spend by 30%+
             </h3>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
-                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+              <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
                   <span>1. Set AUTO_SUSPEND = 60</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Default auto-suspend is 10 minutes (600 seconds). For interactive analytics, reducing this to 60 seconds eliminates idle compute waste immediately after analysts finish querying.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
-                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+              <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
                   <span>2. Isolate ETL from BI</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Never mix scheduled batch data pipelines with live user BI dashboards on the same warehouse. Dedicated warehouses prevent queued queries from forcing expensive autoscaling.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
-                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+              <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
                   <span>3. Enforce Resource Monitors</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Attach Snowflake Resource Monitors to every warehouse cluster with hard 100% suspend caps and 80%/90% alert notifications to stop runaway Cartesian product queries.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
-                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+              <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
                   <span>4. Use Transient Staging Tables</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Staging and raw ELT tables don't need 90 days of Time Travel or 7-day Fail-Safe insurance. Creating them as `TRANSIENT` slashes uncompressed auxiliary storage overhead.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
-                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+              <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
                   <span>5. Offload Raw Data to Parquet</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Keep cold historical logs in external object storage (AWS S3, Google Cloud Storage) formatted as Apache Parquet, and query via external tables or Iceberg tables at fraction of cost.
                 </p>
               </div>
 
-              <div className="p-4 rounded-xl bg-slate-900 border border-slate-800 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-slate-200 text-xs sm:text-sm">
-                  <CheckCircle2 className="size-4 text-emerald-400 shrink-0" />
+              <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-xs space-y-2">
+                <div className="flex items-center gap-2 font-bold text-slate-900 text-xs sm:text-sm">
+                  <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
                   <span>6. Pre-Purchase Capacity</span>
                 </div>
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Negotiate 1 to 3-year capacity commitments with Snowflake sales reps. Storage drops from $40/TB to $23/TB, and effective credit rates drop by 15% to 30%.
                 </p>
               </div>
@@ -751,51 +751,51 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
 
           {/* Subsection 3: Editions Comparison Table */}
           <div className="space-y-4">
-            <h3 className="text-lg sm:text-xl font-bold text-slate-100 flex items-center gap-2">
-              <ShieldCheck className="size-5 text-cyan-400" />
+            <h3 className="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+              <ShieldCheck className="size-5 text-cyan-600" />
               Snowflake Editions Comparison Matrix
             </h3>
 
-            <div className="overflow-x-auto rounded-2xl border border-slate-800 shadow-xl">
+            <div className="overflow-x-auto rounded-2xl border border-slate-200 shadow-xs bg-white">
               <table className="w-full text-left text-xs border-collapse">
-                <thead className="bg-slate-900 border-b border-slate-800 text-slate-300 font-semibold">
+                <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-semibold">
                   <tr>
                     <th className="p-3.5">Capability / Feature</th>
-                    <th className="p-3.5 text-slate-300">Standard Edition</th>
-                    <th className="p-3.5 text-cyan-400">Enterprise Edition</th>
-                    <th className="p-3.5 text-indigo-400">Business Critical Edition</th>
+                    <th className="p-3.5 text-slate-700">Standard Edition</th>
+                    <th className="p-3.5 text-cyan-700 font-semibold">Enterprise Edition</th>
+                    <th className="p-3.5 text-indigo-700 font-semibold">Business Critical Edition</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 bg-slate-950">
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-semibold text-slate-200">On-Demand Price / Credit</td>
-                    <td className="p-3.5 font-mono text-slate-200">$2.00 / credit</td>
-                    <td className="p-3.5 font-mono text-cyan-300 font-bold">$3.00 / credit</td>
-                    <td className="p-3.5 font-mono text-indigo-300 font-bold">$4.00 / credit</td>
+                <tbody className="divide-y divide-slate-100 bg-white">
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-semibold text-slate-800">On-Demand Price / Credit</td>
+                    <td className="p-3.5 font-mono text-slate-700">$2.00 / credit</td>
+                    <td className="p-3.5 font-mono text-cyan-700 font-bold">$3.00 / credit</td>
+                    <td className="p-3.5 font-mono text-indigo-700 font-bold">$4.00 / credit</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-semibold text-slate-200">Multi-Cluster Warehouses (Auto-Scale)</td>
-                    <td className="p-3.5 text-rose-400">Not Available</td>
-                    <td className="p-3.5 text-emerald-400 font-semibold">Included (Max concurrency)</td>
-                    <td className="p-3.5 text-emerald-400 font-semibold">Included</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-semibold text-slate-800">Multi-Cluster Warehouses (Auto-Scale)</td>
+                    <td className="p-3.5 text-rose-600">Not Available</td>
+                    <td className="p-3.5 text-emerald-600 font-semibold">Included (Max concurrency)</td>
+                    <td className="p-3.5 text-emerald-600 font-semibold">Included</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-semibold text-slate-200">Time Travel Retention Window</td>
-                    <td className="p-3.5 text-slate-400">1 Day Maximum</td>
-                    <td className="p-3.5 text-emerald-400 font-semibold">Up to 90 Days</td>
-                    <td className="p-3.5 text-emerald-400 font-semibold">Up to 90 Days</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-semibold text-slate-800">Time Travel Retention Window</td>
+                    <td className="p-3.5 text-slate-600">1 Day Maximum</td>
+                    <td className="p-3.5 text-emerald-600 font-semibold">Up to 90 Days</td>
+                    <td className="p-3.5 text-emerald-600 font-semibold">Up to 90 Days</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-semibold text-slate-200">Search Optimization Service</td>
-                    <td className="p-3.5 text-rose-400">Not Available</td>
-                    <td className="p-3.5 text-emerald-400 font-semibold">Included</td>
-                    <td className="p-3.5 text-emerald-400 font-semibold">Included</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-semibold text-slate-800">Search Optimization Service</td>
+                    <td className="p-3.5 text-rose-600">Not Available</td>
+                    <td className="p-3.5 text-emerald-600 font-semibold">Included</td>
+                    <td className="p-3.5 text-emerald-600 font-semibold">Included</td>
                   </tr>
-                  <tr className="hover:bg-slate-900/50">
-                    <td className="p-3.5 font-semibold text-slate-200">Security & Compliance Enclaves</td>
-                    <td className="p-3.5 text-slate-400">SOC 1/2, PCI-DSS (L2)</td>
-                    <td className="p-3.5 text-slate-200">Column/Row-Level Security Policies</td>
-                    <td className="p-3.5 text-indigo-300 font-semibold">Tri-Secret Secure, HIPAA, AWS PrivateLink</td>
+                  <tr className="hover:bg-slate-50/80">
+                    <td className="p-3.5 font-semibold text-slate-800">Security & Compliance Enclaves</td>
+                    <td className="p-3.5 text-slate-600">SOC 1/2, PCI-DSS (L2)</td>
+                    <td className="p-3.5 text-slate-800">Column/Row-Level Security Policies</td>
+                    <td className="p-3.5 text-indigo-700 font-semibold">Tri-Secret Secure, HIPAA, AWS PrivateLink</td>
                   </tr>
                 </tbody>
               </table>

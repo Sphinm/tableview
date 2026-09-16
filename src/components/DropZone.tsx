@@ -1,11 +1,11 @@
 import { useState, useRef, type DragEvent, type ChangeEvent } from 'react';
-import { UploadCloud, Sparkles, FolderOpen, ShieldCheck, ArrowLeft } from 'lucide-react';
+import { UploadCloud, FolderOpen, ShieldCheck, ArrowLeft } from 'lucide-react';
 import { type ToolConfig } from '../data/tools';
 import { navigateTo } from '../lib/router';
 
 interface DropZoneProps {
   onFileSelected: (file: File) => void;
-  onTrySample: () => void;
+  onTrySample?: () => void;
   isLoading: boolean;
   loadingStatus?: string;
   toolConfig?: ToolConfig;
@@ -13,7 +13,7 @@ interface DropZoneProps {
 
 export const DropZone = ({
   onFileSelected,
-  onTrySample,
+  onTrySample: _onTrySample,
   isLoading,
   loadingStatus = 'Initializing engine...',
   toolConfig
@@ -190,24 +190,12 @@ export const DropZone = ({
                       e.stopPropagation();
                       fileInputRef.current?.click();
                     }}
-                    className="inline-flex items-center gap-2.5 pl-5 pr-3.5 py-2.5 rounded-xl text-sm font-bold bg-slate-900 hover:bg-slate-800 text-white shadow-2xs transition-all active:scale-95 cursor-pointer"
+                    className="inline-flex items-center gap-2.5 pl-5 pr-3.5 py-2.5 rounded-xl text-sm font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-xs transition-all active:scale-95 cursor-pointer"
                   >
                     <span>Choose Local File</span>
                     <span className="p-1 rounded-lg bg-white/15 text-white">
                       <FolderOpen className="size-4" />
                     </span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onTrySample();
-                    }}
-                    className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-900 bg-white hover:bg-slate-100 border border-slate-300 shadow-2xs transition-all cursor-pointer"
-                  >
-                    <Sparkles className="size-4 text-amber-500" />
-                    Try 1,000-Row Sample
                   </button>
                 </div>
 

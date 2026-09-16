@@ -116,7 +116,7 @@ interface FieldProps {
 
 const Field = ({ label, value, onChange, prefix, suffix, step = 1, hint }: FieldProps) => (
   <label className="block">
-    <span className="block text-xs font-medium text-slate-400 mb-1.5">{label}</span>
+    <span className="block text-xs font-medium text-slate-700 mb-1.5">{label}</span>
     {prefix === '$' ? (
       <CurrencyInput
         value={Number.isFinite(value) ? value : 0}
@@ -149,14 +149,14 @@ const StatRow = ({
   strong?: boolean;
 }) => {
   const toneClass = {
-    default: 'text-slate-100',
-    positive: 'text-emerald-400',
-    negative: 'text-rose-400',
-    muted: 'text-slate-400',
+    default: 'text-slate-900',
+    positive: 'text-emerald-600',
+    negative: 'text-rose-600',
+    muted: 'text-slate-500',
   }[tone];
   return (
-    <div className="flex items-center justify-between gap-4 py-2 border-b border-slate-800/60 last:border-0">
-      <span className="text-xs text-slate-400">{label}</span>
+    <div className="flex items-center justify-between gap-4 py-2 border-b border-slate-100 last:border-0">
+      <span className="text-xs text-slate-600">{label}</span>
       <span className={`text-sm font-mono ${toneClass} ${strong ? 'font-bold' : 'font-medium'}`}>
         {value}
       </span>
@@ -393,27 +393,27 @@ export const Section1031Calculator = () => {
 
   const verdictTone = {
     emerald: {
-      border: 'border-emerald-500/40',
-      bg: 'bg-emerald-500/10',
-      text: 'text-emerald-400',
+      border: 'border-emerald-200',
+      bg: 'bg-emerald-50/80',
+      text: 'text-emerald-700',
       Icon: CheckCircle2,
     },
     amber: {
-      border: 'border-amber-500/40',
-      bg: 'bg-amber-500/10',
-      text: 'text-amber-400',
+      border: 'border-amber-200',
+      bg: 'bg-amber-50/80',
+      text: 'text-amber-700',
       Icon: AlertTriangle,
     },
     rose: {
-      border: 'border-rose-500/40',
-      bg: 'bg-rose-500/10',
-      text: 'text-rose-400',
+      border: 'border-rose-200',
+      bg: 'bg-rose-50/80',
+      text: 'text-rose-700',
       Icon: AlertTriangle,
     },
   }[result.verdictColor as 'emerald' | 'amber' | 'rose'] ?? {
-    border: 'border-slate-700',
-    bg: 'bg-slate-800/40',
-    text: 'text-slate-300',
+    border: 'border-slate-200',
+    bg: 'bg-slate-50',
+    text: 'text-slate-700',
     Icon: AlertTriangle,
   };
 
@@ -461,9 +461,9 @@ export const Section1031Calculator = () => {
         {/* ---- Inputs ---- */}
         <div className="lg:col-span-7 space-y-6">
           {/* Relinquished */}
-          <section className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6">
-            <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800/80 pb-3 mb-5">
-              <Building className="size-4 text-indigo-400" />
+          <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 shadow-xs">
+            <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-5">
+              <Building className="size-4 text-indigo-600" />
               Relinquished Property (what you are selling)
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -503,16 +503,16 @@ export const Section1031Calculator = () => {
           </section>
 
           {/* Replacement */}
-          <section className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6">
-            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-800/80 pb-3 mb-5">
-              <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-200">
-                <Landmark className="size-4 text-emerald-400" />
+          <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 shadow-xs">
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3 mb-5">
+              <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-900">
+                <Landmark className="size-4 text-emerald-600" />
                 {compareMode ? 'Replacement Candidates' : 'Replacement Property (what you are buying)'}
               </h2>
               <button
                 type="button"
                 onClick={() => setCompareMode((v) => !v)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors cursor-pointer shadow-xs"
               >
                 <ArrowLeftRight className="size-3.5" />
                 {compareMode ? 'Single property' : 'Compare candidates'}
@@ -521,7 +521,7 @@ export const Section1031Calculator = () => {
 
             {compareMode && (
               <div className="space-y-4">
-                <p className="text-xs text-slate-400 leading-relaxed">
+                <p className="text-xs text-slate-600 leading-relaxed">
                   Enter each replacement property you are considering. Every candidate is measured
                   against the same relinquished sale, so only the replacement side varies.
                 </p>
@@ -532,10 +532,10 @@ export const Section1031Calculator = () => {
                   return (
                     <div
                       key={candidate.id}
-                      className={`p-4 rounded-xl border ${
+                      className={`p-4 rounded-xl border shadow-xs ${
                         row?.isBest
-                          ? 'bg-emerald-500/5 border-emerald-500/40'
-                          : 'bg-slate-950 border-slate-800'
+                          ? 'bg-emerald-50/60 border-emerald-300'
+                          : 'bg-white border-slate-200'
                       }`}
                     >
                       <div className="flex items-center justify-between gap-3 mb-3">
@@ -544,11 +544,11 @@ export const Section1031Calculator = () => {
                           value={candidate.label}
                           onChange={(e) => updateCandidate(candidate.id, { label: e.target.value })}
                           aria-label="Candidate name"
-                          className="bg-transparent text-sm font-semibold text-slate-100 border-b border-transparent hover:border-slate-700 focus:border-indigo-500 focus:outline-none py-0.5 min-w-0 flex-1"
+                          className="bg-transparent text-sm font-semibold text-slate-900 border-b border-transparent hover:border-slate-300 focus:border-indigo-500 focus:outline-none py-0.5 min-w-0 flex-1"
                         />
                         <div className="flex items-center gap-2 shrink-0">
                           {row?.isBest && (
-                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-500/15 border border-emerald-500/40 text-emerald-400">
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[11px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700">
                               <CheckCircle2 className="size-3" />
                               Best
                             </span>
@@ -558,7 +558,7 @@ export const Section1031Calculator = () => {
                               type="button"
                               onClick={() => removeCandidate(candidate.id)}
                               aria-label={`Remove ${candidate.label}`}
-                              className="p-1 rounded-lg text-slate-500 hover:text-rose-400 hover:bg-slate-800 transition-colors cursor-pointer"
+                              className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-100 transition-colors cursor-pointer"
                             >
                               <Trash2 className="size-3.5" />
                             </button>
@@ -591,8 +591,8 @@ export const Section1031Calculator = () => {
                       </div>
 
                       <div
-                        className={`mt-3 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs ${
-                          row?.isBest ? 'text-emerald-300' : 'text-slate-400'
+                        className={`mt-3 pt-3 border-t border-slate-100 flex items-center justify-between text-xs ${
+                          row?.isBest ? 'text-emerald-700 font-medium' : 'text-slate-600'
                         }`}
                       >
                         <span>
@@ -601,7 +601,7 @@ export const Section1031Calculator = () => {
                         <span>
                           Tax due: <span className="font-mono font-bold">{fmt(tax)}</span>
                           {row && row.taxVsBest > 0 && (
-                            <span className="text-rose-400 ml-1">(+{fmt(row.taxVsBest)})</span>
+                            <span className="text-rose-600 ml-1">(+{fmt(row.taxVsBest)})</span>
                           )}
                         </span>
                       </div>
@@ -613,7 +613,7 @@ export const Section1031Calculator = () => {
                   type="button"
                   onClick={addCandidate}
                   disabled={candidates.length >= 5}
-                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-dashed border-slate-700 text-xs font-semibold text-slate-300 hover:border-indigo-500/60 hover:text-indigo-300 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl border border-dashed border-slate-300 text-xs font-semibold text-slate-600 hover:border-indigo-500 hover:text-indigo-600 hover:bg-slate-50 transition-colors cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
                 >
                   <Plus className="size-3.5" />
                   {candidates.length >= 5 ? 'Maximum 5 candidates' : 'Add candidate property'}
@@ -651,33 +651,33 @@ export const Section1031Calculator = () => {
           </section>
 
           {/* Timeline */}
-          <section className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6">
-            <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800/80 pb-3 mb-5">
-              <Clock className="size-4 text-amber-400" />
+          <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 shadow-xs">
+            <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-5">
+              <Clock className="size-4 text-amber-600" />
               Statutory Deadlines
             </h2>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
               <label className="block">
-                <span className="block text-xs font-medium text-slate-400 mb-1.5">
+                <span className="block text-xs font-medium text-slate-700 mb-1.5">
                   Closing Date (relinquished)
                 </span>
                 <input
                   type="date"
                   value={closingDate}
                   onChange={(e) => setClosingDate(e.target.value)}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                  className="w-full px-3 py-2.5 rounded-xl bg-white border border-slate-200 text-sm text-slate-900 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
                 />
               </label>
 
-              <label className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer">
+              <label className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer">
                 <input
                   type="checkbox"
                   checked={filingExtension}
                   onChange={(e) => setFilingExtension(e.target.checked)}
                   className="mt-0.5 size-4 accent-indigo-500"
                 />
-                <span className="text-xs text-slate-300 leading-snug">
+                <span className="text-xs text-slate-800 leading-snug">
                   I will file a tax-return extension
                   <span className="block text-[11px] text-slate-500 mt-0.5">
                     Without one, the exchange period can end on April 15 (long before day 180).
@@ -690,20 +690,20 @@ export const Section1031Calculator = () => {
               <div
                 className={`p-4 rounded-xl border ${
                   idDeadlinePassed
-                    ? 'bg-rose-500/10 border-rose-500/40'
-                    : 'bg-slate-950 border-slate-800'
+                    ? 'bg-rose-50 border-rose-200'
+                    : 'bg-slate-50 border border-slate-200'
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="size-4 text-amber-400" />
-                  <span className="text-xs font-semibold text-slate-300">45-Day Identification</span>
+                  <Calendar className="size-4 text-amber-600" />
+                  <span className="text-xs font-semibold text-slate-700">45-Day Identification</span>
                 </div>
-                <div className="text-lg font-mono font-bold text-slate-100">
+                <div className="text-lg font-mono font-bold text-slate-900">
                   {result.identificationDeadline}
                 </div>
                 <div
                   className={`text-xs mt-1 ${
-                    idDeadlinePassed ? 'text-rose-400 font-semibold' : 'text-slate-400'
+                    idDeadlinePassed ? 'text-rose-600 font-semibold' : 'text-slate-500'
                   }`}
                 >
                   {idDeadlinePassed
@@ -715,20 +715,20 @@ export const Section1031Calculator = () => {
               <div
                 className={`p-4 rounded-xl border ${
                   exchDeadlinePassed
-                    ? 'bg-rose-500/10 border-rose-500/40'
-                    : 'bg-slate-950 border-slate-800'
+                    ? 'bg-rose-50 border-rose-200'
+                    : 'bg-slate-50 border border-slate-200'
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="size-4 text-emerald-400" />
-                  <span className="text-xs font-semibold text-slate-300">180-Day Exchange</span>
+                  <Calendar className="size-4 text-emerald-600" />
+                  <span className="text-xs font-semibold text-slate-700">180-Day Exchange</span>
                 </div>
-                <div className="text-lg font-mono font-bold text-slate-100">
+                <div className="text-lg font-mono font-bold text-slate-900">
                   {result.exchangeDeadline}
                 </div>
                 <div
                   className={`text-xs mt-1 ${
-                    exchDeadlinePassed ? 'text-rose-400 font-semibold' : 'text-slate-400'
+                    exchDeadlinePassed ? 'text-rose-600 font-semibold' : 'text-slate-500'
                   }`}
                 >
                   {exchDeadlinePassed
@@ -739,9 +739,9 @@ export const Section1031Calculator = () => {
             </div>
 
             {result.exchangeDeadlineDriver === 'tax-return-due-date' && (
-              <div className="mt-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-2.5">
-                <AlertTriangle className="size-4 text-amber-400 shrink-0 mt-0.5" />
-                <p className="text-xs text-amber-200/90 leading-relaxed">
+              <div className="mt-4 p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5">
+                <AlertTriangle className="size-4 text-amber-600 shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-800 leading-relaxed">
                   Your exchange period ends on <strong>April 15</strong>, not day 180. §1031 cuts the
                   exchange period short at the due date of that year&apos;s tax return. Filing an
                   extension would restore the full 180 days.
@@ -751,9 +751,9 @@ export const Section1031Calculator = () => {
           </section>
 
           {/* Identification */}
-          <section className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6">
-            <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800/80 pb-3 mb-5">
-              <Scale className="size-4 text-cyan-400" />
+          <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 shadow-xs">
+            <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-5">
+              <Scale className="size-4 text-cyan-600" />
               Identification Limits
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -775,19 +775,19 @@ export const Section1031Calculator = () => {
             <div
               className={`mt-4 p-3.5 rounded-xl border flex items-start gap-2.5 ${
                 result.identificationCompliant
-                  ? 'bg-emerald-500/10 border-emerald-500/30'
-                  : 'bg-rose-500/10 border-rose-500/40'
+                  ? 'bg-emerald-50 border-emerald-200'
+                  : 'bg-rose-50 border-rose-200'
               }`}
             >
               {result.identificationCompliant ? (
-                <CheckCircle2 className="size-4 text-emerald-400 shrink-0 mt-0.5" />
+                <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
               ) : (
-                <AlertTriangle className="size-4 text-rose-400 shrink-0 mt-0.5" />
+                <AlertTriangle className="size-4 text-rose-600 shrink-0 mt-0.5" />
               )}
               <div className="text-xs leading-relaxed">
                 <p
                   className={
-                    result.identificationCompliant ? 'text-emerald-200/90' : 'text-rose-200/90'
+                    result.identificationCompliant ? 'text-emerald-800' : 'text-rose-800'
                   }
                 >
                   {result.identificationRule === '3-property' &&
@@ -804,14 +804,14 @@ export const Section1031Calculator = () => {
           </section>
 
           {/* Tax rates */}
-          <section className="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden">
+          <section className="rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-xs">
             <button
               type="button"
               onClick={() => setShowRates((v) => !v)}
-              className="w-full p-5 sm:p-6 flex items-center justify-between gap-4 cursor-pointer text-left"
+              className="w-full p-5 sm:p-6 flex items-center justify-between gap-4 cursor-pointer text-left hover:bg-slate-50 transition-colors"
             >
-              <span className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-200">
-                <Calculator className="size-4 text-purple-400" />
+              <span className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-900">
+                <Calculator className="size-4 text-purple-600" />
                 Tax Rate Assumptions
               </span>
               <ChevronDown
@@ -821,7 +821,7 @@ export const Section1031Calculator = () => {
               />
             </button>
             {showRates && (
-              <div className="px-5 sm:px-6 pb-5 sm:pb-6 border-t border-slate-800/80 pt-5">
+              <div className="px-5 sm:px-6 pb-5 sm:pb-6 border-t border-slate-100 pt-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Field
                     label="Federal Long-Term Capital Gains"
@@ -847,14 +847,14 @@ export const Section1031Calculator = () => {
                     step={0.1}
                     hint="Enter 0 if your state does not tax the gain"
                   />
-                  <label className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer self-start">
+                  <label className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer self-start">
                     <input
                       type="checkbox"
                       checked={applyNiit}
                       onChange={(e) => setApplyNiit(e.target.checked)}
                       className="mt-0.5 size-4 accent-indigo-500"
                     />
-                    <span className="text-xs text-slate-300 leading-snug">
+                    <span className="text-xs text-slate-800 leading-snug">
                       Apply 3.8% NIIT
                       <span className="block text-[11px] text-slate-500 mt-0.5">
                         Net Investment Income Tax, above MAGI thresholds
@@ -876,7 +876,7 @@ export const Section1031Calculator = () => {
         <div className="lg:col-span-5">
           <div className="lg:sticky lg:top-6 space-y-5">
             <section
-              className={`rounded-2xl border p-5 sm:p-6 ${verdictTone.border} ${verdictTone.bg}`}
+              className={`rounded-2xl border p-5 sm:p-6 shadow-xs ${verdictTone.border} ${verdictTone.bg}`}
             >
               <div className="flex items-center gap-2 mb-3">
                 <VerdictIcon className={`size-5 ${verdictTone.text}`} />
@@ -884,24 +884,24 @@ export const Section1031Calculator = () => {
                   {result.verdictLabel}
                 </span>
               </div>
-              <p className="text-xs text-slate-300 leading-relaxed mb-5">
+              <p className="text-xs text-slate-600 leading-relaxed mb-5">
                 {result.verdictDescription}
               </p>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <div className="text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                  <div className="text-[11px] uppercase tracking-wider text-slate-500 mb-1">
                     Tax Due Now
                   </div>
-                  <div className="text-xl font-mono font-bold text-slate-100">
+                  <div className="text-xl font-mono font-bold text-slate-900">
                     {fmt(result.totalTaxDue)}
                   </div>
                 </div>
                 <div>
-                  <div className="text-[11px] uppercase tracking-wider text-slate-400 mb-1">
+                  <div className="text-[11px] uppercase tracking-wider text-slate-500 mb-1">
                     Gain Deferred
                   </div>
-                  <div className="text-xl font-mono font-bold text-emerald-400">
+                  <div className="text-xl font-mono font-bold text-emerald-600">
                     {fmt(result.deferredGain)}
                   </div>
                 </div>
@@ -910,8 +910,8 @@ export const Section1031Calculator = () => {
 
             {/* Side-by-side ranking, only in compare mode. */}
             {compareMode && comparison.length > 0 && (
-              <section className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6">
-                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800/80 pb-3 mb-3">
+              <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 shadow-xs">
+                <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-3">
                   Candidate Comparison
                 </h2>
                 <div className="space-y-2">
@@ -920,16 +920,16 @@ export const Section1031Calculator = () => {
                     .map((row) => (
                       <div
                         key={row.candidate.id}
-                        className={`flex items-center justify-between gap-3 py-2 border-b border-slate-800/60 last:border-0 ${
-                          row.isBest ? 'text-emerald-300' : 'text-slate-300'
+                        className={`flex items-center justify-between gap-3 py-2 border-b border-slate-100 last:border-0 ${
+                          row.isBest ? 'text-emerald-700 font-medium' : 'text-slate-700'
                         }`}
                       >
                         <span className="flex items-center gap-2 min-w-0">
                           <span
                             className={`size-5 shrink-0 rounded-md text-[11px] font-bold flex items-center justify-center ${
                               row.isBest
-                                ? 'bg-emerald-500/20 text-emerald-300'
-                                : 'bg-slate-800 text-slate-400'
+                                ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                                : 'bg-slate-100 text-slate-600'
                             }`}
                           >
                             {row.rank}
@@ -939,7 +939,7 @@ export const Section1031Calculator = () => {
                         <span className="text-xs font-mono shrink-0">
                           {fmt(row.result.totalTaxDue)}
                           {row.taxVsBest > 0 && (
-                            <span className="text-rose-400 ml-1">+{fmt(row.taxVsBest)}</span>
+                            <span className="text-rose-600 ml-1">+{fmt(row.taxVsBest)}</span>
                           )}
                         </span>
                       </div>
@@ -952,8 +952,8 @@ export const Section1031Calculator = () => {
               </section>
             )}
 
-            <section className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800/80 pb-3 mb-3">
+            <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 shadow-xs">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-3">
                 Boot Analysis
               </h2>
               <StatRow label="Cash boot (un-reinvested proceeds)" value={fmt2(result.cashBoot)} tone={result.cashBoot > 0 ? 'negative' : 'positive'} />
@@ -968,8 +968,8 @@ export const Section1031Calculator = () => {
               )}
             </section>
 
-            <section className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-200 border-b border-slate-800/80 pb-3 mb-3">
+            <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 shadow-xs">
+              <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-3">
                 Gain &amp; Tax
               </h2>
               <StatRow label="Net sale proceeds" value={fmt2(result.netSaleProceeds)} />
@@ -1003,22 +1003,22 @@ export const Section1031Calculator = () => {
             </section>
 
             {/* Actions */}
-            <section className="rounded-2xl bg-slate-900/60 border border-slate-800 p-5 sm:p-6 space-y-3">
+            <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 space-y-3 shadow-xs">
               <div className="grid grid-cols-2 gap-2.5">
                 <button
                   type="button"
                   onClick={handleExportExcel}
-                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer shadow-xs"
                 >
-                  <FileSpreadsheet className="size-3.5" />
+                  <FileSpreadsheet className="size-3.5 text-emerald-600" />
                   Excel
                 </button>
                 <button
                   type="button"
                   onClick={handleExportCsv}
-                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition-colors cursor-pointer"
+                  className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer shadow-xs"
                 >
-                  <Download className="size-3.5" />
+                  <Download className="size-3.5 text-indigo-600" />
                   CSV
                 </button>
               </div>
@@ -1026,17 +1026,17 @@ export const Section1031Calculator = () => {
               <button
                 type="button"
                 onClick={handleCopySummary}
-                className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer shadow-xs"
               >
-                <RefreshCw className="size-3.5" />
+                <RefreshCw className="size-3.5 text-slate-500" />
                 {copiedNotice ? 'Summary copied' : 'Copy summary for your CPA'}
               </button>
               <button
                 type="button"
                 onClick={() => window.print()}
-                className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold text-slate-200 transition-colors cursor-pointer"
+                className="w-full flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer shadow-xs"
               >
-                <Printer className="size-3.5" />
+                <Printer className="size-3.5 text-slate-500" />
                 Print / Save as PDF
               </button>
               <p className="text-[11px] text-slate-500 leading-relaxed pt-1">
@@ -1056,7 +1056,7 @@ export const Section1031Calculator = () => {
 
       {/* ---- FAQ ---- */}
       <section className="max-w-3xl mx-auto mt-14">
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-100 text-center mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-6">
           Frequently Asked Questions About 1031 Exchanges
         </h2>
         <div className="space-y-3.5">
@@ -1065,22 +1065,22 @@ export const Section1031Calculator = () => {
             return (
               <div
                 key={faq.q}
-                className="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden"
+                className="rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-xs"
               >
                 <button
                   type="button"
                   onClick={() => setOpenFaq(isOpen ? null : index)}
-                  className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer"
+                  className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-slate-50 transition-colors"
                 >
-                  <span className="text-sm sm:text-base font-semibold text-slate-200">{faq.q}</span>
+                  <span className="text-sm sm:text-base font-semibold text-slate-900">{faq.q}</span>
                   <ChevronDown
                     className={`size-5 text-slate-400 transition-transform duration-200 shrink-0 ${
-                      isOpen ? 'rotate-180 text-indigo-400' : ''
+                      isOpen ? 'rotate-180 text-indigo-600' : ''
                     }`}
                   />
                 </button>
                 {isOpen && (
-                  <div className="px-5 pb-5 pt-1 text-sm text-slate-400 border-t border-slate-800/60 leading-relaxed">
+                  <div className="px-5 pb-5 pt-1 text-sm text-slate-600 border-t border-slate-100 leading-relaxed">
                     {faq.a}
                   </div>
                 )}

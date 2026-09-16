@@ -75,35 +75,35 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     const staleChunk = isStaleChunkError(error);
 
     return (
-      <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center px-4">
-        <div className="max-w-md w-full p-6 sm:p-8 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl text-center">
-          <h1 className="text-xl font-bold text-slate-100 mb-2">
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex items-center justify-center px-4">
+        <div className="max-w-md w-full p-6 sm:p-8 rounded-3xl bg-white border border-slate-200 shadow-xl text-center">
+          <h1 className="text-xl font-extrabold text-slate-900 mb-2">
             {staleChunk ? 'This page needs a refresh' : 'Something went wrong'}
           </h1>
-          <p className="text-sm text-slate-400 leading-relaxed mb-6">
+          <p className="text-sm text-slate-600 leading-relaxed mb-6">
             {staleChunk
               ? 'TableView was updated while this tab was open, so part of the app is out of date. Reloading will fix it: your files were never uploaded and nothing was lost.'
               : 'An unexpected error stopped this page from rendering. Your files stay on your device and were not uploaded. Reloading usually resolves it.'}
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-2 justify-center">
+          <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
             <button
               type="button"
               onClick={this.handleReload}
-              className="btn-primary px-4 py-2 rounded-xl text-sm font-semibold cursor-pointer"
+              className="btn-primary px-5 py-2.5 rounded-xl text-sm font-semibold cursor-pointer"
             >
               Reload page
             </button>
             <a
               href="/"
-              className="px-4 py-2 rounded-xl text-sm font-medium bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 transition-colors"
+              className="px-5 py-2.5 rounded-xl text-sm font-semibold bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 transition-colors shadow-2xs"
             >
-              Back to workbench
+              Back to Home
             </a>
           </div>
 
           {import.meta.env.DEV && (
-            <pre className="mt-6 p-3 rounded-xl bg-slate-950 border border-slate-800 text-left text-[11px] text-rose-300 overflow-auto max-h-48">
+            <pre className="mt-6 p-3 rounded-xl bg-slate-100 border border-slate-200 text-left text-[11px] text-rose-600 overflow-auto max-h-48">
               {error.message}
             </pre>
           )}

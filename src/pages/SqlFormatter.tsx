@@ -132,7 +132,7 @@ export const SqlFormatter = () => {
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={handleBeautify}
-            className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
+            className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white flex items-center gap-1.5 shadow-xs cursor-pointer transition-all active:scale-95"
           >
             <Maximize2 className="size-3.5" />
             <span>Beautify</span>

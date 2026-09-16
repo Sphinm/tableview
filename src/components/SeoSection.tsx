@@ -104,15 +104,15 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
             </div>
 
             {/* Code Snippet Preview */}
-            <div className="rounded-xl bg-slate-900 border border-slate-800 p-4 font-mono text-xs sm:text-sm text-slate-300 overflow-x-auto shadow-inner">
-              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-800 text-slate-400 text-xs">
+            <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 font-mono text-xs sm:text-sm text-slate-800 overflow-x-auto shadow-2xs">
+              <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200 text-slate-500 text-xs">
                 <span>duckdb-wasm-interactive-query</span>
-                <span className="text-emerald-400 font-mono">⚡ 4ms execution</span>
+                <span className="text-emerald-600 font-mono font-semibold">⚡ 4ms execution</span>
               </div>
-              <p className="text-indigo-400">SELECT <span className="text-slate-200">category, count(*), round(avg(amount), 2) AS avg_rev</span></p>
-              <p className="text-indigo-400">FROM <span className="text-amber-300">parquet_scan('dataset.parquet')</span></p>
-              <p className="text-indigo-400">WHERE <span className="text-slate-200">status = 'COMPLETED'</span></p>
-              <p className="text-indigo-400">GROUP BY <span className="text-slate-200">1</span> ORDER BY <span className="text-slate-200">2 DESC LIMIT 5;</span></p>
+              <p className="text-indigo-600 font-bold">SELECT <span className="text-slate-800 font-normal">category, count(*), round(avg(amount), 2) AS avg_rev</span></p>
+              <p className="text-indigo-600 font-bold">FROM <span className="text-amber-700 font-normal">parquet_scan('dataset.parquet')</span></p>
+              <p className="text-indigo-600 font-bold">WHERE <span className="text-slate-800 font-normal">status = 'COMPLETED'</span></p>
+              <p className="text-indigo-600 font-bold">GROUP BY <span className="text-slate-800 font-normal">1</span> ORDER BY <span className="text-slate-800 font-normal">2 DESC LIMIT 5;</span></p>
             </div>
           </div>
 

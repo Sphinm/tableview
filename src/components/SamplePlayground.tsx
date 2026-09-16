@@ -130,7 +130,7 @@ export const SamplePlayground = ({ onSelectSample, isLoading }: SamplePlayground
                 <button
                   onClick={() => onSelectSample(s.id)}
                   disabled={isLoading}
-                  className="py-2 px-3 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs transition-transform active:scale-95 disabled:opacity-50"
+                  className="py-2 px-3 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-transform active:scale-95 disabled:opacity-50"
                   title="Open and query dataset in TableView"
                 >
                   <Play className="size-3 fill-current" />

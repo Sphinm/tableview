@@ -56,9 +56,9 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
 
       {/* Side-by-Side Comparison Matrix */}
       <div className="border border-slate-300 rounded-lg overflow-hidden mb-6">
-        <div className="bg-slate-800 text-white px-4 py-2 flex justify-between items-center">
-          <span className="text-xs font-bold uppercase tracking-wider">1. Loan Structure Comparison</span>
-          <span className="text-xs font-medium text-slate-300">Target Holding Period: {inputs.yearsBeforeSell} Years</span>
+        <div className="bg-slate-100 text-slate-900 border-b border-slate-300 px-4 py-2 flex justify-between items-center">
+          <span className="text-xs font-bold uppercase tracking-wider text-slate-800">1. Loan Structure Comparison</span>
+          <span className="text-xs font-medium text-slate-600">Target Holding Period: {inputs.yearsBeforeSell} Years</span>
         </div>
         <table className="w-full text-xs">
           <thead>
@@ -158,17 +158,17 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
 
         {scheduleView === 'monthly' ? (
           <table className="w-full text-[9px] border border-slate-300">
-            <thead className="bg-slate-900 text-white">
+            <thead className="bg-slate-100 text-slate-900 border-b border-slate-300">
               <tr>
-                <th className="py-1 px-1.5 text-left">Mo</th>
-                <th className="py-1 px-1.5 text-left">Yr</th>
-                <th className="py-1 px-1.5 text-right">Old Balance</th>
-                <th className="py-1 px-1.5 text-right">New Balance</th>
-                <th className="py-1 px-1.5 text-right">Old P&I</th>
-                <th className="py-1 px-1.5 text-right">New P&I</th>
-                <th className="py-1 px-1.5 text-right text-emerald-300 font-bold">Monthly Save</th>
-                <th className="py-1 px-1.5 text-right text-emerald-300 font-bold">Cumul. Save</th>
-                <th className="py-1 px-1.5 text-right text-indigo-300 font-bold">Equity Diff</th>
+                <th className="py-1 px-1.5 text-left font-bold">Mo</th>
+                <th className="py-1 px-1.5 text-left font-bold">Yr</th>
+                <th className="py-1 px-1.5 text-right font-bold">Old Balance</th>
+                <th className="py-1 px-1.5 text-right font-bold">New Balance</th>
+                <th className="py-1 px-1.5 text-right font-bold">Old P&I</th>
+                <th className="py-1 px-1.5 text-right font-bold">New P&I</th>
+                <th className="py-1 px-1.5 text-right text-emerald-700 font-bold">Monthly Save</th>
+                <th className="py-1 px-1.5 text-right text-emerald-700 font-bold">Cumul. Save</th>
+                <th className="py-1 px-1.5 text-right text-indigo-700 font-bold">Equity Diff</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 font-mono">
@@ -195,15 +195,15 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
           </table>
         ) : (
           <table className="w-full text-[10px] border border-slate-300">
-            <thead className="bg-slate-900 text-white">
+            <thead className="bg-slate-100 text-slate-900 border-b border-slate-300">
               <tr>
-                <th className="py-1.5 px-2 text-left">Year</th>
-                <th className="py-1.5 px-2 text-right">Old Balance</th>
-                <th className="py-1.5 px-2 text-right">New Balance</th>
-                <th className="py-1.5 px-2 text-right">Old Annual Int.</th>
-                <th className="py-1.5 px-2 text-right">New Annual Int.</th>
-                <th className="py-1.5 px-2 text-right text-emerald-300 font-bold">Annual Savings</th>
-                <th className="py-1.5 px-2 text-right text-indigo-300 font-bold">Equity Gain</th>
+                <th className="py-1.5 px-2 text-left font-bold">Year</th>
+                <th className="py-1.5 px-2 text-right font-bold">Old Balance</th>
+                <th className="py-1.5 px-2 text-right font-bold">New Balance</th>
+                <th className="py-1.5 px-2 text-right font-bold">Old Annual Int.</th>
+                <th className="py-1.5 px-2 text-right font-bold">New Annual Int.</th>
+                <th className="py-1.5 px-2 text-right text-emerald-700 font-bold">Annual Savings</th>
+                <th className="py-1.5 px-2 text-right text-indigo-700 font-bold">Equity Gain</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 font-mono">

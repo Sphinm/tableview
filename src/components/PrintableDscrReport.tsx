@@ -217,14 +217,14 @@ export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
 
         {isMonthly ? (
           <table className="w-full text-[10px] border border-slate-300">
-            <thead className="bg-slate-900 text-white">
+            <thead className="bg-slate-100 text-slate-900 border-b border-slate-300">
               <tr>
-                <th className="py-1.5 px-2 text-left">Period</th>
-                <th className="py-1.5 px-2 text-right">Monthly Payment</th>
-                <th className="py-1.5 px-2 text-right text-emerald-300 font-bold">Principal</th>
-                <th className="py-1.5 px-2 text-right text-rose-300 font-bold">Interest</th>
-                <th className="py-1.5 px-2 text-right font-bold text-white">Ending Balance</th>
-                <th className="py-1.5 px-2 text-right text-slate-300">Cumulative Interest</th>
+                <th className="py-1.5 px-2 text-left font-bold">Period</th>
+                <th className="py-1.5 px-2 text-right font-bold">Monthly Payment</th>
+                <th className="py-1.5 px-2 text-right text-emerald-700 font-bold">Principal</th>
+                <th className="py-1.5 px-2 text-right text-rose-700 font-bold">Interest</th>
+                <th className="py-1.5 px-2 text-right font-bold text-slate-950">Ending Balance</th>
+                <th className="py-1.5 px-2 text-right text-slate-700 font-bold">Cumulative Interest</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 font-mono">
@@ -254,14 +254,14 @@ export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
           </table>
         ) : (
           <table className="w-full text-[10px] border border-slate-300">
-            <thead className="bg-slate-900 text-white">
+            <thead className="bg-slate-100 text-slate-900 border-b border-slate-300">
               <tr>
-                <th className="py-1.5 px-2 text-left">Period</th>
-                <th className="py-1.5 px-2 text-right">Annual Payment</th>
-                <th className="py-1.5 px-2 text-right text-emerald-300 font-bold">Principal Paid</th>
-                <th className="py-1.5 px-2 text-right text-rose-300 font-bold">Interest Paid</th>
-                <th className="py-1.5 px-2 text-right font-bold text-white">Ending Balance</th>
-                <th className="py-1.5 px-2 text-right text-slate-300">Cumulative Interest</th>
+                <th className="py-1.5 px-2 text-left font-bold">Period</th>
+                <th className="py-1.5 px-2 text-right font-bold">Annual Payment</th>
+                <th className="py-1.5 px-2 text-right text-emerald-700 font-bold">Principal Paid</th>
+                <th className="py-1.5 px-2 text-right text-rose-700 font-bold">Interest Paid</th>
+                <th className="py-1.5 px-2 text-right font-bold text-slate-950">Ending Balance</th>
+                <th className="py-1.5 px-2 text-right text-slate-700 font-bold">Cumulative Interest</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 font-mono">

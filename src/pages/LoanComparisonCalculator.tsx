@@ -261,17 +261,17 @@ export const LoanComparisonCalculator = () => {
             <button
               type="button"
               onClick={handleCopyLink}
-              className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm active:scale-95 shrink-0"
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 cursor-pointer transition-all shadow-xs active:scale-95 shrink-0"
               title="Copy shareable link with current loan parameters"
             >
               {copied ? (
                 <>
-                  <Check className="size-4 text-emerald-400" />
-                  <span className="text-emerald-400">Link Copied!</span>
+                  <Check className="size-4 text-emerald-600" />
+                  <span className="text-emerald-600">Link Copied!</span>
                 </>
               ) : (
                 <>
-                  <Share2 className="size-4 text-indigo-400" />
+                  <Share2 className="size-4 text-indigo-600" />
                   <span>Share Link</span>
                 </>
               )}
@@ -279,7 +279,7 @@ export const LoanComparisonCalculator = () => {
             <button
               type="button"
               onClick={handleExportExcel}
-              className="btn-primary h-9 px-4 rounded-xl text-xs font-semibold inline-flex items-center gap-2 shadow-sm cursor-pointer transition-transform active:scale-95 shrink-0"
+              className="btn-primary h-9 px-4 rounded-xl text-xs font-semibold inline-flex items-center gap-2 shadow-xs cursor-pointer transition-transform active:scale-95 shrink-0"
             >
               <Download className="size-4" />
               <span>Export Comparison (.xlsx)</span>
@@ -289,40 +289,40 @@ export const LoanComparisonCalculator = () => {
       />
 
       {/* Main Verdict Recommendation Banner */}
-      <div className={`p-6 rounded-2xl border mb-8 shadow-xl transition-all ${
+      <div className={`p-6 rounded-2xl border mb-8 shadow-xs transition-all ${
         comparison.recommendation.betterOverall !== 'TIE'
-          ? 'bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border-indigo-500/40 shadow-indigo-500/5'
-          : 'bg-slate-900/90 border-slate-800'
+          ? 'bg-gradient-to-r from-indigo-50/70 via-indigo-50/40 to-slate-50 border-indigo-200 shadow-indigo-100/50'
+          : 'bg-white border-slate-200'
       }`}>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-3xl">
             <div className="flex items-center gap-2">
-              <span className="p-1.5 rounded-lg bg-emerald-500/15 text-emerald-400 border border-emerald-500/30">
+              <span className="p-1.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <CheckCircle2 className="size-4" />
               </span>
-              <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">
+              <span className="text-xs font-bold uppercase tracking-wider text-emerald-700">
                 Objective Decision Verdict
               </span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-100">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
               {comparison.recommendation.headline}
             </h2>
             {comparison.recommendation.subHeadline && (
-              <p className="text-xs sm:text-sm text-indigo-300/90 font-medium">
+              <p className="text-xs sm:text-sm text-indigo-700 font-medium">
                 {comparison.recommendation.subHeadline}
               </p>
             )}
-            <p className="text-sm text-slate-300 leading-relaxed">
+            <p className="text-sm text-slate-600 leading-relaxed">
               {comparison.recommendation.description}
             </p>
           </div>
 
           {/* Quick Stats Pill */}
-          <div className="grid grid-cols-2 gap-3 shrink-0 bg-slate-950/80 p-4 rounded-xl border border-slate-800">
+          <div className="grid grid-cols-2 gap-3 shrink-0 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
             <div>
-              <span className="text-[11px] text-slate-400 block font-medium">Monthly Diff</span>
+              <span className="text-[11px] text-slate-500 block font-medium">Monthly Diff</span>
               <span className={`text-base font-bold font-mono ${
-                comparison.monthlyPaymentDiff > 0 ? 'text-emerald-400' : comparison.monthlyPaymentDiff < 0 ? 'text-amber-400' : 'text-slate-200'
+                comparison.monthlyPaymentDiff > 0 ? 'text-emerald-600' : comparison.monthlyPaymentDiff < 0 ? 'text-amber-600' : 'text-slate-800'
               }`}>
                 {comparison.monthlyPaymentDiff > 0
                   ? `-$${comparison.monthlyPaymentDiff.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -332,8 +332,8 @@ export const LoanComparisonCalculator = () => {
               </span>
             </div>
             <div>
-              <span className="text-[11px] text-slate-400 block font-medium">Interest Saved</span>
-              <span className="text-base font-bold font-mono text-emerald-400">
+              <span className="text-[11px] text-slate-500 block font-medium">Interest Saved</span>
+              <span className="text-base font-bold font-mono text-emerald-600">
                 ${Math.abs(comparison.totalInterestDiff).toLocaleString()}
               </span>
             </div>
@@ -370,28 +370,28 @@ export const LoanComparisonCalculator = () => {
       />
 
       {/* Mobile Segmented Switcher */}
-      <div className="flex lg:hidden items-center p-1 bg-slate-900/90 border border-slate-800 rounded-xl mb-6 text-xs font-semibold sticky top-16 z-20 backdrop-blur-md">
+      <div className="flex lg:hidden items-center p-1 bg-white/95 border border-slate-200 rounded-xl mb-6 text-xs font-semibold sticky top-16 z-20 backdrop-blur-md shadow-xs">
         <button
           onClick={() => setMobileTab('both')}
-          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'both' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'both' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
         >
           Both
         </button>
         <button
           onClick={() => setMobileTab('a')}
-          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'a' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'a' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
         >
           Option A
         </button>
         <button
           onClick={() => setMobileTab('b')}
-          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'b' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'b' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
         >
           Option B
         </button>
         <button
           onClick={() => setMobileTab('verdict')}
-          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'verdict' ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-400 hover:text-slate-200'}`}
+          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'verdict' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
         >
           Breakdown
         </button>
@@ -400,23 +400,23 @@ export const LoanComparisonCalculator = () => {
       {/* Side-by-Side Input Columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         {/* Loan A Card */}
-        <div className={`p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm flex flex-col justify-between ${mobileTab === 'b' || mobileTab === 'verdict' ? 'hidden lg:flex' : 'flex'}`}>
+        <div className={`p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between ${mobileTab === 'b' || mobileTab === 'verdict' ? 'hidden lg:flex' : 'flex'}`}>
           <div>
-            <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-200">
               <input
                 type="text"
                 value={loanA.name}
                 onChange={(e) => setLoanA({ ...loanA, name: e.target.value })}
-                className="bg-transparent text-lg font-bold text-indigo-300 focus:outline-none focus:border-b border-indigo-400 w-full"
+                className="bg-transparent text-lg font-bold text-indigo-700 focus:outline-none focus:border-b border-indigo-500 w-full"
               />
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-indigo-950/80 text-indigo-400 border border-indigo-800/60 shrink-0 ml-2">
+              <span className="text-xs font-mono px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0 ml-2 font-medium">
                 Option A
               </span>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">Loan Amount ($)</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1.5">Loan Amount ($)</label>
                 <CurrencyInput
                   value={loanA.loanAmount}
                   onChange={(val) => setLoanA({ ...loanA, loanAmount: val })}
@@ -426,7 +426,7 @@ export const LoanComparisonCalculator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Interest Rate (APR %)</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Interest Rate (APR %)</label>
                   <NumericInput
                     value={loanA.interestRate}
                     onChange={(val) => setLoanA({ ...loanA, interestRate: val })}
@@ -435,11 +435,11 @@ export const LoanComparisonCalculator = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Loan Term (Years)</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Loan Term (Years)</label>
                   <select
                     value={loanA.termYears}
                     onChange={(e) => setLoanA({ ...loanA, termYears: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-semibold text-slate-100 focus:border-indigo-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:border-indigo-500 focus:outline-none"
                   >
                     <option value={10}>10 Years</option>
                     <option value={15}>15 Years</option>
@@ -453,7 +453,7 @@ export const LoanComparisonCalculator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Points (%)</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Points (%)</label>
                   <NumericInput
                     value={loanA.originationPoints}
                     onChange={(val) => setLoanA({ ...loanA, originationPoints: val })}
@@ -462,7 +462,7 @@ export const LoanComparisonCalculator = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Upfront Fees ($)</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Upfront Fees ($)</label>
                   <CurrencyInput
                     value={loanA.upfrontFees}
                     onChange={(val) => setLoanA({ ...loanA, upfrontFees: val })}
@@ -472,7 +472,7 @@ export const LoanComparisonCalculator = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">Extra Monthly Principal ($)</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1.5">Extra Monthly Principal ($)</label>
                 <CurrencyInput
                   value={loanA.extraMonthlyPayment}
                   onChange={(val) => setLoanA({ ...loanA, extraMonthlyPayment: val })}
@@ -483,46 +483,46 @@ export const LoanComparisonCalculator = () => {
           </div>
 
           {/* Loan A Result Summary Footer */}
-          <div className="mt-8 pt-5 border-t border-slate-800 bg-slate-950/40 -mx-6 -mb-6 p-6 rounded-b-2xl space-y-3">
+          <div className="mt-8 pt-5 border-t border-slate-200 bg-slate-50 -mx-6 -mb-6 p-6 rounded-b-2xl space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-400">Monthly Payment</span>
-              <span className="text-xl font-bold font-mono text-slate-100">
+              <span className="text-xs text-slate-500">Monthly Payment</span>
+              <span className="text-xl font-bold font-mono text-slate-900">
                 ${comparison.loanA.actualMonthlyPayment.toLocaleString()}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">Total Interest Paid</span>
-              <span className="font-mono text-slate-300">${comparison.loanA.totalInterestPaid.toLocaleString()}</span>
+              <span className="text-slate-500">Total Interest Paid</span>
+              <span className="font-mono text-slate-700">${comparison.loanA.totalInterestPaid.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">Upfront Costs</span>
-              <span className="font-mono text-slate-300">${comparison.loanA.upfrontClosingCosts.toLocaleString()}</span>
+              <span className="text-slate-500">Upfront Costs</span>
+              <span className="font-mono text-slate-700">${comparison.loanA.upfrontClosingCosts.toLocaleString()}</span>
             </div>
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-800/60 font-semibold">
-              <span className="text-slate-300">Total Lifetime Cost</span>
-              <span className="font-mono text-indigo-300">${comparison.loanA.totalLoanCost.toLocaleString()}</span>
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200 font-semibold">
+              <span className="text-slate-700">Total Lifetime Cost</span>
+              <span className="font-mono text-indigo-700">${comparison.loanA.totalLoanCost.toLocaleString()}</span>
             </div>
           </div>
         </div>
 
         {/* Loan B Card */}
-        <div className={`p-6 rounded-2xl bg-slate-900/80 border border-slate-800 shadow-sm flex flex-col justify-between ${mobileTab === 'a' || mobileTab === 'verdict' ? 'hidden lg:flex' : 'flex'}`}>
+        <div className={`p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between ${mobileTab === 'a' || mobileTab === 'verdict' ? 'hidden lg:flex' : 'flex'}`}>
           <div>
-            <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-800">
+            <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-200">
               <input
                 type="text"
                 value={loanB.name}
                 onChange={(e) => setLoanB({ ...loanB, name: e.target.value })}
-                className="bg-transparent text-lg font-bold text-emerald-300 focus:outline-none focus:border-b border-emerald-400 w-full"
+                className="bg-transparent text-lg font-bold text-emerald-700 focus:outline-none focus:border-b border-emerald-500 w-full"
               />
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-950/80 text-emerald-400 border border-emerald-800/60 shrink-0 ml-2">
+              <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0 ml-2 font-medium">
                 Option B
               </span>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">Loan Amount ($)</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1.5">Loan Amount ($)</label>
                 <CurrencyInput
                   value={loanB.loanAmount}
                   onChange={(val) => setLoanB({ ...loanB, loanAmount: val })}
@@ -532,7 +532,7 @@ export const LoanComparisonCalculator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Interest Rate (APR %)</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Interest Rate (APR %)</label>
                   <NumericInput
                     value={loanB.interestRate}
                     onChange={(val) => setLoanB({ ...loanB, interestRate: val })}
@@ -541,11 +541,11 @@ export const LoanComparisonCalculator = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Loan Term (Years)</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Loan Term (Years)</label>
                   <select
                     value={loanB.termYears}
                     onChange={(e) => setLoanB({ ...loanB, termYears: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-semibold text-slate-100 focus:border-emerald-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:border-emerald-500 focus:outline-none"
                   >
                     <option value={10}>10 Years</option>
                     <option value={15}>15 Years</option>
@@ -559,7 +559,7 @@ export const LoanComparisonCalculator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Points (%)</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Points (%)</label>
                   <NumericInput
                     value={loanB.originationPoints}
                     onChange={(val) => setLoanB({ ...loanB, originationPoints: val })}
@@ -568,7 +568,7 @@ export const LoanComparisonCalculator = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">Upfront Fees ($)</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Upfront Fees ($)</label>
                   <CurrencyInput
                     value={loanB.upfrontFees}
                     onChange={(val) => setLoanB({ ...loanB, upfrontFees: val })}
@@ -578,7 +578,7 @@ export const LoanComparisonCalculator = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">Extra Monthly Principal ($)</label>
+                <label className="block text-xs font-medium text-slate-700 mb-1.5">Extra Monthly Principal ($)</label>
                 <CurrencyInput
                   value={loanB.extraMonthlyPayment}
                   onChange={(val) => setLoanB({ ...loanB, extraMonthlyPayment: val })}
@@ -589,85 +589,85 @@ export const LoanComparisonCalculator = () => {
           </div>
 
           {/* Loan B Result Summary Footer */}
-          <div className="mt-8 pt-5 border-t border-slate-800 bg-slate-950/40 -mx-6 -mb-6 p-6 rounded-b-2xl space-y-3">
+          <div className="mt-8 pt-5 border-t border-slate-200 bg-slate-50 -mx-6 -mb-6 p-6 rounded-b-2xl space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-400">Monthly Payment</span>
-              <span className="text-xl font-bold font-mono text-slate-100">
+              <span className="text-xs text-slate-500">Monthly Payment</span>
+              <span className="text-xl font-bold font-mono text-slate-900">
                 ${comparison.loanB.actualMonthlyPayment.toLocaleString()}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">Total Interest Paid</span>
-              <span className="font-mono text-slate-300">${comparison.loanB.totalInterestPaid.toLocaleString()}</span>
+              <span className="text-slate-500">Total Interest Paid</span>
+              <span className="font-mono text-slate-700">${comparison.loanB.totalInterestPaid.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-400">Upfront Costs</span>
-              <span className="font-mono text-slate-300">${comparison.loanB.upfrontClosingCosts.toLocaleString()}</span>
+              <span className="text-slate-500">Upfront Costs</span>
+              <span className="font-mono text-slate-700">${comparison.loanB.upfrontClosingCosts.toLocaleString()}</span>
             </div>
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-800/60 font-semibold">
-              <span className="text-slate-300">Total Lifetime Cost</span>
-              <span className="font-mono text-emerald-300">${comparison.loanB.totalLoanCost.toLocaleString()}</span>
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200 font-semibold">
+              <span className="text-slate-700">Total Lifetime Cost</span>
+              <span className="font-mono text-emerald-700">${comparison.loanB.totalLoanCost.toLocaleString()}</span>
             </div>
           </div>
         </div>
       </div>
 
       {/* Comprehensive Metric Comparison Table */}
-      <div className={`mb-14 rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden shadow-lg ${mobileTab === 'a' || mobileTab === 'b' ? 'hidden lg:block' : 'block'}`}>
-        <div className="p-5 border-b border-slate-800 bg-slate-950/80 flex items-center justify-between">
-          <h3 className="text-base font-bold text-slate-100">Side-by-Side Detailed Breakdown</h3>
-          <span className="text-xs text-slate-400 font-mono">100% In-Memory Calculation</span>
+      <div className={`mb-14 rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs ${mobileTab === 'a' || mobileTab === 'b' ? 'hidden lg:block' : 'block'}`}>
+        <div className="p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+          <h3 className="text-base font-bold text-slate-900">Side-by-Side Detailed Breakdown</h3>
+          <span className="text-xs text-slate-500 font-mono">100% In-Memory Calculation</span>
         </div>
 
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-slate-800 text-xs text-slate-400 bg-slate-950/40">
+              <tr className="border-b border-slate-200 text-xs text-slate-600 bg-slate-50/50">
                 <th className="p-4 font-semibold">Evaluation Criteria</th>
-                <th className="p-4 font-semibold text-indigo-300">{loanA.name}</th>
-                <th className="p-4 font-semibold text-emerald-300">{loanB.name}</th>
+                <th className="p-4 font-semibold text-indigo-700">{loanA.name}</th>
+                <th className="p-4 font-semibold text-emerald-700">{loanB.name}</th>
                 <th className="p-4 font-semibold text-right">Difference</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-xs">
-              <tr className="hover:bg-slate-900/40">
-                <td className="p-4 font-medium text-slate-200">Scheduled Monthly Payment (P&I)</td>
-                <td className="p-4 font-mono text-slate-100">${comparison.loanA.scheduledMonthlyPayment.toLocaleString()}</td>
-                <td className="p-4 font-mono text-slate-100">${comparison.loanB.scheduledMonthlyPayment.toLocaleString()}</td>
-                <td className="p-4 font-mono text-right text-slate-300">
+            <tbody className="divide-y divide-slate-100 text-xs">
+              <tr className="hover:bg-slate-50/80 transition-colors">
+                <td className="p-4 font-medium text-slate-900">Scheduled Monthly Payment (P&I)</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.scheduledMonthlyPayment.toLocaleString()}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.scheduledMonthlyPayment.toLocaleString()}</td>
+                <td className="p-4 font-mono text-right text-slate-600">
                   {comparison.monthlyPaymentDiff > 0 ? `Option B saves $${comparison.monthlyPaymentDiff.toFixed(2)}/mo` : comparison.monthlyPaymentDiff < 0 ? `Option A saves $${Math.abs(comparison.monthlyPaymentDiff).toFixed(2)}/mo` : 'Equal'}
                 </td>
               </tr>
-              <tr className="hover:bg-slate-900/40">
-                <td className="p-4 font-medium text-slate-200">Total Lifetime Interest</td>
-                <td className="p-4 font-mono text-slate-100">${comparison.loanA.totalInterestPaid.toLocaleString()}</td>
-                <td className="p-4 font-mono text-slate-100">${comparison.loanB.totalInterestPaid.toLocaleString()}</td>
-                <td className="p-4 font-mono text-right font-semibold text-emerald-400">
+              <tr className="hover:bg-slate-50/80 transition-colors">
+                <td className="p-4 font-medium text-slate-900">Total Lifetime Interest</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.totalInterestPaid.toLocaleString()}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.totalInterestPaid.toLocaleString()}</td>
+                <td className="p-4 font-mono text-right font-semibold text-emerald-600">
                   ${Math.abs(comparison.totalInterestDiff).toLocaleString()} {comparison.totalInterestDiff > 0 ? 'less with B' : 'less with A'}
                 </td>
               </tr>
-              <tr className="hover:bg-slate-900/40">
-                <td className="p-4 font-medium text-slate-200">Upfront Points & Closing Fees</td>
-                <td className="p-4 font-mono text-slate-100">${comparison.loanA.upfrontClosingCosts.toLocaleString()}</td>
-                <td className="p-4 font-mono text-slate-100">${comparison.loanB.upfrontClosingCosts.toLocaleString()}</td>
-                <td className="p-4 font-mono text-right text-slate-300">${Math.abs(comparison.upfrontCostDiff).toLocaleString()} diff</td>
+              <tr className="hover:bg-slate-50/80 transition-colors">
+                <td className="p-4 font-medium text-slate-900">Upfront Points & Closing Fees</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.upfrontClosingCosts.toLocaleString()}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.upfrontClosingCosts.toLocaleString()}</td>
+                <td className="p-4 font-mono text-right text-slate-600">${Math.abs(comparison.upfrontCostDiff).toLocaleString()} diff</td>
               </tr>
               {comparison.breakEvenMonths && (
-                <tr className="bg-indigo-950/20 hover:bg-indigo-950/30">
-                  <td className="p-4 font-medium text-indigo-200">Points Break-Even Horizon</td>
-                  <td colSpan={2} className="p-4 text-xs text-indigo-300">
+                <tr className="bg-indigo-50/70 hover:bg-indigo-50 transition-colors">
+                  <td className="p-4 font-medium text-indigo-900">Points Break-Even Horizon</td>
+                  <td colSpan={2} className="p-4 text-xs text-indigo-800">
                     Lower monthly payment recoups higher upfront closing fees in:
                   </td>
-                  <td className="p-4 font-mono font-bold text-right text-emerald-400">
+                  <td className="p-4 font-mono font-bold text-right text-emerald-600">
                     ~{comparison.breakEvenMonths} Months ({(comparison.breakEvenMonths / 12).toFixed(1)} Years)
                   </td>
                 </tr>
               )}
-              <tr className="hover:bg-slate-900/40 font-bold bg-slate-950/60">
-                <td className="p-4 text-slate-100">Total Lifetime Out-of-Pocket Cost</td>
-                <td className="p-4 font-mono text-indigo-300">${comparison.loanA.totalLoanCost.toLocaleString()}</td>
-                <td className="p-4 font-mono text-emerald-300">${comparison.loanB.totalLoanCost.toLocaleString()}</td>
-                <td className="p-4 font-mono text-right text-emerald-400 font-extrabold">
+              <tr className="hover:bg-slate-50/80 font-bold bg-slate-50/70 transition-colors">
+                <td className="p-4 text-slate-900">Total Lifetime Out-of-Pocket Cost</td>
+                <td className="p-4 font-mono text-indigo-700">${comparison.loanA.totalLoanCost.toLocaleString()}</td>
+                <td className="p-4 font-mono text-emerald-700">${comparison.loanB.totalLoanCost.toLocaleString()}</td>
+                <td className="p-4 font-mono text-right text-emerald-600 font-extrabold">
                   ${Math.abs(comparison.totalCostDiff).toLocaleString()} {comparison.totalCostDiff > 0 ? 'Savings on B' : 'Savings on A'}
                 </td>
               </tr>
@@ -676,12 +676,12 @@ export const LoanComparisonCalculator = () => {
         </div>
 
         {/* In-Browser Excel Viewer contextual link */}
-        <div className="p-3.5 bg-slate-950/80 border-t border-slate-800/80 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-400">
+        <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
           <span>Need to inspect or customize your exported comparison spreadsheet?</span>
           <a
             href="/excel-viewer"
             onClick={(e) => { e.preventDefault(); navigateTo('/excel-viewer'); }}
-            className="text-indigo-400 hover:text-indigo-300 transition-colors inline-flex items-center gap-1 font-semibold"
+            className="text-indigo-600 hover:text-indigo-700 transition-colors inline-flex items-center gap-1 font-semibold"
           >
             <span>Open in Free In-Browser Excel Viewer</span>
             <ArrowRight className="size-3" />
@@ -696,23 +696,23 @@ export const LoanComparisonCalculator = () => {
 
       {/* FAQs */}
       <div className="max-w-3xl mx-auto mb-12">
-        <h2 className="text-xl sm:text-2xl font-bold text-slate-100 text-center mb-6">
+        <h2 className="text-xl sm:text-2xl font-bold text-slate-900 text-center mb-6">
           Loan Comparison FAQs
         </h2>
         <div className="space-y-3">
           {faqs.map((faq, index) => {
             const isOpen = openFaq === index;
             return (
-              <div key={index} className="rounded-xl bg-slate-900/80 border border-slate-800 overflow-hidden">
+              <div key={index} className="rounded-xl bg-white border border-slate-200 overflow-hidden shadow-xs">
                 <button
                   onClick={() => setOpenFaq(isOpen ? null : index)}
-                  className="w-full p-4 text-left flex items-center justify-between gap-4 cursor-pointer"
+                  className="w-full p-4 text-left flex items-center justify-between gap-4 cursor-pointer hover:bg-slate-50 transition-colors"
                 >
-                  <span className="text-sm font-semibold text-slate-200">{faq.q}</span>
-                  <ChevronDown className={`size-4 text-slate-400 transition-transform ${isOpen ? 'rotate-180 text-indigo-400' : ''}`} />
+                  <span className="text-sm font-semibold text-slate-900">{faq.q}</span>
+                  <ChevronDown className={`size-4 text-slate-500 transition-transform ${isOpen ? 'rotate-180 text-indigo-600' : ''}`} />
                 </button>
                 {isOpen && (
-                  <div className="px-4 pb-4 text-xs text-slate-400 leading-relaxed border-t border-slate-800/60 pt-3">
+                  <div className="px-4 pb-4 text-xs text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                     {faq.a}
                   </div>
                 )}
