@@ -342,10 +342,10 @@ export function ImageCompressor() {
                       {/* Before / After Preview Button */}
                       <button
                         onClick={() => setComparingItem(item)}
-                        className="absolute bottom-2 right-2 p-1.5 bg-black/60 hover:bg-black/80 text-white rounded-lg backdrop-blur-sm transition-colors text-xs flex items-center gap-1 font-semibold"
+                        className="absolute bottom-2 right-2 p-1.5 bg-white/95 hover:bg-white text-slate-800 border border-slate-200/80 rounded-lg shadow-xs backdrop-blur-sm transition-colors text-xs flex items-center gap-1 font-semibold"
                         title="Compare Before & After"
                       >
-                        <Eye className="w-3.5 h-3.5" />
+                        <Eye className="w-3.5 h-3.5 text-slate-600" />
                         <span className="text-[11px]">Compare</span>
                       </button>
                     </div>
@@ -437,7 +437,7 @@ export function ImageCompressor() {
                     alt="Original"
                     className="max-h-[65vh] w-auto max-w-full object-contain"
                   />
-                  <div className="absolute top-4 left-4 bg-black/80 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-md">
+                  <div className="absolute top-4 left-4 bg-indigo-600/90 text-white text-xs font-bold px-2.5 py-1 rounded-md shadow-md">
                     Original ({formatBytes(comparingItem.originalSize)})
                   </div>
                 </div>

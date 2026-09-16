@@ -569,7 +569,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                   onClick={() => setLoanTermYears(term)}
                   className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
                     loanTermYears === term
-                      ? 'bg-slate-900 text-white font-bold border border-slate-900'
+                      ? 'bg-indigo-600 text-white font-bold border border-indigo-600'
                       : 'bg-white text-slate-700 hover:text-slate-900 border border-slate-200'
                   }`}
                 >

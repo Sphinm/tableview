@@ -50,7 +50,7 @@ export const DataWorkbenchBanner = () => {
           <button
             type="button"
             onClick={() => navigateTo('/data-tools')}
-            className="px-5 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm inline-flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
+            className="px-5 py-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm inline-flex items-center gap-2 shadow-xs transition-colors cursor-pointer"
           >
             <span>Launch Data Workbench</span>
             <ArrowRight className="size-4" />

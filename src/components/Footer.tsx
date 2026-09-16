@@ -83,7 +83,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
               <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                 <button
                   onClick={handleTrySampleClick}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center gap-2 shadow-xs active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center gap-2 shadow-xs active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
                 >
                   <Sparkles className="size-4 text-amber-400" />
                   <span>Try 1,000-Row Sample</span>

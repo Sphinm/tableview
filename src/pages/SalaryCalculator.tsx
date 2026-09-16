@@ -275,7 +275,7 @@ export const SalaryCalculator = ({
                   }}
                   className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer border shrink-0 ${
                     isSelected
-                      ? 'bg-slate-900 text-white font-bold border-slate-900 shadow-xs'
+                      ? 'bg-indigo-600 text-white font-bold border-indigo-600 shadow-xs'
                       : 'bg-white text-slate-900 font-semibold border-slate-200 hover:bg-slate-100 hover:border-slate-300'
                   }`}
                 >

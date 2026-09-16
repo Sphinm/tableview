@@ -57,7 +57,7 @@ export function CalculatorPresetsBar<T = Record<string, unknown>>({
               title={preset.description || preset.label}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-slate-900 text-white font-bold shadow-xs border border-slate-900'
+                  ? 'bg-indigo-600 text-white font-bold shadow-xs border border-indigo-600'
                   : 'bg-slate-100/80 hover:bg-slate-200/80 text-slate-900 border border-slate-200'
               }`}
             >

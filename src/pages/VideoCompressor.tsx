@@ -276,7 +276,7 @@ export function VideoCompressor() {
                 </div>
 
                 {/* Video Player */}
-                <div className="relative flex-1 bg-black rounded-xl overflow-hidden flex items-center justify-center min-h-[260px] shadow-inner">
+                <div className="relative flex-1 bg-slate-100 border border-slate-200 rounded-xl overflow-hidden flex items-center justify-center min-h-[260px] shadow-inner">
                   <video
                     ref={videoRef}
                     src={compareTab === 'compressed' && result ? result.url : videoUrl || ''}

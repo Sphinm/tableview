@@ -67,7 +67,7 @@ export const GuidesHub = () => {
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer ${
                 selectedCategory === cat
-                  ? 'bg-slate-900 text-white font-semibold shadow-xs'
+                  ? 'bg-indigo-600 text-white font-semibold shadow-xs'
                   : 'bg-white text-slate-900 font-semibold hover:bg-slate-100 border border-slate-300'
               }`}
             >

@@ -986,7 +986,7 @@ export const Header = ({ onTrySample: _onTrySample, isLoading: _isLoading, curre
             <button
               type="button"
               onClick={openAuthModal}
-              className="inline-flex items-center justify-center px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-white shadow-xs hover:shadow transition-all cursor-pointer whitespace-nowrap active:scale-95"
+              className="inline-flex items-center justify-center px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs hover:shadow-indigo-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
             >
               <span>Sign In</span>
             </button>

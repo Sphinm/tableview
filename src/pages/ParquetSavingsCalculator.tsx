@@ -298,7 +298,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                 }}
                 className={`px-3 py-1.5 rounded-xl text-xs font-mono border transition-all cursor-pointer ${
                   rawSizeAmount === preset.amount && rawSizeUnit === preset.unit
-                    ? 'bg-slate-900 text-white border-slate-900 font-bold shadow-xs'
+                    ? 'bg-indigo-600 text-white border-indigo-600 font-bold shadow-xs'
                     : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
                 }`}
               >

@@ -229,14 +229,14 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
                 onClick={() => setActiveCategory(cat.id)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                   isActive
-                    ? 'bg-slate-900 text-white font-semibold shadow-2xs'
+                    ? 'bg-indigo-600 text-white font-semibold shadow-2xs'
                     : 'bg-white hover:bg-slate-100 text-slate-900 font-semibold border border-slate-300 shadow-2xs'
                 }`}
               >
                 <span>{cat.label}</span>
                 <span
                   className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
-                    isActive ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-700'
+                    isActive ? 'bg-indigo-700 text-indigo-100' : 'bg-slate-100 text-slate-700'
                   }`}
                 >
                   {cat.count}
@@ -298,7 +298,7 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
           </div>
           <button
             onClick={() => navigateTo('/finance-calculator')}
-            className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white inline-flex items-center gap-1.5 shrink-0 cursor-pointer shadow-2xs"
+            className="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white inline-flex items-center gap-1.5 shrink-0 cursor-pointer shadow-2xs"
           >
             <span>Launch Calculators Hub</span>
             <ArrowRight className="size-3" />

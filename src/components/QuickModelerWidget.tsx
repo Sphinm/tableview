@@ -306,7 +306,7 @@ export const QuickModelerWidget = () => {
                         onClick={() => setVideoCodec(codec.id as any)}
                         className={`flex-1 py-2 px-3 rounded-xl text-xs font-medium transition-all flex items-center justify-between cursor-pointer ${
                           videoCodec === codec.id
-                            ? 'bg-slate-900 text-white font-bold'
+                            ? 'bg-indigo-600 text-white font-bold'
                             : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
                         }`}
                       >
@@ -722,10 +722,10 @@ export const QuickModelerWidget = () => {
                 <button
                   type="button"
                   onClick={() => navigateTo('/video-compressor')}
-                  className="group w-full h-11 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
+                  className="group w-full h-11 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <Video className="size-4 text-blue-400" />
+                    <Video className="size-4 text-blue-200" />
                     <span>Open Video Compressor (Wasm)</span>
                   </span>
                   <span className="size-6 rounded-full bg-white/15 flex items-center justify-center transition-transform group-hover:translate-x-0.5">
@@ -738,10 +738,10 @@ export const QuickModelerWidget = () => {
                 <button
                   type="button"
                   onClick={() => navigateTo('/image-compressor')}
-                  className="group w-full h-11 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
+                  className="group w-full h-11 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <ImageIcon className="size-4 text-emerald-400" />
+                    <ImageIcon className="size-4 text-emerald-200" />
                     <span>Open Image Compressor (Batch Mode)</span>
                   </span>
                   <span className="size-6 rounded-full bg-white/15 flex items-center justify-center transition-transform group-hover:translate-x-0.5">
@@ -754,7 +754,7 @@ export const QuickModelerWidget = () => {
                 <button
                   type="button"
                   onClick={() => navigateTo('/mortgage-calculator')}
-                  className="group w-full h-11 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
+                  className="group w-full h-11 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
                 >
                   <span>Open Full Amortization in Mortgage Calculator</span>
                   <span className="size-6 rounded-full bg-white/15 flex items-center justify-center transition-transform group-hover:translate-x-0.5">
@@ -767,10 +767,10 @@ export const QuickModelerWidget = () => {
                 <button
                   type="button"
                   onClick={() => navigateTo('/data-tools')}
-                  className="group w-full h-11 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
+                  className="group w-full h-11 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
                 >
                   <span className="flex items-center gap-2">
-                    <Database className="size-4 text-purple-400" />
+                    <Database className="size-4 text-purple-200" />
                     <span>Open Full Data Tools Workbench</span>
                   </span>
                   <span className="size-6 rounded-full bg-white/15 flex items-center justify-center transition-transform group-hover:translate-x-0.5">

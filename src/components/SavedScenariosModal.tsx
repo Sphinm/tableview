@@ -148,7 +148,7 @@ export function SavedScenariosModal<T>({
           />
           <button
             type="submit"
-            className="px-3.5 py-2 rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer shrink-0 bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-colors"
+            className="px-3.5 py-2 rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 cursor-pointer shrink-0 bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs transition-colors"
           >
             <Plus className="size-3.5" />
             <span>Save Scenario</span>

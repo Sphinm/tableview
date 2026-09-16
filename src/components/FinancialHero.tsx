@@ -47,11 +47,11 @@ export const FinancialHero = ({ onExploreClick }: FinancialHeroProps) => {
           <button
             type="button"
             onClick={() => navigateTo('/video-compressor')}
-            className="px-6 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm hover:shadow active:scale-[0.99] transition-all cursor-pointer"
+            className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm hover:shadow active:scale-[0.99] transition-all cursor-pointer"
           >
-            <Video className="size-4 text-blue-400" />
+            <Video className="size-4 text-white" />
             <span>Compress Video</span>
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-blue-500/20 text-blue-300 font-bold">Wasm</span>
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-mono bg-indigo-500/30 text-indigo-100 font-bold">Wasm</span>
           </button>
 
           <button
