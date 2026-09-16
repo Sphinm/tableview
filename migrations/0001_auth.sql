@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
   avatar_url TEXT,
   plan TEXT DEFAULT 'free' CHECK (plan IN ('free', 'basic', 'pro')),
   credits INTEGER DEFAULT 30,
+  total_usage_count INTEGER DEFAULT 0,
   created_at INTEGER NOT NULL,
   updated_at INTEGER NOT NULL
 );
@@ -32,3 +33,17 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
+
+CREATE TABLE IF NOT EXISTS usage_logs (
+  id TEXT PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  action TEXT NOT NULL, -- e.g. 'video_compress', 'image_compress', 'csv_export'
+  credits_spent INTEGER DEFAULT 1,
+  balance_after INTEGER NOT NULL,
+  file_size_bytes INTEGER,
+  metadata TEXT,
+  created_at INTEGER NOT NULL
+);
+
+CREATE INDEX IF NOT EXISTS idx_usage_logs_user_id ON usage_logs(user_id);
+CREATE INDEX IF NOT EXISTS idx_usage_logs_created_at ON usage_logs(created_at);

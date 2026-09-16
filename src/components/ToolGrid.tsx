@@ -97,52 +97,52 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
     switch (color) {
       case 'emerald':
         return {
-          iconBg: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 group-hover:bg-emerald-500/20 group-hover:border-emerald-500/50',
-          badge: 'bg-emerald-500/10 text-emerald-300 border-emerald-500/20',
-          glow: 'group-hover:border-emerald-500/40 group-hover:shadow-emerald-500/10',
-          dropGlow: 'border-emerald-400 bg-emerald-950/40 shadow-emerald-500/20'
+          iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200 group-hover:bg-emerald-100/70',
+          badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+          glow: 'hover:border-emerald-300',
+          dropGlow: 'border-emerald-500 bg-emerald-50 shadow-emerald-500/10'
         };
       case 'green':
         return {
-          iconBg: 'bg-green-500/10 text-green-400 border-green-500/30 group-hover:bg-green-500/20 group-hover:border-green-500/50',
-          badge: 'bg-green-500/10 text-green-300 border-green-500/20',
-          glow: 'group-hover:border-green-500/40 group-hover:shadow-green-500/10',
-          dropGlow: 'border-green-400 bg-green-950/40 shadow-green-500/20'
+          iconBg: 'bg-emerald-50 text-emerald-600 border-emerald-200 group-hover:bg-emerald-100/70',
+          badge: 'bg-emerald-50 text-emerald-700 border-emerald-200',
+          glow: 'hover:border-emerald-300',
+          dropGlow: 'border-emerald-500 bg-emerald-50 shadow-emerald-500/10'
         };
       case 'indigo':
         return {
-          iconBg: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/30 group-hover:bg-indigo-500/20 group-hover:border-indigo-500/50',
-          badge: 'bg-indigo-500/10 text-indigo-300 border-indigo-500/20',
-          glow: 'group-hover:border-indigo-500/40 group-hover:shadow-indigo-500/10',
-          dropGlow: 'border-indigo-400 bg-indigo-950/40 shadow-indigo-500/20'
+          iconBg: 'bg-indigo-50 text-indigo-600 border-indigo-200 group-hover:bg-indigo-100/70',
+          badge: 'bg-indigo-50 text-indigo-700 border-indigo-200',
+          glow: 'hover:border-indigo-300',
+          dropGlow: 'border-indigo-500 bg-indigo-50 shadow-indigo-500/10'
         };
       case 'cyan':
         return {
-          iconBg: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/30 group-hover:bg-cyan-500/20 group-hover:border-cyan-500/50',
-          badge: 'bg-cyan-500/10 text-cyan-300 border-cyan-500/20',
-          glow: 'group-hover:border-cyan-500/40 group-hover:shadow-cyan-500/10',
-          dropGlow: 'border-cyan-400 bg-cyan-950/40 shadow-cyan-500/20'
+          iconBg: 'bg-cyan-50 text-cyan-700 border-cyan-200 group-hover:bg-cyan-100/70',
+          badge: 'bg-cyan-50 text-cyan-800 border-cyan-200',
+          glow: 'hover:border-cyan-300',
+          dropGlow: 'border-cyan-500 bg-cyan-50 shadow-cyan-500/10'
         };
       case 'amber':
         return {
-          iconBg: 'bg-amber-500/10 text-amber-400 border-amber-500/30 group-hover:bg-amber-500/20 group-hover:border-amber-500/50',
-          badge: 'bg-amber-500/10 text-amber-300 border-amber-500/20',
-          glow: 'group-hover:border-amber-500/40 group-hover:shadow-amber-500/10',
-          dropGlow: 'border-amber-400 bg-amber-950/40 shadow-amber-500/20'
+          iconBg: 'bg-amber-50 text-amber-700 border-amber-200 group-hover:bg-amber-100/70',
+          badge: 'bg-amber-50 text-amber-800 border-amber-200',
+          glow: 'hover:border-amber-300',
+          dropGlow: 'border-amber-500 bg-amber-50 shadow-amber-500/10'
         };
       case 'purple':
         return {
-          iconBg: 'bg-purple-500/10 text-purple-400 border-purple-500/30 group-hover:bg-purple-500/20 group-hover:border-purple-500/50',
-          badge: 'bg-purple-500/10 text-purple-300 border-purple-500/20',
-          glow: 'group-hover:border-purple-500/40 group-hover:shadow-purple-500/10',
-          dropGlow: 'border-purple-400 bg-purple-950/40 shadow-purple-500/20'
+          iconBg: 'bg-purple-50 text-purple-700 border-purple-200 group-hover:bg-purple-100/70',
+          badge: 'bg-purple-50 text-purple-800 border-purple-200',
+          glow: 'hover:border-purple-300',
+          dropGlow: 'border-purple-500 bg-purple-50 shadow-purple-500/10'
         };
       default:
         return {
-          iconBg: 'bg-slate-800 text-slate-200 border-slate-700',
-          badge: 'bg-slate-800 text-slate-300 border-slate-700',
-          glow: 'group-hover:border-slate-600',
-          dropGlow: 'border-indigo-400 bg-indigo-950/30'
+          iconBg: 'bg-slate-100 text-slate-700 border-slate-200',
+          badge: 'bg-slate-100 text-slate-700 border-slate-200',
+          glow: 'hover:border-slate-300',
+          dropGlow: 'border-indigo-500 bg-indigo-50'
         };
     }
   };
@@ -218,7 +218,7 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
       />
 
       {/* Grid Filter Bar: Categories + Search Input (ILovePDF Style) */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-800/80">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-8 pb-4 border-b border-slate-200">
         {/* Category Pills */}
         <div className="flex items-center gap-1.5 overflow-x-auto w-full md:w-auto py-1 scrollbar-none">
           {categories.map((cat) => {
@@ -229,14 +229,14 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
                 onClick={() => setActiveCategory(cat.id)}
                 className={`px-3.5 py-1.5 rounded-xl text-xs sm:text-sm font-medium transition-all whitespace-nowrap cursor-pointer flex items-center gap-1.5 ${
                   isActive
-                    ? 'bg-indigo-600 text-white font-semibold shadow-md shadow-indigo-600/20'
-                    : 'bg-slate-900/80 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    ? 'bg-slate-900 text-white font-semibold shadow-2xs'
+                    : 'bg-white hover:bg-slate-100 text-slate-900 font-semibold border border-slate-300 shadow-2xs'
                 }`}
               >
                 <span>{cat.label}</span>
                 <span
-                  className={`text-[10px] px-1.5 py-0.2 rounded-full ${
-                    isActive ? 'bg-indigo-700 text-indigo-100' : 'bg-slate-800 text-slate-500'
+                  className={`text-[10px] px-1.5 py-0.2 rounded-full font-bold ${
+                    isActive ? 'bg-slate-800 text-slate-200' : 'bg-slate-100 text-slate-700'
                   }`}
                 >
                   {cat.count}
@@ -254,12 +254,12 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search tools & calculators..."
-            className="w-full pl-9 pr-8 py-2 rounded-xl bg-slate-900/90 border border-slate-800 hover:border-slate-700 focus:border-indigo-500 text-xs sm:text-sm text-slate-200 placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all"
+            className="w-full pl-9 pr-8 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 focus:border-indigo-500 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-indigo-500 transition-all shadow-2xs"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-md hover:bg-slate-800 text-slate-400 hover:text-slate-200 cursor-pointer"
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-700 cursor-pointer"
             >
               <X className="size-3.5" />
             </button>
@@ -269,16 +269,16 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
 
       {/* Empty State when no tools match query */}
       {filteredTools.length === 0 && (
-        <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-slate-800 bg-slate-950/40">
-          <SlidersHorizontal className="size-10 text-slate-500 mx-auto mb-3" />
-          <h3 className="text-base font-semibold text-slate-200">No tools found matching "{searchQuery}"</h3>
-          <p className="text-xs text-slate-400 mt-1 mb-4">Try searching for "CSV", "Excel", "Parquet", "SQL", or "Calculator".</p>
+        <div className="text-center py-16 px-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50/50">
+          <SlidersHorizontal className="size-10 text-slate-400 mx-auto mb-3" />
+          <h3 className="text-base font-semibold text-slate-900">No tools found matching "{searchQuery}"</h3>
+          <p className="text-xs text-slate-500 mt-1 mb-4">Try searching for "CSV", "Excel", "Parquet", "SQL", or "Calculator".</p>
           <button
             onClick={() => {
               setSearchQuery('');
               setActiveCategory('all');
             }}
-            className="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 font-medium transition-colors cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs text-slate-700 font-medium transition-colors cursor-pointer shadow-2xs"
           >
             Clear Filters
           </button>
@@ -286,19 +286,19 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
       )}
 
       {activeCategory === 'calculator' && (
-        <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-indigo-950/40 via-slate-900/60 to-slate-950 border border-indigo-500/30 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="mb-6 p-4 rounded-2xl bg-indigo-50/50 border border-indigo-100 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xs">
           <div className="flex items-center gap-3 text-left">
-            <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+            <div className="p-2.5 rounded-xl bg-white text-indigo-600 border border-indigo-200 shadow-2xs">
               <Calculator className="size-5" />
             </div>
             <div>
-              <h4 className="text-sm font-bold text-slate-100">Looking for our Full Financial Planning & FinOps Hub?</h4>
-              <p className="text-xs text-slate-400">Explore loan underwriting, debt payoff, compound growth, and cloud infrastructure modeling.</p>
+              <h4 className="text-sm font-bold text-slate-900">Looking for our Full Financial Planning & FinOps Hub?</h4>
+              <p className="text-xs text-slate-600">Explore loan underwriting, debt payoff, compound growth, and cloud infrastructure modeling.</p>
             </div>
           </div>
           <button
             onClick={() => navigateTo('/finance-calculator')}
-            className="btn-primary px-4 py-2 rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 shrink-0 cursor-pointer shadow-sm"
+            className="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white inline-flex items-center gap-1.5 shrink-0 cursor-pointer shadow-2xs"
           >
             <span>Launch Calculators Hub</span>
             <ArrowRight className="size-3" />
@@ -319,83 +319,81 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
               onDragOver={(e) => handleCardDragOver(e, tool)}
               onDragLeave={handleCardDragLeave}
               onDrop={(e) => handleCardDrop(e, tool)}
-              className={`group relative rounded-2xl p-[1px] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] cursor-pointer flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl ${
+              className={`group relative rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between overflow-hidden p-4 sm:p-5 ${
                 isDraggingThis
-                  ? `scale-[1.02] bg-indigo-500 ${colors.dropGlow}`
-                  : `bg-gradient-to-b from-slate-800/80 via-slate-800/40 to-slate-900/90 hover:from-indigo-500/40 hover:via-slate-700/60 hover:to-indigo-500/20 hover:-translate-y-1 ${colors.glow}`
+                  ? `scale-[1.02] border-indigo-500 ${colors.dropGlow}`
+                  : `hover:-translate-y-0.5 ${colors.glow}`
               }`}
             >
-              <div className="rounded-[calc(1rem-1px)] p-4 sm:p-5 bg-slate-950/95 group-hover:bg-slate-900/90 transition-colors duration-200 flex flex-col justify-between h-full shadow-[inset_0_1px_1px_rgba(255,255,255,0.06)]">
+              <div>
                 {/* Card Header: Icon + Badge */}
-                <div>
-                  <div className="flex items-start justify-between gap-2 mb-3.5">
-                    <div
-                      className={`size-11 rounded-xl border flex items-center justify-center transition-transform group-hover:scale-105 duration-200 shadow-inner ${colors.iconBg}`}
-                    >
-                      {getToolIcon(tool.iconType)}
-                    </div>
-
-                    <div className="flex items-center gap-1.5">
-                      {tool.tag && (
-                        <span
-                          className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border shadow-xs uppercase tracking-wider ${colors.badge}`}
-                        >
-                          {tool.tag}
-                        </span>
-                      )}
-                    </div>
+                <div className="flex items-start justify-between gap-2 mb-3.5">
+                  <div
+                    className={`size-11 rounded-xl border flex items-center justify-center transition-transform group-hover:scale-105 duration-200 shadow-2xs ${colors.iconBg}`}
+                  >
+                    {getToolIcon(tool.iconType)}
                   </div>
 
-                  {/* Card Title & Short Description */}
-                  <h3 className="text-base font-bold text-slate-100 group-hover:text-white transition-colors mb-1.5 tracking-tight flex items-center justify-between">
-                    <span>{tool.shortTitle || tool.title}</span>
-                  </h3>
-
-                  <p className="text-xs text-slate-400 group-hover:text-slate-300 leading-relaxed line-clamp-2 transition-colors mb-4">
-                    {tool.subtitle}
-                  </p>
+                  <div className="flex items-center gap-1.5">
+                    {tool.tag && (
+                      <span
+                        className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border shadow-2xs uppercase tracking-wider ${colors.badge}`}
+                      >
+                        {tool.tag}
+                      </span>
+                    )}
+                  </div>
                 </div>
 
-                {/* Card Footer: Accepted Exts & Button-in-Button Action */}
-                {tool.category === 'calculator' ? (
-                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-300">
-                    <span className="text-[11px] text-slate-400 flex items-center gap-1.5 truncate pr-2">
-                      <span className="inline-block size-1.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
-                      <span className="truncate">{tool.acceptExtensions}</span>
-                    </span>
+                {/* Card Title & Short Description */}
+                <h3 className="text-base font-bold text-slate-900 group-hover:text-indigo-600 transition-colors mb-1.5 tracking-tight flex items-center justify-between">
+                  <span>{tool.shortTitle || tool.title}</span>
+                </h3>
 
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-300 group-hover:text-indigo-300 transition-colors shrink-0">
-                      <span>Launch</span>
-                      <span className="size-5 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-300 group-hover:border-indigo-500/40 group-hover:translate-x-0.5 transition-all duration-200">
-                        <ArrowRight className="size-2.5" />
-                      </span>
-                    </span>
-                  </div>
-                ) : (
-                  <div className="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400 group-hover:text-slate-300">
-                    <span className="font-mono text-[11px] text-slate-400">
-                      {tool.acceptExtensions.split(',')[0]}
-                      {tool.acceptExtensions.split(',').length > 1 && (
-                        <span className="text-slate-400"> +{tool.acceptExtensions.split(',').length - 1}</span>
-                      )}
-                    </span>
-
-                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-300 group-hover:text-indigo-300 transition-colors shrink-0">
-                      <span>Open</span>
-                      <span className="size-5 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 group-hover:text-indigo-300 group-hover:border-indigo-500/40 group-hover:translate-x-0.5 transition-all duration-200">
-                        <ArrowRight className="size-2.5" />
-                      </span>
-                    </span>
-                  </div>
-                )}
+                <p className="text-xs text-slate-700 leading-relaxed line-clamp-2 mb-4">
+                  {tool.subtitle}
+                </p>
               </div>
+
+              {/* Card Footer: Accepted Exts & Button-in-Button Action */}
+              {tool.category === 'calculator' ? (
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-700">
+                  <span className="text-[11px] text-slate-700 font-medium flex items-center gap-1.5 truncate pr-2">
+                    <span className="inline-block size-1.5 rounded-full bg-emerald-500 shrink-0" />
+                    <span className="truncate">{tool.acceptExtensions}</span>
+                  </span>
+
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors shrink-0">
+                    <span>Launch</span>
+                    <span className="size-5 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 group-hover:text-indigo-600 group-hover:border-indigo-200 group-hover:translate-x-0.5 transition-all duration-200">
+                      <ArrowRight className="size-2.5" />
+                    </span>
+                  </span>
+                </div>
+              ) : (
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-700">
+                  <span className="font-mono text-[11px] text-slate-700 font-medium">
+                    {tool.acceptExtensions.split(',')[0]}
+                    {tool.acceptExtensions.split(',').length > 1 && (
+                      <span className="text-slate-600 font-medium"> +{tool.acceptExtensions.split(',').length - 1}</span>
+                    )}
+                  </span>
+
+                  <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold text-slate-900 group-hover:text-indigo-600 transition-colors shrink-0">
+                    <span>Open</span>
+                    <span className="size-5 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-700 group-hover:text-indigo-600 group-hover:border-indigo-200 group-hover:translate-x-0.5 transition-all duration-200">
+                      <ArrowRight className="size-2.5" />
+                    </span>
+                  </span>
+                </div>
+              )}
 
               {/* Drag over overlay hint (only for file tools) */}
               {isDraggingThis && tool.category !== 'calculator' && (
-                <div className="absolute inset-0 bg-indigo-950/90 backdrop-blur-xs flex flex-col items-center justify-center p-4 text-center z-10 animate-fade-in rounded-2xl">
-                  <Sparkles className="size-8 text-amber-400 mb-2 animate-bounce" />
-                  <p className="text-sm font-bold text-slate-100">Drop file to open in</p>
-                  <p className="text-xs text-indigo-300 font-semibold">{tool.shortTitle || tool.title}</p>
+                <div className="absolute inset-0 bg-indigo-50/95 backdrop-blur-xs flex flex-col items-center justify-center p-4 text-center z-10 animate-fade-in rounded-2xl">
+                  <Sparkles className="size-8 text-indigo-600 mb-2 animate-bounce" />
+                  <p className="text-sm font-bold text-slate-900">Drop file to open in</p>
+                  <p className="text-xs text-indigo-600 font-semibold">{tool.shortTitle || tool.title}</p>
                 </div>
               )}
             </div>

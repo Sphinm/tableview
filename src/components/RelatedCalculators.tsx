@@ -141,21 +141,21 @@ export const RelatedCalculators = ({ currentSlug, category = 'real-estate' }: Re
   };
 
   return (
-    <div className="my-12 pt-10 border-t border-slate-800/80 no-print">
+    <div className="my-12 pt-10 border-t border-slate-200 no-print">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <div>
-          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-1.5">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/80 mb-1.5">
             <Sparkles className="size-3" />
             <span>More Financial & FinOps Modeling Tools</span>
           </div>
-          <h3 className="text-lg sm:text-xl font-bold text-slate-100 tracking-tight">
+          <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
             Explore Related Calculators
           </h3>
         </div>
         <a
           href="/finance-calculator"
           onClick={(e) => handleNav(e, '/finance-calculator')}
-          className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-400 hover:text-indigo-300 transition-colors"
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
         >
           <span>View All 10+ Calculators</span>
           <ArrowRight className="size-3.5" />
@@ -170,26 +170,26 @@ export const RelatedCalculators = ({ currentSlug, category = 'real-estate' }: Re
               key={item.slug}
               href={item.path}
               onClick={(e) => handleNav(e, item.path)}
-              className="p-4 rounded-xl bg-slate-900/60 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 transition-all flex flex-col justify-between group shadow-xs hover:shadow-md"
+              className="p-4 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all flex flex-col justify-between group shadow-2xs hover:shadow-xs"
             >
               <div>
                 <div className="flex items-center justify-between gap-2 mb-2.5">
-                  <div className="p-2 rounded-lg bg-slate-800/80 text-slate-300 group-hover:text-indigo-400 transition-colors border border-slate-700/60">
+                  <div className="p-2 rounded-lg bg-slate-50 text-slate-700 group-hover:text-indigo-600 transition-colors border border-slate-200">
                     <Icon className="size-4" />
                   </div>
-                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 border border-slate-700/80">
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
                     {item.badge}
                   </span>
                 </div>
-                <h4 className="text-sm font-bold text-slate-200 group-hover:text-white transition-colors mb-1">
+                <h4 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors mb-1">
                   {item.title}
                 </h4>
-                <p className="text-xs text-slate-400 leading-relaxed line-clamp-2">
+                <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
                   {item.description}
                 </p>
               </div>
 
-              <div className="mt-4 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs font-medium text-slate-400 group-hover:text-indigo-300 transition-colors">
+              <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-medium text-slate-500 group-hover:text-indigo-600 transition-colors">
                 <span>Launch Calculator</span>
                 <ArrowRight className="size-3.5 -translate-x-1 group-hover:translate-x-0 transition-transform" />
               </div>

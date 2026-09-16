@@ -75,10 +75,10 @@ export const DataToolsWorkbench = ({
         {/* All Data Tools Grid */}
         <div className="pt-8">
           <div className="text-center max-w-2xl mx-auto mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-100 tracking-tight">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
               All In-Browser Data Tools & Converters
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            <p className="text-xs sm:text-sm text-slate-600 mt-1">
               Select any specialized viewer or converter to process your files client-side.
             </p>
           </div>

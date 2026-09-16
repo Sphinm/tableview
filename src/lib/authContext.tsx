@@ -24,11 +24,34 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const data = (await res.json()) as any;
         if (data.token) localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
         if (data.user) {
-          setUser(data.user);
-          localStorage.setItem(MOCK_USER_KEY, JSON.stringify(data.user));
+          const formattedUser: User = {
+            id: data.user.id || 'user_' + Math.random().toString(36).slice(2, 9),
+            email: data.user.email,
+            name: data.user.name || data.user.email?.split('@')[0] || 'User',
+            avatarUrl: data.user.avatarUrl || data.user.avatar_url || null,
+            plan: data.user.plan || 'free',
+            credits: data.user.credits ?? 30,
+          };
+          setUser(formattedUser);
+          localStorage.setItem(MOCK_USER_KEY, JSON.stringify(formattedUser));
         }
         return { success: true };
       }
+
+      if (res.status === 404) {
+        // Fallback for local development or static hosting
+        const mockUser: User = {
+          id: 'user_' + Math.random().toString(36).slice(2, 9),
+          email: 'user@example.com',
+          name: 'Demo User',
+          plan: 'free',
+          credits: 30,
+        };
+        setUser(mockUser);
+        localStorage.setItem(MOCK_USER_KEY, JSON.stringify(mockUser));
+        return { success: true };
+      }
+
       const err = (await res.json().catch(() => ({}))) as any;
       return { success: false, message: err.error || 'Verification failed' };
     } catch {
@@ -58,6 +81,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const data = (await res.json()) as any;
         return { success: true, message: data.message, devToken: data.devToken };
       }
+
+      if (res.status === 404) {
+        const devToken = crypto.randomUUID();
+        return {
+          success: true,
+          message: 'Dev mode: Magic link generated! Click verify below.',
+          devToken,
+        };
+      }
+
       const err = (await res.json().catch(() => ({}))) as any;
       return { success: false, message: err.error || 'Failed to send magic link' };
     } catch {
@@ -83,25 +116,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         const data = (await res.json()) as any;
         if (data.token) localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
         if (data.user) {
-          setUser(data.user);
-          localStorage.setItem(MOCK_USER_KEY, JSON.stringify(data.user));
+          const formattedUser: User = {
+            id: data.user.id || 'user_' + Math.random().toString(36).slice(2, 9),
+            email: data.user.email,
+            name: data.user.name || data.user.email?.split('@')[0] || 'User',
+            avatarUrl: data.user.avatarUrl || data.user.avatar_url || null,
+            plan: data.user.plan || 'free',
+            credits: data.user.credits ?? 30,
+          };
+          setUser(formattedUser);
+          localStorage.setItem(MOCK_USER_KEY, JSON.stringify(formattedUser));
         }
         return { success: true };
       }
-      return { success: false, message: 'Google sign-in failed' };
+
+      if (res.status !== 404) {
+        const err = (await res.json().catch(() => ({}))) as any;
+        return { success: false, message: err.error || 'Google sign-in failed' };
+      }
     } catch {
-      // Local fallback
-      const mockUser: User = {
-        id: 'google_user_' + Math.random().toString(36).slice(2, 9),
-        email: 'google.user@example.com',
-        name: 'Google User',
-        plan: 'pro',
-        credits: 5000,
-      };
-      setUser(mockUser);
-      localStorage.setItem(MOCK_USER_KEY, JSON.stringify(mockUser));
-      return { success: true };
+      // Network failure, proceed to client-side token parsing below
     }
+
+    // Client-side fallback: decode Google ID Token directly if /api/auth/google is 404 or unreachable
+    try {
+      const parts = credential.split('.');
+      if (parts.length >= 2) {
+        const base64Url = parts[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(
+          atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+        );
+        const payload = JSON.parse(jsonPayload);
+        if (payload?.email) {
+          const fallbackUser: User = {
+            id: 'google_' + (payload.sub || Math.random().toString(36).slice(2, 9)),
+            email: payload.email,
+            name: payload.name || payload.email.split('@')[0],
+            avatarUrl: payload.picture || null,
+            plan: 'free',
+            credits: 30,
+          };
+          setUser(fallbackUser);
+          localStorage.setItem(MOCK_USER_KEY, JSON.stringify(fallbackUser));
+          return { success: true };
+        }
+      }
+    } catch (decodeErr) {
+      console.warn('Fallback Google token decoding failed:', decodeErr);
+    }
+
+    return { success: false, message: 'Google sign-in failed' };
   };
 
   const loginAsDemo = (plan: 'free' | 'pro' = 'free') => {

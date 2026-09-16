@@ -36,12 +36,152 @@ function serviceWorkerVersionPlugin() {
   }
 }
 
+function parseRequestBody(req: import('node:http').IncomingMessage): Promise<any> {
+  return new Promise((resolve) => {
+    let body = '';
+    req.on('data', (chunk) => {
+      body += chunk;
+    });
+    req.on('end', () => {
+      try {
+        resolve(body ? JSON.parse(body) : {});
+      } catch {
+        resolve({});
+      }
+    });
+    req.on('error', () => resolve({}));
+  });
+}
+
+/**
+ * Development middleware to handle /api/auth endpoints when running Vite locally.
+ */
+function devAuthPlugin() {
+  return {
+    name: 'tableview-dev-auth',
+    configureServer(server: import('vite').ViteDevServer) {
+      server.middlewares.use(async (req, res, next) => {
+        if (!req.url || !req.url.startsWith('/api/auth/')) {
+          return next();
+        }
+
+        const pathname = req.url.split('?')[0];
+        res.setHeader('Content-Type', 'application/json');
+
+        if (pathname === '/api/auth/google' && req.method === 'POST') {
+          const body = await parseRequestBody(req);
+          const credential = body.credential;
+          let email = 'developer@tableview.dev';
+          let name = 'Google User';
+          let avatarUrl = null;
+
+          if (typeof credential === 'string') {
+            try {
+              const parts = credential.split('.');
+              if (parts.length >= 2) {
+                const base64Url = parts[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(
+                  atob(base64)
+                    .split('')
+                    .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+                    .join('')
+                );
+                const payload = JSON.parse(jsonPayload);
+                if (payload.email) email = payload.email;
+                if (payload.name) name = payload.name;
+                if (payload.picture) avatarUrl = payload.picture;
+              }
+            } catch (e) {
+              console.warn('[dev-auth] Could not decode Google token:', e);
+            }
+          }
+
+          res.statusCode = 200;
+          res.end(
+            JSON.stringify({
+              success: true,
+              token: 'dev-token-' + Buffer.from(email).toString('base64'),
+              user: {
+                id: 'google_' + Buffer.from(email).toString('hex').slice(0, 12),
+                email,
+                name,
+                avatarUrl,
+                plan: 'free',
+                credits: 30,
+              },
+            })
+          );
+          return;
+        }
+
+        if (pathname === '/api/auth/send-magic-link' && req.method === 'POST') {
+          res.statusCode = 200;
+          res.end(
+            JSON.stringify({
+              success: true,
+              message: 'Magic link sent! (Dev mode)',
+              devToken: 'dev-token-' + Date.now(),
+            })
+          );
+          return;
+        }
+
+        if (pathname === '/api/auth/verify-magic-link' && req.method === 'POST') {
+          res.statusCode = 200;
+          res.end(
+            JSON.stringify({
+              success: true,
+              token: 'dev-token-' + Date.now(),
+              user: {
+                id: 'user_dev_magic',
+                email: 'user@tableview.dev',
+                name: 'Developer',
+                avatarUrl: null,
+                plan: 'free',
+                credits: 30,
+              },
+            })
+          );
+          return;
+        }
+
+        if (pathname === '/api/auth/me' && req.method === 'GET') {
+          res.statusCode = 200;
+          res.end(
+            JSON.stringify({
+              user: {
+                id: 'user_dev',
+                email: 'developer@tableview.dev',
+                name: 'Developer',
+                avatarUrl: null,
+                plan: 'free',
+                credits: 30,
+              },
+            })
+          );
+          return;
+        }
+
+        if (pathname === '/api/auth/logout' && req.method === 'POST') {
+          res.statusCode = 200;
+          res.end(JSON.stringify({ success: true }));
+          return;
+        }
+
+        next();
+      });
+    },
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
     serviceWorkerVersionPlugin(),
+    devAuthPlugin(),
   ],
   optimizeDeps: {
     exclude: ['@duckdb/duckdb-wasm']

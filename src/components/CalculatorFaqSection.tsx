@@ -32,8 +32,8 @@ export const CalculatorFaqSection = ({
 
   return (
     <section className={`w-full max-w-7xl mx-auto space-y-4 ${className}`}>
-      <h3 className="text-xl font-bold text-slate-100 flex items-center gap-2">
-        <HelpCircle className="size-5 text-indigo-400" />
+      <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
+        <HelpCircle className="size-5 text-indigo-600" />
         {title}
       </h3>
       <div className="space-y-3">
@@ -42,7 +42,7 @@ export const CalculatorFaqSection = ({
           return (
             <div
               key={faq.q}
-              className="rounded-2xl bg-slate-900/60 border border-slate-800 overflow-hidden"
+              className="rounded-2xl bg-white border border-slate-200 overflow-hidden shadow-2xs"
             >
               <button
                 type="button"
@@ -50,15 +50,15 @@ export const CalculatorFaqSection = ({
                 aria-expanded={isOpen}
                 className="w-full p-4 sm:p-5 text-left flex items-center justify-between gap-4 cursor-pointer"
               >
-                <h4 className="text-sm sm:text-base font-semibold text-slate-200">{faq.q}</h4>
+                <h4 className="text-sm sm:text-base font-semibold text-slate-900">{faq.q}</h4>
                 <ChevronDown
                   className={`size-5 text-slate-400 transition-transform duration-200 shrink-0 ${
-                    isOpen ? 'rotate-180 text-indigo-400' : ''
+                    isOpen ? 'rotate-180 text-indigo-600' : ''
                   }`}
                 />
               </button>
               {isOpen && (
-                <div className="px-5 pb-5 pt-1 text-sm text-slate-400 border-t border-slate-800/60 leading-relaxed">
+                <div className="px-5 pb-5 pt-1 text-sm text-slate-600 border-t border-slate-100 leading-relaxed">
                   {faq.a}
                 </div>
               )}

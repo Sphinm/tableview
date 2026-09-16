@@ -55,7 +55,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
   return (
     <footer
-      className={`w-full bg-slate-50 border-t border-slate-200 text-slate-500 relative transition-colors ${
+      className={`w-full bg-slate-50 border-t border-slate-200 text-slate-700 relative transition-colors ${
         isCompression ? 'mt-10 pt-8 pb-8' : 'mt-12 sm:mt-16 pt-10 pb-10'
       }`}
     >
@@ -75,7 +75,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                 <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                   Ready to Inspect, Query & Model Your Data?
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-800 leading-relaxed">
                   Open CSV, Excel, Apache Parquet, or JSON files of hundreds of megabytes directly in browser memory. Zero cloud uploads, zero telemetry, instantaneous DuckDB SQL queries.
                 </p>
               </div>
@@ -83,7 +83,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
               <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                 <button
                   onClick={handleTrySampleClick}
-                  className="btn-primary w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-xs hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
+                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-white flex items-center justify-center gap-2 shadow-xs active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
                 >
                   <Sparkles className="size-4 text-amber-400" />
                   <span>Try 1,000-Row Sample</span>
@@ -92,7 +92,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                 <a
                   href="/finance-calculator"
                   onClick={(e) => handleNav(e, '/finance-calculator')}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-white hover:bg-slate-50 text-slate-800 hover:text-slate-900 border border-slate-200 hover:border-slate-300 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"
                 >
                   <Calculator className="size-4 text-indigo-600" />
                   <span>Financial Calculators</span>
@@ -105,103 +105,103 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
         {/* Brand & Mission Row (Context-Aware) */}
         {isCompression ? (
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-800/80 gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shadow-sm">
+                <div className="size-8 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center font-bold shadow-2xs">
                   <Video className="size-4" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-slate-100 text-base tracking-tight">TableView Compress</span>
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/20 text-[11px] font-mono text-emerald-400">
-                    <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="font-bold text-slate-900 text-base tracking-tight">TableView Compress</span>
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[11px] font-mono text-emerald-700">
+                    <span className="size-1.5 rounded-full bg-emerald-500" />
                     Client-Side Engine
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-slate-400 max-w-xl leading-relaxed">
+              <p className="text-xs text-slate-800 max-w-xl leading-relaxed">
                 100% private in-browser video & image compression. Powered by WebAssembly and HTML5 Canvas — zero files uploaded, no server bandwidth, no watermarks.
               </p>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-900/80 border border-slate-800 px-3.5 py-1.5 rounded-lg shrink-0">
-              <ShieldCheck className="size-4 text-emerald-400" />
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 bg-white border border-slate-300 px-3.5 py-1.5 rounded-lg shrink-0 shadow-2xs">
+              <ShieldCheck className="size-4 text-emerald-600" />
               <span>Zero Data Egress · Pure Client Execution</span>
             </div>
           </div>
         ) : isCalculator ? (
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-800/80 gap-4">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
             <div className="space-y-1.5">
               <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 flex items-center justify-center font-bold shadow-sm">
+                <div className="size-8 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 flex items-center justify-center font-bold shadow-2xs">
                   <Calculator className="size-4" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-slate-100 text-base tracking-tight">TableView Calculators</span>
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-indigo-500/10 border border-indigo-500/20 text-[11px] font-mono text-indigo-300">
+                  <span className="font-bold text-slate-900 text-base tracking-tight">TableView Calculators</span>
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-200 text-[11px] font-mono text-indigo-700">
                     High-Precision
                   </span>
                 </div>
               </div>
-              <p className="text-xs text-slate-400 max-w-xl leading-relaxed">
+              <p className="text-xs text-slate-800 max-w-xl leading-relaxed">
                 Institutional-grade financial, real estate debt, and FinOps calculators with instant amortization schedules and zero telemetry.
               </p>
             </div>
-            <div className="flex items-center gap-2 text-xs text-slate-300 bg-slate-900/80 border border-slate-800 px-3.5 py-1.5 rounded-lg shrink-0">
-              <ShieldCheck className="size-4 text-emerald-400" />
+            <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 bg-white border border-slate-300 px-3.5 py-1.5 rounded-lg shrink-0 shadow-2xs">
+              <ShieldCheck className="size-4 text-emerald-600" />
               <span>Instant Local Compute</span>
             </div>
           </div>
         ) : (
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-8 border-b border-slate-800 gap-6">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-8 border-b border-slate-200 gap-6">
             <div className="space-y-2.5">
               <div className="flex items-center gap-3">
-                <div className="brand-icon size-9 rounded-xl flex items-center justify-center font-bold shadow-sm ring-1 ring-slate-800/80">
+                <div className="brand-icon size-9 rounded-xl flex items-center justify-center font-bold shadow-2xs ring-1 ring-slate-200">
                   <Table className="size-5" />
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-slate-100 text-lg tracking-tight">TableView.dev</span>
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-slate-900 border border-slate-800 text-[11px] font-mono font-medium text-emerald-400">
-                    <span className="size-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="font-bold text-slate-900 text-lg tracking-tight">TableView.dev</span>
+                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[11px] font-mono font-medium text-emerald-700">
+                    <span className="size-1.5 rounded-full bg-emerald-500" />
                     In-Browser Engine
                   </span>
                 </div>
               </div>
 
-              <p className="text-xs text-slate-400 max-w-lg leading-relaxed">
+              <p className="text-xs text-slate-800 max-w-lg leading-relaxed">
                 100% private in-browser data workspace for CSV, Excel, Parquet, and JSON with SQL analytics, two-way format conversion, and free media & financial tools.
               </p>
 
               <div className="flex flex-wrap items-center gap-2 pt-1">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-500/10 border border-emerald-500/20 text-emerald-400">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-50 border border-emerald-200 text-emerald-700">
                   <ShieldCheck className="size-3.5" />
                   Client-Side Sandbox
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-500/10 border border-indigo-500/20 text-indigo-400">
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-50 border border-indigo-200 text-indigo-700">
                   <Zap className="size-3.5" />
                   DuckDB-Wasm Engine
                 </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-900 border border-slate-800 text-slate-300">
-                  <Lock className="size-3.5 text-slate-400" />
+                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-900 shadow-2xs">
+                  <Lock className="size-3.5 text-slate-700" />
                   Zero Server Telemetry
                 </span>
               </div>
             </div>
 
-            <div className="w-full md:w-auto p-3.5 rounded-xl bg-slate-900/60 border border-slate-800 space-y-1.5 min-w-[220px]">
+            <div className="w-full md:w-auto p-3.5 rounded-xl bg-white border border-slate-200 space-y-1.5 min-w-[220px] shadow-2xs">
               <div className="flex items-center justify-between gap-4">
-                <span className="text-xs font-medium text-slate-300">Engine Health</span>
-                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400">
-                  <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
+                <span className="text-xs font-bold text-slate-900">Engine Health</span>
+                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
+                  <span className="size-2 rounded-full bg-emerald-500" />
                   Operational
                 </span>
               </div>
-              <div className="text-[11px] text-slate-400 flex items-center justify-between border-t border-slate-800/80 pt-1.5">
+              <div className="text-[11px] text-slate-700 font-medium flex items-center justify-between border-t border-slate-200 pt-1.5">
                 <span>Data egress:</span>
-                <span className="font-mono font-medium text-slate-200">0 B</span>
+                <span className="font-mono font-bold text-slate-900">0 B</span>
               </div>
-              <div className="text-[11px] text-slate-400 flex items-center justify-between">
+              <div className="text-[11px] text-slate-700 font-medium flex items-center justify-between">
                 <span>Target:</span>
-                <span className="font-mono font-medium text-slate-200">Local Wasm</span>
+                <span className="font-mono font-bold text-slate-900">Local Wasm</span>
               </div>
             </div>
           </div>
@@ -213,8 +213,8 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 py-8 text-sm">
             {/* Column 1: Compression Tools */}
             <div>
-              <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
-                <Video className="size-3.5 text-emerald-400" />
+              <h4 className="text-slate-900 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
+                <Video className="size-3.5 text-emerald-600" />
                 Compression Studio
               </h4>
               <ul className="space-y-2">
@@ -222,10 +222,10 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/video-compressor"
                     onClick={(e) => handleNav(e, '/video-compressor')}
-                    className="text-emerald-400 font-medium hover:text-emerald-300 transition-colors flex items-center justify-between"
+                    className="text-emerald-700 font-medium hover:text-emerald-800 transition-colors flex items-center justify-between"
                   >
                     <span>Video Compressor</span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono">
                       Wasm
                     </span>
                   </a>
@@ -234,10 +234,10 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/image-compressor"
                     onClick={(e) => handleNav(e, '/image-compressor')}
-                    className="text-slate-300 hover:text-slate-100 transition-colors flex items-center justify-between"
+                    className="text-slate-700 hover:text-slate-900 transition-colors flex items-center justify-between"
                   >
                     <span>Image Compressor</span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 font-mono">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-cyan-50 text-cyan-700 border border-cyan-200 font-mono">
                       Batch
                     </span>
                   </a>
@@ -246,7 +246,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/compress-video"
                     onClick={(e) => handleNav(e, '/compress-video')}
-                    className="text-slate-400 hover:text-slate-200 transition-colors block text-xs"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block text-xs"
                   >
                     Reduce Video File Size (MP4/WebM)
                   </a>
@@ -255,7 +255,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/compress-image"
                     onClick={(e) => handleNav(e, '/compress-image')}
-                    className="text-slate-400 hover:text-slate-200 transition-colors block text-xs"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block text-xs"
                   >
                     Batch Photo Optimizer (WebP/JPG)
                   </a>
@@ -265,16 +265,16 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
             {/* Column 2: Popular Tools */}
             <div>
-              <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
-                <Table className="size-3.5 text-slate-400" />
+              <h4 className="text-slate-900 font-bold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
+                <Table className="size-3.5 text-slate-700" />
                 Popular Utilities
               </h4>
-              <ul className="space-y-2">
+              <ul className="space-y-2 text-xs">
                 <li>
                   <a
                     href="/csv-viewer"
                     onClick={(e) => handleNav(e, '/csv-viewer')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     CSV Viewer & Search
                   </a>
@@ -283,7 +283,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/excel-viewer"
                     onClick={(e) => handleNav(e, '/excel-viewer')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Excel Viewer (.xlsx)
                   </a>
@@ -292,7 +292,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/sql-workbench"
                     onClick={(e) => handleNav(e, '/sql-workbench')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     DuckDB SQL Console
                   </a>
@@ -301,7 +301,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/finance-calculator"
                     onClick={(e) => handleNav(e, '/finance-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Financial Calculators
                   </a>
@@ -310,7 +310,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/json-formatter"
                     onClick={(e) => handleNav(e, '/json-formatter')}
-                    className="hover:text-slate-100 transition-colors block text-xs"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     JSON Formatter & Validator
                   </a>
@@ -320,16 +320,16 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
             {/* Column 3: Privacy & Legal */}
             <div>
-              <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
-                <ShieldCheck className="size-3.5 text-emerald-400" />
+              <h4 className="text-slate-900 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
+                <ShieldCheck className="size-3.5 text-emerald-600" />
                 Privacy & Legal
               </h4>
-              <ul className="space-y-2">
+              <ul className="space-y-2 text-xs">
                 <li>
                   <a
                     href="/privacy"
                     onClick={(e) => handleNav(e, '/privacy')}
-                    className="text-slate-300 hover:text-slate-100 font-medium transition-colors block"
+                    className="text-slate-700 hover:text-slate-900 font-medium transition-colors block"
                   >
                     Privacy Policy (Zero Upload Guarantee)
                   </a>
@@ -338,7 +338,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <button
                     type="button"
                     onClick={openCookieSettings}
-                    className="hover:text-slate-100 transition-colors block text-left cursor-pointer"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block text-left cursor-pointer"
                   >
                     Cookie Settings
                   </button>
@@ -347,7 +347,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/terms"
                     onClick={(e) => handleNav(e, '/terms')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Terms of Service
                   </a>
@@ -356,7 +356,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/contact"
                     onClick={(e) => handleNav(e, '/contact')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Contact & Feedback
                   </a>
@@ -364,7 +364,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                 <li>
                   <a
                     href={getBugReportMailto()}
-                    className="hover:text-slate-100 transition-colors flex items-center gap-1.5 text-xs text-slate-400"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors flex items-center gap-1.5"
                   >
                     <span>Report Bug / Issue</span>
                   </a>
@@ -377,8 +377,8 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-6 py-8 text-sm">
             {/* Column 1: Real Estate & Debt */}
             <div>
-              <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
-                <Calculator className="size-3.5 text-indigo-400" />
+              <h4 className="text-slate-900 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
+                <Calculator className="size-3.5 text-indigo-600" />
                 Real Estate & Debt
               </h4>
               <ul className="space-y-2 text-xs">
@@ -386,7 +386,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/dscr-loan-calculator"
                     onClick={(e) => handleNav(e, '/dscr-loan-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     DSCR Loan Calculator
                   </a>
@@ -395,7 +395,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/commercial-loan-calculator"
                     onClick={(e) => handleNav(e, '/commercial-loan-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Commercial Loan & Balloon
                   </a>
@@ -404,7 +404,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/section-1031-exchange-calculator"
                     onClick={(e) => handleNav(e, '/section-1031-exchange-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     1031 Exchange Tax Deferral
                   </a>
@@ -413,7 +413,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/loan-comparison-calculator"
                     onClick={(e) => handleNav(e, '/loan-comparison-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Loan Comparison (Side-by-Side)
                   </a>
@@ -422,7 +422,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/mortgage-calculator"
                     onClick={(e) => handleNav(e, '/mortgage-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Mortgage & Extra Payments
                   </a>
@@ -431,7 +431,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/refinance-calculator"
                     onClick={(e) => handleNav(e, '/refinance-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Refinance Break-Even
                   </a>
@@ -440,7 +440,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/hard-money-calculator"
                     onClick={(e) => handleNav(e, '/hard-money-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Hard Money (70% Rule MAO)
                   </a>
@@ -450,8 +450,8 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
             {/* Column 2: Payroll & FinOps */}
             <div>
-              <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
-                <Zap className="size-3.5 text-emerald-400" />
+              <h4 className="text-slate-900 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
+                <Zap className="size-3.5 text-emerald-600" />
                 Payroll & FinOps
               </h4>
               <ul className="space-y-2 text-xs">
@@ -459,7 +459,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/salary-to-hourly-calculator"
                     onClick={(e) => handleNav(e, '/salary-to-hourly-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Salary to Hourly Matrix
                   </a>
@@ -468,7 +468,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/snowflake-cost-calculator"
                     onClick={(e) => handleNav(e, '/snowflake-cost-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Snowflake Warehouse Cost
                   </a>
@@ -477,7 +477,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/parquet-storage-calculator"
                     onClick={(e) => handleNav(e, '/parquet-storage-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Parquet Storage Savings
                   </a>
@@ -486,7 +486,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/60000-a-year-is-how-much-an-hour"
                     onClick={(e) => handleNav(e, '/60000-a-year-is-how-much-an-hour')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     $60k/yr is How Much/Hour?
                   </a>
@@ -495,7 +495,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/100000-a-year-is-how-much-an-hour"
                     onClick={(e) => handleNav(e, '/100000-a-year-is-how-much-an-hour')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     $100k/yr is How Much/Hour?
                   </a>
@@ -504,10 +504,10 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/finance-calculator"
                     onClick={(e) => handleNav(e, '/finance-calculator')}
-                    className="text-slate-200 hover:text-slate-100 font-medium flex items-center gap-1"
+                    className="text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1"
                   >
                     <span>All 10+ Calculators</span>
-                    <ArrowRight className="size-3 text-slate-400" />
+                    <ArrowRight className="size-3" />
                   </a>
                 </li>
               </ul>
@@ -515,8 +515,8 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
             {/* Column 3: Media & Dev Tools */}
             <div>
-              <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
-                <Video className="size-3.5 text-cyan-400" />
+              <h4 className="text-slate-900 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
+                <Video className="size-3.5 text-cyan-600" />
                 Media & Dev Tools
               </h4>
               <ul className="space-y-2 text-xs">
@@ -524,7 +524,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/video-compressor"
                     onClick={(e) => handleNav(e, '/video-compressor')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Video Compressor (Wasm)
                   </a>
@@ -533,7 +533,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/image-compressor"
                     onClick={(e) => handleNav(e, '/image-compressor')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Image Compressor (Batch)
                   </a>
@@ -542,7 +542,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/data-tools"
                     onClick={(e) => handleNav(e, '/data-tools')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Data Workbench
                   </a>
@@ -551,7 +551,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/sql-workbench"
                     onClick={(e) => handleNav(e, '/sql-workbench')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     DuckDB SQL Console
                   </a>
@@ -560,7 +560,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/json-formatter"
                     onClick={(e) => handleNav(e, '/json-formatter')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     JSON Formatter
                   </a>
@@ -570,8 +570,8 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
             {/* Column 4: Project & Legal */}
             <div>
-              <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
-                <ShieldCheck className="size-3.5 text-slate-400" />
+              <h4 className="text-slate-900 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
+                <ShieldCheck className="size-3.5 text-slate-700" />
                 Support & Legal
               </h4>
               <ul className="space-y-2 text-xs">
@@ -579,7 +579,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/about"
                     onClick={(e) => handleNav(e, '/about')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     About TableView
                   </a>
@@ -588,7 +588,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/contact"
                     onClick={(e) => handleNav(e, '/contact')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Contact & Feedback
                   </a>
@@ -597,7 +597,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/privacy"
                     onClick={(e) => handleNav(e, '/privacy')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Privacy Policy
                   </a>
@@ -606,7 +606,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <button
                     type="button"
                     onClick={openCookieSettings}
-                    className="hover:text-slate-100 transition-colors block text-left cursor-pointer"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block text-left cursor-pointer"
                   >
                     Cookie Settings
                   </button>
@@ -615,7 +615,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/terms"
                     onClick={(e) => handleNav(e, '/terms')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Terms of Service
                   </a>
@@ -624,7 +624,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/disclaimer"
                     onClick={(e) => handleNav(e, '/disclaimer')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Disclaimer
                   </a>
@@ -637,8 +637,8 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 sm:gap-6 py-8 text-sm">
             {/* Column 1: Data Workbench */}
             <div>
-              <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
-                <Table className="size-3.5 text-slate-400" />
+              <h4 className="text-slate-900 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
+                <Table className="size-3.5 text-slate-700" />
                 Data Workbench
               </h4>
               <ul className="space-y-2 text-xs">
@@ -646,7 +646,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/data-tools"
                     onClick={(e) => handleNav(e, '/data-tools')}
-                    className="text-emerald-400 font-medium hover:text-emerald-300 transition-colors block"
+                    className="text-emerald-700 font-medium hover:text-emerald-800 transition-colors block"
                   >
                     Data Workbench Studio
                   </a>
@@ -655,7 +655,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/csv-viewer"
                     onClick={(e) => handleNav(e, '/csv-viewer')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     CSV Viewer
                   </a>
@@ -664,7 +664,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/excel-viewer"
                     onClick={(e) => handleNav(e, '/excel-viewer')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Excel Viewer (.xlsx)
                   </a>
@@ -673,7 +673,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/parquet-viewer"
                     onClick={(e) => handleNav(e, '/parquet-viewer')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Parquet Viewer
                   </a>
@@ -682,7 +682,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/parquet-to-excel"
                     onClick={(e) => handleNav(e, '/parquet-to-excel')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Parquet to Excel
                   </a>
@@ -691,7 +691,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/sql-workbench"
                     onClick={(e) => handleNav(e, '/sql-workbench')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     DuckDB SQL Console
                   </a>
@@ -700,7 +700,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/json-formatter"
                     onClick={(e) => handleNav(e, '/json-formatter')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     JSON Formatter
                   </a>
@@ -710,8 +710,8 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
             {/* Column 2: Media & Compressors */}
             <div>
-              <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
-                <Video className="size-3.5 text-emerald-400" />
+              <h4 className="text-slate-900 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
+                <Video className="size-3.5 text-emerald-600" />
                 Media & Compressors
               </h4>
               <ul className="space-y-2 text-xs">
@@ -719,10 +719,10 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/video-compressor"
                     onClick={(e) => handleNav(e, '/video-compressor')}
-                    className="text-slate-200 hover:text-slate-100 font-medium transition-colors flex items-center justify-between"
+                    className="text-slate-700 hover:text-slate-900 font-medium transition-colors flex items-center justify-between"
                   >
                     <span>Video Compressor</span>
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono">
                       Wasm
                     </span>
                   </a>
@@ -731,7 +731,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/image-compressor"
                     onClick={(e) => handleNav(e, '/image-compressor')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Image Compressor (Batch)
                   </a>
@@ -740,7 +740,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/compress-video"
                     onClick={(e) => handleNav(e, '/compress-video')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Reduce Video File Size
                   </a>
@@ -749,7 +749,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/compress-image"
                     onClick={(e) => handleNav(e, '/compress-image')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Batch Photo Optimizer
                   </a>
@@ -758,7 +758,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/sql-formatter"
                     onClick={(e) => handleNav(e, '/sql-formatter')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     SQL Formatter
                   </a>
@@ -768,8 +768,8 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
             {/* Column 3: Financial Calculators */}
             <div>
-              <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
-                <Calculator className="size-3.5 text-indigo-400" />
+              <h4 className="text-slate-900 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
+                <Calculator className="size-3.5 text-indigo-600" />
                 Financial Calculators
               </h4>
               <ul className="space-y-2 text-xs">
@@ -777,7 +777,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/dscr-loan-calculator"
                     onClick={(e) => handleNav(e, '/dscr-loan-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     DSCR Loan Calculator
                   </a>
@@ -786,7 +786,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/commercial-loan-calculator"
                     onClick={(e) => handleNav(e, '/commercial-loan-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Commercial Loan & Balloon
                   </a>
@@ -795,7 +795,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/mortgage-calculator"
                     onClick={(e) => handleNav(e, '/mortgage-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Mortgage & Extra Payments
                   </a>
@@ -804,7 +804,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/salary-to-hourly-calculator"
                     onClick={(e) => handleNav(e, '/salary-to-hourly-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Salary to Hourly Matrix
                   </a>
@@ -813,7 +813,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/snowflake-cost-calculator"
                     onClick={(e) => handleNav(e, '/snowflake-cost-calculator')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Snowflake Warehouse Cost
                   </a>
@@ -822,10 +822,10 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/finance-calculator"
                     onClick={(e) => handleNav(e, '/finance-calculator')}
-                    className="text-slate-200 hover:text-slate-100 font-medium flex items-center gap-1"
+                    className="text-indigo-600 hover:text-indigo-700 font-medium flex items-center gap-1"
                   >
                     <span>All 10+ Calculators</span>
-                    <ArrowRight className="size-3 text-slate-400" />
+                    <ArrowRight className="size-3" />
                   </a>
                 </li>
               </ul>
@@ -833,8 +833,8 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
             {/* Column 4: Guides & Legal */}
             <div>
-              <h4 className="text-slate-100 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
-                <ShieldCheck className="size-3.5 text-slate-400" />
+              <h4 className="text-slate-900 font-semibold uppercase tracking-wider text-xs mb-3.5 flex items-center gap-2">
+                <ShieldCheck className="size-3.5 text-slate-700" />
                 Guides & Legal
               </h4>
               <ul className="space-y-2 text-xs">
@@ -842,7 +842,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/guides"
                     onClick={(e) => handleNav(e, '/guides')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Technical Guides Hub
                   </a>
@@ -851,7 +851,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/about"
                     onClick={(e) => handleNav(e, '/about')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     About TableView
                   </a>
@@ -860,7 +860,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/contact"
                     onClick={(e) => handleNav(e, '/contact')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Contact & Feedback
                   </a>
@@ -869,7 +869,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/privacy"
                     onClick={(e) => handleNav(e, '/privacy')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Privacy Policy
                   </a>
@@ -878,7 +878,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <button
                     type="button"
                     onClick={openCookieSettings}
-                    className="hover:text-slate-100 transition-colors block text-left cursor-pointer"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block text-left cursor-pointer"
                   >
                     Cookie Settings
                   </button>
@@ -887,7 +887,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/terms"
                     onClick={(e) => handleNav(e, '/terms')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Terms of Service
                   </a>
@@ -896,7 +896,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                   <a
                     href="/disclaimer"
                     onClick={(e) => handleNav(e, '/disclaimer')}
-                    className="hover:text-slate-100 transition-colors block"
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Disclaimer
                   </a>
@@ -907,20 +907,20 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
         )}
 
         {/* 3. Bottom copyright & legal bar */}
-        <div className="pt-6 border-t border-slate-900 text-xs text-slate-500 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="pt-6 border-t border-slate-200 text-xs text-slate-700 font-medium flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span>© {new Date().getFullYear()} TableView.dev. All rights reserved.</span>
           </div>
 
           {!isCompression && (
-            <div className="text-slate-500 text-center text-[11px] max-w-md">
+            <div className="text-slate-700 text-center text-[11px] max-w-md font-medium">
               Apache Parquet is a registered trademark of the Apache Software Foundation. DuckDB is a trademark of the DuckDB Foundation.
             </div>
           )}
 
           <button
             onClick={scrollToTop}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-slate-200 border border-slate-800 transition-colors cursor-pointer text-xs font-medium"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 shadow-2xs transition-colors cursor-pointer text-xs font-semibold"
             title="Scroll back to top"
           >
             <ArrowUp className="size-3" />

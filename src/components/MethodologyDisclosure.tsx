@@ -216,10 +216,10 @@ export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosu
   const info = getDetails();
 
   return (
-    <div className="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 text-slate-300 mt-12 mb-8">
-      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-800">
-        <ShieldCheck className="size-4 text-emerald-400" />
-        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-200">
+    <div className="p-6 rounded-2xl bg-white border border-slate-200 text-slate-700 shadow-2xs mt-12 mb-8">
+      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
+        <ShieldCheck className="size-4 text-emerald-600" />
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">
           {info.title}
         </h3>
       </div>
@@ -229,11 +229,11 @@ export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosu
           const Icon = s.icon;
           return (
             <div key={idx} className="space-y-1.5">
-              <div className="flex items-center gap-2 font-semibold text-slate-100">
-                <Icon className="size-3.5 text-indigo-400 shrink-0" />
+              <div className="flex items-center gap-2 font-semibold text-slate-900">
+                <Icon className="size-3.5 text-indigo-600 shrink-0" />
                 <span>{s.title}</span>
               </div>
-              <p className="text-slate-400 leading-relaxed text-[11px]">
+              <p className="text-slate-600 leading-relaxed text-[11px]">
                 {s.desc}
               </p>
             </div>

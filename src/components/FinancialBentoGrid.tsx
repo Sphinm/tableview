@@ -141,11 +141,11 @@ export const FinancialBentoGrid = () => {
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight [text-wrap:balance]">
               Commercial Debt, Mortgages & Property Underwriting
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl [text-wrap:pretty]">
+            <p className="text-xs sm:text-sm text-slate-800 mt-1 max-w-2xl [text-wrap:pretty]">
               Full-featured client-side underwriting models with real amortization schedules, points analysis, and 1-click Excel deal sheets.
             </p>
           </div>
-          <span className="text-xs font-mono text-slate-500">7 Instruments Available</span>
+          <span className="text-xs font-mono text-slate-700 font-semibold">7 Instruments Available</span>
         </div>
 
         {/* Bento Grid: Real Estate */}
@@ -170,7 +170,7 @@ export const FinancialBentoGrid = () => {
                   {calc.title}
                 </h3>
 
-                <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                <p className="text-xs text-slate-800 leading-relaxed mb-4">
                   {calc.description}
                 </p>
               </div>
@@ -180,7 +180,7 @@ export const FinancialBentoGrid = () => {
                   {calc.metrics.map((metric) => (
                     <span
                       key={metric}
-                      className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-50 text-slate-600 border border-slate-200/80"
+                      className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-slate-50 text-slate-800 border border-slate-300"
                     >
                       {metric}
                     </span>
@@ -189,7 +189,7 @@ export const FinancialBentoGrid = () => {
 
                 <div className="flex items-center justify-between text-xs font-semibold text-indigo-600 group-hover:text-indigo-700">
                   <span>Launch Modeler</span>
-                  <span className="size-6 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-600 group-hover:text-white text-slate-600 transition-all duration-200">
+                  <span className="size-6 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-indigo-600 group-hover:border-indigo-600 group-hover:text-white text-slate-800 transition-all duration-200">
                     <ArrowRight className="size-3" />
                   </span>
                 </div>
@@ -210,11 +210,11 @@ export const FinancialBentoGrid = () => {
             <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight [text-wrap:balance]">
               Payroll Matrices & Cloud Infrastructure Sizing
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 max-w-2xl [text-wrap:pretty]">
+            <p className="text-xs sm:text-sm text-slate-800 mt-1 max-w-2xl [text-wrap:pretty]">
               High-intent salary conversion matrices and cloud data warehouse consumption models running in client RAM.
             </p>
           </div>
-          <span className="text-xs font-mono text-slate-500">3 Models Available</span>
+          <span className="text-xs font-mono text-slate-700 font-semibold">3 Models Available</span>
         </div>
 
         {/* Bento Grid: Payroll & FinOps */}
@@ -239,7 +239,7 @@ export const FinancialBentoGrid = () => {
                   {calc.title}
                 </h3>
 
-                <p className="text-xs text-slate-600 leading-relaxed mb-4">
+                <p className="text-xs text-slate-800 leading-relaxed mb-4">
                   {calc.description}
                 </p>
               </div>
@@ -249,7 +249,7 @@ export const FinancialBentoGrid = () => {
                   {calc.metrics.map((metric) => (
                     <span
                       key={metric}
-                      className="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-50 text-slate-600 border border-slate-200/80"
+                      className="text-[10px] font-mono font-medium px-2 py-0.5 rounded bg-slate-50 text-slate-800 border border-slate-300"
                     >
                       {metric}
                     </span>
@@ -258,7 +258,7 @@ export const FinancialBentoGrid = () => {
 
                 <div className="flex items-center justify-between text-xs font-semibold text-emerald-700 group-hover:text-emerald-800">
                   <span>Launch Modeler</span>
-                  <span className="size-6 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:border-emerald-600 group-hover:text-white text-slate-600 transition-all duration-200">
+                  <span className="size-6 rounded-full bg-slate-50 border border-slate-200 flex items-center justify-center group-hover:bg-emerald-600 group-hover:border-emerald-600 group-hover:text-white text-slate-800 transition-all duration-200">
                     <ArrowRight className="size-3" />
                   </span>
                 </div>

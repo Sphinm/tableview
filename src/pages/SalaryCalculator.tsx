@@ -234,17 +234,17 @@ export const SalaryCalculator = ({
             <button
               type="button"
               onClick={handleCopyLink}
-              className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm active:scale-95 shrink-0"
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 cursor-pointer transition-all shadow-2xs active:scale-95 shrink-0"
               title="Copy shareable link with current wage inputs"
             >
               {copied ? (
                 <>
-                  <Check className="size-3.5 text-emerald-400" />
-                  <span className="text-emerald-400">Copied!</span>
+                  <Check className="size-3.5 text-emerald-600" />
+                  <span className="text-emerald-700">Copied!</span>
                 </>
               ) : (
                 <>
-                  <Share2 className="size-3.5 text-emerald-400" />
+                  <Share2 className="size-3.5 text-emerald-600" />
                   <span>Share</span>
                 </>
               )}
@@ -261,7 +261,7 @@ export const SalaryCalculator = ({
         }
         presets={
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
-            <span className="text-xs text-slate-400 font-medium shrink-0 mr-1.5">Quick Presets:</span>
+            <span className="text-xs text-slate-500 font-medium shrink-0 mr-1.5">Quick Presets:</span>
             {SALARY_PRESETS.map((preset) => {
               const isSelected = mode === 'salary-to-hourly' && amount === preset.value;
               return (
@@ -275,8 +275,8 @@ export const SalaryCalculator = ({
                   }}
                   className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer border shrink-0 ${
                     isSelected
-                      ? 'bg-emerald-500 text-slate-950 font-bold border-emerald-400 shadow-sm shadow-emerald-500/20'
-                      : 'bg-slate-900 text-slate-300 border-slate-800 hover:bg-slate-800 hover:border-slate-700'
+                      ? 'bg-slate-900 text-white font-bold border-slate-900 shadow-xs'
+                      : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
                   }`}
                 >
                   {preset.label}
@@ -288,51 +288,51 @@ export const SalaryCalculator = ({
       />
 
       {/* Hero Answer Banner - Instantly answers the search intent */}
-      <div className="relative overflow-hidden rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900/90 p-5 sm:p-6 shadow-xl mb-8">
+      <div className="relative overflow-hidden rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 sm:p-6 shadow-xs mb-8">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           {/* Main calculated result */}
           <div className="space-y-1">
-            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 uppercase tracking-wider">
-              <Clock className="size-3.5" />
+            <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 uppercase tracking-wider">
+              <Clock className="size-3.5 text-emerald-600" />
               <span>{mode === 'salary-to-hourly' ? 'Calculated Hourly Wage' : 'Equivalent Annual Salary'}</span>
             </div>
             <div className="flex items-baseline gap-2">
-              <span className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight font-mono">
+              <span className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight font-mono">
                 {mode === 'salary-to-hourly' ? `$${summary.hourlyRate.toFixed(2)}` : `$${summary.annualSalary.toLocaleString()}`}
               </span>
-              <span className="text-base sm:text-lg font-medium text-emerald-400">
+              <span className="text-base sm:text-lg font-medium text-emerald-700">
                 {mode === 'salary-to-hourly' ? '/ hr' : '/ yr'}
               </span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-600">
               Standard {summary.hoursPerWeek} hrs/week × {summary.weeksPerYear} weeks ({summary.totalAnnualHours.toLocaleString()} annual paid hours)
             </p>
           </div>
 
           {/* 3 Companion KPIs */}
-          <div className="grid grid-cols-3 gap-2.5 border-t md:border-t-0 md:border-l border-slate-800 pt-4 md:pt-0 md:pl-6">
-            <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 min-w-[110px]">
-              <div className="text-[11px] text-slate-400 mb-0.5">Bi-Weekly (26x)</div>
-              <div className="text-base font-bold text-sky-300 font-mono">
+          <div className="grid grid-cols-3 gap-2.5 border-t md:border-t-0 md:border-l border-slate-200 pt-4 md:pt-0 md:pl-6">
+            <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs min-w-[110px]">
+              <div className="text-[11px] text-slate-500 mb-0.5">Bi-Weekly (26x)</div>
+              <div className="text-base font-bold text-sky-700 font-mono">
                 ${summary.biWeeklyRate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
-              <div className="text-[10px] text-slate-500">Every 2 weeks</div>
+              <div className="text-[10px] text-slate-400">Every 2 weeks</div>
             </div>
 
-            <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 min-w-[110px]">
-              <div className="text-[11px] text-slate-400 mb-0.5">Monthly Check</div>
-              <div className="text-base font-bold text-emerald-300 font-mono">
+            <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs min-w-[110px]">
+              <div className="text-[11px] text-slate-500 mb-0.5">Monthly Check</div>
+              <div className="text-base font-bold text-emerald-700 font-mono">
                 ${summary.monthlyRate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
               </div>
-              <div className="text-[10px] text-slate-500">12 pay periods</div>
+              <div className="text-[10px] text-slate-400">12 pay periods</div>
             </div>
 
-            <div className="bg-slate-950/60 p-3 rounded-xl border border-slate-800/80 min-w-[110px]">
-              <div className="text-[11px] text-slate-400 mb-0.5">1.5x Overtime</div>
-              <div className="text-base font-bold text-amber-300 font-mono">
+            <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs min-w-[110px]">
+              <div className="text-[11px] text-slate-500 mb-0.5">1.5x Overtime</div>
+              <div className="text-base font-bold text-amber-800 font-mono">
                 ${summary.overtimeRate15x.toFixed(2)}/hr
               </div>
-              <div className="text-[10px] text-slate-500">FLSA minimum</div>
+              <div className="text-[10px] text-slate-400">FLSA minimum</div>
             </div>
           </div>
         </div>
@@ -343,20 +343,20 @@ export const SalaryCalculator = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Controls Column (5 cols) */}
           <div className="lg:col-span-5 space-y-6">
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-sm space-y-5">
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-5">
               {/* Calculation Mode Switcher - directly above inputs */}
               <div>
-                <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">
+                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
                   Calculation Mode
                 </div>
-                <div className="grid grid-cols-2 p-1 bg-slate-950 rounded-xl border border-slate-800">
+                <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl border border-slate-200">
                   <button
                     type="button"
                     onClick={() => handleModeChange('salary-to-hourly')}
                     className={`py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                       mode === 'salary-to-hourly'
-                        ? 'bg-emerald-500 text-slate-950 shadow-sm font-bold'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'bg-white text-slate-900 shadow-xs font-bold'
+                        : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     Annual Salary → Hourly
@@ -366,8 +366,8 @@ export const SalaryCalculator = ({
                     onClick={() => handleModeChange('hourly-to-salary')}
                     className={`py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                       mode === 'hourly-to-salary'
-                        ? 'bg-emerald-500 text-slate-950 shadow-sm font-bold'
-                        : 'text-slate-400 hover:text-slate-200'
+                        ? 'bg-white text-slate-900 shadow-xs font-bold'
+                        : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
                     Hourly Wage → Salary
@@ -377,22 +377,22 @@ export const SalaryCalculator = ({
 
               {/* Base Amount Input */}
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                <label className="block text-xs font-medium text-slate-700 mb-1.5">
                   {mode === 'salary-to-hourly' ? 'Annual Base Salary ($)' : 'Hourly Pay Rate ($/hr)'}
                 </label>
                 <CurrencyInput
                   value={amount}
                   onChange={(val) => setAmount(val)}
                   allowDecimal={mode === 'hourly-to-salary'}
-                  className="font-mono border-slate-700 focus:border-emerald-500"
+                  className="font-mono"
                 />
               </div>
 
               {/* Hours Per Week */}
               <div>
-                <div className="flex justify-between text-xs font-medium text-slate-300 mb-1.5">
+                <div className="flex justify-between text-xs font-medium text-slate-700 mb-1.5">
                   <span>Hours Per Week</span>
-                  <span className="text-emerald-400 font-semibold font-mono">{hoursPerWeek} hrs</span>
+                  <span className="text-emerald-700 font-semibold font-mono">{hoursPerWeek} hrs</span>
                 </div>
                 <input
                   type="range"
@@ -401,9 +401,9 @@ export const SalaryCalculator = ({
                   step={1}
                   value={hoursPerWeek}
                   onChange={(e) => setHoursPerWeek(Number(e.target.value))}
-                  className="w-full accent-emerald-500 cursor-pointer"
+                  className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
-                <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-mono">
                   <span>20h (Part-time)</span>
                   <span>40h (Standard)</span>
                   <span>60h (Heavy)</span>
@@ -412,9 +412,9 @@ export const SalaryCalculator = ({
 
               {/* Weeks Per Year */}
               <div>
-                <div className="flex justify-between text-xs font-medium text-slate-300 mb-1.5">
+                <div className="flex justify-between text-xs font-medium text-slate-700 mb-1.5">
                   <span>Weeks Worked Per Year</span>
-                  <span className="text-emerald-400 font-semibold font-mono">{weeksPerYear} wks</span>
+                  <span className="text-emerald-700 font-semibold font-mono">{weeksPerYear} wks</span>
                 </div>
                 <input
                   type="range"
@@ -423,9 +423,9 @@ export const SalaryCalculator = ({
                   step={1}
                   value={weeksPerYear}
                   onChange={(e) => setWeeksPerYear(Number(e.target.value))}
-                  className="w-full accent-emerald-500 cursor-pointer"
+                  className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
-                <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
+                <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-mono">
                   <span>36w (Seasonal)</span>
                   <span>50w (2w unpaid)</span>
                   <span>52w (Full Year)</span>
@@ -433,10 +433,10 @@ export const SalaryCalculator = ({
               </div>
 
               {/* Overtime Hours Per Week */}
-              <div className="pt-2 border-t border-slate-800">
-                <div className="flex justify-between text-xs font-medium text-slate-300 mb-1.5">
+              <div className="pt-2 border-t border-slate-100">
+                <div className="flex justify-between text-xs font-medium text-slate-700 mb-1.5">
                   <span>Expected Overtime Hours / Week</span>
-                  <span className="text-amber-400 font-semibold font-mono">{overtimeHours} hrs</span>
+                  <span className="text-amber-800 font-semibold font-mono">{overtimeHours} hrs</span>
                 </div>
                 <input
                   type="range"
@@ -445,7 +445,7 @@ export const SalaryCalculator = ({
                   step={0.5}
                   value={overtimeHours}
                   onChange={(e) => setOvertimeHours(Number(e.target.value))}
-                  className="w-full accent-amber-500 cursor-pointer"
+                  className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-amber-600"
                 />
                 <span className="text-[11px] text-slate-500 block mt-1">
                   Paid at 1.5× regular rate (${summary.overtimeRate15x.toFixed(2)}/hr) under FLSA rules.
@@ -453,29 +453,29 @@ export const SalaryCalculator = ({
               </div>
 
               {/* Paid Time Off (PTO) */}
-              <div className="pt-2 border-t border-slate-800 space-y-3">
-                <div className="text-xs font-medium text-slate-300">
+              <div className="pt-2 border-t border-slate-100 space-y-3">
+                <div className="text-xs font-medium text-slate-700">
                   Paid Time Off (PTO Days)
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] text-slate-400 mb-1">Paid Holidays</label>
+                    <label className="block text-[11px] text-slate-500 mb-1">Paid Holidays</label>
                     <NumericInput
                       min={0}
                       max={30}
                       value={paidHolidays}
                       onChange={(val) => setPaidHolidays(val)}
-                      className="px-2.5 py-1.5 border-slate-700 text-xs text-white font-mono focus:border-emerald-500"
+                      className="px-2.5 py-1.5 text-xs text-slate-900 font-mono"
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] text-slate-400 mb-1">Paid Vacation / Sick</label>
+                    <label className="block text-[11px] text-slate-500 mb-1">Paid Vacation / Sick</label>
                     <NumericInput
                       min={0}
                       max={50}
                       value={paidVacation}
                       onChange={(val) => setPaidVacation(val)}
-                      className="px-2.5 py-1.5 border-slate-700 text-xs text-white font-mono focus:border-emerald-500"
+                      className="px-2.5 py-1.5 text-xs text-slate-900 font-mono"
                     />
                   </div>
                 </div>
@@ -483,25 +483,25 @@ export const SalaryCalculator = ({
             </div>
 
             {/* Total Annual Comp Summary Card */}
-            <div className="p-4 rounded-xl bg-emerald-950/20 border border-emerald-500/30">
-              <div className="text-xs font-medium text-emerald-400 mb-1">
+            <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200 shadow-2xs">
+              <div className="text-xs font-medium text-emerald-800 mb-1">
                 Total Annual Comp (Base + Overtime)
               </div>
-              <div className="text-2xl font-bold text-white font-mono">
+              <div className="text-2xl font-bold text-slate-900 font-mono">
                 ${summary.totalAnnualCompensationWithOvertime.toLocaleString()}
               </div>
-              <div className="text-xs text-slate-400 mt-2 space-y-1">
+              <div className="text-xs text-slate-600 mt-2 space-y-1">
                 <div className="flex justify-between">
                   <span>Base Gross Salary:</span>
-                  <span className="text-slate-200 font-medium font-mono">${summary.annualSalary.toLocaleString()}</span>
+                  <span className="text-slate-900 font-medium font-mono">${summary.annualSalary.toLocaleString()}</span>
                 </div>
                 {summary.annualOvertimePay > 0 && (
                   <div className="flex justify-between">
                     <span>Overtime Pay ({overtimeHours}h/wk):</span>
-                    <span className="text-amber-400 font-medium font-mono">+${summary.annualOvertimePay.toLocaleString()}</span>
+                    <span className="text-amber-800 font-medium font-mono">+${summary.annualOvertimePay.toLocaleString()}</span>
                   </div>
                 )}
-                <div className="flex justify-between border-t border-emerald-500/20 pt-1 text-purple-300">
+                <div className="flex justify-between border-t border-emerald-200/60 pt-1 text-purple-700">
                   <span>Embedded PTO Value:</span>
                   <span className="font-mono">${summary.ptoMonetaryValue.toLocaleString()}</span>
                 </div>
@@ -512,11 +512,11 @@ export const SalaryCalculator = ({
           {/* Right Column: Wage Matrix Table & Detailed FLSA Specs (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
             {/* Conversion Matrix Table */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
-              <div className="px-5 py-4 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
+              <div className="px-5 py-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div>
-                  <h3 className="text-base font-semibold text-white">Full Wage Conversion Schedule</h3>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <h3 className="text-base font-semibold text-slate-900">Full Wage Conversion Schedule</h3>
+                  <p className="text-xs text-slate-500 mt-0.5">
                     Gross compensation broken down across every standard US corporate pay frequency
                   </p>
                 </div>
@@ -524,16 +524,16 @@ export const SalaryCalculator = ({
                   <a
                     href="/excel-viewer"
                     onClick={(e) => { e.preventDefault(); navigateTo('/excel-viewer'); }}
-                    className="text-[11px] text-slate-400 hover:text-emerald-400 transition-colors flex items-center gap-1"
+                    className="text-[11px] text-slate-500 hover:text-emerald-600 transition-colors flex items-center gap-1"
                   >
                     <span>Free In-Browser Viewer</span>
                     <ArrowRight className="size-3" />
                   </a>
                   <button
                     onClick={handleExportExcel}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition cursor-pointer"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 transition cursor-pointer"
                   >
-                    <Download className="w-3.5 h-3.5 text-emerald-400" />
+                    <Download className="w-3.5 h-3.5 text-emerald-600" />
                     <span>Export .xlsx</span>
                   </button>
                 </div>
@@ -541,24 +541,24 @@ export const SalaryCalculator = ({
 
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-slate-950/60 text-slate-400 text-xs uppercase border-b border-slate-800">
+                  <thead className="bg-slate-50 text-slate-600 text-xs uppercase border-b border-slate-200 font-semibold">
                     <tr>
                       <th className="px-5 py-3 font-medium">Frequency / Period</th>
                       <th className="px-5 py-3 font-medium">Gross Amount</th>
                       <th className="px-5 py-3 font-medium">Payroll Basis / Context</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800 text-slate-300">
+                  <tbody className="divide-y divide-slate-100 text-slate-700">
                     {summary.breakdownTable.map((row) => (
-                      <tr key={row.period} className="hover:bg-slate-800/40 transition">
-                        <td className="px-5 py-3.5 font-medium text-white flex items-center gap-2">
-                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                      <tr key={row.period} className="hover:bg-slate-50/80 transition">
+                        <td className="px-5 py-3.5 font-medium text-slate-900 flex items-center gap-2">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           {row.period}
                         </td>
-                        <td className="px-5 py-3.5 font-bold text-emerald-300 text-base font-mono">
+                        <td className="px-5 py-3.5 font-bold text-emerald-600 text-base font-mono">
                           {row.formatted}
                         </td>
-                        <td className="px-5 py-3.5 text-xs text-slate-400">
+                        <td className="px-5 py-3.5 text-xs text-slate-500">
                           {row.notes}
                         </td>
                       </tr>
@@ -569,32 +569,32 @@ export const SalaryCalculator = ({
             </div>
 
             {/* FLSA Overtime Tiers Card */}
-            <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-5 shadow-sm">
-              <h3 className="text-base font-semibold text-white mb-2 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-amber-400" />
+            <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs">
+              <h3 className="text-base font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                <Clock className="w-4 h-4 text-amber-600" />
                 Fair Labor Standards Act (FLSA) Overtime Breakdown
               </h3>
-              <p className="text-xs text-slate-400 mb-4 leading-relaxed">
+              <p className="text-xs text-slate-600 mb-4 leading-relaxed">
                 Under federal FLSA rules, non-exempt hourly employees working beyond 40 hours in a single workweek receive not less than 1.5× the regular rate.
               </p>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="p-3.5 rounded-xl bg-slate-950 border border-slate-800">
-                  <div className="text-xs text-slate-400 mb-1">Regular Rate (1.0x)</div>
-                  <div className="text-xl font-bold text-white font-mono">${summary.hourlyRate.toFixed(2)}/hr</div>
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <div className="text-xs text-slate-500 mb-1">Regular Rate (1.0x)</div>
+                  <div className="text-xl font-bold text-slate-900 font-mono">${summary.hourlyRate.toFixed(2)}/hr</div>
                   <div className="text-[11px] text-slate-500 mt-1">First 40 hours/week</div>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-amber-950/20 border border-amber-500/30">
-                  <div className="text-xs text-amber-300 mb-1">Time-and-a-Half (1.5x)</div>
-                  <div className="text-xl font-bold text-amber-400 font-mono">${summary.overtimeRate15x.toFixed(2)}/hr</div>
-                  <div className="text-[11px] text-slate-400 mt-1">FLSA overtime statutory minimum</div>
+                <div className="p-3.5 rounded-xl bg-amber-50/60 border border-amber-200/80">
+                  <div className="text-xs text-amber-800 font-medium mb-1">Time-and-a-Half (1.5x)</div>
+                  <div className="text-xl font-bold text-amber-700 font-mono">${summary.overtimeRate15x.toFixed(2)}/hr</div>
+                  <div className="text-[11px] text-amber-900/70 mt-1">FLSA overtime statutory minimum</div>
                 </div>
 
-                <div className="p-3.5 rounded-xl bg-rose-950/20 border border-rose-500/30">
-                  <div className="text-xs text-rose-300 mb-1">Double Time (2.0x)</div>
-                  <div className="text-xl font-bold text-rose-400 font-mono">${summary.overtimeRate20x.toFixed(2)}/hr</div>
-                  <div className="text-[11px] text-slate-400 mt-1">Holidays / Special agreements</div>
+                <div className="p-3.5 rounded-xl bg-rose-50/60 border border-rose-200/80">
+                  <div className="text-xs text-rose-800 font-medium mb-1">Double Time (2.0x)</div>
+                  <div className="text-xl font-bold text-rose-700 font-mono">${summary.overtimeRate20x.toFixed(2)}/hr</div>
+                  <div className="text-[11px] text-rose-900/70 mt-1">Holidays / Special agreements</div>
                 </div>
               </div>
             </div>
@@ -607,15 +607,15 @@ export const SalaryCalculator = ({
         </div>
 
         {/* Detailed SEO Explanatory Guide */}
-        <div className="mt-12 bg-slate-900/60 border border-slate-800 rounded-2xl p-6 sm:p-8 space-y-8">
+        <div className="mt-12 bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 space-y-8 shadow-2xs">
           <div>
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-3">
+            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-3">
               How to Convert Annual Salary to Hourly Wage
             </h2>
-            <p className="text-slate-400 text-sm leading-relaxed mb-4">
+            <p className="text-slate-600 text-sm leading-relaxed mb-4">
               Converting an annual salary into an hourly wage requires calculating the exact number of working hours in a calendar year. The baseline formula adopted by the US Department of Labor and corporate payroll systems is the <strong>2,080 working hours benchmark</strong>:
             </p>
-            <div className="p-4 rounded-xl bg-slate-950 border border-slate-800 font-mono text-xs sm:text-sm text-emerald-300 overflow-x-auto">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 font-mono text-xs sm:text-sm text-emerald-800 overflow-x-auto">
               Hourly Wage = Annual Salary ÷ (Hours Worked Per Week × Weeks Per Year)
               <br />
               Standard Example: $75,000 ÷ (40 hrs/wk × 52 wks/yr = 2,080 hrs) = $36.06 per hour
@@ -623,12 +623,12 @@ export const SalaryCalculator = ({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-5 rounded-xl bg-slate-950/70 border border-slate-800">
-              <h3 className="text-base font-semibold text-white mb-2 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 rounded-xl bg-slate-50/80 border border-slate-200">
+              <h3 className="text-base font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 Bi-Weekly vs Semi-Monthly Payroll
               </h3>
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Many workers confuse bi-weekly and semi-monthly pay periods:
                 <br /><br />
                 • <strong>Bi-Weekly (26 Paychecks/Year):</strong> You get paid every other week (e.g. every other Friday). Because 52 weeks ÷ 2 = 26, you experience two &ldquo;3-paycheck magic months&rdquo; each year.
@@ -637,12 +637,12 @@ export const SalaryCalculator = ({
               </p>
             </div>
 
-            <div className="p-5 rounded-xl bg-slate-950/70 border border-slate-800">
-              <h3 className="text-base font-semibold text-white mb-2 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+            <div className="p-5 rounded-xl bg-slate-50/80 border border-slate-200">
+              <h3 className="text-base font-semibold text-slate-900 mb-2 flex items-center gap-2">
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
                 Exempt vs Non-Exempt Status (FLSA)
               </h3>
-              <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                 Understanding whether you qualify for overtime pay depends on your classification under the Fair Labor Standards Act:
                 <br /><br />
                 • <strong>Exempt Employees:</strong> Typically executive, administrative, or professional positions paid on a predetermined salary basis above federal thresholds. Exempt employees do not receive overtime regardless of hours worked.
@@ -653,9 +653,9 @@ export const SalaryCalculator = ({
           </div>
 
           {/* Interactive FAQ Accordion */}
-          <div className="pt-4 border-t border-slate-800">
-            <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-emerald-400" />
+          <div className="pt-4 border-t border-slate-200">
+            <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
+              <HelpCircle className="w-5 h-5 text-emerald-600" />
               Frequently Asked Questions About Wage Conversion
             </h2>
             <div className="space-y-3">
@@ -677,16 +677,16 @@ export const SalaryCalculator = ({
                   a: 'For salaried non-exempt employees, the regular hourly rate is determined by dividing the weekly salary by 40 hours. For every hour worked above 40 in that week, the employee receives an extra half-time (0.5x) or time-and-a-half (1.5x) depending on whether the salary was intended to cover all hours worked or standard 40 hours.'
                 }
               ].map((faq, idx) => (
-                <div key={idx} className="border border-slate-800 rounded-xl bg-slate-950/60 overflow-hidden">
+                <div key={idx} className="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-2xs">
                   <button
                     onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                    className="w-full px-4 py-3 text-left font-medium text-slate-200 hover:text-white flex items-center justify-between text-sm transition"
+                    className="w-full px-4 py-3 text-left font-medium text-slate-800 hover:text-slate-900 flex items-center justify-between text-sm transition"
                   >
                     <span>{faq.q}</span>
-                    <ChevronDown className={`w-4 h-4 text-slate-500 transition-transform ${openFaq === idx ? 'rotate-180 text-emerald-400' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openFaq === idx ? 'rotate-180 text-emerald-600' : ''}`} />
                   </button>
                   {openFaq === idx && (
-                    <div className="px-4 pb-4 text-xs sm:text-sm text-slate-400 leading-relaxed border-t border-slate-800/60 pt-3">
+                    <div className="px-4 pb-4 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">
                       {faq.a}
                     </div>
                   )}

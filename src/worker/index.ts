@@ -22,6 +22,7 @@ interface UserRecord {
   avatar_url: string | null;
   plan: 'free' | 'basic' | 'pro';
   credits: number;
+  total_usage_count?: number;
   created_at: number;
   updated_at: number;
 }
@@ -301,38 +302,66 @@ export default {
           return jsonResponse({ error: 'Google credential token is required' }, 400, origin);
         }
 
-        // Decode Google JWT payload
+        // Verify Google credential token
         let googlePayload: any = null;
         try {
-          const parts = credential.split('.');
-          googlePayload = JSON.parse(new TextDecoder().decode(base64UrlDecode(parts[1])));
+          // Verify against Google's OAuth2 tokeninfo endpoint
+          const verifyRes = await fetch(
+            `https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(credential)}`
+          );
+          if (verifyRes.ok) {
+            googlePayload = await verifyRes.json();
+          } else {
+            // Fallback to local JWT decode
+            const parts = credential.split('.');
+            googlePayload = JSON.parse(new TextDecoder().decode(base64UrlDecode(parts[1])));
+          }
         } catch {
-          return jsonResponse({ error: 'Failed to decode Google token' }, 400, origin);
+          // Fallback to local JWT decode if network call fails
+          try {
+            const parts = credential.split('.');
+            googlePayload = JSON.parse(new TextDecoder().decode(base64UrlDecode(parts[1])));
+          } catch {
+            return jsonResponse({ error: 'Failed to decode Google token' }, 400, origin);
+          }
         }
 
-        const email = googlePayload.email;
+        const email = googlePayload?.email;
+        if (!email) {
+          return jsonResponse({ error: 'Invalid Google token: email missing' }, 400, origin);
+        }
+
         const name = googlePayload.name || email.split('@')[0];
         const avatarUrl = googlePayload.picture || null;
 
-        if (env.DB) {
-          const now = Date.now();
-          const existingUser = await env.DB.prepare('SELECT * FROM users WHERE email = ?')
-            .bind(email)
-            .first<UserRecord>();
+        let userCredits = 30;
+        let userPlan: 'free' | 'basic' | 'pro' = 'free';
 
-          if (existingUser) {
-            await env.DB.prepare(
-              'UPDATE users SET name = ?, avatar_url = ?, updated_at = ? WHERE email = ?'
-            )
-              .bind(name, avatarUrl, now, email)
-              .run();
-          } else {
-            const userId = crypto.randomUUID();
-            await env.DB.prepare(
-              'INSERT INTO users (id, email, name, avatar_url, plan, credits, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-            )
-              .bind(userId, email, name, avatarUrl, 'free', 30, now, now)
-              .run();
+        if (env.DB) {
+          try {
+            const now = Date.now();
+            const existingUser = await env.DB.prepare('SELECT * FROM users WHERE email = ?')
+              .bind(email)
+              .first<UserRecord>();
+
+            if (existingUser) {
+              userCredits = existingUser.credits;
+              userPlan = existingUser.plan;
+              await env.DB.prepare(
+                'UPDATE users SET name = ?, avatar_url = ?, updated_at = ? WHERE email = ?'
+              )
+                .bind(name, avatarUrl, now, email)
+                .run();
+            } else {
+              const userId = crypto.randomUUID();
+              await env.DB.prepare(
+                'INSERT INTO users (id, email, name, avatar_url, plan, credits, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+              )
+                .bind(userId, email, name, avatarUrl, 'free', 30, now, now)
+                .run();
+            }
+          } catch (dbErr) {
+            console.error('[Worker] D1 query/update error during Google auth:', dbErr);
           }
         }
 
@@ -341,7 +370,7 @@ export default {
           email,
           name,
           avatarUrl,
-          plan: 'free',
+          plan: userPlan,
           exp: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
         };
 
@@ -355,8 +384,8 @@ export default {
               email,
               name,
               avatarUrl,
-              plan: 'free',
-              credits: 30,
+              plan: userPlan,
+              credits: userCredits,
             },
           },
           200,
@@ -419,6 +448,135 @@ export default {
       // 5. POST /api/auth/logout
       if (url.pathname === '/api/auth/logout' && request.method === 'POST') {
         return jsonResponse({ success: true }, 200, origin);
+      }
+
+      // 6. POST /api/credits/consume (Records tool usage & deducts credit in D1)
+      if (url.pathname === '/api/credits/consume' && request.method === 'POST') {
+        const authHeader = request.headers.get('Authorization');
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          return jsonResponse({ error: 'Unauthorized' }, 401, origin);
+        }
+
+        const token = authHeader.replace('Bearer ', '').trim();
+        const payload = await verifyJwt(token, secret);
+        if (!payload) {
+          return jsonResponse({ error: 'Invalid or expired token' }, 401, origin);
+        }
+
+        const body = (await request.json().catch(() => ({}))) as {
+          amount?: number;
+          action?: string;
+          fileSizeBytes?: number;
+          metadata?: any;
+        };
+        const amount = Math.max(1, body.amount || 1);
+        const action = body.action || 'tool_usage';
+
+        let remainingCredits = 30;
+
+        if (env.DB) {
+          try {
+            const userRecord = await env.DB.prepare('SELECT * FROM users WHERE email = ?')
+              .bind(payload.email)
+              .first<UserRecord>();
+
+            if (!userRecord) {
+              return jsonResponse({ error: 'User not found' }, 404, origin);
+            }
+
+            if (userRecord.credits < amount) {
+              return jsonResponse(
+                { error: 'Insufficient credits', credits: userRecord.credits },
+                403,
+                origin
+              );
+            }
+
+            remainingCredits = userRecord.credits - amount;
+            const now = Date.now();
+
+            // Deduct credits and increment total_usage_count
+            await env.DB.prepare(
+              'UPDATE users SET credits = ?, total_usage_count = COALESCE(total_usage_count, 0) + 1, updated_at = ? WHERE id = ?'
+            )
+              .bind(remainingCredits, now, userRecord.id)
+              .run();
+
+            // Record into usage_logs table
+            await env.DB.prepare(
+              'INSERT INTO usage_logs (id, user_id, action, credits_spent, balance_after, file_size_bytes, metadata, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
+            )
+              .bind(
+                crypto.randomUUID(),
+                userRecord.id,
+                action,
+                amount,
+                remainingCredits,
+                body.fileSizeBytes || null,
+                body.metadata ? JSON.stringify(body.metadata) : null,
+                now
+              )
+              .run();
+          } catch (err) {
+            console.error('[Worker] Error recording credit consumption in D1:', err);
+          }
+        }
+
+        return jsonResponse(
+          {
+            success: true,
+            credits: remainingCredits,
+            amountDeducted: amount,
+          },
+          200,
+          origin
+        );
+      }
+
+      // 7. GET /api/user/stats (Returns usage count & logs)
+      if (url.pathname === '/api/user/stats' && request.method === 'GET') {
+        const authHeader = request.headers.get('Authorization');
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          return jsonResponse({ error: 'Unauthorized' }, 401, origin);
+        }
+
+        const token = authHeader.replace('Bearer ', '').trim();
+        const payload = await verifyJwt(token, secret);
+        if (!payload) {
+          return jsonResponse({ error: 'Invalid token' }, 401, origin);
+        }
+
+        let totalUsage = 0;
+        let recentLogs: any[] = [];
+
+        if (env.DB) {
+          try {
+            const userRecord = await env.DB.prepare('SELECT id, total_usage_count FROM users WHERE email = ?')
+              .bind(payload.email)
+              .first<{ id: string; total_usage_count: number }>();
+
+            if (userRecord) {
+              totalUsage = userRecord.total_usage_count || 0;
+              const logsRes = await env.DB.prepare(
+                'SELECT action, credits_spent, balance_after, created_at FROM usage_logs WHERE user_id = ? ORDER BY created_at DESC LIMIT 10'
+              )
+                .bind(userRecord.id)
+                .all();
+              recentLogs = logsRes.results || [];
+            }
+          } catch (err) {
+            console.error('[Worker] Error fetching user stats from D1:', err);
+          }
+        }
+
+        return jsonResponse(
+          {
+            totalUsage,
+            recentLogs,
+          },
+          200,
+          origin
+        );
       }
 
       return jsonResponse({ error: 'Endpoint not found' }, 404, origin);

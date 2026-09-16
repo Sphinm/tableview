@@ -410,13 +410,10 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
               <Table className="size-4.5" />
             </div>
             <span className="text-base font-bold text-slate-900 tracking-tight">TableView</span>
-            <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-              Workspace
-            </span>
           </a>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1.5 text-sm">
+          <nav className="hidden md:flex items-center gap-1 text-sm">
             {/* 1. Calculators Dropdown Menu (Primary Focus) */}
             <div
               ref={calcDropdownRef}
@@ -427,20 +424,16 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
               <button
                 type="button"
                 onClick={toggleCalcDropdown}
-                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1 cursor-pointer select-none whitespace-nowrap ${
                   isCalculatorSection || calcDropdownOpen
-                    ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200/80 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
+                    ? 'text-slate-900 bg-slate-100'
+                    : 'text-slate-900 hover:bg-slate-100'
                 }`}
                 aria-expanded={calcDropdownOpen}
               >
-                <Calculator className="size-4 text-indigo-600" />
                 <span>Calculators</span>
-                <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 border border-indigo-200/60">
-                  High-Precision
-                </span>
                 <ChevronDown
-                  className={`size-3.5 transition-transform duration-200 text-slate-400 ${
+                  className={`size-3.5 transition-transform duration-200 text-slate-700 ${
                     calcDropdownOpen ? 'rotate-180' : ''
                   }`}
                 />
@@ -451,7 +444,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                 <div className="absolute left-0 top-full pt-1.5 w-[680px] z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-xl overflow-hidden p-3.5">
                     <div className="px-3 pt-1 pb-2.5 flex items-center justify-between border-b border-slate-100">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
+                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold">
                         Financial, Real Estate & FinOps Calculators
                       </span>
                       <span className="text-[10px] text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
@@ -462,7 +455,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                     <div className="grid grid-cols-2 gap-3 py-2">
                       {/* Column 1: Real Estate & Commercial Loans */}
                       <div className="space-y-0.5">
-                        <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold mb-1">
+                        <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1">
                           Real Estate & Commercial Debt
                         </div>
                         {realEstateCalcs.map((calc) => (
@@ -486,7 +479,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] text-slate-500 leading-snug truncate mt-0.5">
+                              <p className="text-[10px] text-slate-700 leading-snug truncate mt-0.5">
                                 {calc.description}
                               </p>
                             </div>
@@ -498,7 +491,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                       <div className="space-y-3">
                         {/* Payroll & Compensation */}
                         <div className="space-y-0.5">
-                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold mb-1">
+                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1">
                             Payroll & Compensation
                           </div>
                           {payrollCalcs.map((calc) => (
@@ -522,7 +515,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-[10px] text-slate-500 leading-snug truncate mt-0.5">
+                                <p className="text-[10px] text-slate-700 leading-snug truncate mt-0.5">
                                   {calc.description}
                                 </p>
                               </div>
@@ -532,7 +525,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
 
                         {/* Cloud FinOps */}
                         <div className="space-y-0.5 pt-2 border-t border-slate-100">
-                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold mb-1">
+                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-700 font-bold mb-1">
                             Cloud & Data FinOps
                           </div>
                           {cloudFinOpsCalcs.map((calc) => (
@@ -556,7 +549,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-[10px] text-slate-500 leading-snug truncate mt-0.5">
+                                <p className="text-[10px] text-slate-700 leading-snug truncate mt-0.5">
                                   {calc.description}
                                 </p>
                               </div>
@@ -565,7 +558,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                         </div>
 
                         {/* Trust card */}
-                        <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 leading-relaxed">
+                        <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-800 leading-relaxed">
                           <span className="font-semibold text-slate-900 block mb-0.5">100% Private In-Browser</span>
                           Interest amortization, tax deferral, and wage math run client-side in WebAssembly. No sensitive numbers touch a server.
                         </div>
@@ -604,17 +597,16 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                   if (e.metaKey || e.ctrlKey) return;
                   toggleParquetDropdown();
                 }}
-                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1 cursor-pointer select-none whitespace-nowrap ${
                   isToolsSection || parquetDropdownOpen
-                    ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200/80 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
+                    ? 'text-slate-900 bg-slate-100'
+                    : 'text-slate-900 hover:bg-slate-100'
                 }`}
                 aria-expanded={parquetDropdownOpen}
               >
-                <Table className="size-4 text-emerald-600" />
                 <span>Data Tools</span>
                 <ChevronDown
-                  className={`size-3.5 transition-transform duration-200 text-slate-400 ${
+                  className={`size-3.5 transition-transform duration-200 text-slate-700 ${
                     parquetDropdownOpen ? 'rotate-180' : ''
                   }`}
                 />
@@ -625,7 +617,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                 <div className="absolute left-0 top-full pt-1.5 w-[760px] z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-xl overflow-hidden p-3.5">
                     <div className="px-3 pt-1 pb-2.5 flex items-center justify-between border-b border-slate-100">
-                      <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold">
+                      <span className="text-xs font-mono uppercase tracking-wider text-slate-700 font-bold">
                         All In-Browser Data Tools & Workbench
                       </span>
                       <span className="text-[10px] text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
@@ -636,7 +628,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                     <div className="grid grid-cols-3 gap-3 py-2">
                       {/* Column 1: Viewers */}
                       <div className="space-y-1">
-                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1">
                           Viewers
                         </p>
                         {viewerItems.map((tool) => (
@@ -660,7 +652,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] text-slate-500 truncate mt-0.5">
+                              <p className="text-[10px] text-slate-700 truncate mt-0.5">
                                 {tool.description}
                               </p>
                             </div>
@@ -669,8 +661,8 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                       </div>
 
                       {/* Column 2: Converters */}
-                      <div className="space-y-1 border-x border-slate-100 px-2">
-                        <p className="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                      <div className="space-y-1">
+                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1">
                           Converters
                         </p>
                         {converterItems.map((tool) => (
@@ -694,7 +686,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] text-slate-500 truncate mt-0.5">
+                              <p className="text-[10px] text-slate-700 truncate mt-0.5">
                                 {tool.description}
                               </p>
                             </div>
@@ -704,7 +696,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
 
                       {/* Column 3: SQL & Analytics */}
                       <div className="space-y-1">
-                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
+                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-700 mb-1">
                           SQL & Analytics
                         </p>
                         {analyticsItems.map((tool) => (
@@ -728,7 +720,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] text-slate-500 truncate mt-0.5">
+                              <p className="text-[10px] text-slate-700 truncate mt-0.5">
                                 {tool.description}
                               </p>
                             </div>
@@ -749,7 +741,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                         <ArrowRight className="size-3" />
                       </a>
 
-                      <span className="text-[11px] text-slate-400 font-mono">
+                      <span className="text-[11px] text-slate-600 font-mono font-medium">
                         Zero server telemetry
                       </span>
                     </div>
@@ -768,20 +760,16 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
               <button
                 type="button"
                 onClick={toggleCompressDropdown}
-                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
+                className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors flex items-center gap-1 cursor-pointer select-none whitespace-nowrap ${
                   isCompressSection || compressDropdownOpen
-                    ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200/80 shadow-xs'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
+                    ? 'text-slate-900 bg-slate-100'
+                    : 'text-slate-900 hover:bg-slate-100'
                 }`}
                 aria-expanded={compressDropdownOpen}
               >
-                <Video className="size-4 text-blue-600" />
                 <span>Compress</span>
-                <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-blue-50 text-blue-700 border border-blue-200/60">
-                  Free
-                </span>
                 <ChevronDown
-                  className={`size-3.5 transition-transform duration-200 text-slate-400 ${
+                  className={`size-3.5 transition-transform duration-200 text-slate-700 ${
                     compressDropdownOpen ? 'rotate-180' : ''
                   }`}
                 />
@@ -792,7 +780,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                 <div className="absolute left-0 top-full pt-1.5 w-[380px] z-50 animate-in fade-in zoom-in-95 duration-150">
                   <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-xl overflow-hidden p-3 space-y-1">
                     <div className="px-3 pt-1 pb-2 flex items-center justify-between border-b border-slate-100 mb-1">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
+                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-700 font-bold">
                         In-Browser Media Compression
                       </span>
                       <span className="text-[10px] text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
@@ -821,7 +809,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                               </span>
                             )}
                           </div>
-                          <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
+                          <p className="text-[11px] text-slate-700 leading-snug mt-0.5">
                             {item.description}
                           </p>
                         </div>
@@ -836,37 +824,33 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
             <a
               href="/guides"
               onClick={(e) => handleNav(e, '/guides')}
-              className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap ${
+              className={`px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors whitespace-nowrap ${
                 isGuides
-                  ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200/80 shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
+                  ? 'text-slate-900 bg-slate-100'
+                  : 'text-slate-900 hover:bg-slate-100'
               }`}
             >
-              <BookOpen className="size-4" />
               Guides
             </a>
           </nav>
         </div>
 
         {/* Right action buttons */}
-        <div className="flex items-center gap-2.5">
+        <div className="flex items-center gap-2">
 
           {onTrySample && isDataWorkbench && (
             <button
               onClick={onTrySample}
               disabled={isLoading}
-              className="btn-primary inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-semibold transition-all cursor-pointer disabled:opacity-75 shrink-0 whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold text-slate-900 hover:bg-slate-100 border border-slate-300 transition-all cursor-pointer disabled:opacity-50 shrink-0 whitespace-nowrap"
             >
               {isLoading ? (
                 <>
-                  <RefreshCw className="size-3.5 animate-spin" />
+                  <RefreshCw className="size-3.5 animate-spin text-slate-500" />
                   <span>Loading...</span>
                 </>
               ) : (
-                <>
-                  <Sparkles className="size-4 text-amber-500" />
-                  <span>Try Sample</span>
-                </>
+                <span>Try Sample</span>
               )}
             </button>
           )}
@@ -879,11 +863,11 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                 onClick={() => setUserMenuOpen((prev) => !prev)}
                 className="flex items-center gap-2 py-1.5 px-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-xs"
               >
-                <div className="size-6 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px]">
+                <div className="size-6 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[10px]">
                   {user.name ? user.name[0].toUpperCase() : 'U'}
                 </div>
                 <span className="max-w-[80px] truncate hidden sm:inline">{user.name}</span>
-                <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] font-bold border border-blue-200/60">
+                <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
                   {user.credits} Cr
                 </span>
               </button>
@@ -894,7 +878,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                     <div className="text-[11px] text-slate-500">Signed in as</div>
                     <div className="text-xs font-bold text-slate-900 truncate">{user.email}</div>
                     <div className="mt-1 flex items-center gap-1.5">
-                      <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200/60">
+                      <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
                         {user.plan} Plan
                       </span>
                       <span className="text-[10px] text-slate-500">
@@ -920,9 +904,8 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
             <button
               type="button"
               onClick={openAuthModal}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-sm shadow-blue-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
+              className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-slate-900 hover:bg-slate-800 text-white shadow-2xs transition-all cursor-pointer whitespace-nowrap active:scale-95"
             >
-              <Sparkles className="size-3.5 text-white" />
               <span>Sign In</span>
             </button>
           )}
@@ -945,13 +928,13 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
           <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
             <button
               onClick={() => setMobileCalcsExpanded(!mobileCalcsExpanded)}
-              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-800 text-sm font-semibold cursor-pointer"
+              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-900 text-sm font-bold cursor-pointer"
             >
               <span className="flex items-center gap-2.5">
                 <Calculator className="size-4 text-indigo-600" />
                 <span>Financial & FinOps Calculators</span>
               </span>
-              <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileCalcsExpanded ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`size-4 transition-transform duration-200 text-slate-600 ${mobileCalcsExpanded ? 'rotate-180' : ''}`} />
             </button>
 
             {mobileCalcsExpanded && (
@@ -961,7 +944,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                     key={c.path}
                     href={c.path}
                     onClick={(e) => handleNav(e, c.path)}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 transition-colors"
+                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-slate-900 hover:bg-slate-200/60 transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <c.icon className="size-3.5 text-indigo-600" />
@@ -977,7 +960,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                 <a
                   href="/finance-calculator"
                   onClick={(e) => handleNav(e, '/finance-calculator')}
-                  className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors"
+                  className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 transition-colors"
                 >
                   <span>Browse All Calculators Hub</span>
                   <ArrowRight className="size-3" />
@@ -990,13 +973,13 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
           <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
             <button
               onClick={() => setMobileParquetExpanded(!mobileParquetExpanded)}
-              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-800 text-sm font-semibold cursor-pointer"
+              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-900 text-sm font-bold cursor-pointer"
             >
               <span className="flex items-center gap-2.5">
                 <Table className="size-4 text-emerald-600" />
                 <span>Data Tools (Viewers, Converters, SQL)</span>
               </span>
-              <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileParquetExpanded ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`size-4 transition-transform duration-200 text-slate-600 ${mobileParquetExpanded ? 'rotate-180' : ''}`} />
             </button>
 
             {mobileParquetExpanded && (
@@ -1017,7 +1000,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                     key={p.path}
                     href={p.path}
                     onClick={(e) => handleNav(e, p.path)}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 transition-colors"
+                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-slate-900 hover:bg-slate-200/60 transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <p.icon className="size-3.5 text-emerald-600" />
@@ -1038,13 +1021,13 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
           <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
             <button
               onClick={() => setMobileCompressExpanded(!mobileCompressExpanded)}
-              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-800 text-sm font-semibold cursor-pointer"
+              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-900 text-sm font-bold cursor-pointer"
             >
               <span className="flex items-center gap-2.5">
                 <Video className="size-4 text-blue-600" />
                 <span>Media Compress (Video & Image)</span>
               </span>
-              <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileCompressExpanded ? 'rotate-180' : ''}`} />
+              <ChevronDown className={`size-4 transition-transform duration-200 text-slate-600 ${mobileCompressExpanded ? 'rotate-180' : ''}`} />
             </button>
 
             {mobileCompressExpanded && (
@@ -1054,7 +1037,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
                     key={p.path}
                     href={p.path}
                     onClick={(e) => handleNav(e, p.path)}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 transition-colors"
+                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-slate-900 hover:bg-slate-200/60 transition-colors"
                   >
                     <div className="flex items-center gap-2">
                       <p.icon className="size-3.5 text-blue-600" />
@@ -1075,13 +1058,13 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
           <a
             href="/guides"
             onClick={(e) => handleNav(e, '/guides')}
-            className={`block px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 ${
+            className={`px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 text-sm font-semibold transition-colors ${
               isGuides
-                ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                ? 'bg-slate-100 text-slate-900 border border-slate-200'
+                : 'text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <BookOpen className="size-4 text-slate-500" />
+            <BookOpen className="size-4 text-slate-700" />
             <span>Guides & Articles</span>
           </a>
 
@@ -1089,13 +1072,13 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
           <a
             href="/about"
             onClick={(e) => handleNav(e, '/about')}
-            className={`block px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 ${
+            className={`px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 text-sm font-semibold transition-colors ${
               isAbout
-                ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                ? 'bg-slate-100 text-slate-900 border border-slate-200'
+                : 'text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <Info className="size-4 text-slate-500" />
+            <Info className="size-4 text-slate-700" />
             <span>About TableView</span>
           </a>
 
@@ -1103,13 +1086,13 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
           <a
             href="/contact"
             onClick={(e) => handleNav(e, '/contact')}
-            className={`block px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 ${
+            className={`px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 text-sm font-semibold transition-colors ${
               isContact
-                ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200'
-                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                ? 'bg-slate-100 text-slate-900 border border-slate-200'
+                : 'text-slate-900 hover:bg-slate-100'
             }`}
           >
-            <MessageSquare className="size-4 text-slate-500" />
+            <MessageSquare className="size-4 text-slate-700" />
             <span>Contact & Support</span>
           </a>
 

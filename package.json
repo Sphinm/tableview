@@ -11,7 +11,9 @@
     "adslots:check": "bun run scripts/check-ads.ts",
     "test": "bun test",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "wrangler": "bun ./node_modules/wrangler/bin/wrangler.js",
+    "deploy": "bun run build && bun run wrangler deploy"
   },
   "dependencies": {
     "@duckdb/duckdb-wasm": "^1.33.1-dev57.0",
@@ -39,6 +41,7 @@
     "oxlint": "^1.79.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",
-    "vite": "^8.2.2"
+    "vite": "^8.2.2",
+    "wrangler": "^4.132.0"
   }
 }

@@ -161,14 +161,14 @@ export const JsonFormatter = () => {
             <button
               type="button"
               onClick={handleLoadSample}
-              className="h-9 px-3.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 transition-all shadow-sm active:scale-95 cursor-pointer shrink-0"
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition-all shadow-2xs active:scale-95 cursor-pointer shrink-0"
             >
               Load Sample
             </button>
             <button
               type="button"
               onClick={() => setInputJson('')}
-              className="h-9 px-3.5 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-red-400 border border-slate-700/80 transition-all shadow-sm active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+              className="h-9 px-3.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-500 hover:text-red-600 border border-slate-200 transition-all shadow-2xs active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
             >
               <Trash2 className="size-3.5" />
               <span>Clear</span>
@@ -178,11 +178,11 @@ export const JsonFormatter = () => {
       />
 
       {/* Control Toolbar */}
-      <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-3 sm:p-4 mb-4 flex flex-wrap items-center justify-between gap-3 shadow-md">
+      <div className="bg-white border border-slate-200 rounded-2xl p-3 sm:p-4 mb-4 flex flex-wrap items-center justify-between gap-3 shadow-2xs">
         <div className="flex items-center gap-2 flex-wrap">
           <button
             onClick={handleBeautify}
-            className="btn-primary px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 shadow-sm cursor-pointer"
+            className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white flex items-center gap-1.5 shadow-2xs cursor-pointer transition-all active:scale-95"
           >
             <Maximize2 className="size-3.5" />
             <span>Beautify</span>
@@ -190,21 +190,21 @@ export const JsonFormatter = () => {
 
           <button
             onClick={handleMinify}
-            className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors cursor-pointer flex items-center gap-1.5"
+            className="px-3.5 py-1.5 rounded-lg text-xs font-medium bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors cursor-pointer flex items-center gap-1.5"
           >
             <Minimize2 className="size-3.5" />
             <span>Minify (One-Line)</span>
           </button>
 
-          <div className="h-4 w-px bg-slate-800 mx-1 hidden sm:block" />
+          <div className="h-4 w-px bg-slate-200 mx-1 hidden sm:block" />
 
           {/* Indentation Selector */}
-          <div className="flex items-center gap-1 text-xs text-slate-400">
-            <span>Indent:</span>
+          <div className="flex items-center gap-1.5 text-xs text-slate-500">
+            <span className="font-medium">Indent:</span>
             <select
               value={indentOption}
               onChange={(e) => setIndentOption(e.target.value as any)}
-              className="bg-slate-950 border border-slate-800 text-slate-200 text-xs rounded-lg px-2 py-1 focus:outline-none focus:border-indigo-500"
+              className="bg-white border border-slate-200 text-slate-700 text-xs font-medium rounded-lg px-2.5 py-1 focus:outline-none focus:border-indigo-500 shadow-2xs cursor-pointer"
             >
               <option value="2">2 Spaces</option>
               <option value="4">4 Spaces</option>
@@ -217,14 +217,14 @@ export const JsonFormatter = () => {
         <div className="flex items-center gap-2">
           {/* Status Badge */}
           {parseResult.isEmpty ? (
-            <span className="text-xs text-slate-500 font-mono px-2 py-0.5">Awaiting Input...</span>
+            <span className="text-xs text-slate-400 font-mono px-2 py-0.5">Awaiting Input...</span>
           ) : parseResult.isValid ? (
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2.5 py-1 rounded-lg">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
               <CheckCircle2 className="size-3.5" />
               <span>Valid JSON ({parseResult.stats?.lines} lines)</span>
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-400 bg-rose-950/60 border border-rose-500/30 px-2.5 py-1 rounded-lg">
+            <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-lg">
               <AlertCircle className="size-3.5" />
               <span>Invalid Syntax</span>
             </span>
@@ -232,15 +232,15 @@ export const JsonFormatter = () => {
 
           <button
             onClick={handleCopy}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors cursor-pointer flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
           >
-            {copied ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
+            {copied ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
             <span>{copied ? 'Copied' : 'Copy'}</span>
           </button>
 
           <button
             onClick={handleDownload}
-            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors cursor-pointer flex items-center gap-1.5"
+            className="px-3 py-1.5 rounded-lg text-xs font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-200 transition-colors cursor-pointer flex items-center gap-1.5 shadow-2xs"
           >
             <Download className="size-3.5" />
             <span>.json</span>
@@ -250,10 +250,10 @@ export const JsonFormatter = () => {
 
       {/* Error Banner if invalid */}
       {!parseResult.isValid && parseResult.error && (
-        <div className="mb-4 p-4 rounded-xl bg-rose-950/30 border border-rose-500/40 text-rose-200 text-xs font-mono flex items-start gap-3">
-          <AlertCircle className="size-4.5 text-rose-400 shrink-0 mt-0.5" />
+        <div className="mb-4 p-4 rounded-xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-mono flex items-start gap-3">
+          <AlertCircle className="size-4.5 text-rose-600 shrink-0 mt-0.5" />
           <div>
-            <span className="font-bold block text-sm mb-0.5 text-rose-300">JSON Parse Error</span>
+            <span className="font-bold block text-sm mb-0.5 text-rose-900">JSON Parse Error</span>
             <span>{parseResult.error}</span>
           </div>
         </div>
@@ -262,8 +262,8 @@ export const JsonFormatter = () => {
       {/* Editor & Viewer Split Area */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-8">
         {/* Input Pane */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden flex flex-col h-[560px]">
-          <div className="px-4 py-2.5 bg-slate-950 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400 font-mono">
+        <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden flex flex-col h-[560px] shadow-2xs">
+          <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500 font-mono font-medium">
             <span>Raw Input (Paste JSON)</span>
             <span>{inputJson.length} chars</span>
           </div>
@@ -272,20 +272,20 @@ export const JsonFormatter = () => {
             onChange={(e) => setInputJson(e.target.value)}
             placeholder="Paste raw JSON here or drop file..."
             spellCheck={false}
-            className="w-full flex-1 p-4 bg-transparent text-slate-200 font-mono text-xs leading-relaxed resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
+            className="w-full flex-1 p-4 bg-transparent text-slate-800 font-mono text-xs leading-relaxed resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
           />
         </div>
 
         {/* Formatted Output Pane */}
-        <div className="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden flex flex-col h-[560px]">
-          <div className="px-4 py-2.5 bg-slate-950 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400 font-mono">
+        <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden flex flex-col h-[560px] shadow-2xs">
+          <div className="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex items-center justify-between text-xs text-slate-500 font-mono font-medium">
             <span>Formatted & Validated Output</span>
             {parseResult.stats && (
               <span>{(parseResult.stats.bytes / 1024).toFixed(1)} KB</span>
             )}
           </div>
-          <pre className="w-full flex-1 p-4 bg-slate-950/60 text-indigo-300 font-mono text-xs leading-relaxed overflow-auto select-text scrollbar-thin">
-            {parseResult.formatted || <span className="text-slate-600">// Formatted output will render here...</span>}
+          <pre className="w-full flex-1 p-4 bg-slate-50/50 text-slate-800 font-mono text-xs leading-relaxed overflow-auto select-text scrollbar-thin">
+            {parseResult.formatted || <span className="text-slate-400">// Formatted output will render here...</span>}
           </pre>
         </div>
       </div>

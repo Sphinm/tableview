@@ -394,17 +394,17 @@ export function ImageCompressor() {
 
         {/* Visual Split-Screen Comparison Modal */}
         {comparingItem && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="relative w-full max-w-4xl bg-slate-900 border border-slate-800 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/60 backdrop-blur-md animate-in fade-in duration-200">
+            <div className="relative w-full max-w-4xl bg-white border border-slate-200 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
               {/* Modal Header */}
-              <div className="flex items-center justify-between p-4 border-b border-slate-800">
-                <div className="flex items-center gap-2 text-white text-sm font-bold truncate">
-                  <Eye className="w-4 h-4 text-emerald-400" />
+              <div className="flex items-center justify-between p-4 border-b border-slate-200 bg-slate-50">
+                <div className="flex items-center gap-2 text-slate-900 text-sm font-bold truncate">
+                  <Eye className="w-4 h-4 text-emerald-600" />
                   <span>Before vs After: {comparingItem.name}</span>
                 </div>
                 <button
                   onClick={() => setComparingItem(null)}
-                  className="p-1.5 text-slate-400 hover:text-white rounded-lg transition-colors"
+                  className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg transition-colors"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -415,7 +415,7 @@ export function ImageCompressor() {
                 ref={sliderRef}
                 onMouseMove={(e) => e.buttons === 1 && handleSliderMove(e.clientX)}
                 onTouchMove={(e) => handleSliderMove(e.touches[0].clientX)}
-                className="relative flex-1 min-h-[380px] bg-slate-950 select-none overflow-hidden cursor-ew-resize flex items-center justify-center"
+                className="relative flex-1 min-h-[380px] bg-slate-900 select-none overflow-hidden cursor-ew-resize flex items-center justify-center"
               >
                 {/* Background: Compressed Image */}
                 <img
@@ -454,9 +454,9 @@ export function ImageCompressor() {
               </div>
 
               {/* Footer */}
-              <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+              <div className="p-4 bg-slate-50 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
                 <span>Drag slider left/right to compare image fidelity</span>
-                <span className="font-semibold text-emerald-400">
+                <span className="font-semibold text-emerald-600">
                   Savings: -{comparingItem.savedPercentage}%
                 </span>
               </div>

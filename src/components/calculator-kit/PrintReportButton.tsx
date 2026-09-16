@@ -31,10 +31,10 @@ export const PrintReportButton = ({
     <button
       type="button"
       onClick={handlePrint}
-      className={`no-print h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700/80 cursor-pointer transition-all shadow-sm active:scale-95 shrink-0 ${className}`}
+      className={`no-print h-9 px-3.5 rounded-xl text-xs font-semibold inline-flex items-center gap-2 bg-white hover:bg-slate-50 text-slate-800 hover:text-slate-900 border border-slate-200 hover:border-slate-300 cursor-pointer transition-all shadow-2xs active:scale-95 shrink-0 ${className}`}
       title="Open browser print dialog to print or save clean vector PDF report"
     >
-      <Printer className="size-4 text-indigo-400" />
+      <Printer className="size-4 text-indigo-600" />
       <span>{label}</span>
     </button>
   );

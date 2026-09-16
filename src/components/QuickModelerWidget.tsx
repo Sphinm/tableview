@@ -119,7 +119,7 @@ export const QuickModelerWidget = () => {
             <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight [text-wrap:balance]">
               Live Analytical Playground
             </h2>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1 [text-wrap:pretty]">
+            <p className="text-xs sm:text-sm text-slate-800 mt-1 [text-wrap:pretty]">
               Run debt service, equity yields, and wage amortizations directly in memory. Zero server roundtrips.
             </p>
           </div>
@@ -132,7 +132,7 @@ export const QuickModelerWidget = () => {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
                 activeTab === 'mortgage'
                   ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80 font-bold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : 'text-slate-900 hover:bg-slate-200/60'
               }`}
             >
               <Home className="size-3.5 text-indigo-600" />
@@ -145,7 +145,7 @@ export const QuickModelerWidget = () => {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
                 activeTab === 'dscr'
                   ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80 font-bold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : 'text-slate-900 hover:bg-slate-200/60'
               }`}
             >
               <Building className="size-3.5 text-cyan-600" />
@@ -158,7 +158,7 @@ export const QuickModelerWidget = () => {
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
                 activeTab === 'salary'
                   ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80 font-bold'
-                  : 'text-slate-600 hover:text-slate-900'
+                  : 'text-slate-900 hover:bg-slate-200/60'
               }`}
             >
               <DollarSign className="size-3.5 text-emerald-600" />
@@ -176,7 +176,7 @@ export const QuickModelerWidget = () => {
                 {/* Home Price Input */}
                 <div>
                   <div className="flex justify-between items-center mb-1.5 text-xs">
-                    <span className="font-semibold text-slate-700">Property Purchase Price</span>
+                    <span className="font-bold text-slate-900">Property Purchase Price</span>
                     <span className="font-mono font-bold text-slate-900 text-sm">{fmtCurrency(homePrice)}</span>
                   </div>
                   <input
@@ -188,7 +188,7 @@ export const QuickModelerWidget = () => {
                     onChange={(e) => setHomePrice(Number(e.target.value))}
                     className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                   />
-                  <div className="flex justify-between text-[10px] font-mono text-slate-400 mt-1">
+                  <div className="flex justify-between text-[10px] font-mono text-slate-600 font-medium mt-1">
                     <span>$100k</span>
                     <span>$1.0M</span>
                     <span>$2.0M</span>
@@ -198,8 +198,8 @@ export const QuickModelerWidget = () => {
                 {/* Down Payment Slider */}
                 <div>
                   <div className="flex justify-between items-center mb-1.5 text-xs">
-                    <span className="font-semibold text-slate-700">Down Payment ({downPercent}%)</span>
-                    <span className="font-mono text-slate-500 text-xs">{fmtCurrency(mortgageMath.downAmount)}</span>
+                    <span className="font-bold text-slate-900">Down Payment ({downPercent}%)</span>
+                    <span className="font-mono text-slate-800 font-medium text-xs">{fmtCurrency(mortgageMath.downAmount)}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {[10, 15, 20, 25, 30].map((pct) => (
@@ -210,7 +210,7 @@ export const QuickModelerWidget = () => {
                         className={`flex-1 py-1.5 rounded-lg text-xs font-mono font-medium transition-colors ${
                           downPercent === pct
                             ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold shadow-2xs'
-                            : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                            : 'bg-white border border-slate-300 text-slate-900 font-semibold hover:bg-slate-100'
                         }`}
                       >
                         {pct}%
@@ -222,7 +222,7 @@ export const QuickModelerWidget = () => {
                 {/* Interest Rate & Term */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    <label className="block text-xs font-bold text-slate-900 mb-1.5">
                       Interest Rate (APR)
                     </label>
                     <div className="relative">
@@ -235,12 +235,12 @@ export const QuickModelerWidget = () => {
                         onChange={(e) => setMortgageRate(Number(e.target.value))}
                         className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-mono text-slate-900 focus:outline-none focus:border-indigo-500 shadow-2xs"
                       />
-                      <Percent className="size-3.5 text-slate-400 absolute right-3 top-3 pointer-events-none" />
+                      <Percent className="size-3.5 text-slate-600 absolute right-3 top-3 pointer-events-none" />
                     </div>
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    <label className="block text-xs font-bold text-slate-900 mb-1.5">
                       Loan Term
                     </label>
                     <div className="grid grid-cols-2 gap-2">
@@ -252,7 +252,7 @@ export const QuickModelerWidget = () => {
                           className={`py-2 rounded-xl text-xs font-mono transition-colors ${
                             mortgageTermYears === term
                               ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold shadow-2xs'
-                              : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                              : 'bg-white border border-slate-300 text-slate-900 font-semibold hover:bg-slate-100'
                           }`}
                         >
                           {term} Yrs
@@ -269,7 +269,7 @@ export const QuickModelerWidget = () => {
                 {/* Gross Annual Rent */}
                 <div>
                   <div className="flex justify-between items-center mb-1.5 text-xs">
-                    <span className="font-semibold text-slate-700">Gross Annual Rental Income</span>
+                    <span className="font-bold text-slate-900">Gross Annual Rental Income</span>
                     <span className="font-mono font-bold text-slate-900 text-sm">{fmtCurrency(annualRent)}</span>
                   </div>
                   <input
@@ -281,7 +281,7 @@ export const QuickModelerWidget = () => {
                     onChange={(e) => setAnnualRent(Number(e.target.value))}
                     className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600"
                   />
-                  <div className="flex justify-between text-[10px] font-mono text-slate-400 mt-1">
+                  <div className="flex justify-between text-[10px] font-mono text-slate-600 font-medium mt-1">
                     <span>$20k/yr</span>
                     <span>$250k/yr</span>
                     <span>$500k/yr</span>
@@ -291,7 +291,7 @@ export const QuickModelerWidget = () => {
                 {/* Operating Expenses */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    <label className="block text-xs font-bold text-slate-900 mb-1.5">
                       Annual Operating Expenses (Taxes, Ins, Maint)
                     </label>
                     <input
@@ -304,7 +304,7 @@ export const QuickModelerWidget = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                    <label className="block text-xs font-bold text-slate-900 mb-1.5">
                       Annual Debt Service (P&I)
                     </label>
                     <input
@@ -324,7 +324,7 @@ export const QuickModelerWidget = () => {
                 {/* Annual Salary Slider */}
                 <div>
                   <div className="flex justify-between items-center mb-1.5 text-xs">
-                    <span className="font-semibold text-slate-700">Base Annual Salary</span>
+                    <span className="font-bold text-slate-900">Base Annual Salary</span>
                     <span className="font-mono font-bold text-slate-900 text-sm">{fmtCurrency(annualSalary)}</span>
                   </div>
                   <input
@@ -336,7 +336,7 @@ export const QuickModelerWidget = () => {
                     onChange={(e) => setAnnualSalary(Number(e.target.value))}
                     className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                   />
-                  <div className="flex justify-between text-[10px] font-mono text-slate-400 mt-1">
+                  <div className="flex justify-between text-[10px] font-mono text-slate-600 font-medium mt-1">
                     <span>$25k</span>
                     <span>$150k</span>
                     <span>$350k</span>
@@ -345,7 +345,7 @@ export const QuickModelerWidget = () => {
 
                 {/* Standard Tiers */}
                 <div>
-                  <span className="block text-xs font-semibold text-slate-700 mb-1.5">Common Salary Benchmarks</span>
+                  <span className="block text-xs font-bold text-slate-900 mb-1.5">Common Salary Benchmarks</span>
                   <div className="flex flex-wrap gap-2">
                     {[40000, 50000, 65000, 80000, 100000, 120000].map((tier) => (
                       <button
@@ -355,7 +355,7 @@ export const QuickModelerWidget = () => {
                         className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition-colors ${
                           annualSalary === tier
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold shadow-2xs'
-                            : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                            : 'bg-white border border-slate-300 text-slate-900 font-semibold hover:bg-slate-100'
                         }`}
                       >
                         ${tier / 1000}k/yr
@@ -366,7 +366,7 @@ export const QuickModelerWidget = () => {
 
                 {/* Hours per Week */}
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label className="block text-xs font-bold text-slate-900 mb-1.5">
                     Weekly Working Hours: <span className="text-emerald-700 font-mono font-bold">{hoursPerWeek} hrs</span>
                   </label>
                   <div className="flex gap-2">
@@ -378,7 +378,7 @@ export const QuickModelerWidget = () => {
                         className={`flex-1 py-1.5 rounded-lg text-xs font-mono transition-colors ${
                           hoursPerWeek === hrs
                             ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold shadow-2xs'
-                            : 'bg-white border border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50'
+                            : 'bg-white border border-slate-300 text-slate-900 font-semibold hover:bg-slate-100'
                         }`}
                       >
                         {hrs}h/wk
@@ -395,7 +395,7 @@ export const QuickModelerWidget = () => {
             {activeTab === 'mortgage' && (
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold">
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-800 font-bold">
                     Estimated Monthly P&I
                   </span>
                   <span className="text-[10px] font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
@@ -405,21 +405,21 @@ export const QuickModelerWidget = () => {
 
                 <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight mb-4">
                   {fmtCurrency(mortgageMath.monthlyPI, 2)}
-                  <span className="text-xs text-slate-500 font-sans font-normal ml-1.5">/ month</span>
+                  <span className="text-xs text-slate-700 font-sans font-medium ml-1.5">/ month</span>
                 </div>
 
                 {/* Breakdown Matrix */}
                 <div className="space-y-2 pt-3 border-t border-slate-200 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Total Loan Amount:</span>
+                    <span className="text-slate-800 font-medium">Total Loan Amount:</span>
                     <span className="font-mono font-semibold text-slate-900">{fmtCurrency(mortgageMath.loanAmount)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Lifetime Interest:</span>
+                    <span className="text-slate-800 font-medium">Lifetime Interest:</span>
                     <span className="font-mono font-semibold text-indigo-700">{fmtCurrency(mortgageMath.totalInterest)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Total Cost of Loan:</span>
+                    <span className="text-slate-800 font-medium">Total Cost of Loan:</span>
                     <span className="font-mono font-semibold text-slate-900">{fmtCurrency(mortgageMath.totalPaid)}</span>
                   </div>
                 </div>
@@ -429,7 +429,7 @@ export const QuickModelerWidget = () => {
             {activeTab === 'dscr' && (
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold">
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-800 font-bold">
                     DSCR Debt Coverage Ratio
                   </span>
                 </div>
@@ -448,11 +448,11 @@ export const QuickModelerWidget = () => {
                 {/* Breakdown Matrix */}
                 <div className="space-y-2 pt-3 border-t border-slate-200 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Net Operating Income (NOI):</span>
+                    <span className="text-slate-800 font-medium">Net Operating Income (NOI):</span>
                     <span className="font-mono font-semibold text-slate-900">{fmtCurrency(dscrMath.noi)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Annual Net Cash Flow:</span>
+                    <span className="text-slate-800 font-medium">Annual Net Cash Flow:</span>
                     <span className="font-mono font-semibold text-cyan-700">{fmtCurrency(dscrMath.netCashFlow)}</span>
                   </div>
                 </div>
@@ -462,7 +462,7 @@ export const QuickModelerWidget = () => {
             {activeTab === 'salary' && (
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold">
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-800 font-bold">
                     Equivalent Hourly Wage
                   </span>
                   <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
@@ -472,21 +472,21 @@ export const QuickModelerWidget = () => {
 
                 <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight mb-4">
                   {fmtCurrency(salaryMath.hourlyRate, 2)}
-                  <span className="text-xs text-slate-500 font-sans font-normal ml-1.5">/ hour</span>
+                  <span className="text-xs text-slate-700 font-sans font-medium ml-1.5">/ hour</span>
                 </div>
 
                 {/* Breakdown Matrix */}
                 <div className="space-y-2 pt-3 border-t border-slate-200 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Bi-Weekly Paycheck (26x):</span>
+                    <span className="text-slate-800 font-medium">Bi-Weekly Paycheck (26x):</span>
                     <span className="font-mono font-semibold text-slate-900">{fmtCurrency(salaryMath.biweeklyPay, 2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">Monthly Gross Pay (12x):</span>
+                    <span className="text-slate-800 font-medium">Monthly Gross Pay (12x):</span>
                     <span className="font-mono font-semibold text-slate-900">{fmtCurrency(salaryMath.monthlyPay, 2)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-600">1.5x FLSA Overtime Rate:</span>
+                    <span className="text-slate-800 font-medium">1.5x FLSA Overtime Rate:</span>
                     <span className="font-mono font-semibold text-emerald-700">{fmtCurrency(salaryMath.overtimeRate, 2)}/hr</span>
                   </div>
                 </div>
