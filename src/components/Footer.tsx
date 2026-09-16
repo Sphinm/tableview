@@ -244,20 +244,47 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                 </li>
                 <li>
                   <a
-                    href="/compress-video"
-                    onClick={(e) => handleNav(e, '/compress-video')}
+                    href="/compress-mp4"
+                    onClick={(e) => handleNav(e, '/compress-mp4')}
                     className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block text-xs"
                   >
-                    Reduce Video File Size (MP4/WebM)
+                    Compress MP4 Video
                   </a>
                 </li>
                 <li>
                   <a
-                    href="/compress-image"
-                    onClick={(e) => handleNav(e, '/compress-image')}
+                    href="/compress-video-for-discord"
+                    onClick={(e) => handleNav(e, '/compress-video-for-discord')}
                     className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block text-xs"
                   >
-                    Batch Photo Optimizer (WebP/JPG)
+                    Compress Video for Discord (25MB)
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/compress-png"
+                    onClick={(e) => handleNav(e, '/compress-png')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block text-xs"
+                  >
+                    Compress PNG (Transparent)
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/compress-jpg"
+                    onClick={(e) => handleNav(e, '/compress-jpg')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block text-xs"
+                  >
+                    Compress JPG Photos (EXIF Stripped)
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/compress-webp"
+                    onClick={(e) => handleNav(e, '/compress-webp')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block text-xs"
+                  >
+                    Compress WebP (Google Speed)
                   </a>
                 </li>
               </ul>
@@ -402,11 +429,29 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                 </li>
                 <li>
                   <a
+                    href="/balloon-payment-calculator"
+                    onClick={(e) => handleNav(e, '/balloon-payment-calculator')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    Balloon Payment Calculator
+                  </a>
+                </li>
+                <li>
+                  <a
                     href="/section-1031-exchange-calculator"
                     onClick={(e) => handleNav(e, '/section-1031-exchange-calculator')}
                     className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     1031 Exchange Tax Deferral
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/1031-exchange-timeline-calculator"
+                    onClick={(e) => handleNav(e, '/1031-exchange-timeline-calculator')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    1031 Exchange Timeline (45/180)
                   </a>
                 </li>
                 <li>
@@ -429,11 +474,38 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                 </li>
                 <li>
                   <a
+                    href="/amortization-schedule-calculator"
+                    onClick={(e) => handleNav(e, '/amortization-schedule-calculator')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    Amortization Schedule
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/mortgage-payoff-calculator"
+                    onClick={(e) => handleNav(e, '/mortgage-payoff-calculator')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    Mortgage Payoff Calculator
+                  </a>
+                </li>
+                <li>
+                  <a
                     href="/refinance-calculator"
                     onClick={(e) => handleNav(e, '/refinance-calculator')}
                     className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
                     Refinance Break-Even
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/cash-out-refinance-calculator"
+                    onClick={(e) => handleNav(e, '/cash-out-refinance-calculator')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    Cash-Out Refinance
                   </a>
                 </li>
                 <li>
@@ -689,6 +761,51 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                 </li>
                 <li>
                   <a
+                    href="/geoparquet-viewer"
+                    onClick={(e) => handleNav(e, '/geoparquet-viewer')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    GeoParquet Viewer
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/json-to-csv"
+                    onClick={(e) => handleNav(e, '/json-to-csv')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    JSON to CSV
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/json-to-excel"
+                    onClick={(e) => handleNav(e, '/json-to-excel')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    JSON to Excel
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/excel-to-json"
+                    onClick={(e) => handleNav(e, '/excel-to-json')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    Excel to JSON
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/tsv-viewer"
+                    onClick={(e) => handleNav(e, '/tsv-viewer')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    TSV Viewer
+                  </a>
+                </li>
+                <li>
+                  <a
                     href="/sql-workbench"
                     onClick={(e) => handleNav(e, '/sql-workbench')}
                     className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
@@ -729,6 +846,24 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                 </li>
                 <li>
                   <a
+                    href="/compress-mp4"
+                    onClick={(e) => handleNav(e, '/compress-mp4')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    Compress MP4 Video
+                  </a>
+                </li>
+                <li>
+                  <a
+                    href="/compress-video-for-discord"
+                    onClick={(e) => handleNav(e, '/compress-video-for-discord')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
+                  >
+                    Compress for Discord
+                  </a>
+                </li>
+                <li>
+                  <a
                     href="/image-compressor"
                     onClick={(e) => handleNav(e, '/image-compressor')}
                     className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
@@ -738,29 +873,29 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                 </li>
                 <li>
                   <a
-                    href="/compress-video"
-                    onClick={(e) => handleNav(e, '/compress-video')}
+                    href="/compress-png"
+                    onClick={(e) => handleNav(e, '/compress-png')}
                     className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
-                    Reduce Video File Size
+                    Compress PNG (Alpha)
                   </a>
                 </li>
                 <li>
                   <a
-                    href="/compress-image"
-                    onClick={(e) => handleNav(e, '/compress-image')}
+                    href="/compress-jpg"
+                    onClick={(e) => handleNav(e, '/compress-jpg')}
                     className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
-                    Batch Photo Optimizer
+                    Compress JPG (EXIF)
                   </a>
                 </li>
                 <li>
                   <a
-                    href="/sql-formatter"
-                    onClick={(e) => handleNav(e, '/sql-formatter')}
+                    href="/compress-webp"
+                    onClick={(e) => handleNav(e, '/compress-webp')}
                     className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"
                   >
-                    SQL Formatter
+                    Compress WebP
                   </a>
                 </li>
               </ul>

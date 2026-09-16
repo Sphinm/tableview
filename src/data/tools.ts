@@ -1,4 +1,4 @@
-export type ToolCategory = 'viewer' | 'converter' | 'sql' | 'analysis' | 'calculator';
+export type ToolCategory = 'viewer' | 'converter' | 'sql' | 'analysis' | 'calculator' | 'media' | 'developer';
 
 export interface ToolConfig {
   slug: string;
@@ -14,7 +14,7 @@ export interface ToolConfig {
   category: ToolCategory;
   tag?: string;
   color: 'emerald' | 'green' | 'indigo' | 'cyan' | 'amber' | 'purple';
-  iconType: 'csv' | 'excel' | 'parquet' | 'json' | 'sql' | 'schema' | 'calculator' | 'building' | 'hammer' | 'server' | 'savings' | 'home' | 'refinance';
+  iconType: 'csv' | 'excel' | 'parquet' | 'json' | 'sql' | 'schema' | 'calculator' | 'building' | 'hammer' | 'server' | 'savings' | 'home' | 'refinance' | 'video' | 'image' | 'file';
   acceptExtensions: string;
   acceptLabel: string;
   primaryExport: 'excel' | 'csv' | 'parquet' | 'json' | 'schema' | 'any';
@@ -1364,6 +1364,370 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
         a: 'SQL Minify removes redundant whitespace, comments, and line breaks to compress queries into a single compact string. This is ideal for embedding queries into source code, application config files, or URL parameters.'
       }
     ]
+  },
+
+  'json-to-csv': {
+    slug: 'json-to-csv',
+    path: '/json-to-csv',
+    badge: '100% In-Browser · Instant JSON to CSV',
+    title: 'Free Online JSON to CSV Converter',
+    shortTitle: 'JSON to CSV',
+    metaTitle: 'Free Online JSON to CSV Converter: In-Browser, Private & Fast | TableView.dev',
+    metaDescription: 'Convert JSON arrays, NDJSON, and nested objects to formatted CSV files directly in your web browser. 100% private, client-side DuckDB-Wasm with zero server uploads.',
+    h1: 'Free Online JSON to',
+    h1Highlight: 'CSV Converter',
+    subtitle: 'Drop any .json, .jsonl, or .ndjson file to convert JSON into clean, standard UTF-8 CSV spreadsheets in seconds with zero server file uploads.',
+    category: 'converter',
+    tag: 'Popular',
+    color: 'amber',
+    iconType: 'csv',
+    acceptExtensions: '.json,.jsonl,.ndjson,.txt',
+    acceptLabel: 'Drop JSON (.json), JSON Lines (.jsonl), or NDJSON to convert to CSV',
+    primaryExport: 'csv',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'download',
+        title: 'RFC 4180 Compliant CSV',
+        description: 'Properly escapes quotes, handles nested objects, and ensures clean UTF-8 comma-separated text.'
+      },
+      {
+        icon: 'shield',
+        title: 'Zero Cloud Storage or Egress',
+        description: 'All JSON parsing, flattening, and conversion runs locally in browser WebAssembly memory.'
+      },
+      {
+        icon: 'zap',
+        title: 'Streams Large JSON & NDJSON',
+        description: 'Powered by DuckDB read_json_auto for blazing-fast handling of large files.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How do I convert JSON to CSV without uploading to an external server?',
+        a: 'Drop your .json or .jsonl file onto TableView above and click "Export CSV". The file is parsed locally in your browser tab using WebAssembly and saved directly to your computer.'
+      },
+      {
+        q: 'Can this tool convert JSON Lines (NDJSON) to CSV?',
+        a: 'Yes! Both standard hierarchical JSON arrays and newline-delimited JSON Lines (NDJSON/JSONL) are automatically detected and converted into tabular CSV.'
+      },
+      {
+        q: 'What happens to nested JSON objects and arrays?',
+        a: 'DuckDB automatically flattens first-level scalar attributes and serializes nested objects and lists into structured text columns.'
+      }
+    ]
+  },
+
+  'json-to-excel': {
+    slug: 'json-to-excel',
+    path: '/json-to-excel',
+    badge: 'Client-Side · Formatted .xlsx Export',
+    title: 'Free Online JSON to Excel Converter (.xlsx)',
+    shortTitle: 'JSON to Excel',
+    metaTitle: 'Free Online JSON to Excel (.xlsx) Converter: Fast In-Browser Export | TableView.dev',
+    metaDescription: 'Convert JSON and NDJSON files into formatted Microsoft Excel (.xlsx) spreadsheets online. 100% private in-browser conversion with zero cloud uploads.',
+    h1: 'Free Online JSON to',
+    h1Highlight: 'Excel Converter (.xlsx)',
+    subtitle: 'Transform JSON arrays and nested data into multi-column Excel workbooks directly in your browser without uploading confidential data.',
+    category: 'converter',
+    tag: 'Popular',
+    color: 'green',
+    iconType: 'excel',
+    acceptExtensions: '.json,.jsonl,.ndjson,.txt',
+    acceptLabel: 'Drop JSON (.json) or JSON Lines (.jsonl) to convert to Excel (.xlsx)',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Formatted Microsoft Excel Output',
+        description: 'Generates genuine binary .xlsx workbooks with proper column headers and data type recognition.'
+      },
+      {
+        icon: 'shield',
+        title: 'Zero Cloud Uploads',
+        description: 'Your sensitive JSON feeds and API records never leave your local machine.'
+      },
+      {
+        icon: 'zap',
+        title: 'Fast Client-Side Generation',
+        description: 'Utilizes SheetJS and DuckDB-Wasm for high-performance in-memory spreadsheet construction.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Can I open the generated Excel file in Microsoft Excel or Google Sheets?',
+        a: 'Yes! The exported file is an industry-standard OpenXML spreadsheet (.xlsx) fully compatible with Microsoft Excel, Google Sheets, Apple Numbers, and LibreOffice Calc.'
+      },
+      {
+        q: 'Is there a limit on how many JSON rows can be exported to Excel?',
+        a: 'Microsoft Excel supports up to 1,048,576 rows per worksheet. TableView handles large JSON datasets up to Excel\'s native limits.'
+      },
+      {
+        q: 'Are dates and numbers formatted properly in the resulting spreadsheet?',
+        a: 'Yes, numeric values, timestamps, and ISO date strings are parsed and formatted as appropriate Excel column types.'
+      }
+    ]
+  },
+
+  'excel-to-json': {
+    slug: 'excel-to-json',
+    path: '/excel-to-json',
+    badge: 'Zero Server Upload · Fast Spreadsheet to JSON',
+    title: 'Free Online Excel to JSON Converter (.xlsx to JSON)',
+    shortTitle: 'Excel to JSON',
+    metaTitle: 'Free Online Excel to JSON Converter (.xlsx to JSON): Private & Fast | TableView.dev',
+    metaDescription: 'Convert Microsoft Excel spreadsheets (.xlsx, .xls) to clean JSON array data online. Fast, secure in-browser parser with zero server file uploads.',
+    h1: 'Free Online Excel to',
+    h1Highlight: 'JSON Converter',
+    subtitle: 'Drop any Excel workbook (.xlsx or .xls) to convert rows into clean, structured JSON format with zero server uploads.',
+    category: 'converter',
+    tag: 'Dev Tool',
+    color: 'amber',
+    iconType: 'json',
+    acceptExtensions: '.xlsx,.xls',
+    acceptLabel: 'Drop Microsoft Excel (.xlsx or .xls) file to convert to JSON',
+    primaryExport: 'json',
+    defaultTab: 'json',
+    features: [
+      {
+        icon: 'download',
+        title: 'Clean JSON Array Export',
+        description: 'Transforms spreadsheet rows into an array of structured JSON objects with column headers as object keys.'
+      },
+      {
+        icon: 'shield',
+        title: 'Confidential Records Stay Private',
+        description: 'Internal financial sheets and user rosters are parsed locally without reaching third-party servers.'
+      },
+      {
+        icon: 'zap',
+        title: 'Multi-Sheet Workbook Support',
+        description: 'Inspect and convert any worksheet within multi-tab Excel workbooks.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How does TableView convert Excel rows into JSON?',
+        a: 'TableView parses the workbook client-side using SheetJS and DuckDB, using the first row as object keys and subsequent rows as values in a clean JSON array.'
+      },
+      {
+        q: 'Does it support older .xls binary Excel files?',
+        a: 'Yes, both modern XML Excel spreadsheets (.xlsx) and legacy binary Excel files (.xls) are supported.'
+      },
+      {
+        q: 'Can I copy the JSON directly to my clipboard?',
+        a: 'Yes, you can preview the generated JSON in our built-in JSON inspector, format it with indentation, and copy it to your clipboard with one click.'
+      }
+    ]
+  },
+
+  'tsv-viewer': {
+    slug: 'tsv-viewer',
+    path: '/tsv-viewer',
+    badge: '100% In-Browser · Instant TSV Reader',
+    title: 'Free Online TSV Viewer & Query Console',
+    shortTitle: 'TSV Viewer',
+    metaTitle: 'Free Online TSV Viewer: Open & Query Tab-Separated Values In-Browser | TableView.dev',
+    metaDescription: 'Open, search, filter, and execute SQL queries on tab-separated value (.tsv) files online. 100% private client-side DuckDB with zero server file uploads.',
+    h1: 'Free Online TSV',
+    h1Highlight: 'Viewer & Console',
+    subtitle: 'Open large tab-separated values (.tsv) files instantly in your browser. Inspect schemas, filter records, and export to Excel, CSV, or Parquet.',
+    category: 'viewer',
+    color: 'cyan',
+    iconType: 'csv',
+    acceptExtensions: '.tsv,.txt',
+    acceptLabel: 'Supports Tab-Separated Values (.tsv) and tab-delimited text files',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Accurate Tab Delimiter Parsing',
+        description: 'Automatically detects tab delimiters (\\t) without delimiter confusion on text containing commas.'
+      },
+      {
+        icon: 'shield',
+        title: 'Zero Server Uploads',
+        description: 'Processes large genomics, bioinformatics, and TSV data feeds locally inside browser RAM.'
+      },
+      {
+        icon: 'zap',
+        title: 'DuckDB SQL Analysis Built-In',
+        description: 'Filter, aggregate, and query TSV files using full standard analytical SQL syntax.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is the difference between CSV and TSV files?',
+        a: 'CSV uses commas (,) as delimiters, whereas TSV uses tabs (\\t). TSV is especially popular in genomics, bioinformatics, and log processing because data fields frequently contain commas.'
+      },
+      {
+        q: 'Can I convert my TSV file to Excel or CSV?',
+        a: 'Yes! After dropping your TSV file, you can export it to formatted Microsoft Excel (.xlsx), standard CSV, or Apache Parquet with one click.'
+      },
+      {
+        q: 'How large of a TSV file can I open?',
+        a: 'Because parsing occurs client-side in WebAssembly, you can comfortably open TSV files with hundreds of thousands of rows depending on your device RAM.'
+      }
+    ]
+  },
+
+  'geoparquet-viewer': {
+    slug: 'geoparquet-viewer',
+    path: '/geoparquet-viewer',
+    badge: 'DuckDB-Wasm Spatial · GeoParquet Inspector',
+    title: 'Free Online GeoParquet Viewer & Schema Inspector',
+    shortTitle: 'GeoParquet Viewer',
+    metaTitle: 'Free Online GeoParquet Viewer: Inspect Spatial Schemas & Geometry | TableView.dev',
+    metaDescription: 'Inspect and view GeoParquet (.geoparquet) files directly in your web browser. Examine bounding box metadata, spatial column types, and run analytical SQL queries.',
+    h1: 'Online GeoParquet',
+    h1Highlight: 'Viewer & Schema Inspector',
+    subtitle: 'Preview geospatial Parquet datasets, inspect WKB/WKT geometry columns, examine bounding box metadata, and run spatial SQL queries in WebAssembly.',
+    category: 'viewer',
+    tag: 'GIS Tool',
+    color: 'indigo',
+    iconType: 'parquet',
+    acceptExtensions: '.parquet,.geoparquet',
+    acceptLabel: 'Supports GeoParquet (.geoparquet) and Apache Parquet (.parquet)',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'GeoParquet Metadata Inspection',
+        description: 'Inspect file-level geospatial metadata, coordinate reference systems (CRS), and geometry encodings.'
+      },
+      {
+        icon: 'shield',
+        title: '100% In-Browser GIS Privacy',
+        description: 'Proprietary spatial boundaries, LiDAR scans, and GIS datasets remain strictly on your local computer.'
+      },
+      {
+        icon: 'zap',
+        title: 'DuckDB Spatial SQL Queries',
+        description: 'Filter spatial features by bounding box, compute row counts, and inspect geometry columns.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is GeoParquet?',
+        a: 'GeoParquet is an open geospatial vector data format built on Apache Parquet. It adds standardized metadata for geometry columns (points, lines, polygons) encoded in WKB (Well-Known Binary) format.'
+      },
+      {
+        q: 'Can TableView open both .geoparquet and standard .parquet files?',
+        a: 'Yes, TableView seamlessly parses both standard Apache Parquet files and GeoParquet files with spatial metadata.'
+      },
+      {
+        q: 'Can I export GeoParquet records to Excel or CSV?',
+        a: 'Yes, all tabular attributes and geometry representations can be exported to Excel, CSV, or JSON.'
+      }
+    ]
+  },
+
+  'video-compressor': {
+    slug: 'video-compressor',
+    path: '/video-compressor',
+    badge: 'WebAssembly FFmpeg · 100% In-Browser',
+    title: 'Free Online Video Compressor (No Watermark)',
+    shortTitle: 'Video Compressor',
+    metaTitle: 'Free Online Video Compressor: 100% In-Browser & No Watermark | TableView.dev',
+    metaDescription: 'Compress MP4, MOV, WebM, and MKV video files directly inside your browser using WebAssembly FFmpeg. Reduce file sizes by up to 90% without server uploads or watermarks.',
+    h1: 'Free Online Video',
+    h1Highlight: 'Compressor (No Watermark)',
+    subtitle: 'Shrink large video files client-side using WebAssembly FFmpeg. No watermarks, no server file uploads, and custom target MB output.',
+    category: 'media',
+    tag: 'New',
+    color: 'purple',
+    iconType: 'video',
+    acceptExtensions: '.mp4,.mov,.webm,.mkv,.avi',
+    acceptLabel: 'Drop MP4, MOV, WebM, or MKV video files to compress',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'shield',
+        title: '100% Zero-Egress Privacy',
+        description: 'Video decoding and H.264 re-encoding execute locally via WebAssembly FFmpeg. Zero bytes uploaded.'
+      },
+      {
+        icon: 'download',
+        title: 'Zero Watermarks',
+        description: 'Clean video export with no watermark, branding logo, or artificial trial restrictions.'
+      },
+      {
+        icon: 'zap',
+        title: 'Exact Target MB Output',
+        description: 'Set custom output targets (e.g. 25MB for Discord, 16MB for WhatsApp) with automated bitrate tuning.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Does this video compressor upload my video to a server?',
+        a: 'No. The compression engine runs 100% locally in your browser using WebAssembly FFmpeg. Your video never leaves your machine.'
+      },
+      {
+        q: 'Will my video have a watermark added?',
+        a: 'No. Exported videos are completely clean with zero watermarks or logos.'
+      },
+      {
+        q: 'Can I compress a video specifically for Discord?',
+        a: 'Yes! You can specify an exact target size of 24.5 MB to easily fit under Discord\'s attachment limit.'
+      }
+    ]
+  },
+
+  'image-compressor': {
+    slug: 'image-compressor',
+    path: '/image-compressor',
+    badge: 'HTML5 Canvas · Batch & ZIP Export',
+    title: 'Free Online Image Compressor (Batch JPG, PNG, WebP)',
+    shortTitle: 'Image Compressor',
+    metaTitle: 'Free Online Image Compressor: Batch JPG, PNG, WebP & ZIP Export | TableView.dev',
+    metaDescription: 'Batch compress photos and graphics directly in your browser with 100% privacy. Interactive before/after split slider, custom quality adjustments, and 1-click ZIP export.',
+    h1: 'Free Online Batch',
+    h1Highlight: 'Image Compressor',
+    subtitle: 'Compress dozens of JPG, PNG, and WebP images simultaneously in browser memory. Compare visual quality with a split-screen curtain slider and download as ZIP.',
+    category: 'media',
+    tag: 'New',
+    color: 'purple',
+    iconType: 'image',
+    acceptExtensions: '.jpg,.jpeg,.png,.webp',
+    acceptLabel: 'Drop multiple JPG, PNG, or WebP images to batch compress',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'zap',
+        title: 'Concurrent Batch Compression',
+        description: 'Process dozens of images simultaneously with real-time compression ratios and 1-click ZIP packaging.'
+      },
+      {
+        icon: 'shield',
+        title: '100% Local Canvas Sandbox',
+        description: 'No photos are uploaded to any external server. All scaling and re-encoding runs locally.'
+      },
+      {
+        icon: 'table',
+        title: 'Visual Split-Screen Curtain',
+        description: 'Scrub across before/after views to inspect sharpness and ensure zero visible degradation.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Can I compress multiple images at once?',
+        a: 'Yes! Drop any number of images and TableView will process them concurrently, allowing you to download each image individually or all together as a ZIP.'
+      },
+      {
+        q: 'Which format gives the best compression: WebP, JPEG, or PNG?',
+        a: 'WebP offers 25%–35% smaller file sizes than JPEG at equivalent quality while supporting transparency. PNG is best for logos with transparency, and JPEG for universal legacy compatibility.'
+      },
+      {
+        q: 'Can I resize the width and height in pixels?',
+        a: 'Yes, you can cap the maximum width/height to Full HD (1920px), HD (1280px), web standard (800px), or keep original dimensions.'
+      }
+    ]
   }
 };
+
 

@@ -858,14 +858,10 @@ export const Header = ({ onTrySample: _onTrySample, isLoading: _isLoading, curre
                     {user.name ? user.name[0].toUpperCase() : 'U'}
                   </div>
                 )}
-                <span className="max-w-[85px] truncate font-bold text-slate-900 hidden sm:inline">
+                <span className="max-w-[120px] truncate font-bold text-slate-900 hidden sm:inline">
                   {user.name || user.email.split('@')[0]}
                 </span>
-                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80 text-[10px] font-mono font-bold">
-                  <Zap className="size-2.5 text-amber-500 fill-amber-500" />
-                  {user.credits} Cr
-                </span>
-                <ChevronDown className={`size-3 text-slate-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`size-3.5 text-slate-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {userMenuOpen && (
@@ -892,34 +888,12 @@ export const Header = ({ onTrySample: _onTrySample, isLoading: _isLoading, curre
                         {user.email}
                       </div>
                       <div className="mt-1.5 flex items-center gap-1.5">
-                        <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/70">
-                          <ShieldCheck className="size-3 text-indigo-600" />
-                          {user.plan} Plan
+                        <span className="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/70">
+                          <ShieldCheck className="size-3 text-emerald-600" />
+                          Google Account
                         </span>
                       </div>
                     </div>
-                  </div>
-
-                  {/* Visual Credit Meter */}
-                  <div className="py-3">
-                    <div className="flex items-center justify-between text-xs mb-1.5">
-                      <span className="font-semibold text-slate-700 flex items-center gap-1">
-                        <Zap className="size-3.5 text-amber-500 fill-amber-500" />
-                        Monthly Cloud Credits
-                      </span>
-                      <span className="font-mono font-bold text-slate-900">
-                        {user.credits} / 30
-                      </span>
-                    </div>
-                    <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                      <div
-                        className="bg-indigo-600 h-full rounded-full transition-all duration-300"
-                        style={{ width: `${Math.min(100, Math.max(0, (user.credits / 30) * 100))}%` }}
-                      />
-                    </div>
-                    <p className="text-[10px] text-slate-500 mt-1.5 leading-normal">
-                      30 free credits every month. 100% private in-browser compression.
-                    </p>
                   </div>
 
                   {/* Quick Links */}
@@ -1182,9 +1156,9 @@ export const Header = ({ onTrySample: _onTrySample, isLoading: _isLoading, curre
           <div className="pt-2">
             {user ? (
               <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
-                <div>
-                  <div className="text-xs font-bold text-slate-900">{user.name}</div>
-                  <div className="text-[11px] text-slate-500">{user.credits} credits remaining</div>
+                <div className="min-w-0 pr-2">
+                  <div className="text-xs font-bold text-slate-900 truncate">{user.name}</div>
+                  <div className="text-[11px] text-slate-500 truncate">{user.email}</div>
                 </div>
                 <button
                   onClick={() => {

@@ -24,7 +24,7 @@ import {
 import { useAuth } from '../lib/useAuth';
 
 export function VideoCompressor() {
-  const { user, openAuthModal, consumeCredit } = useAuth();
+  const { consumeCredit } = useAuth();
 
   // State
   const [file, setFile] = useState<File | Blob | null>(null);
@@ -89,12 +89,6 @@ export function VideoCompressor() {
   // Run Compression
   const handleStartCompression = async () => {
     if (!file || !metadata) return;
-
-    // Check credits
-    if (user && user.credits <= 0) {
-      openAuthModal();
-      return;
-    }
 
     setIsProcessing(true);
     setProgress(0);
@@ -660,7 +654,7 @@ export function VideoCompressor() {
             <div className="p-4 bg-slate-50 rounded-xl space-y-1.5 border border-slate-200/60">
               <h4 className="font-bold text-slate-900">Does it cost money to compress videos?</h4>
               <p className="text-slate-500 leading-relaxed">
-                It is free to use with no watermark. Registered members receive 30 free monthly credits to process longer high-resolution videos.
+                It is 100% free to use with no watermark or hidden fees. All video compression executes directly inside your browser sandbox via WebAssembly.
               </p>
             </div>
           </div>

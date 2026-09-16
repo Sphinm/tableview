@@ -325,7 +325,16 @@ export function App() {
       case '/mortgage-calculator':
         return <MortgageCalculator />;
 
+      case '/amortization-schedule-calculator':
+        return <MortgageCalculator />;
+
+      case '/mortgage-payoff-calculator':
+        return <MortgageCalculator />;
+
       case '/refinance-calculator':
+        return <RefinanceCalculator />;
+
+      case '/cash-out-refinance-calculator':
         return <RefinanceCalculator />;
 
       case '/dscr-loan-calculator':
@@ -343,10 +352,16 @@ export function App() {
       case '/section-1031-exchange-calculator':
         return <Section1031Calculator />;
 
+      case '/1031-exchange-timeline-calculator':
+        return <Section1031Calculator />;
+
       case '/loan-comparison-calculator':
         return <LoanComparisonCalculator />;
 
       case '/commercial-loan-calculator':
+        return <CommercialLoanCalculator />;
+
+      case '/balloon-payment-calculator':
         return <CommercialLoanCalculator />;
 
       case '/salary-to-hourly-calculator': {
@@ -371,7 +386,22 @@ export function App() {
       case '/video-compressor':
         return <VideoCompressor />;
 
+      case '/compress-mp4':
+        return <VideoCompressor />;
+
+      case '/compress-video-for-discord':
+        return <VideoCompressor />;
+
       case '/image-compressor':
+        return <ImageCompressor />;
+
+      case '/compress-png':
+        return <ImageCompressor />;
+
+      case '/compress-jpg':
+        return <ImageCompressor />;
+
+      case '/compress-webp':
         return <ImageCompressor />;
 
       case '/finance-calculator':

@@ -329,6 +329,81 @@ export const CALCULATOR_FAQS: Record<string, CalcFaq[]> = {
       a: 'SQL Minify removes redundant whitespace, comments, and line breaks to compress queries into a single compact string. This is ideal for embedding queries into source code, application config files, or URL parameters.',
     },
   ],
+
+  '/amortization-schedule-calculator': [
+    {
+      q: 'What is an amortization schedule and how does it work?',
+      a: 'An amortization schedule is a complete table showing every periodic payment over the life of a loan. Each payment is split between the interest charged by the lender and the principal reduction applied to your loan balance.',
+    },
+    {
+      q: 'How does making extra principal payments affect my amortization table?',
+      a: 'Extra principal payments reduce your remaining loan balance immediately. Because subsequent interest charges are calculated on a smaller outstanding balance, more of each future payment goes toward principal, accelerating your debt payoff and saving thousands in lifetime interest.',
+    },
+    {
+      q: 'Why is more interest paid during the early years of a mortgage?',
+      a: 'Interest is calculated based on the outstanding principal balance. In the first years of a 30-year mortgage, the balance is at its highest, meaning the interest portion of each fixed payment is large. As the balance decreases over time, the interest portion shrinks while principal repayment grows.',
+    },
+  ],
+
+  '/mortgage-payoff-calculator': [
+    {
+      q: 'How much interest can I save by paying extra principal each month?',
+      a: 'Even an extra $100 to $200 per month applied directly to principal on a standard 30-year fixed mortgage can shave 4 to 6 years off your loan term and save tens of thousands of dollars in cumulative interest charges.',
+    },
+    {
+      q: 'Is it better to make bi-weekly mortgage payments or one lump sum extra payment per year?',
+      a: 'Both strategies yield similar results. Making bi-weekly payments results in 26 half-payments per year (equivalent to 13 full payments, or one extra payment annually). The advantage of bi-weekly payments is automatic budgeting without needing a large lump sum.',
+    },
+    {
+      q: 'Does paying extra principal shorten my loan term or lower my monthly payment?',
+      a: 'On a standard fixed-rate mortgage, paying extra principal shortens your loan term and eliminates future payments earlier. Your required monthly payment stays the same unless you request a formal loan recast from your servicer.',
+    },
+  ],
+
+  '/cash-out-refinance-calculator': [
+    {
+      q: 'How does a cash-out refinance work?',
+      a: 'A cash-out refinance replaces your existing mortgage with a new, larger loan balance, allowing you to withdraw the difference between the two loans in cash based on your accumulated home equity.',
+    },
+    {
+      q: 'What is the maximum loan-to-value (LTV) permitted for a cash-out refinance?',
+      a: 'Most conventional lenders cap cash-out refinances at 80% LTV on single-family primary residences. FHA loans permit up to 80% LTV, while VA cash-out refinances allow eligible veterans to borrow up to 90% or 100% of appraised home value.',
+    },
+    {
+      q: 'How long does it take to break even on cash-out refinance closing costs?',
+      a: 'Break-even time is calculated by dividing total closing costs (typically 2% to 4% of the new loan amount) by your monthly savings if your interest rate decreased. If your interest rate increased, the cost of funds must be compared against alternative borrowing options like HELOCs or personal loans.',
+    },
+  ],
+
+  '/balloon-payment-calculator': [
+    {
+      q: 'What is a balloon payment in commercial real estate financing?',
+      a: 'A balloon payment is a large lump-sum payment due at the end of a short-term commercial loan (commonly 5, 7, or 10 years) where the monthly payments were amortized over a much longer period (such as 20, 25, or 30 years).',
+    },
+    {
+      q: 'How is the remaining balloon balance calculated at loan maturity?',
+      a: 'The balloon balance equals the unpaid principal remaining on the loan after the agreed term. Our calculator models the exact month-by-month amortization schedule to compute the precise dollar balance due at maturity.',
+    },
+    {
+      q: 'What are the main refinance risks associated with commercial balloon mortgages?',
+      a: 'Borrowers face refinancing risk if interest rates rise sharply before maturity, if property values decline (lowering debt yield and LTV), or if credit standards tighten. Commercial investors typically begin refinancing discussions 12 to 18 months before the balloon date.',
+    },
+  ],
+
+  '/1031-exchange-timeline-calculator': [
+    {
+      q: 'What are the strict 45-day and 180-day deadlines in an IRS Section 1031 exchange?',
+      a: 'Under IRC §1031, you have exactly 45 calendar days from closing on your relinquished property to identify potential replacement properties in writing, and exactly 180 calendar days (or your tax return due date, whichever is earlier) to acquire the replacement property.',
+    },
+    {
+      q: 'Can the 45-day or 180-day deadlines be extended if they land on a weekend or holiday?',
+      a: 'No. IRS regulations strictly enforce calendar days. If day 45 or day 180 falls on a Saturday, Sunday, or federal holiday, the deadline does NOT roll over to the next business day. Missing the deadline by even one day disqualifies the entire exchange.',
+    },
+    {
+      q: 'How do I avoid taxable boot during a like-kind exchange?',
+      a: 'To achieve 100% tax deferral, you must reinvest all net cash proceeds and acquire replacement property of equal or greater value and debt. Any net cash withheld or mortgage debt reduction not offset by fresh capital is considered taxable boot.',
+    },
+  ],
 };
 export function getCalculatorFaqs(path: string): CalcFaq[] {
   return CALCULATOR_FAQS[path] ?? [];

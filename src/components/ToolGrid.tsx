@@ -18,7 +18,10 @@ import {
   PiggyBank,
   Home,
   ArrowRightLeft,
-  Calculator
+  Calculator,
+  Video,
+  Image as ImageIcon,
+  FileCode2
 } from 'lucide-react';
 import { type ToolConfig, type ToolCategory, TOOLS_CONFIG } from '../data/tools';
 import { navigateTo } from '../lib/router';
@@ -88,6 +91,12 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
         return <Home className={iconSize} />;
       case 'refinance':
         return <ArrowRightLeft className={iconSize} />;
+      case 'video':
+        return <Video className={iconSize} />;
+      case 'image':
+        return <ImageIcon className={iconSize} />;
+      case 'file':
+        return <FileCode2 className={iconSize} />;
       default:
         return <Table className={iconSize} />;
     }
@@ -150,7 +159,7 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
   const handleCardDragOver = (e: DragEvent, tool: ToolConfig) => {
     e.preventDefault();
     e.stopPropagation();
-    if (tool.category !== 'calculator') {
+    if (tool.category !== 'calculator' && tool.category !== 'media') {
       setDragOverSlug(tool.slug);
     }
   };
@@ -166,7 +175,7 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
     e.stopPropagation();
     setDragOverSlug(null);
 
-    if (tool.category === 'calculator') {
+    if (tool.category === 'calculator' || tool.category === 'media') {
       navigateTo(tool.path);
       return;
     }
@@ -191,6 +200,16 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
       id: 'sql',
       label: 'SQL & Analytics',
       count: toolsList.filter((t) => t.category === 'sql' || t.category === 'analysis').length
+    },
+    {
+      id: 'media',
+      label: 'Video & Image',
+      count: toolsList.filter((t) => t.category === 'media').length
+    },
+    {
+      id: 'developer',
+      label: 'Developer',
+      count: toolsList.filter((t) => t.category === 'developer').length
     },
     {
       id: 'calculator',

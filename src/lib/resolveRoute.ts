@@ -37,6 +37,14 @@ export const TOOL_ALIASES: Record<string, string> = {
   'convert-csv-to-parquet': 'csv-to-parquet',
   'convert-csv-to-excel': 'csv-to-excel',
   'convert-excel-to-csv': 'excel-to-csv',
+  'convert-json-to-csv': 'json-to-csv',
+  'convert-json-to-excel': 'json-to-excel',
+  'convert-excel-to-json': 'excel-to-json',
+  'convert-tsv-to-csv': 'tsv-viewer',
+  'tsv': 'tsv-viewer',
+  'view-tsv': 'tsv-viewer',
+  'tsv-reader': 'tsv-viewer',
+  'geoparquet': 'geoparquet-viewer',
   'ndjson-viewer': 'json-viewer',
   'jsonl-viewer': 'json-viewer',
 };
@@ -45,11 +53,23 @@ export const TOOL_ALIASES: Record<string, string> = {
 const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
   { pattern: /^\/(?:tools\/)?(?:mortgage-calculator|mortgage)$/, path: '/mortgage-calculator' },
   {
+    pattern: /^\/(?:tools\/)?(?:amortization-schedule-calculator|loan-amortization-calculator|amortization-calculator)$/,
+    path: '/amortization-schedule-calculator',
+  },
+  {
+    pattern: /^\/(?:tools\/)?(?:mortgage-payoff-calculator|early-payoff-calculator|early-mortgage-payoff-calculator)$/,
+    path: '/mortgage-payoff-calculator',
+  },
+  {
     // The optional .php suffix applies to BOTH forms. It previously hung off the
     // `calculators/` alternative only, so /should-i-refinance.php fell through
     // and rendered a 404 page.
     pattern: /^\/(?:tools\/)?(?:refinance-calculator|refinance|(?:calculators\/)?should-i-refinance(?:\.php)?)$/,
     path: '/refinance-calculator',
+  },
+  {
+    pattern: /^\/(?:tools\/)?(?:cash-out-refinance-calculator|cash-out-refinance)$/,
+    path: '/cash-out-refinance-calculator',
   },
   { pattern: /^\/(?:tools\/)?(?:dscr-loan-calculator|dscr-calculator|dscr)$/, path: '/dscr-loan-calculator' },
   {
@@ -72,13 +92,21 @@ const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
     path: '/section-1031-exchange-calculator',
   },
   {
+    pattern: /^\/(?:tools\/)?(?:1031-exchange-timeline-calculator|1031-timeline-calculator|1031-deadline-calculator)$/,
+    path: '/1031-exchange-timeline-calculator',
+  },
+  {
     pattern: /^\/(?:tools\/)?(?:loan-comparison-calculator|loan-compare|compare-loans|loan-comparison)$/,
     path: '/loan-comparison-calculator',
   },
   {
     pattern:
-      /^\/(?:tools\/)?(?:commercial-loan-calculator|commercial-mortgage-calculator|balloon-payment-calculator|commercial-property-loan-calculator|commercial-real-estate-loan-calculator)$/,
+      /^\/(?:tools\/)?(?:commercial-loan-calculator|commercial-mortgage-calculator|commercial-property-loan-calculator|commercial-real-estate-loan-calculator)$/,
     path: '/commercial-loan-calculator',
+  },
+  {
+    pattern: /^\/(?:tools\/)?(?:balloon-payment-calculator|balloon-mortgage-calculator)$/,
+    path: '/balloon-payment-calculator',
   },
   {
     pattern:
@@ -98,8 +126,28 @@ const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
     path: '/video-compressor',
   },
   {
+    pattern: /^\/(?:tools\/)?(?:compress-mp4|mp4-compressor|mp4-compress)$/,
+    path: '/compress-mp4',
+  },
+  {
+    pattern: /^\/(?:tools\/)?(?:compress-video-for-discord|discord-video-compressor)$/,
+    path: '/compress-video-for-discord',
+  },
+  {
     pattern: /^\/(?:tools\/)?(?:image-compressor|compress-image|image-compress|photo-compressor|reduce-image-size)$/,
     path: '/image-compressor',
+  },
+  {
+    pattern: /^\/(?:tools\/)?(?:compress-png|png-compressor|png-compress)$/,
+    path: '/compress-png',
+  },
+  {
+    pattern: /^\/(?:tools\/)?(?:compress-jpg|compress-jpeg|jpeg-compressor|jpg-compressor)$/,
+    path: '/compress-jpg',
+  },
+  {
+    pattern: /^\/(?:tools\/)?(?:compress-webp|webp-compressor|webp-compress)$/,
+    path: '/compress-webp',
   },
   { pattern: /^\/(?:finance-calculator|calculators|financial-calculators|calculator)$/, path: '/finance-calculator' },
 ];
@@ -186,20 +234,30 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/finance-calculator',
   '/calculator',
   '/mortgage-calculator',
+  '/amortization-schedule-calculator',
+  '/mortgage-payoff-calculator',
   '/refinance-calculator',
+  '/cash-out-refinance-calculator',
   '/dscr-loan-calculator',
   '/hard-money-calculator',
   '/snowflake-cost-calculator',
   '/parquet-storage-calculator',
   '/section-1031-exchange-calculator',
+  '/1031-exchange-timeline-calculator',
   '/loan-comparison-calculator',
   '/commercial-loan-calculator',
+  '/balloon-payment-calculator',
   '/salary-to-hourly-calculator',
   ...SALARY_LONG_TAIL_PAGES.map((p) => p.path),
   '/json-formatter',
   '/sql-formatter',
   '/video-compressor',
+  '/compress-mp4',
+  '/compress-video-for-discord',
   '/image-compressor',
+  '/compress-png',
+  '/compress-jpg',
+  '/compress-webp',
   '/about',
   '/contact',
   '/privacy',
@@ -241,6 +299,11 @@ export function isCompressionRoute(currentPath: string): boolean {
     currentPath.includes('image-compress') ||
     currentPath.includes('compress-video') ||
     currentPath.includes('compress-image') ||
+    currentPath.includes('compress-mp4') ||
+    currentPath.includes('compress-png') ||
+    currentPath.includes('compress-jpg') ||
+    currentPath.includes('compress-webp') ||
+    currentPath.includes('discord') ||
     currentPath.includes('reduce-video') ||
     currentPath.includes('reduce-image') ||
     currentPath.includes('photo-compress')
@@ -282,12 +345,15 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
   // Calculator aliases
   const calculatorAliases: Record<string, string[]> = {
     '/mortgage-calculator': ['/mortgage'],
+    '/amortization-schedule-calculator': ['/loan-amortization-calculator', '/amortization-calculator'],
+    '/mortgage-payoff-calculator': ['/early-payoff-calculator', '/early-mortgage-payoff-calculator'],
     '/refinance-calculator': [
       '/refinance',
       '/should-i-refinance',
       '/should-i-refinance.php',
       '/calculators/should-i-refinance.php',
     ],
+    '/cash-out-refinance-calculator': ['/cash-out-refinance'],
     '/dscr-loan-calculator': ['/dscr', '/dscr-calculator'],
     '/hard-money-calculator': ['/hard-money', '/fix-and-flip-calculator', '/hard-money-loan-calculator'],
     '/snowflake-cost-calculator': ['/snowflake-calculator', '/snowflake-warehouse-calculator'],
@@ -300,13 +366,14 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
       '/1031-exchange-calculator',
       '/like-kind-exchange-calculator',
     ],
+    '/1031-exchange-timeline-calculator': ['/1031-timeline-calculator', '/1031-deadline-calculator'],
     '/loan-comparison-calculator': ['/loan-compare', '/compare-loans', '/loan-comparison'],
     '/commercial-loan-calculator': [
       '/commercial-mortgage-calculator',
-      '/balloon-payment-calculator',
       '/commercial-property-loan-calculator',
       '/commercial-real-estate-loan-calculator',
     ],
+    '/balloon-payment-calculator': ['/balloon-mortgage-calculator'],
     '/salary-to-hourly-calculator': [
       '/hourly-to-salary-calculator',
       '/salary-to-hourly',
@@ -316,7 +383,12 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
     '/json-formatter': ['/json-beautifier', '/json-validator', '/json-viewer-online', '/format-json'],
     '/sql-formatter': ['/sql-beautifier', '/sql-minify', '/format-sql'],
     '/video-compressor': ['/compress-video', '/video-compress', '/reduce-video-size'],
+    '/compress-mp4': ['/mp4-compressor', '/mp4-compress'],
+    '/compress-video-for-discord': ['/discord-video-compressor'],
     '/image-compressor': ['/compress-image', '/image-compress', '/photo-compressor', '/reduce-image-size'],
+    '/compress-png': ['/png-compressor', '/png-compress'],
+    '/compress-jpg': ['/compress-jpeg', '/jpeg-compressor', '/jpg-compressor'],
+    '/compress-webp': ['/webp-compressor', '/webp-compress'],
   };
   for (const [canonical, aliases] of Object.entries(calculatorAliases)) {
     // The canonical itself must exist too — /finance-calculator is not in

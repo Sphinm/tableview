@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 
 import { TOOLS_CONFIG } from '../src/data/tools';
 import { guidesData, type GuideItem } from '../src/data/guides';
-import { listPrerenderTargets, resolveRoutePath } from '../src/lib/resolveRoute';
+import { listPrerenderTargets, resolveRoutePath, isCompressionRoute } from '../src/lib/resolveRoute';
 import { SALARY_LONG_TAIL_MAP, type SalaryLongTailPage } from '../src/data/salaryLongTail';
 import {
   HOME_META,
@@ -145,10 +145,15 @@ function generateFooterHtml(): string {
             <ul style="list-style: none; padding: 0; margin: 0; line-height: 2.1;">
               <li><a href="/dscr-loan-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">DSCR Loan Calculator</a></li>
               <li><a href="/commercial-loan-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Commercial Loan & Balloon</a></li>
+              <li><a href="/balloon-payment-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Balloon Payment Calculator</a></li>
               <li><a href="/section-1031-exchange-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">IRC §1031 Tax Deferral</a></li>
+              <li><a href="/1031-exchange-timeline-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">1031 Exchange Timeline</a></li>
               <li><a href="/loan-comparison-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Loan Comparison & APR</a></li>
               <li><a href="/mortgage-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Residential Mortgage & PITI</a></li>
+              <li><a href="/amortization-schedule-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Amortization Schedule</a></li>
+              <li><a href="/mortgage-payoff-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Mortgage Payoff Calculator</a></li>
               <li><a href="/refinance-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Refinance Break-Even</a></li>
+              <li><a href="/cash-out-refinance-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Cash-Out Refinance</a></li>
               <li><a href="/hard-money-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Hard Money & Fix-and-Flip</a></li>
             </ul>
           </div>
@@ -167,7 +172,12 @@ function generateFooterHtml(): string {
               <li><a href="/csv-viewer" style="color: #1e293b; text-decoration: none; font-weight: 500;">CSV Spreadsheet Viewer</a></li>
               <li><a href="/excel-viewer" style="color: #1e293b; text-decoration: none; font-weight: 500;">Excel (.xlsx) Viewer</a></li>
               <li><a href="/parquet-viewer" style="color: #1e293b; text-decoration: none; font-weight: 500;">Apache Parquet Viewer</a></li>
+              <li><a href="/geoparquet-viewer" style="color: #1e293b; text-decoration: none; font-weight: 500;">GeoParquet GIS Viewer</a></li>
               <li><a href="/sql-workbench" style="color: #1e293b; text-decoration: none; font-weight: 500;">DuckDB SQL Console</a></li>
+              <li><a href="/json-to-csv" style="color: #1e293b; text-decoration: none; font-weight: 500;">JSON to CSV Converter</a></li>
+              <li><a href="/json-to-excel" style="color: #1e293b; text-decoration: none; font-weight: 500;">JSON to Excel Converter</a></li>
+              <li><a href="/excel-to-json" style="color: #1e293b; text-decoration: none; font-weight: 500;">Excel to JSON Converter</a></li>
+              <li><a href="/tsv-viewer" style="color: #1e293b; text-decoration: none; font-weight: 500;">TSV Viewer</a></li>
               <li><a href="/json-formatter" style="color: #1e293b; text-decoration: none; font-weight: 500;">JSON Formatter & Prettifier</a></li>
               <li><a href="/sql-formatter" style="color: #1e293b; text-decoration: none; font-weight: 500;">SQL Query Formatter</a></li>
             </ul>
@@ -176,9 +186,14 @@ function generateFooterHtml(): string {
             <h4 style="color: #0f172a; font-weight: 700; margin-bottom: 0.85rem; font-size: 0.95rem;">Media & Compression Tools</h4>
             <ul style="list-style: none; padding: 0; margin: 0; line-height: 2.1;">
               <li><a href="/video-compressor" style="color: #1e293b; text-decoration: none; font-weight: 500;">Video Compressor (WebAssembly)</a></li>
+              <li><a href="/compress-mp4" style="color: #1e293b; text-decoration: none; font-weight: 500;">Compress MP4 Video</a></li>
+              <li><a href="/compress-video-for-discord" style="color: #1e293b; text-decoration: none; font-weight: 500;">Compress Video for Discord</a></li>
               <li><a href="/image-compressor" style="color: #1e293b; text-decoration: none; font-weight: 500;">Image Compressor (Batch & ZIP)</a></li>
+              <li><a href="/compress-png" style="color: #1e293b; text-decoration: none; font-weight: 500;">Compress PNG Images</a></li>
+              <li><a href="/compress-jpg" style="color: #1e293b; text-decoration: none; font-weight: 500;">Compress JPG Photos</a></li>
+              <li><a href="/compress-webp" style="color: #1e293b; text-decoration: none; font-weight: 500;">Compress WebP Images</a></li>
               <li><a href="/compress-video" style="color: #1e293b; text-decoration: none; font-weight: 500;">Reduce Video Size (MP4/WebM)</a></li>
-              <li><a href="/compress-image" style="color: #1e293b; text-decoration: none; font-weight: 500;">Batch Photo Optimizer (WebP/JPG)</a></li>
+              <li><a href="/compress-image" style="color: #1e293b; text-decoration: none; font-weight: 500;">Batch Photo Optimizer</a></li>
             </ul>
           </div>
           <div>
@@ -450,8 +465,28 @@ function generateStaticPageContentHtml(canonical: string): string {
     return generateVideoCompressorContentHtml();
   }
 
+  if (canonical === '/compress-mp4') {
+    return generateCompressMp4ContentHtml();
+  }
+
+  if (canonical === '/compress-video-for-discord') {
+    return generateCompressVideoForDiscordContentHtml();
+  }
+
   if (canonical === '/image-compressor') {
     return generateImageCompressorContentHtml();
+  }
+
+  if (canonical === '/compress-png') {
+    return generateCompressPngContentHtml();
+  }
+
+  if (canonical === '/compress-jpg') {
+    return generateCompressJpgContentHtml();
+  }
+
+  if (canonical === '/compress-webp') {
+    return generateCompressWebpContentHtml();
   }
 
   return '';
@@ -480,6 +515,44 @@ const VIDEO_COMPRESSOR_FAQS = [
   },
 ];
 
+const COMPRESS_MP4_FAQS = [
+  {
+    q: 'How much can I compress an MP4 file without noticeable quality loss?',
+    a: 'Using H.264 video encoding with a Constant Rate Factor (CRF) between 23 and 28, you can typically reduce MP4 file sizes by 50% to 75% while keeping visual compression artifacts virtually imperceptible on standard 1080p and 4K displays.',
+  },
+  {
+    q: 'Is it safe to compress private or sensitive MP4 videos here?',
+    a: 'Yes, 100%. Unlike cloud video converters, TableView uses in-browser WebAssembly FFmpeg. Your video file never leaves your computer, and zero bytes are transmitted across any network.',
+  },
+  {
+    q: 'How does WebAssembly FFmpeg compare to server-side converters?',
+    a: 'Because processing is local, you avoid multi-minute upload queues and server wait times. Encoding speed depends purely on your local machine CPU cores, and there are no artificial file size caps or watermarks.',
+  },
+  {
+    q: 'Can I change MP4 resolution or frame rate?',
+    a: 'Yes. You can preserve the original resolution or downscale to 1080p Full HD, 720p HD, or 480p SD, and customize audio bitrates or mute audio tracks entirely to maximize compression.',
+  },
+];
+
+const COMPRESS_VIDEO_FOR_DISCORD_FAQS = [
+  {
+    q: 'What is the maximum file size for free Discord uploads?',
+    a: "Discord allows free users to upload files up to 25MB (previously 8MB, and occasionally 10MB during A/B tests). Nitro Basic expands this to 50MB, and Nitro Classic/Pro allows up to 500MB. TableView defaults to a 24MB target to guarantee your video uploads successfully on any free Discord account.",
+  },
+  {
+    q: 'How does TableView guarantee the compressed video is under 25MB?',
+    a: 'Our engine computes the exact mathematical bitrate required based on your clip duration: Target Bitrate (kbps) = (Target MB × 8,192) / Duration (seconds) - Audio Bitrate. FFmpeg encodes with rate control buffers so the final file stays strictly below your target threshold.',
+  },
+  {
+    q: 'Will compressing for Discord desync my audio?',
+    a: 'No. TableView maintains constant frame rate (CFR) and synchronizes audio presentation timestamps (PTS) using standard AAC stereo encoding at 128 kbps, preventing the common audio drift issues found in cheap online tools.',
+  },
+  {
+    q: 'Can I compress Discord screen recordings or game clips from OBS/GeForce Experience?',
+    a: 'Yes. TableView accepts raw MP4, MKV, MOV, and WebM clips from OBS, GeForce Experience, AMD Radeon ReLive, and phone screen recorders.',
+  },
+];
+
 const IMAGE_COMPRESSOR_FAQS = [
   {
     q: 'How does batch image compression work in TableView?',
@@ -500,6 +573,63 @@ const IMAGE_COMPRESSOR_FAQS = [
   {
     q: 'Can I resize image dimensions in pixels during compression?',
     a: 'Yes. You can preserve the original aspect ratio while capping maximum dimensions to presets such as 1920px (Full HD), 1280px (HD), 800px (Web standard), or keeping original dimensions.',
+  },
+];
+
+const COMPRESS_PNG_FAQS = [
+  {
+    q: 'How does PNG compression preserve transparent backgrounds?',
+    a: 'TableView uses HTML5 canvas 2D contexts with alpha channel preservation. It cleans up redundant metadata chunks, optimizes color indexing, and applies lossless or near-lossless quantization without corrupting transparent pixels or producing halo artifacts.',
+  },
+  {
+    q: 'Should I compress PNG or convert it to WebP?',
+    a: 'If you need universal legacy compatibility or strictly lossless graphic assets (like UI icons, vector logos, and design mockups), PNG is optimal. If your goal is website loading speed and smaller bandwidth, WebP offers up to 40% smaller file sizes while still supporting transparency.',
+  },
+  {
+    q: 'Can I compress multiple PNG screenshots at once?',
+    a: 'Yes. TableView supports batch dragging and dropping. Drop dozens of PNG screenshots into the browser, review the compressed size reduction for each, and download all optimized files in a single organized ZIP archive.',
+  },
+  {
+    q: 'Are my confidential company screenshots uploaded to a server?',
+    a: 'Never. All image parsing and compression execute inside your browser local memory sandbox. No telemetry, image payloads, or logs are transmitted to any remote server.',
+  },
+];
+
+const COMPRESS_JPG_FAQS = [
+  {
+    q: 'How does JPEG compression reduce photo file sizes?',
+    a: 'JPEG utilizes discrete cosine transform (DCT) lossy compression. By adjusting the quality parameter between 70% and 85%, TableView eliminates high-frequency image data imperceptible to the human eye, reducing typical 8MB–15MB DSLR/smartphone photos to 400KB–900KB.',
+  },
+  {
+    q: 'Does compressing JPG photos strip private EXIF GPS metadata?',
+    a: 'Yes. When re-rendering photos via the browser HTML5 Canvas, unnecessary EXIF headers, camera serial numbers, and sensitive GPS geolocation coordinates are naturally stripped, protecting your personal privacy before sharing photos online.',
+  },
+  {
+    q: 'Can I resize large 4K photos down to standard web dimensions?',
+    a: 'Yes. TableView includes resolution constraint presets: you can cap maximum width or height to 1920px (Full HD), 1280px (HD), or 800px (blog standard), which drastically cuts file size while maintaining pristine visual sharpness.',
+  },
+  {
+    q: 'Is there a limit on how many JPGs I can compress at once?',
+    a: 'No server-imposed limit exists. Because compression utilizes your local machine multi-core CPU and memory, you can batch compress dozens of photos in a single session and download them all via 1-click ZIP.',
+  },
+];
+
+const COMPRESS_WEBP_FAQS = [
+  {
+    q: 'Why is WebP better than JPEG and PNG for websites?',
+    a: 'WebP was developed by Google to provide superior compression for web images. WebP lossy images are 25% to 34% smaller than comparable JPEG images, and WebP lossless images are 26% smaller than PNGs. Furthermore, WebP natively supports transparent alpha channels in both lossy and lossless modes.',
+  },
+  {
+    q: 'Do all modern web browsers support WebP images?',
+    a: 'Yes. Over 97% of global web browsers support WebP, including Google Chrome, Apple Safari (iOS 14+ and macOS Big Sur+), Mozilla Firefox, Microsoft Edge, and Opera.',
+  },
+  {
+    q: 'Can I convert existing JPG and PNG files into compressed WebP files?',
+    a: 'Yes. Simply drop your JPG or PNG files into TableView, select WebP as your target output format, set your desired compression quality, and the engine will instantly convert and compress them into modern WebP format.',
+  },
+  {
+    q: 'How can I verify the image quality before downloading?',
+    a: 'TableView includes an interactive before-and-after curtain slider. You can scrub across the image at 100% zoom to inspect fine details, text edges, and textures to ensure zero compression degradation.',
   },
 ];
 
@@ -665,6 +795,225 @@ function generateImageCompressorContentHtml(): string {
   `;
 }
 
+function generateCompressMp4ContentHtml(): string {
+  return `
+    <article style="max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; color: #334155; line-height: 1.8;">
+      <header style="margin-bottom: 2.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem;">
+        <span style="background: #ecfdf5; color: #065f46; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; border: 1px solid #a7f3d0;">H.264 / AAC WebAssembly · 0 KB Server Egress</span>
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-top: 0.75rem; margin-bottom: 1rem;">Compress MP4 Video Online: Reduce File Size Without Quality Loss</h1>
+        <p style="font-size: 1.15rem; color: #64748b; line-height: 1.7;">Shrink heavy MP4 videos by up to 80% while retaining pristine 1080p and 4K visual clarity. Encoded client-side using WebAssembly FFmpeg — zero watermarks, zero server uploads, and instant synchronized playback preview.</p>
+      </header>
+
+      <aside style="background: #f0f9ff; border-left: 4px solid #0284c7; padding: 1.25rem 1.5rem; border-radius: 0 0.75rem 0.75rem 0; margin-bottom: 2.5rem;">
+        <strong style="color: #0284c7; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Quick Summary (GEO / TL;DR)</strong>
+        <p style="margin: 0; color: #0c4a6e; font-size: 0.95rem; line-height: 1.6;">TableView.dev Compress MP4 is a free browser-based video optimizer. It reduces MP4 file sizes through calibrated H.264 Constant Rate Factor (CRF) encoding and AAC audio compression. All processing runs in a local WebAssembly sandbox with no file uploads, no watermarks, and no software installation required.</p>
+      </aside>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">The Science of MP4 Bitrate &amp; Constant Rate Factor (CRF)</h2>
+        <p>The MP4 container format combined with the H.264 (AVC) codec remains the universal standard for video playback across iOS, Android, Windows, macOS, and web platforms. However, high-bitrate phone recordings and screen captures frequently generate bloated files (500 MB to 2 GB) that cannot be easily shared.</p>
+        <p>Instead of traditional lossy re-encoding that degrades sharpness, TableView applies intelligent CRF rate control. Lower CRF values (18–23) preserve visually lossless quality for high-motion footage, while values around 24–28 deliver massive 60%–80% size reductions ideal for web streaming and sharing.</p>
+      </section>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">Recommended MP4 Compression Profiles</h2>
+        <div style="overflow-x: auto; margin: 1.5rem 0;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+            <thead>
+              <tr style="background: #f8fafc; color: #0f172a;">
+                <th style="border: 1px solid #e2e8f0; padding: 0.75rem; text-align: left;">Use Case</th>
+                <th style="border: 1px solid #e2e8f0; padding: 0.75rem; text-align: left;">Resolution</th>
+                <th style="border: 1px solid #e2e8f0; padding: 0.75rem; text-align: left;">CRF Target</th>
+                <th style="border: 1px solid #e2e8f0; padding: 0.75rem; text-align: left; color: #059669;">Typical Size Reduction</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem; font-weight: 600;">Web &amp; Email Delivery</td>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem;">1080p / 720p</td>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem;">CRF 26–28</td>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem; color: #059669; font-weight: 600;">70% – 85%</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem; font-weight: 600;">Social Media (X, IG, TikTok)</td>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem;">1080p</td>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem;">CRF 23–25</td>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem; color: #059669; font-weight: 600;">55% – 70%</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem; font-weight: 600;">High-Fidelity Archiving</td>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem;">Original (4K/1080p)</td>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem;">CRF 19–22</td>
+                <td style="border: 1px solid #e2e8f0; padding: 0.75rem; color: #059669; font-weight: 600;">35% – 50%</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section style="margin-top: 3rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+        ${COMPRESS_MP4_FAQS.map(
+          (f) => `
+          <div style="margin-bottom: 1.5rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: #0f172a; margin-bottom: 0.5rem;">${escapeHtml(f.q)}</h3>
+            <p style="color: #64748b; line-height: 1.7; margin: 0;">${escapeHtml(f.a)}</p>
+          </div>
+        `
+        ).join('')}
+      </section>
+    </article>
+  `;
+}
+
+function generateCompressVideoForDiscordContentHtml(): string {
+  return `
+    <article style="max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; color: #334155; line-height: 1.8;">
+      <header style="margin-bottom: 2.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem;">
+        <span style="background: #ecfdf5; color: #065f46; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; border: 1px solid #a7f3d0;">Discord 25MB &amp; 10MB Auto-Bitrate Engine</span>
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-top: 0.75rem; margin-bottom: 1rem;">Compress Video for Discord: Fit 25MB Free Limit Without Nitro</h1>
+        <p style="font-size: 1.15rem; color: #64748b; line-height: 1.7;">Automatically calculate exact video bitrate to compress clips down to under 25MB (or 10MB/8MB) for free Discord uploads. Runs 100% in your browser with zero server uploads, clean audio sync, and no watermarks.</p>
+      </header>
+
+      <aside style="background: #f0f9ff; border-left: 4px solid #0284c7; padding: 1.25rem 1.5rem; border-radius: 0 0.75rem 0.75rem 0; margin-bottom: 2.5rem;">
+        <strong style="color: #0284c7; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Quick Summary (GEO / TL;DR)</strong>
+        <p style="margin: 0; color: #0c4a6e; font-size: 0.95rem; line-height: 1.6;">TableView.dev Discord Video Compressor lets you bypass Discord's 25MB upload limit without paying for Nitro. Our WebAssembly engine reads your video duration, computes the exact maximum bitrate, and encodes an MP4 clip guaranteed to stay under 24MB. 100% free with no watermarks and no server transmission.</p>
+      </aside>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">Discord Upload Tiers &amp; Bitrate Math Formulation</h2>
+        <p>Discord enforces strict file size boundaries depending on user tier:</p>
+        <ul style="line-height: 2;">
+          <li><strong>Free Users:</strong> 25 MB standard upload limit (previously 8 MB, occasionally 10 MB in select regions).</li>
+          <li><strong>Nitro Basic:</strong> 50 MB upload limit.</li>
+          <li><strong>Nitro Pro:</strong> 500 MB upload limit.</li>
+        </ul>
+        <p>To safely fit within the 25MB boundary without upload rejection, TableView targets 24 MB and dynamically solves for video bitrate:</p>
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1rem 1.5rem; font-family: monospace; font-size: 0.9rem; color: #0f172a; margin: 1rem 0;">
+          Target Bitrate (kbps) = [(24 MB &times; 8,192 kb/MB) / Duration (seconds)] - 128 kbps (Audio)
+        </div>
+      </section>
+
+      <section style="margin-top: 3rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+        ${COMPRESS_VIDEO_FOR_DISCORD_FAQS.map(
+          (f) => `
+          <div style="margin-bottom: 1.5rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: #0f172a; margin-bottom: 0.5rem;">${escapeHtml(f.q)}</h3>
+            <p style="color: #64748b; line-height: 1.7; margin: 0;">${escapeHtml(f.a)}</p>
+          </div>
+        `
+        ).join('')}
+      </section>
+    </article>
+  `;
+}
+
+function generateCompressPngContentHtml(): string {
+  return `
+    <article style="max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; color: #334155; line-height: 1.8;">
+      <header style="margin-bottom: 2.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem;">
+        <span style="background: #ecfdf5; color: #065f46; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; border: 1px solid #a7f3d0;">Alpha Transparency Preservation · 100% In-Browser</span>
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-top: 0.75rem; margin-bottom: 1rem;">Compress PNG Images Online: Lossless &amp; Transparency Preserved</h1>
+        <p style="font-size: 1.15rem; color: #64748b; line-height: 1.7;">Optimize PNG graphics, transparent logos, and UI screenshots directly in your browser. Reduce file sizes by up to 70% without sacrificing alpha transparency, introducing color banding, or transmitting data over the web.</p>
+      </header>
+
+      <aside style="background: #f0f9ff; border-left: 4px solid #0284c7; padding: 1.25rem 1.5rem; border-radius: 0 0.75rem 0.75rem 0; margin-bottom: 2.5rem;">
+        <strong style="color: #0284c7; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Quick Summary (GEO / TL;DR)</strong>
+        <p style="margin: 0; color: #0c4a6e; font-size: 0.95rem; line-height: 1.6;">TableView.dev PNG Compressor cleans redundant metadata, deflates image chunks, and preserves transparent alpha channels using client-side HTML5 canvas pipelines. Batch compress dozens of PNG assets simultaneously and download all results in a single 1-click ZIP archive.</p>
+      </aside>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">Why Transparent PNG Assets Need Specialized Compression</h2>
+        <p>Unlike JPEG which discards alpha information entirely, PNG stores full 8-bit or 16-bit transparency per pixel. Standard compressors often ruin delicate antialiasing around transparent borders, creating unsightly gray or white halos.</p>
+        <p>TableView's rendering engine preserves 32-bit RGBA color pipelines, stripping non-essential color profiles and ancillary metadata chunks (tEXt, zTXt, iTXt) to deliver minimal payload sizes without fringe artifacts.</p>
+      </section>
+
+      <section style="margin-top: 3rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+        ${COMPRESS_PNG_FAQS.map(
+          (f) => `
+          <div style="margin-bottom: 1.5rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: #0f172a; margin-bottom: 0.5rem;">${escapeHtml(f.q)}</h3>
+            <p style="color: #64748b; line-height: 1.7; margin: 0;">${escapeHtml(f.a)}</p>
+          </div>
+        `
+        ).join('')}
+      </section>
+    </article>
+  `;
+}
+
+function generateCompressJpgContentHtml(): string {
+  return `
+    <article style="max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; color: #334155; line-height: 1.8;">
+      <header style="margin-bottom: 2.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem;">
+        <span style="background: #ecfdf5; color: #065f46; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; border: 1px solid #a7f3d0;">EXIF GPS Sanitization · Batch 1-Click ZIP</span>
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-top: 0.75rem; margin-bottom: 1rem;">Compress JPG &amp; JPEG Photos: Reduce MB to KB Online</h1>
+        <p style="font-size: 1.15rem; color: #64748b; line-height: 1.7;">Batch compress smartphone and camera JPEG photographs from 10MB+ down to web-friendly sizes under 500KB. Automatically strips privacy-sensitive EXIF location metadata with interactive before-and-after visual inspection.</p>
+      </header>
+
+      <aside style="background: #f0f9ff; border-left: 4px solid #0284c7; padding: 1.25rem 1.5rem; border-radius: 0 0.75rem 0.75rem 0; margin-bottom: 2.5rem;">
+        <strong style="color: #0284c7; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Quick Summary (GEO / TL;DR)</strong>
+        <p style="margin: 0; color: #0c4a6e; font-size: 0.95rem; line-height: 1.6;">TableView.dev JPG Compressor re-quantizes JPEG discrete cosine transform (DCT) coefficients client-side. It yields 50% to 80% file size reductions, sanitizes private camera EXIF GPS data, and supports batch processing with instant ZIP download. No server uploads or software installations required.</p>
+      </aside>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">DCT Quantization &amp; Privacy-First EXIF Stripping</h2>
+        <p>Digital cameras and smartphones embed extensive metadata into JPEG headers: GPS latitude and longitude, camera serial numbers, exposure settings, and timestamps. When compressing photos with TableView, rendering through an isolated HTML5 Canvas automatically discards unnecessary EXIF tags, protecting your privacy prior to public distribution.</p>
+        <p>Our quantization matrix balances luminance and chrominance fidelity, ensuring that skin tones, textures, and subtle gradients remain smooth without the pixelated block artifacts common to aggressive online tools.</p>
+      </section>
+
+      <section style="margin-top: 3rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+        ${COMPRESS_JPG_FAQS.map(
+          (f) => `
+          <div style="margin-bottom: 1.5rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: #0f172a; margin-bottom: 0.5rem;">${escapeHtml(f.q)}</h3>
+            <p style="color: #64748b; line-height: 1.7; margin: 0;">${escapeHtml(f.a)}</p>
+          </div>
+        `
+        ).join('')}
+      </section>
+    </article>
+  `;
+}
+
+function generateCompressWebpContentHtml(): string {
+  return `
+    <article style="max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; color: #334155; line-height: 1.8;">
+      <header style="margin-bottom: 2.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem;">
+        <span style="background: #ecfdf5; color: #065f46; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; border: 1px solid #a7f3d0;">Google Next-Gen Format · 30% Smaller Than JPEG</span>
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-top: 0.75rem; margin-bottom: 1rem;">Compress WebP Images: Maximize Website Loading Speed</h1>
+        <p style="font-size: 1.15rem; color: #64748b; line-height: 1.7;">Optimize modern WebP graphics and convert JPG/PNG into high-efficiency WebP format. Improve Google Core Web Vitals and Largest Contentful Paint (LCP) scores with 100% private in-browser compression.</p>
+      </header>
+
+      <aside style="background: #f0f9ff; border-left: 4px solid #0284c7; padding: 1.25rem 1.5rem; border-radius: 0 0.75rem 0.75rem 0; margin-bottom: 2.5rem;">
+        <strong style="color: #0284c7; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Quick Summary (GEO / TL;DR)</strong>
+        <p style="margin: 0; color: #0c4a6e; font-size: 0.95rem; line-height: 1.6;">TableView.dev WebP Compressor provides client-side batch optimization and format conversion to Google WebP. Achieve up to 85% bandwidth reduction compared to uncompressed images with full alpha channel support, zero server uploads, and bulk ZIP export.</p>
+      </aside>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">Core Web Vitals &amp; Modern Web Performance</h2>
+        <p>Google Search ranking factors heavily prioritize page load velocity via Core Web Vitals metrics, specifically Largest Contentful Paint (LCP). Large hero images and uncompressed banners are the #1 cause of slow page scores.</p>
+        <p>By leveraging predictive VP8 intra-frame block coding, WebP achieves superior compression efficiency over JPEG and PNG without sacrificing visual clarity or transparency. Modern browsers (Chrome, Safari, Firefox, Edge) provide 97%+ global native decoding support.</p>
+      </section>
+
+      <section style="margin-top: 3rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+        ${COMPRESS_WEBP_FAQS.map(
+          (f) => `
+          <div style="margin-bottom: 1.5rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: #0f172a; margin-bottom: 0.5rem;">${escapeHtml(f.q)}</h3>
+            <p style="color: #64748b; line-height: 1.7; margin: 0;">${escapeHtml(f.a)}</p>
+          </div>
+        `
+        ).join('')}
+      </section>
+    </article>
+  `;
+}
+
 /** Render Homepage semantic content */
 function generateHomepageHtml(): string {
   return `
@@ -741,36 +1090,96 @@ function generateDataToolsHtml(): string {
     <div style="max-width: 1200px; margin: 0 auto; padding: 3.5rem 1.5rem;">
       <header style="text-align: center; margin-bottom: 3.5rem;">
         <span style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 9999px; display: inline-block; margin-bottom: 1rem;">100% Local WebAssembly Engine</span>
-        <h1 style="font-size: 2.75rem; font-weight: 800; color: #0f172a; line-height: 1.25; margin-bottom: 1rem;">In-Browser Data Workbench &amp; DuckDB SQL Console</h1>
-        <p style="font-size: 1.2rem; color: #64748b; max-width: 820px; margin: 0 auto; line-height: 1.7;">Inspect, convert, and query large CSV, Excel (.xlsx), Apache Parquet, and JSON files with DuckDB-Wasm SIMD. Zero server uploads.</p>
+        <h1 style="font-size: 2.75rem; font-weight: 800; color: #0f172a; line-height: 1.25; margin-bottom: 1rem;">In-Browser Data Workbench &amp; Developer Tools</h1>
+        <p style="font-size: 1.2rem; color: #64748b; max-width: 820px; margin: 0 auto; line-height: 1.7;">Inspect, convert, and query CSV, Excel, Apache Parquet, TSV, and JSON with DuckDB-Wasm and SheetJS. Plus client-side video and image compressors. Zero server uploads.</p>
       </header>
 
       <section style="margin-bottom: 4rem;">
-        <h2 style="font-size: 1.75rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">All 15 In-Browser Data Tools</h2>
+        <h2 style="font-size: 1.75rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Spreadsheet Viewers &amp; Data Converters</h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
           <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
             <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/csv-viewer" style="color: #0f172a; text-decoration: none;">CSV Spreadsheet Viewer</a></h3>
-            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Open and sort large CSV and TSV spreadsheets client-side.</p>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Open, search, sort, and filter large CSV files in browser memory.</p>
           </div>
           <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
             <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/excel-viewer" style="color: #0f172a; text-decoration: none;">Excel (.xlsx) Viewer</a></h3>
-            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Preview multi-sheet Excel workbooks without Microsoft Office.</p>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Preview multi-sheet Excel workbooks without Microsoft Office or 365.</p>
           </div>
           <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/json-to-csv" style="color: #0f172a; text-decoration: none;">JSON to CSV Converter</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Convert nested JSON records and API responses into flat CSV tables.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/json-to-excel" style="color: #0f172a; text-decoration: none;">JSON to Excel (.xlsx)</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Export JSON data to styled multi-column Excel workbooks instantly.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/excel-to-json" style="color: #0f172a; text-decoration: none;">Excel to JSON Converter</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Extract sheets from Excel files into formatted JSON datasets.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/tsv-viewer" style="color: #0f172a; text-decoration: none;">TSV Tab-Separated Viewer</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Inspect bioinformatics and raw server log TSV files with auto-detection.</p>
+          </div>
+        </div>
+      </section>
+
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-size: 1.75rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Big Data Analytics &amp; SQL Engines</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
             <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/parquet-viewer" style="color: #0f172a; text-decoration: none;">Apache Parquet Viewer</a></h3>
-            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Inspect columnar Parquet datasets and row groups instantly.</p>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Inspect columnar Parquet schemas, row groups, and metadata directly.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/geoparquet-viewer" style="color: #0f172a; text-decoration: none;">GeoParquet GIS Viewer</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Preview geospatial Parquet layers and geometries in the browser.</p>
           </div>
           <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
             <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/sql-workbench" style="color: #0f172a; text-decoration: none;">DuckDB SQL Console</a></h3>
-            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Execute analytical SQL queries directly against client files.</p>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Execute analytical SQL queries directly against local files with zero latency.</p>
           </div>
           <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
             <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/json-formatter" style="color: #0f172a; text-decoration: none;">JSON Formatter &amp; Prettifier</a></h3>
-            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Format, validate, minify, and clean nested JSON documents.</p>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Format, validate, minify, and clean nested JSON data structures.</p>
           </div>
           <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
             <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/sql-formatter" style="color: #0f172a; text-decoration: none;">SQL Query Formatter</a></h3>
-            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Beautify, indent, and format complex SQL dialects cleanly.</p>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Beautify and standardize complex SQL dialects cleanly.</p>
+          </div>
+        </div>
+      </section>
+
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-size: 1.75rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Client-Side Media &amp; Image Compressors</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/video-compressor" style="color: #0f172a; text-decoration: none;">In-Browser Video Compressor</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">WebAssembly FFmpeg video compression with custom target MB &amp; zero watermarks.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/compress-mp4" style="color: #0f172a; text-decoration: none;">Compress MP4 Video</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Optimized H.264/AAC MP4 encoding for web, social media, and email sharing.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/compress-video-for-discord" style="color: #0f172a; text-decoration: none;">Compress Video for Discord</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Automatically fit free Discord 25MB and 10MB limits without Nitro.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/image-compressor" style="color: #0f172a; text-decoration: none;">Batch Image Compressor</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Canvas-powered batch photo compression with split-screen slider and ZIP export.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/compress-png" style="color: #0f172a; text-decoration: none;">Compress PNG Images</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Preserve transparent alpha channels while deflating UI assets and screenshots.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/compress-jpg" style="color: #0f172a; text-decoration: none;">Compress JPG &amp; JPEG</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Reduce megabyte camera photos to lightweight web JPEGs with EXIF stripping.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/compress-webp" style="color: #0f172a; text-decoration: none;">Compress WebP Images</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Modern WebP compression for superior Google PageSpeed and LCP rankings.</p>
           </div>
         </div>
       </section>
@@ -1130,6 +1539,75 @@ function resolvePage(url: string, canonical: string): ResolvedPage {
     };
   }
 
+  // --- Media & Compression Tools ------------------------------------------
+  if (isCompressionRoute(canonical)) {
+    const isVideo =
+      canonical === '/video-compressor' ||
+      canonical === '/compress-mp4' ||
+      canonical === '/compress-video-for-discord';
+    const meta = STATIC_PAGE_META[canonical]!;
+    const label = meta.title.split('|')[0].trim();
+
+    let faqs = isVideo ? VIDEO_COMPRESSOR_FAQS : IMAGE_COMPRESSOR_FAQS;
+    let articleHtml = isVideo ? generateVideoCompressorContentHtml() : generateImageCompressorContentHtml();
+
+    if (canonical === '/compress-mp4') {
+      faqs = COMPRESS_MP4_FAQS;
+      articleHtml = generateCompressMp4ContentHtml();
+    } else if (canonical === '/compress-video-for-discord') {
+      faqs = COMPRESS_VIDEO_FOR_DISCORD_FAQS;
+      articleHtml = generateCompressVideoForDiscordContentHtml();
+    } else if (canonical === '/compress-png') {
+      faqs = COMPRESS_PNG_FAQS;
+      articleHtml = generateCompressPngContentHtml();
+    } else if (canonical === '/compress-jpg') {
+      faqs = COMPRESS_JPG_FAQS;
+      articleHtml = generateCompressJpgContentHtml();
+    } else if (canonical === '/compress-webp') {
+      faqs = COMPRESS_WEBP_FAQS;
+      articleHtml = generateCompressWebpContentHtml();
+    }
+
+    return {
+      ...meta,
+      route,
+      faqs,
+      h1: label,
+      intro: meta.description,
+      articleHtml,
+      jsonLd: [
+        {
+          '@type': 'WebApplication',
+          name: label,
+          url: `${SITE}${canonical}`,
+          description: meta.description,
+          applicationCategory: isVideo ? 'MultimediaApplication' : 'UtilitiesApplication',
+          operatingSystem: 'All',
+          browserRequirements: 'Requires modern browser with WebAssembly support.',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: faqs.map((f) => ({
+            '@type': 'Question',
+            name: f.q,
+            acceptedAnswer: { '@type': 'Answer', text: f.a },
+          })),
+        },
+        breadcrumb([
+          { name: 'Home', url: '/' },
+          {
+            name: isVideo ? 'Video Compressor' : 'Image Compressor',
+            url: isVideo ? '/video-compressor' : '/image-compressor',
+          },
+          ...(canonical !== '/video-compressor' && canonical !== '/image-compressor'
+            ? [{ name: label, url: canonical }]
+            : []),
+        ]),
+      ],
+    };
+  }
+
   // --- Tool landing pages (incl. calculators, which are also in TOOLS_CONFIG)
   const tool = TOOLS_BY_PATH.get(canonical);
   if (tool) {
@@ -1203,48 +1681,6 @@ function resolvePage(url: string, canonical: string): ResolvedPage {
         breadcrumb([
           { name: 'Home', url: '/' },
           { name: tool.title, url: tool.path },
-        ]),
-      ],
-    };
-  }
-
-  // --- Media & Compression Tools ------------------------------------------
-  if (canonical === '/video-compressor' || canonical === '/image-compressor') {
-    const isVideo = canonical === '/video-compressor';
-    const label = isVideo
-      ? 'Free Online Video Compressor: 100% In-Browser & No Watermark'
-      : 'Free Online Image Compressor: Batch JPG, PNG, WebP & ZIP Export';
-    const faqs = isVideo ? VIDEO_COMPRESSOR_FAQS : IMAGE_COMPRESSOR_FAQS;
-    const meta = STATIC_PAGE_META[canonical]!;
-    return {
-      ...meta,
-      route,
-      faqs,
-      h1: label,
-      intro: meta.description,
-      articleHtml: isVideo ? generateVideoCompressorContentHtml() : generateImageCompressorContentHtml(),
-      jsonLd: [
-        {
-          '@type': 'WebApplication',
-          name: label,
-          url: `${SITE}${canonical}`,
-          description: meta.description,
-          applicationCategory: isVideo ? 'MultimediaApplication' : 'UtilitiesApplication',
-          operatingSystem: 'All',
-          browserRequirements: 'Requires modern browser with WebAssembly support.',
-          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
-        },
-        {
-          '@type': 'FAQPage',
-          mainEntity: faqs.map((f) => ({
-            '@type': 'Question',
-            name: f.q,
-            acceptedAnswer: { '@type': 'Answer', text: f.a },
-          })),
-        },
-        breadcrumb([
-          { name: 'Home', url: '/' },
-          { name: isVideo ? 'Video Compressor' : 'Image Compressor', url: canonical },
         ]),
       ],
     };
@@ -1384,7 +1820,7 @@ function writePage(outPath: string, html: string, written: Set<string>) {
 
 function priorityFor(canonical: string): { priority: string; changefreq: string } {
   if (canonical === '/') return { priority: '1.0', changefreq: 'daily' };
-  if (canonical === '/video-compressor' || canonical === '/image-compressor') {
+  if (isCompressionRoute(canonical)) {
     return { priority: '0.95', changefreq: 'weekly' };
   }
   if (canonical.startsWith('/guides')) return { priority: '0.85', changefreq: 'monthly' };

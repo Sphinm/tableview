@@ -26,13 +26,15 @@ export const DropZone = ({
   const quickTools = [
     { slug: '', name: 'All Tools', path: '/' },
     { slug: 'csv-viewer', name: 'CSV Viewer', path: '/csv-viewer' },
-    { slug: 'csv-to-excel', name: 'CSV to Excel', path: '/csv-to-excel' },
     { slug: 'excel-viewer', name: 'Excel Viewer', path: '/excel-viewer' },
     { slug: 'parquet-viewer', name: 'Parquet Viewer', path: '/parquet-viewer' },
+    { slug: 'json-to-csv', name: 'JSON to CSV', path: '/json-to-csv' },
+    { slug: 'json-to-excel', name: 'JSON to Excel', path: '/json-to-excel' },
+    { slug: 'excel-to-json', name: 'Excel to JSON', path: '/excel-to-json' },
+    { slug: 'tsv-viewer', name: 'TSV Viewer', path: '/tsv-viewer' },
+    { slug: 'csv-to-excel', name: 'CSV to Excel', path: '/csv-to-excel' },
     { slug: 'parquet-to-excel', name: 'Parquet to Excel', path: '/parquet-to-excel' },
     { slug: 'parquet-to-csv', name: 'Parquet to CSV', path: '/parquet-to-csv' },
-    { slug: 'csv-to-parquet', name: 'CSV to Parquet', path: '/csv-to-parquet' },
-    { slug: 'excel-to-csv', name: 'Excel to CSV', path: '/excel-to-csv' },
     { slug: 'sql-workbench', name: 'SQL Workbench', path: '/sql-workbench' },
     { slug: 'finance-calculator', name: 'Calculators', path: '/finance-calculator' }
   ];
