@@ -44,7 +44,7 @@ import { AuthProvider } from './lib/authContext';
 import { AuthModal } from './components/AuthModal';
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
 import { TOOLS_CONFIG } from './data/tools';
-import { getInitialTheme, applyTheme, type Theme } from './lib/theme';
+import { applyTheme } from './lib/theme';
 import { AlertCircle, ArrowLeft, FileQuestion, Mail } from 'lucide-react';
 import { getBugReportMailto } from './lib/feedback';
 import { describeFile, captureException } from './lib/sentry';
@@ -56,7 +56,6 @@ import { SALARY_LONG_TAIL_SLUG_MAP } from './data/salaryLongTail';
 
 export function App() {
   const { path, slug } = useRouter();
-  const [theme, setTheme] = useState<Theme>(getInitialTheme);
   const [currentTable, setCurrentTable] = useState<string | null>(null);
   const [fileType, setFileType] = useState<'parquet' | 'csv' | 'json'>('parquet');
   // Populated only for multi-sheet Excel workbooks; drives the sheet switcher.
@@ -65,14 +64,10 @@ export function App() {
   const [loadingStatus, setLoadingStatus] = useState<string>('Initializing engine...');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  // Apply theme class and meta tags on change
+  // Apply light theme
   useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
-
-  const handleToggleTheme = () => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  };
+    applyTheme();
+  }, []);
 
   // Update meta tags based on current route.
   // Text lives in src/data/routeMeta.ts so the prerendered HTML and the SPA agree.
@@ -214,15 +209,15 @@ export function App() {
     // Common error banner component
     const errorBanner = errorMessage && (
       <div className="max-w-4xl mx-auto px-4 mt-6 w-full">
-        <div className="p-4 rounded-2xl bg-red-950/60 border border-red-800 text-red-300 text-sm flex items-start gap-3">
-          <AlertCircle className="size-5 text-red-400 shrink-0 mt-0.5" />
+        <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-sm flex items-start gap-3 shadow-xs">
+          <AlertCircle className="size-5 text-red-500 shrink-0 mt-0.5" />
           <div className="flex-1">
-            <p className="font-semibold text-red-200">Error opening file</p>
-            <p className="text-xs text-red-300/90 mt-0.5">{errorMessage}</p>
-            <div className="mt-2 pt-2 border-t border-red-900/60 flex items-center gap-3">
+            <p className="font-semibold text-red-900">Error opening file</p>
+            <p className="text-xs text-red-700 mt-0.5">{errorMessage}</p>
+            <div className="mt-2 pt-2 border-t border-red-200 flex items-center gap-3">
               <a
                 href={getBugReportMailto({ errorMessage })}
-                className="inline-flex items-center gap-1.5 text-xs text-red-200 hover:text-white underline font-medium cursor-pointer"
+                className="inline-flex items-center gap-1.5 text-xs text-red-700 hover:text-red-900 underline font-medium cursor-pointer"
               >
                 <Mail className="size-3.5" />
                 <span>Report this issue via email</span>
@@ -400,8 +395,8 @@ export function App() {
         return (
           <div className="max-w-md mx-auto px-4 py-24 text-center">
             <FileQuestion className="size-12 text-indigo-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-slate-100 mb-2">Page Not Found</h2>
-            <p className="text-xs text-slate-400 mb-6 leading-relaxed">
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">Page Not Found</h2>
+            <p className="text-xs text-slate-500 mb-6 leading-relaxed">
               The page you are looking for does not exist or may have been moved.
             </p>
             <button
@@ -424,8 +419,6 @@ export function App() {
             onTrySample={handleTrySample}
             isLoading={isLoading}
             currentPath={path}
-            theme={theme}
-            onToggleTheme={handleToggleTheme}
           />
         </div>
 

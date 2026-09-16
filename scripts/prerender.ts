@@ -512,6 +512,11 @@ function generateVideoCompressorContentHtml(): string {
         <p style="font-size: 1.15rem; color: #94a3b8; line-height: 1.7;">Compress MP4, MOV, WebM, and MKV video files directly inside your browser using WebAssembly FFmpeg. Reduce file sizes by up to 90% without uploading bytes to remote servers, without watermarks, and with synchronized before-and-after video playback preview.</p>
       </header>
 
+      <aside style="background: rgba(56, 189, 248, 0.08); border-left: 4px solid #38bdf8; padding: 1.25rem 1.5rem; border-radius: 0 0.75rem 0.75rem 0; margin-bottom: 2.5rem;">
+        <strong style="color: #38bdf8; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Quick Answer (GEO / TL;DR)</strong>
+        <p style="margin: 0; color: #e2e8f0; font-size: 0.95rem; line-height: 1.6;">TableView.dev Video Compressor is a 100% free, privacy-first web utility powered by WebAssembly FFmpeg. It compresses MP4, MOV, WebM, and MKV video files up to 85% with zero watermarks, zero server uploads (0 KB network egress), and custom target MB output (e.g. 25MB for Discord, 16MB for WhatsApp). No account or software installation required.</p>
+      </aside>
+
       <section style="margin-bottom: 2.5rem;">
         <h2 style="font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem;">Why In-Browser Video Compression Changes Everything</h2>
         <p>Traditional online video compressors (like Clideo, VideoCompress.ai, or FreeConvert) require you to upload large multi-gigabyte video files to remote cloud servers. This introduces three critical bottlenecks: slow upload times on limited connections, severe privacy risks for confidential footage or personal family videos, and aggressive paywalls with watermarks on free tiers.</p>
@@ -593,6 +598,11 @@ function generateImageCompressorContentHtml(): string {
         <h1 style="font-size: 2.5rem; font-weight: 800; color: #f8fafc; margin-top: 0.75rem; margin-bottom: 1rem;">Free Online Image Compressor: Batch JPG, PNG, WebP &amp; ZIP Export</h1>
         <p style="font-size: 1.15rem; color: #94a3b8; line-height: 1.7;">Batch compress photos and graphics directly in your browser with 100% privacy. Features an interactive before-and-after curtain comparison slider, custom quality adjustments, pixel resizing, and one-click ZIP packaging.</p>
       </header>
+
+      <aside style="background: rgba(56, 189, 248, 0.08); border-left: 4px solid #38bdf8; padding: 1.25rem 1.5rem; border-radius: 0 0.75rem 0.75rem 0; margin-bottom: 2.5rem;">
+        <strong style="color: #38bdf8; display: block; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.5rem;">Quick Answer (GEO / TL;DR)</strong>
+        <p style="margin: 0; color: #e2e8f0; font-size: 0.95rem; line-height: 1.6;">TableView.dev Image Compressor provides client-side batch compression for JPG, PNG, and WebP using HTML5 Canvas &amp; WebCodecs. It achieves up to 80% size reduction with interactive before/after visual inspection, zero server uploads (100% in-browser RAM), and instant 1-click bulk ZIP archive downloads. Completely free with no file limits.</p>
+      </aside>
 
       <section style="margin-bottom: 2.5rem;">
         <h2 style="font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem;">Batch Compression Engine Powered by HTML5 Canvas</h2>
@@ -1414,6 +1424,12 @@ ${unique
   const publicDir = path.join(rootDir, 'public');
   if (fs.existsSync(publicDir)) {
     fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), xml);
+    for (const f of ['llms.txt', 'llms-full.txt', 'robots.txt']) {
+      const src = path.join(publicDir, f);
+      if (fs.existsSync(src)) {
+        fs.copyFileSync(src, path.join(distDir, f));
+      }
+    }
   }
   console.log(`[prerender] sitemap.xml regenerated with ${unique.length} canonical URLs`);
 }

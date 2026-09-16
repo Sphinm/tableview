@@ -179,7 +179,7 @@ export const CurrencyInput = ({
         onFocus={handleFocus}
         onBlur={handleBlur}
         disabled={disabled}
-        className={`w-full ${prefix ? 'pl-9' : 'pl-3.5'} ${suffix ? 'pr-9' : 'pr-3.5'} py-2 bg-slate-950 border border-slate-800 rounded-xl text-sm font-semibold text-slate-100 focus:border-indigo-500 focus:outline-none transition-colors ${className}`}
+        className={`w-full ${prefix ? 'pl-9' : 'pl-3.5'} ${suffix ? 'pr-9' : 'pr-3.5'} py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 focus:outline-none transition-colors shadow-2xs ${className}`}
         {...rest}
       />
       {suffix && (

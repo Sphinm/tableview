@@ -55,27 +55,27 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
 
   return (
     <footer
-      className={`w-full bg-slate-950 border-t border-slate-800 text-slate-400 relative transition-colors ${
+      className={`w-full bg-slate-50 border-t border-slate-200 text-slate-500 relative transition-colors ${
         isCompression ? 'mt-10 pt-8 pb-8' : 'mt-12 sm:mt-16 pt-10 pb-10'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Pre-Footer Action Banner: ONLY shown on Data Workbench to eliminate cross-domain clutter */}
         {isDataWorkbench && !isCalculator && !isCompression && (
-          <div className="relative rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-gradient-to-b dark:from-slate-900/90 dark:to-slate-950 p-6 sm:p-8 mb-12 shadow-sm dark:shadow-xl overflow-hidden">
-            <div className="absolute top-0 right-0 -mt-10 -mr-10 size-64 bg-emerald-500/5 dark:bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-1/4 -mb-10 size-48 bg-indigo-500/5 dark:bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="relative rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 mb-12 shadow-sm overflow-hidden">
+            <div className="absolute top-0 right-0 -mt-10 -mr-10 size-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-1/4 -mb-10 size-48 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
               <div className="space-y-2 max-w-xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 dark:bg-emerald-500/10 border border-emerald-200/60 dark:border-emerald-500/20 text-emerald-700 dark:text-emerald-400">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 border border-emerald-200/60 text-emerald-700">
                   <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
                   <span>Zero Data Egress · Pure Client WebAssembly Sandbox</span>
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 tracking-tight">
+                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
                   Ready to Inspect, Query & Model Your Data?
                 </h3>
-                <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   Open CSV, Excel, Apache Parquet, or JSON files of hundreds of megabytes directly in browser memory. Zero cloud uploads, zero telemetry, instantaneous DuckDB SQL queries.
                 </p>
               </div>
@@ -83,7 +83,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
               <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
                 <button
                   onClick={handleTrySampleClick}
-                  className="btn-primary w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-sm hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
+                  className="btn-primary w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 shadow-xs hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
                 >
                   <Sparkles className="size-4 text-amber-400" />
                   <span>Try 1,000-Row Sample</span>
@@ -92,9 +92,9 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                 <a
                   href="/finance-calculator"
                   onClick={(e) => handleNav(e, '/finance-calculator')}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-white dark:bg-slate-900 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200 hover:text-slate-900 dark:hover:text-slate-100 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"
+                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-medium bg-white hover:bg-slate-50 text-slate-800 hover:text-slate-900 border border-slate-200 hover:border-slate-300 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"
                 >
-                  <Calculator className="size-4 text-indigo-600 dark:text-indigo-400" />
+                  <Calculator className="size-4 text-indigo-600" />
                   <span>Financial Calculators</span>
                   <ArrowRight className="size-3.5 opacity-60" />
                 </a>

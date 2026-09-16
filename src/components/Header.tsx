@@ -31,9 +31,7 @@ import {
   DollarSign,
   Video,
   Image as ImageIcon,
-  LogOut,
-  Sun,
-  Moon
+  LogOut
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 import { isCalculatorRoute, isCompressionRoute } from '../lib/resolveRoute';
@@ -43,11 +41,9 @@ interface HeaderProps {
   onTrySample?: () => void;
   isLoading?: boolean;
   currentPath?: string;
-  theme?: 'dark' | 'light';
-  onToggleTheme?: () => void;
 }
 
-export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dark', onToggleTheme }: HeaderProps) => {
+export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProps) => {
   const { user, openAuthModal, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [parquetDropdownOpen, setParquetDropdownOpen] = useState(false);
@@ -413,8 +409,8 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             <div className="brand-icon size-8 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-105 transition-all">
               <Table className="size-4.5" />
             </div>
-            <span className="text-base font-bold text-slate-100 tracking-tight">TableView</span>
-            <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="text-base font-bold text-slate-900 tracking-tight">TableView</span>
+            <span className="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
               Workspace
             </span>
           </a>
@@ -433,18 +429,18 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                 onClick={toggleCalcDropdown}
                 className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
                   isCalculatorSection || calcDropdownOpen
-                    ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+                    ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200/80 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
                 }`}
                 aria-expanded={calcDropdownOpen}
               >
-                <Calculator className="size-4 text-indigo-400" />
+                <Calculator className="size-4 text-indigo-600" />
                 <span>Calculators</span>
-                <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
+                <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 border border-indigo-200/60">
                   High-Precision
                 </span>
                 <ChevronDown
-                  className={`size-3.5 transition-transform duration-200 opacity-70 ${
+                  className={`size-3.5 transition-transform duration-200 text-slate-400 ${
                     calcDropdownOpen ? 'rotate-180' : ''
                   }`}
                 />
@@ -453,12 +449,12 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               {/* Calculators Flyout Panel */}
               {calcDropdownOpen && (
                 <div className="absolute left-0 top-full pt-1.5 w-[680px] z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900/98 text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-3">
-                    <div className="px-3 pt-2 pb-2 flex items-center justify-between border-b border-slate-800/80">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+                  <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-xl overflow-hidden p-3.5">
+                    <div className="px-3 pt-1 pb-2.5 flex items-center justify-between border-b border-slate-100">
+                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
                         Financial, Real Estate & FinOps Calculators
                       </span>
-                      <span className="text-[10px] text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      <span className="text-[10px] text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
                         100% Client-Side · Zero Server Math
                       </span>
                     </div>
@@ -466,7 +462,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                     <div className="grid grid-cols-2 gap-3 py-2">
                       {/* Column 1: Real Estate & Commercial Loans */}
                       <div className="space-y-0.5">
-                        <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">
+                        <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold mb-1">
                           Real Estate & Commercial Debt
                         </div>
                         {realEstateCalcs.map((calc) => (
@@ -474,23 +470,23 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                             key={calc.path}
                             href={calc.path}
                             onClick={(e) => handleNav(e, calc.path)}
-                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors"
                           >
-                            <div className="size-7 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                            <div className="size-7 rounded-lg bg-indigo-50 text-indigo-600 border border-indigo-200/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                               <calc.icon className="size-3.5" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">
+                                <span className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
                                   {calc.title}
                                 </span>
                                 {calc.badge && (
-                                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-indigo-50 text-indigo-700 border border-indigo-200/60">
                                     {calc.badge}
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] text-slate-400 leading-snug truncate mt-0.5">
+                              <p className="text-[10px] text-slate-500 leading-snug truncate mt-0.5">
                                 {calc.description}
                               </p>
                             </div>
@@ -502,7 +498,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                       <div className="space-y-3">
                         {/* Payroll & Compensation */}
                         <div className="space-y-0.5">
-                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">
+                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold mb-1">
                             Payroll & Compensation
                           </div>
                           {payrollCalcs.map((calc) => (
@@ -510,23 +506,23 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                               key={calc.path}
                               href={calc.path}
                               onClick={(e) => handleNav(e, calc.path)}
-                              className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
+                              className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors"
                             >
-                              <div className="size-7 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                              <div className="size-7 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                                 <calc.icon className="size-3.5" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-xs font-bold text-slate-100 group-hover:text-emerald-400 transition-colors">
+                                  <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
                                     {calc.title}
                                   </span>
                                   {calc.badge && (
-                                    <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200/60">
                                       {calc.badge}
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-[10px] text-slate-400 leading-snug truncate mt-0.5">
+                                <p className="text-[10px] text-slate-500 leading-snug truncate mt-0.5">
                                   {calc.description}
                                 </p>
                               </div>
@@ -535,8 +531,8 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                         </div>
 
                         {/* Cloud FinOps */}
-                        <div className="space-y-0.5 pt-2 border-t border-slate-800/60">
-                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-400 font-bold mb-1">
+                        <div className="space-y-0.5 pt-2 border-t border-slate-100">
+                          <div className="px-2 text-[10px] font-mono uppercase tracking-wider text-slate-500 font-bold mb-1">
                             Cloud & Data FinOps
                           </div>
                           {cloudFinOpsCalcs.map((calc) => (
@@ -544,23 +540,23 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                               key={calc.path}
                               href={calc.path}
                               onClick={(e) => handleNav(e, calc.path)}
-                              className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
+                              className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors"
                             >
-                              <div className="size-7 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                              <div className="size-7 rounded-lg bg-cyan-50 text-cyan-700 border border-cyan-200/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                                 <calc.icon className="size-3.5" />
                               </div>
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-1.5">
-                                  <span className="text-xs font-bold text-slate-100 group-hover:text-cyan-400 transition-colors">
+                                  <span className="text-xs font-bold text-slate-900 group-hover:text-cyan-700 transition-colors">
                                     {calc.title}
                                   </span>
                                   {calc.badge && (
-                                    <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                    <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-cyan-50 text-cyan-700 border border-cyan-200/60">
                                       {calc.badge}
                                     </span>
                                   )}
                                 </div>
-                                <p className="text-[10px] text-slate-400 leading-snug truncate mt-0.5">
+                                <p className="text-[10px] text-slate-500 leading-snug truncate mt-0.5">
                                   {calc.description}
                                 </p>
                               </div>
@@ -569,19 +565,19 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                         </div>
 
                         {/* Trust card */}
-                        <div className="p-2.5 rounded-xl bg-slate-800/40 border border-slate-800/80 text-[11px] text-slate-400 leading-relaxed">
-                          <span className="font-semibold text-slate-300 block mb-0.5">100% Private In-Browser</span>
+                        <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 text-[11px] text-slate-600 leading-relaxed">
+                          <span className="font-semibold text-slate-900 block mb-0.5">100% Private In-Browser</span>
                           Interest amortization, tax deferral, and wage math run client-side in WebAssembly. No sensitive numbers touch a server.
                         </div>
                       </div>
                     </div>
 
                     {/* Bottom Link: View all */}
-                    <div className="pt-2 border-t border-slate-800/80">
+                    <div className="pt-2 border-t border-slate-100">
                       <a
                         href="/finance-calculator"
                         onClick={(e) => handleNav(e, '/finance-calculator')}
-                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-indigo-400 hover:bg-indigo-500/10 transition-colors"
+                        className="flex items-center justify-between px-3 py-2 rounded-xl text-xs font-semibold text-indigo-600 hover:bg-indigo-50/50 transition-colors"
                       >
                         <span className="flex items-center gap-1.5">
                           <Calculator className="size-3.5" />
@@ -610,15 +606,15 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                 }}
                 className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
                   isToolsSection || parquetDropdownOpen
-                    ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+                    ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200/80 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
                 }`}
                 aria-expanded={parquetDropdownOpen}
               >
-                <Table className="size-4 text-emerald-400" />
+                <Table className="size-4 text-emerald-600" />
                 <span>Data Tools</span>
                 <ChevronDown
-                  className={`size-3.5 transition-transform duration-200 opacity-70 ${
+                  className={`size-3.5 transition-transform duration-200 text-slate-400 ${
                     parquetDropdownOpen ? 'rotate-180' : ''
                   }`}
                 />
@@ -627,12 +623,12 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               {/* Data Tools Mega Dropdown Panel */}
               {parquetDropdownOpen && (
                 <div className="absolute left-0 top-full pt-1.5 w-[760px] z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900/98 text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-3">
-                    <div className="px-3 pt-2 pb-2.5 flex items-center justify-between border-b border-slate-800/80">
-                      <span className="text-xs font-mono uppercase tracking-wider text-slate-400 font-bold">
+                  <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-xl overflow-hidden p-3.5">
+                    <div className="px-3 pt-1 pb-2.5 flex items-center justify-between border-b border-slate-100">
+                      <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-bold">
                         All In-Browser Data Tools & Workbench
                       </span>
-                      <span className="text-[10px] text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      <span className="text-[10px] text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
                         DuckDB-Wasm SIMD · 100% Client-Side
                       </span>
                     </div>
@@ -640,7 +636,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                     <div className="grid grid-cols-3 gap-3 py-2">
                       {/* Column 1: Viewers */}
                       <div className="space-y-1">
-                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                           Viewers
                         </p>
                         {viewerItems.map((tool) => (
@@ -648,23 +644,23 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                             key={tool.path}
                             href={tool.path}
                             onClick={(e) => handleNav(e, tool.path)}
-                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors"
                           >
-                            <div className="size-7 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                            <div className="size-7 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/60 flex items-center justify-center shrink-0 mt-0.5">
                               <tool.icon className="size-3.5" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-slate-100 group-hover:text-emerald-400 transition-colors">
+                                <span className="text-xs font-bold text-slate-900 group-hover:text-emerald-700 transition-colors">
                                   {tool.title}
                                 </span>
                                 {tool.badge && (
-                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200/60">
                                     {tool.badge}
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                              <p className="text-[10px] text-slate-500 truncate mt-0.5">
                                 {tool.description}
                               </p>
                             </div>
@@ -673,8 +669,8 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                       </div>
 
                       {/* Column 2: Converters */}
-                      <div className="space-y-1 border-x border-slate-800/60 px-2">
-                        <p className="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                      <div className="space-y-1 border-x border-slate-100 px-2">
+                        <p className="px-1 text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                           Converters
                         </p>
                         {converterItems.map((tool) => (
@@ -682,23 +678,23 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                             key={tool.path}
                             href={tool.path}
                             onClick={(e) => handleNav(e, tool.path)}
-                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors"
                           >
-                            <div className="size-7 rounded-lg bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                            <div className="size-7 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200/60 flex items-center justify-center shrink-0 mt-0.5">
                               <tool.icon className="size-3.5" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-slate-100 group-hover:text-indigo-400 transition-colors">
+                                <span className="text-xs font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
                                   {tool.title}
                                 </span>
                                 {tool.badge && (
-                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">
+                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-indigo-50 text-indigo-700 border border-indigo-200/60">
                                     {tool.badge}
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                              <p className="text-[10px] text-slate-500 truncate mt-0.5">
                                 {tool.description}
                               </p>
                             </div>
@@ -708,7 +704,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
 
                       {/* Column 3: SQL & Analytics */}
                       <div className="space-y-1">
-                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-1">
+                        <p className="px-2 text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                           SQL & Analytics
                         </p>
                         {analyticsItems.map((tool) => (
@@ -716,23 +712,23 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                             key={tool.path}
                             href={tool.path}
                             onClick={(e) => handleNav(e, tool.path)}
-                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-800/70 transition-colors"
+                            className="group flex items-start gap-2.5 p-2 rounded-xl hover:bg-slate-50 transition-colors"
                           >
-                            <div className="size-7 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 flex items-center justify-center shrink-0 mt-0.5">
+                            <div className="size-7 rounded-lg bg-cyan-50 text-cyan-700 border border-cyan-200/60 flex items-center justify-center shrink-0 mt-0.5">
                               <tool.icon className="size-3.5" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-xs font-bold text-slate-100 group-hover:text-cyan-400 transition-colors">
+                                <span className="text-xs font-bold text-slate-900 group-hover:text-cyan-700 transition-colors">
                                   {tool.title}
                                 </span>
                                 {tool.badge && (
-                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
+                                  <span className="text-[9px] font-semibold px-1 py-0.2 rounded bg-cyan-50 text-cyan-700 border border-cyan-200/60">
                                     {tool.badge}
                                   </span>
                                 )}
                               </div>
-                              <p className="text-[10px] text-slate-400 truncate mt-0.5">
+                              <p className="text-[10px] text-slate-500 truncate mt-0.5">
                                 {tool.description}
                               </p>
                             </div>
@@ -742,18 +738,18 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                     </div>
 
                     {/* Bottom Link: Main Workbench */}
-                    <div className="mt-1 pt-2 border-t border-slate-800/80 flex items-center justify-between px-3">
+                    <div className="mt-1 pt-2 border-t border-slate-100 flex items-center justify-between px-3">
                       <a
                         href="/data-tools"
                         onClick={(e) => handleNav(e, '/data-tools')}
-                        className="text-xs font-semibold text-emerald-400 hover:text-emerald-300 flex items-center gap-1.5 transition-colors"
+                        className="text-xs font-semibold text-emerald-700 hover:text-emerald-800 flex items-center gap-1.5 transition-colors"
                       >
                         <Sparkles className="size-3.5" />
                         <span>Open In-Browser Data Workbench</span>
                         <ArrowRight className="size-3" />
                       </a>
 
-                      <span className="text-[11px] text-slate-500 font-mono">
+                      <span className="text-[11px] text-slate-400 font-mono">
                         Zero server telemetry
                       </span>
                     </div>
@@ -774,18 +770,18 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                 onClick={toggleCompressDropdown}
                 className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
                   isCompressSection || compressDropdownOpen
-                    ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
-                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+                    ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200/80 shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
                 }`}
                 aria-expanded={compressDropdownOpen}
               >
-                <Video className="size-4 text-blue-400" />
+                <Video className="size-4 text-blue-600" />
                 <span>Compress</span>
-                <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 border border-blue-500/30">
+                <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-blue-50 text-blue-700 border border-blue-200/60">
                   Free
                 </span>
                 <ChevronDown
-                  className={`size-3.5 transition-transform duration-200 opacity-70 ${
+                  className={`size-3.5 transition-transform duration-200 text-slate-400 ${
                     compressDropdownOpen ? 'rotate-180' : ''
                   }`}
                 />
@@ -794,12 +790,12 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               {/* Compress Dropdown Panel */}
               {compressDropdownOpen && (
                 <div className="absolute left-0 top-full pt-1.5 w-[380px] z-50 animate-in fade-in zoom-in-95 duration-150">
-                  <div className="rounded-2xl border border-slate-800 bg-slate-900/98 text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-3 space-y-1">
-                    <div className="px-3 pt-2 pb-2 flex items-center justify-between border-b border-slate-800/80 mb-1">
-                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+                  <div className="rounded-2xl border border-slate-200 bg-white text-slate-900 shadow-xl overflow-hidden p-3 space-y-1">
+                    <div className="px-3 pt-1 pb-2 flex items-center justify-between border-b border-slate-100 mb-1">
+                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-500 font-semibold">
                         In-Browser Media Compression
                       </span>
-                      <span className="text-[10px] text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                      <span className="text-[10px] text-emerald-700 font-medium bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200/60">
                         100% Client-Side
                       </span>
                     </div>
@@ -809,23 +805,23 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                         key={item.path}
                         href={item.path}
                         onClick={(e) => handleNav(e, item.path)}
-                        className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-800/70 transition-colors"
+                        className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-50 transition-colors"
                       >
-                        <div className="size-8 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                        <div className="size-8 rounded-lg bg-blue-50 text-blue-600 border border-blue-200/60 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
                           <item.icon className="size-4" />
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold text-slate-100 group-hover:text-blue-400 transition-colors">
+                            <span className="text-xs font-bold text-slate-900 group-hover:text-blue-600 transition-colors">
                               {item.title}
                             </span>
                             {item.badge && (
-                              <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 border border-blue-500/30">
+                              <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-blue-50 text-blue-700 border border-blue-200/60">
                                 {item.badge}
                               </span>
                             )}
                           </div>
-                          <p className="text-[11px] text-slate-400 leading-snug mt-0.5">
+                          <p className="text-[11px] text-slate-500 leading-snug mt-0.5">
                             {item.description}
                           </p>
                         </div>
@@ -842,8 +838,8 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               onClick={(e) => handleNav(e, '/guides')}
               className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 whitespace-nowrap ${
                 isGuides
-                  ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
-                  : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+                  ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200/80 shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50 border border-transparent'
               }`}
             >
               <BookOpen className="size-4" />
@@ -868,7 +864,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                 </>
               ) : (
                 <>
-                  <Sparkles className="size-4 text-amber-400 dark:text-amber-500" />
+                  <Sparkles className="size-4 text-amber-500" />
                   <span>Try Sample</span>
                 </>
               )}
@@ -881,27 +877,27 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               <button
                 type="button"
                 onClick={() => setUserMenuOpen((prev) => !prev)}
-                className="flex items-center gap-2 py-1.5 px-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-slate-700/80 text-xs font-semibold text-slate-200 transition-all cursor-pointer shadow-sm"
+                className="flex items-center gap-2 py-1.5 px-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-xs"
               >
                 <div className="size-6 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px]">
                   {user.name ? user.name[0].toUpperCase() : 'U'}
                 </div>
                 <span className="max-w-[80px] truncate hidden sm:inline">{user.name}</span>
-                <span className="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold border border-blue-500/30">
+                <span className="px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 text-[10px] font-bold border border-blue-200/60">
                   {user.credits} Cr
                 </span>
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 top-full mt-1.5 w-52 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95">
-                  <div className="px-3 py-2 border-b border-slate-800/80">
-                    <div className="text-[11px] text-slate-400">Signed in as</div>
-                    <div className="text-xs font-bold text-white truncate">{user.email}</div>
+                <div className="absolute right-0 top-full mt-1.5 w-52 rounded-2xl bg-white border border-slate-200 shadow-xl p-2 z-50 animate-in fade-in zoom-in-95">
+                  <div className="px-3 py-2 border-b border-slate-100">
+                    <div className="text-[11px] text-slate-500">Signed in as</div>
+                    <div className="text-xs font-bold text-slate-900 truncate">{user.email}</div>
                     <div className="mt-1 flex items-center gap-1.5">
-                      <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                      <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200/60">
                         {user.plan} Plan
                       </span>
-                      <span className="text-[10px] text-slate-400">
+                      <span className="text-[10px] text-slate-500">
                         {user.credits} Credits left
                       </span>
                     </div>
@@ -912,7 +908,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                       logout();
                       setUserMenuOpen(false);
                     }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 rounded-xl transition-colors mt-1 font-medium cursor-pointer"
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 hover:bg-red-50 rounded-xl transition-colors mt-1 font-medium cursor-pointer"
                   >
                     <LogOut className="size-3.5" />
                     <span>Sign Out</span>
@@ -924,33 +920,17 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             <button
               type="button"
               onClick={openAuthModal}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-sm shadow-blue-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
             >
               <Sparkles className="size-3.5 text-white" />
               <span>Sign In</span>
             </button>
           )}
 
-          {/* Theme Switcher Toggle */}
-          {onToggleTheme && (
-            <button
-              onClick={onToggleTheme}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-100 bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors border border-slate-200 dark:border-slate-800 cursor-pointer"
-              title={theme === 'dark' ? 'Switch to Light Theme (白色主题)' : 'Switch to Dark Theme (黑色主题)'}
-              aria-label="Toggle theme color"
-            >
-              {theme === 'dark' ? (
-                <Sun className="size-4.5 text-amber-400" />
-              ) : (
-                <Moon className="size-4.5 text-indigo-600 dark:text-slate-400" />
-              )}
-            </button>
-          )}
-
           {/* Mobile menu toggle */}
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="p-1.5 rounded-lg bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 border border-slate-200 dark:border-slate-800 md:hidden cursor-pointer"
+            className="p-1.5 rounded-lg bg-slate-100 text-slate-700 hover:text-slate-900 hover:bg-slate-200 border border-slate-200 md:hidden cursor-pointer"
             aria-label="Toggle navigation menu"
           >
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
@@ -960,50 +940,35 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
 
       {/* Mobile Drawer */}
       {mobileMenuOpen && (
-        <div className="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950 px-4 py-4 space-y-2 animate-in fade-in slide-in-from-top-2 duration-150">
-          {onToggleTheme && (
-            <button
-              onClick={onToggleTheme}
-              className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 text-sm font-medium cursor-pointer"
-            >
-              <span className="flex items-center gap-2">
-                {theme === 'dark' ? <Sun className="size-4 text-amber-400" /> : <Moon className="size-4 text-indigo-600 dark:text-slate-400" />}
-                <span>Theme Mode</span>
-              </span>
-              <span className="text-xs text-slate-700 dark:text-slate-200 font-semibold px-2 py-0.5 rounded bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                {theme === 'dark' ? 'Dark (黑色)' : 'Light (白色)'}
-              </span>
-            </button>
-          )}
-
+        <div className="md:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-2 animate-in fade-in slide-in-from-top-2 duration-150">
           {/* 1. Calculators Accordion (Primary Focus) */}
-          <div className="border border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+          <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
             <button
               onClick={() => setMobileCalcsExpanded(!mobileCalcsExpanded)}
-              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-700 dark:text-slate-200 text-sm font-semibold cursor-pointer"
+              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-800 text-sm font-semibold cursor-pointer"
             >
               <span className="flex items-center gap-2.5">
-                <Calculator className="size-4 text-indigo-600 dark:text-indigo-400" />
+                <Calculator className="size-4 text-indigo-600" />
                 <span>Financial & FinOps Calculators</span>
               </span>
               <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileCalcsExpanded ? 'rotate-180' : ''}`} />
             </button>
 
             {mobileCalcsExpanded && (
-              <div className="px-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-800/60 pt-1.5 max-h-72 overflow-y-auto">
+              <div className="px-2 pb-2 space-y-1 border-t border-slate-200/80 pt-1.5 max-h-72 overflow-y-auto">
                 {calculatorItems.map((c) => (
                   <a
                     key={c.path}
                     href={c.path}
                     onClick={(e) => handleNav(e, c.path)}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80 transition-colors"
+                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <c.icon className="size-3.5 text-indigo-400" />
+                      <c.icon className="size-3.5 text-indigo-600" />
                       <span>{c.title}</span>
                     </div>
                     {c.badge && (
-                      <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded border bg-indigo-500/10 text-indigo-400 border-indigo-500/20">
+                      <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded border bg-indigo-50 text-indigo-700 border-indigo-200/60">
                         {c.badge}
                       </span>
                     )}
@@ -1012,7 +977,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                 <a
                   href="/finance-calculator"
                   onClick={(e) => handleNav(e, '/finance-calculator')}
-                  className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-500/10 transition-colors"
+                  className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-indigo-600 hover:bg-indigo-50 transition-colors"
                 >
                   <span>Browse All Calculators Hub</span>
                   <ArrowRight className="size-3" />
@@ -1022,24 +987,24 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
           </div>
 
           {/* 2. Data Tools Accordion (Secondary Focus) */}
-          <div className="border border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+          <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
             <button
               onClick={() => setMobileParquetExpanded(!mobileParquetExpanded)}
-              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-700 dark:text-slate-200 text-sm font-semibold cursor-pointer"
+              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-800 text-sm font-semibold cursor-pointer"
             >
               <span className="flex items-center gap-2.5">
-                <Table className="size-4 text-emerald-600 dark:text-emerald-400" />
+                <Table className="size-4 text-emerald-600" />
                 <span>Data Tools (Viewers, Converters, SQL)</span>
               </span>
               <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileParquetExpanded ? 'rotate-180' : ''}`} />
             </button>
 
             {mobileParquetExpanded && (
-              <div className="px-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-800/60 pt-1.5 max-h-72 overflow-y-auto">
+              <div className="px-2 pb-2 space-y-1 border-t border-slate-200/80 pt-1.5 max-h-72 overflow-y-auto">
                 <a
                   href="/data-tools"
                   onClick={(e) => handleNav(e, '/data-tools')}
-                  className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 transition-colors mb-1"
+                  className="flex items-center justify-between px-3 py-2 rounded-lg text-xs font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200/60 transition-colors mb-1"
                 >
                   <div className="flex items-center gap-2">
                     <Sparkles className="size-3.5" />
@@ -1052,14 +1017,14 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                     key={p.path}
                     href={p.path}
                     onClick={(e) => handleNav(e, p.path)}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80 transition-colors"
+                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <p.icon className="size-3.5 text-emerald-400" />
+                      <p.icon className="size-3.5 text-emerald-600" />
                       <span>{p.title}</span>
                     </div>
                     {p.badge && (
-                      <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                      <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded border bg-emerald-50 text-emerald-700 border-emerald-200/60">
                         {p.badge}
                       </span>
                     )}
@@ -1070,33 +1035,33 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
           </div>
 
           {/* 3. Media Compress Accordion */}
-          <div className="border border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+          <div className="border border-slate-200 rounded-xl overflow-hidden bg-slate-50">
             <button
               onClick={() => setMobileCompressExpanded(!mobileCompressExpanded)}
-              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-700 dark:text-slate-200 text-sm font-semibold cursor-pointer"
+              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-800 text-sm font-semibold cursor-pointer"
             >
               <span className="flex items-center gap-2.5">
-                <Video className="size-4 text-blue-600 dark:text-blue-400" />
+                <Video className="size-4 text-blue-600" />
                 <span>Media Compress (Video & Image)</span>
               </span>
               <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileCompressExpanded ? 'rotate-180' : ''}`} />
             </button>
 
             {mobileCompressExpanded && (
-              <div className="px-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-800/60 pt-1.5">
+              <div className="px-2 pb-2 space-y-1 border-t border-slate-200/80 pt-1.5">
                 {compressItems.map((p) => (
                   <a
                     key={p.path}
                     href={p.path}
                     onClick={(e) => handleNav(e, p.path)}
-                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80 transition-colors"
+                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-700 hover:text-slate-900 hover:bg-slate-200/60 transition-colors"
                   >
                     <div className="flex items-center gap-2">
-                      <p.icon className="size-3.5 text-blue-400" />
+                      <p.icon className="size-3.5 text-blue-600" />
                       <span>{p.title}</span>
                     </div>
                     {p.badge && (
-                      <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded border bg-blue-500/10 text-blue-400 border-blue-500/20">
+                      <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded border bg-blue-50 text-blue-700 border-blue-200/60">
                         {p.badge}
                       </span>
                     )}
@@ -1112,11 +1077,11 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             onClick={(e) => handleNav(e, '/guides')}
             className={`block px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 ${
               isGuides
-                ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900'
+                ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
-            <BookOpen className="size-4 text-slate-400" />
+            <BookOpen className="size-4 text-slate-500" />
             <span>Guides & Articles</span>
           </a>
 
@@ -1126,11 +1091,11 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             onClick={(e) => handleNav(e, '/about')}
             className={`block px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 ${
               isAbout
-                ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900'
+                ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
-            <Info className="size-4 text-slate-400" />
+            <Info className="size-4 text-slate-500" />
             <span>About TableView</span>
           </a>
 
@@ -1140,20 +1105,20 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             onClick={(e) => handleNav(e, '/contact')}
             className={`block px-3.5 py-2.5 rounded-xl flex items-center gap-2.5 ${
               isContact
-                ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700'
-                : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900'
+                ? 'bg-slate-100 text-slate-900 font-semibold border border-slate-200'
+                : 'text-slate-600 hover:text-slate-900 hover:bg-slate-50'
             }`}
           >
-            <MessageSquare className="size-4 text-slate-400" />
+            <MessageSquare className="size-4 text-slate-500" />
             <span>Contact & Support</span>
           </a>
 
           {/* Mobile Auth button */}
           <div className="pt-2">
             {user ? (
-              <div className="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-between">
                 <div>
-                  <div className="text-xs font-bold text-slate-900 dark:text-white">{user.name}</div>
+                  <div className="text-xs font-bold text-slate-900">{user.name}</div>
                   <div className="text-[11px] text-slate-500">{user.credits} credits remaining</div>
                 </div>
                 <button
@@ -1161,7 +1126,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                     logout();
                     setMobileMenuOpen(false);
                   }}
-                  className="px-3 py-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg text-xs font-semibold"
+                  className="px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-lg text-xs font-semibold cursor-pointer"
                 >
                   Sign Out
                 </button>
@@ -1172,7 +1137,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                   openAuthModal();
                   setMobileMenuOpen(false);
                 }}
-                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 flex items-center justify-center gap-2"
+                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-sm shadow-blue-500/20 flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Sparkles className="size-4" />
                 <span>Sign In to TableView</span>
@@ -1180,7 +1145,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             )}
           </div>
 
-          <div className="pt-2 border-t border-slate-900/80 flex items-center gap-2 text-xs text-emerald-500 dark:text-emerald-400">
+          <div className="pt-2 border-t border-slate-100 flex items-center gap-2 text-xs text-emerald-700">
             <ShieldCheck className="size-4" />
             <span>100% Client-Side Sandbox</span>
           </div>

@@ -1,41 +1,27 @@
-export type Theme = 'dark' | 'light';
+export type Theme = 'light';
 
 export const THEME_STORAGE_KEY = 'tableview_theme';
 
 export function getInitialTheme(): Theme {
-  if (typeof window === 'undefined') return 'dark';
-  try {
-    const stored = localStorage.getItem(THEME_STORAGE_KEY);
-    if (stored === 'dark' || stored === 'light') {
-      return stored;
-    }
-  } catch {
-    // localStorage might fail in strict privacy modes
-  }
-  return 'dark';
+  return 'light';
 }
 
-export function applyTheme(theme: Theme) {
+export function applyTheme(_theme?: Theme) {
   if (typeof document === 'undefined') return;
 
   const root = document.documentElement;
-  if (theme === 'light') {
-    root.classList.remove('dark');
-    root.classList.add('light');
-  } else {
-    root.classList.remove('light');
-    root.classList.add('dark');
-  }
+  root.classList.remove('dark');
+  root.classList.add('light');
 
   try {
-    localStorage.setItem(THEME_STORAGE_KEY, theme);
+    localStorage.removeItem(THEME_STORAGE_KEY);
   } catch {
     // Ignore storage quota or access errors
   }
 
-  // Update theme-color meta tag
+  // Update theme-color meta tag to clean white
   const metaTheme = document.querySelector('meta[name="theme-color"]');
   if (metaTheme) {
-    metaTheme.setAttribute('content', theme === 'light' ? '#f8fafc' : '#050608');
+    metaTheme.setAttribute('content', '#ffffff');
   }
 }

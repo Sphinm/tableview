@@ -1,7 +1,11 @@
 User-agent: *
 Allow: /
 
+# Search Engine Crawlers
 User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
 Allow: /
 
 User-agent: Mediapartners-Google
@@ -10,4 +14,31 @@ Allow: /
 User-agent: AdsBot-Google
 Allow: /
 
+# AI Search & Retrieval Crawlers (GEO - Generative Engine Optimization)
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Sitemap & LLM Knowledge Index
 Sitemap: https://tableview.dev/sitemap.xml
+
+# LLM Index (https://llmstxt.org/)
+# LLMs-Text: https://tableview.dev/llms.txt
+# LLMs-Full: https://tableview.dev/llms-full.txt
