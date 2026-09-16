@@ -30,7 +30,8 @@ import {
   DollarSign,
   Video,
   Image as ImageIcon,
-  LogOut
+  LogOut,
+  Activity
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 import { isCalculatorRoute, isCompressionRoute } from '../lib/resolveRoute';
@@ -293,6 +294,13 @@ export const Header = ({ onTrySample: _onTrySample, isLoading: _isLoading, curre
       path: '/parquet-storage-calculator',
       icon: Zap,
       badge: 'Savings'
+    },
+    {
+      title: 'Website Status Checker',
+      description: 'Check if website is down right now',
+      path: '/is-it-down',
+      icon: Activity,
+      badge: 'Live'
     }
   ];
 

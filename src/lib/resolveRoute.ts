@@ -149,6 +149,10 @@ const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
     pattern: /^\/(?:tools\/)?(?:compress-webp|webp-compressor|webp-compress)$/,
     path: '/compress-webp',
   },
+  {
+    pattern: /^\/(?:tools\/)?is-it-down$/,
+    path: '/is-it-down',
+  },
   { pattern: /^\/(?:finance-calculator|calculators|financial-calculators|calculator)$/, path: '/finance-calculator' },
 ];
 
@@ -258,6 +262,7 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/compress-png',
   '/compress-jpg',
   '/compress-webp',
+  '/is-it-down',
   '/about',
   '/contact',
   '/privacy',
@@ -389,6 +394,7 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
     '/compress-png': ['/png-compressor', '/png-compress'],
     '/compress-jpg': ['/compress-jpeg', '/jpeg-compressor', '/jpg-compressor'],
     '/compress-webp': ['/webp-compressor', '/webp-compress'],
+    '/is-it-down': [],
   };
   for (const [canonical, aliases] of Object.entries(calculatorAliases)) {
     // The canonical itself must exist too — /finance-calculator is not in

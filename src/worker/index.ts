@@ -13,7 +13,10 @@ export interface Env {
   RESEND_API_KEY?: string;
   APP_URL?: string;
   GOOGLE_CLIENT_ID?: string;
+  GEMINI_API_KEY?: string;
+  ASSETS?: Fetcher;
 }
+
 
 interface UserRecord {
   id: string;
@@ -129,9 +132,47 @@ function corsHeaders(origin: string = '*'): HeadersInit {
   return {
     'Access-Control-Allow-Origin': origin,
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Gemini-Api-Key',
     'Access-Control-Allow-Credentials': 'true',
   };
+}
+
+// SSRF Protection: Block private, local, and metadata IP addresses
+function isBlockedHostname(hostname: string): boolean {
+  const lower = hostname.toLowerCase().trim();
+  if (
+    lower === 'localhost' ||
+    lower.endsWith('.localhost') ||
+    lower.endsWith('.local') ||
+    lower.endsWith('.internal') ||
+    lower.endsWith('.arpa')
+  ) {
+    return true;
+  }
+
+  // Check IPv4 ranges
+  const ipv4Match = lower.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (ipv4Match) {
+    const [, a, b] = ipv4Match.map(Number);
+    if (a === 0 || a === 127 || a === 10) return true; // 0.0.0.0/8, 127.0.0.0/8, 10.0.0.0/8
+    if (a === 172 && b >= 16 && b <= 31) return true; // 172.16.0.0/12
+    if (a === 192 && b === 168) return true; // 192.168.0.0/16
+    if (a === 169 && b === 254) return true; // 169.254.0.0/16 Link-local / Cloud metadata
+    if (a >= 224) return true; // Multicast & Reserved
+  }
+
+  // Check IPv6 loopback / local
+  if (
+    lower === '::1' ||
+    lower === '::' ||
+    lower.startsWith('fe80:') ||
+    lower.startsWith('fc00:') ||
+    lower.startsWith('fd00:')
+  ) {
+    return true;
+  }
+
+  return false;
 }
 
 function jsonResponse(data: any, status: number = 200, origin: string = '*'): Response {
@@ -142,6 +183,129 @@ function jsonResponse(data: any, status: number = 200, origin: string = '*'): Re
       ...corsHeaders(origin),
     },
   });
+}
+
+interface AiGenerateRequestBody {
+  prompt?: string;
+  systemInstruction?: string;
+  contents?: Array<{ role?: string; parts: Array<{ text: string }> }>;
+  stream?: boolean;
+  model?: string;
+  generationConfig?: {
+    temperature?: number;
+    topP?: number;
+    topK?: number;
+    maxOutputTokens?: number;
+    stopSequences?: string[];
+  };
+}
+
+async function handleAiGenerate(request: Request, env: Env, origin: string): Promise<Response> {
+  if (request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405, origin);
+  }
+
+  const apiKey = request.headers.get('x-gemini-api-key')?.trim() || env.GEMINI_API_KEY?.trim();
+
+  if (!apiKey) {
+    return jsonResponse(
+      {
+        error:
+          'Gemini API key is not configured. Please set GEMINI_API_KEY in Cloudflare Worker secrets or provide the X-Gemini-Api-Key header.',
+        code: 'MISSING_API_KEY',
+      },
+      401,
+      origin
+    );
+  }
+
+  let body: AiGenerateRequestBody;
+  try {
+    body = (await request.json()) as AiGenerateRequestBody;
+  } catch {
+    return jsonResponse({ error: 'Invalid JSON request body' }, 400, origin);
+  }
+
+  const prompt = body.prompt?.trim();
+  const contents = body.contents || (prompt ? [{ role: 'user', parts: [{ text: prompt }] }] : null);
+
+  if (!contents || contents.length === 0) {
+    return jsonResponse({ error: 'Either prompt or contents array is required' }, 400, origin);
+  }
+
+  const model = body.model?.trim() || 'gemini-2.0-flash';
+  const isStream = body.stream !== false;
+
+  const googlePayload: Record<string, any> = {
+    contents,
+  };
+
+  if (body.systemInstruction) {
+    googlePayload.system_instruction = {
+      parts: [{ text: body.systemInstruction }],
+    };
+  }
+
+  if (body.generationConfig) {
+    googlePayload.generationConfig = body.generationConfig;
+  }
+
+  const endpointAction = isStream ? 'streamGenerateContent?alt=sse' : 'generateContent';
+  const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:${endpointAction}&key=${encodeURIComponent(apiKey)}`;
+
+  try {
+    const upstreamRes = await fetch(googleUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(googlePayload),
+    });
+
+    if (!upstreamRes.ok) {
+      const errText = await upstreamRes.text();
+      let parsedErr: any = null;
+      try {
+        parsedErr = JSON.parse(errText);
+      } catch {
+        parsedErr = { error: errText };
+      }
+      return jsonResponse(
+        {
+          error: parsedErr.error?.message || parsedErr.message || 'Gemini API call failed',
+          upstreamStatus: upstreamRes.status,
+          details: parsedErr,
+        },
+        upstreamRes.status >= 400 && upstreamRes.status < 600 ? upstreamRes.status : 500,
+        origin
+      );
+    }
+
+    if (isStream) {
+      return new Response(upstreamRes.body, {
+        status: 200,
+        headers: {
+          'Content-Type': 'text/event-stream; charset=utf-8',
+          'Cache-Control': 'no-cache, no-transform',
+          'Connection': 'keep-alive',
+          'X-Accel-Buffering': 'no',
+          ...corsHeaders(origin),
+        },
+      });
+    } else {
+      const data = await upstreamRes.json();
+      return jsonResponse(data, 200, origin);
+    }
+  } catch (err: any) {
+    console.error('[Worker] Gemini API gateway error:', err);
+    return jsonResponse(
+      {
+        error: err?.message || 'Failed to connect to Gemini API',
+      },
+      502,
+      origin
+    );
+  }
 }
 
 export default {
@@ -158,10 +322,14 @@ export default {
       });
     }
 
-    // Only route /api/auth/* here
-    if (!url.pathname.startsWith('/api/auth/')) {
+    // Route static assets or non-API paths
+    if (!url.pathname.startsWith('/api/')) {
+      if (env.ASSETS) {
+        return env.ASSETS.fetch(request);
+      }
       return new Response('Not Found', { status: 404 });
     }
+
 
     try {
       // 1. POST /api/auth/send-magic-link
@@ -577,6 +745,143 @@ export default {
           200,
           origin
         );
+      }
+
+      // 8. GET /api/tools/is-it-down?url=... (Website Status & Edge Latency Probe)
+      if (url.pathname === '/api/tools/is-it-down' && request.method === 'GET') {
+        const rawTarget = url.searchParams.get('url');
+        if (!rawTarget) {
+          return jsonResponse({ error: 'URL parameter is required' }, 400, origin);
+        }
+
+        let cleanUrl = rawTarget.trim();
+        if (!/^https?:\/\//i.test(cleanUrl)) {
+          cleanUrl = `https://${cleanUrl}`;
+        }
+
+        let parsed: URL;
+        try {
+          parsed = new URL(cleanUrl);
+        } catch {
+          return jsonResponse({ error: 'Invalid URL format' }, 400, origin);
+        }
+
+        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+          return jsonResponse({ error: 'Only HTTP and HTTPS protocols are supported' }, 400, origin);
+        }
+
+        if (isBlockedHostname(parsed.hostname)) {
+          return jsonResponse(
+            { error: 'Probing internal, private, or metadata IP ranges is restricted' },
+            403,
+            origin
+          );
+        }
+
+        // Cache in Cloudflare Cache API for 30 seconds
+        const cacheKey = new Request(url.toString(), request);
+        let cache: any = null;
+        try {
+          cache = (caches as any).default;
+          if (cache) {
+            const hit = await cache.match(cacheKey);
+            if (hit) return hit;
+          }
+        } catch {
+          // Ignore cache errors in local development or test mocks
+        }
+
+        const startTime = performance.now();
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+        try {
+          const resp = await fetch(parsed.toString(), {
+            method: 'GET',
+            headers: {
+              'User-Agent':
+                'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 (TableView-Status-Probe/1.0)',
+              'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+              'Range': 'bytes=0-2048',
+            },
+            redirect: 'follow',
+            signal: controller.signal,
+          });
+          clearTimeout(timeoutId);
+
+          const latencyMs = Math.round(performance.now() - startTime);
+          const colo = (request as any).cf?.colo || 'Edge';
+
+          let status: 'UP' | 'RESTRICTED' | 'DOWN' = 'UP';
+          if (resp.status >= 500) {
+            status = 'DOWN';
+          } else if (resp.status === 401 || resp.status === 403) {
+            status = 'RESTRICTED';
+          }
+
+          const result = {
+            domain: parsed.hostname,
+            targetUrl: parsed.toString(),
+            finalUrl: resp.url,
+            status,
+            httpStatus: resp.status,
+            httpStatusText: resp.statusText || (resp.status === 200 ? 'OK' : 'Response Received'),
+            responseTimeMs: latencyMs,
+            server: resp.headers.get('server') || 'Hidden / Protected',
+            checkedFrom: `Cloudflare ${colo}`,
+            timestamp: Date.now(),
+          };
+
+          const response = jsonResponse(result, 200, origin);
+          response.headers.set('Cache-Control', 'public, max-age=30');
+          if (cache) {
+            try {
+              await cache.put(cacheKey, response.clone());
+            } catch {
+              // Ignore cache put error
+            }
+          }
+          return response;
+        } catch (err: any) {
+          clearTimeout(timeoutId);
+          const latencyMs = Math.round(performance.now() - startTime);
+          const isTimeout = err.name === 'AbortError';
+
+          const result = {
+            domain: parsed.hostname,
+            targetUrl: parsed.toString(),
+            finalUrl: parsed.toString(),
+            status: 'DOWN' as const,
+            httpStatus: isTimeout ? 504 : 0,
+            httpStatusText: isTimeout ? 'Gateway Timeout' : 'DNS / Connection Failed',
+            errorDetails: isTimeout ? 'Target server timed out after 8,000ms' : (err.message || 'Host unreachable'),
+            responseTimeMs: latencyMs,
+            server: 'Unavailable',
+            checkedFrom: `Cloudflare ${(request as any).cf?.colo || 'Edge'}`,
+            timestamp: Date.now(),
+          };
+
+          return jsonResponse(result, 200, origin);
+        }
+      }
+
+      // 9. GET /api/ai/status (Check Gemini AI availability)
+      if (url.pathname === '/api/ai/status' && request.method === 'GET') {
+        const hasKey = Boolean(env.GEMINI_API_KEY?.trim());
+        return jsonResponse(
+          {
+            available: hasKey,
+            model: 'gemini-2.0-flash',
+            hasServerKey: hasKey,
+          },
+          200,
+          origin
+        );
+      }
+
+      // 10. POST /api/ai/generate (Gemini Streaming & Standard AI Gateway)
+      if (url.pathname === '/api/ai/generate') {
+        return handleAiGenerate(request, env, origin);
       }
 
       return jsonResponse({ error: 'Endpoint not found' }, 404, origin);

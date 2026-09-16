@@ -216,4 +216,10 @@ export const STATIC_PAGE_META: Record<string, PageMeta> = {
       'Compress and optimize WebP images directly in your browser. Reduce file size while preserving high visual fidelity and alpha transparency. 100% private.',
     canonical: '/compress-webp',
   },
+  '/is-it-down': {
+    title: 'Is It Down Right Now? Free Website Status & Uptime Checker | TableView.dev',
+    description:
+      'Check if a website is down for everyone or just you. Instant real-time server status and response code tested from global edge nodes.',
+    canonical: '/is-it-down',
+  },
 };

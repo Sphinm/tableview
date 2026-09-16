@@ -21,7 +21,8 @@ import {
   SlidersHorizontal,
   Download,
   Braces,
-  X
+  X,
+  Key
 } from 'lucide-react';
 import {
   type ColumnSchema,
@@ -36,9 +37,18 @@ import {
   getFileContentAsText,
   parseJsonContent
 } from '../lib/duckdb';
+import {
+  getStoredGeminiApiKey,
+  setStoredGeminiApiKey,
+  clearStoredGeminiApiKey,
+  checkAiStatus,
+  streamGenerateDuckDbSql,
+  type AiStatus
+} from '../lib/gemini';
 import { JsonView } from './JsonView';
 import { type ToolConfig } from '../data/tools';
 import { buildSearchFilter } from '../lib/sqlUtils';
+
 
 export interface SheetOption {
   name: string;
@@ -190,6 +200,20 @@ export const DataView = ({
   const [isExporting, setIsExporting] = useState<string | null>(null);
   const [parquetCodec, setParquetCodec] = useState<'ZSTD' | 'SNAPPY' | 'UNCOMPRESSED'>('ZSTD');
   const [showParquetModal, setShowParquetModal] = useState<boolean>(false);
+
+  // AI SQL Copilot state
+  const [aiPrompt, setAiPrompt] = useState<string>('');
+  const [isAiGenerating, setIsAiGenerating] = useState<boolean>(false);
+  const [aiError, setAiError] = useState<string | null>(null);
+  const [showAiKeyModal, setShowAiKeyModal] = useState<boolean>(false);
+  const [customApiKey, setCustomApiKey] = useState<string>(() => getStoredGeminiApiKey() || '');
+  const [aiStatus, setAiStatus] = useState<AiStatus | null>(null);
+  const aiAbortRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    checkAiStatus().then(setAiStatus).catch(() => {});
+  }, []);
+
 
   /**
    * Marks a query as in-flight.
@@ -479,6 +503,58 @@ export const DataView = ({
     setActiveTab('sql');
   };
 
+  // Handle Gemini AI SQL Generation
+  const handleGenerateAiSql = async (overridePrompt?: string) => {
+    const promptToUse = (overridePrompt || aiPrompt).trim();
+    if (!promptToUse || isAiGenerating) return;
+
+    if (overridePrompt) {
+      setAiPrompt(overridePrompt);
+    }
+
+    setIsAiGenerating(true);
+    setAiError(null);
+    setSqlError(null);
+
+    if (aiAbortRef.current) {
+      aiAbortRef.current.abort();
+    }
+    const controller = new AbortController();
+    aiAbortRef.current = controller;
+
+    try {
+      setCustomSql('-- Generating DuckDB SQL with Gemini AI...');
+      let scanExpr = `'${tableName}'`;
+      if (fileType === 'parquet') scanExpr = `parquet_scan('${tableName}')`;
+      else if (fileType === 'csv') scanExpr = `read_csv_auto('${tableName}')`;
+      else if (fileType === 'json') scanExpr = `read_json_auto('${tableName}')`;
+
+      const generated = await streamGenerateDuckDbSql({
+        userPrompt: promptToUse,
+        columns: columns.map(c => ({ name: c.name, type: c.type })),
+        tableName: scanExpr,
+        sampleRows: rows.slice(0, 5),
+        customApiKey: customApiKey || undefined,
+        signal: controller.signal,
+        onChunk: (cleanSql) => {
+          setCustomSql(cleanSql);
+        },
+      });
+
+      setCustomSql(generated);
+    } catch (err: any) {
+      if (err.name === 'AbortError') return;
+      const msg = err.message || 'AI generation failed';
+      setAiError(msg);
+      if (msg.toLowerCase().includes('api key') || msg.toLowerCase().includes('configured')) {
+        setShowAiKeyModal(true);
+      }
+    } finally {
+      setIsAiGenerating(false);
+      aiAbortRef.current = null;
+    }
+  };
+
   const totalPages = Math.ceil(totalRows / pageSize);
 
   // Worksheets of an uploaded workbook. Selecting one swaps the active table;
@@ -661,7 +737,11 @@ export const DataView = ({
             }`}
           >
             <Terminal className="size-4" />
-            SQL Console
+            <span>SQL Console</span>
+            <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-indigo-50 text-[10px] font-bold text-indigo-600 border border-indigo-100/80 shadow-2xs">
+              <Sparkles className="size-2.5 text-indigo-500 fill-indigo-400/20" />
+              AI
+            </span>
           </button>
         </div>
 
@@ -895,6 +975,125 @@ export const DataView = ({
             <span className="text-[11px] text-slate-500 font-mono">
               Press <kbd className="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-600">⌘+Enter</kbd> to execute
             </span>
+          </div>
+
+          {/* Gemini AI SQL Copilot Card */}
+          <div className="p-3.5 rounded-xl bg-gradient-to-r from-indigo-50/80 via-purple-50/40 to-blue-50/70 border border-indigo-100/90 shadow-2xs space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <span className="flex items-center justify-center size-6 rounded-lg bg-indigo-600 text-white shadow-xs">
+                  <Sparkles className="size-3.5 fill-white/20" />
+                </span>
+                <div>
+                  <span className="text-xs font-bold text-slate-900 tracking-tight flex items-center gap-1.5">
+                    Gemini AI SQL Copilot
+                    <span className="px-1.5 py-0.5 rounded-md bg-indigo-100/90 text-[10px] font-medium text-indigo-700">
+                      gemini-2.0-flash
+                    </span>
+                  </span>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setShowAiKeyModal(true)}
+                className="flex items-center gap-1 text-[11px] text-slate-500 hover:text-indigo-600 font-medium transition-colors px-2 py-1 rounded-lg hover:bg-white/80 border border-transparent hover:border-slate-200 cursor-pointer"
+                title="Configure custom Gemini API key"
+              >
+                <Key className="size-3 text-slate-400" />
+                {customApiKey ? 'Custom Key Set' : 'API Key Settings'}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey && !isAiGenerating) {
+                      e.preventDefault();
+                      handleGenerateAiSql();
+                    }
+                  }}
+                  placeholder={`Ask in plain English (e.g. 'Show top 10 rows by ${columns[0]?.name || 'id'}', 'Group by ${columns[1]?.name || 'category'} and count')...`}
+                  className="w-full pl-3.5 pr-8 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 text-slate-900 placeholder:text-slate-400 transition-all shadow-xs"
+                />
+                {aiPrompt && (
+                  <button
+                    type="button"
+                    onClick={() => setAiPrompt('')}
+                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 text-sm cursor-pointer"
+                  >
+                    ×
+                  </button>
+                )}
+              </div>
+
+              <button
+                type="button"
+                onClick={() => handleGenerateAiSql()}
+                disabled={isAiGenerating || !aiPrompt.trim()}
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs disabled:opacity-50 disabled:cursor-not-allowed transition-all cursor-pointer shrink-0"
+              >
+                {isAiGenerating ? (
+                  <>
+                    <RefreshCw className="size-3.5 animate-spin" />
+                    <span>Writing SQL...</span>
+                  </>
+                ) : (
+                  <>
+                    <Sparkles className="size-3.5" />
+                    <span>Generate SQL</span>
+                  </>
+                )}
+              </button>
+            </div>
+
+            {/* Smart Suggested Prompts based on active table columns */}
+            <div className="flex items-center gap-1.5 flex-wrap pt-0.5">
+              <span className="text-[10px] text-slate-500 font-medium mr-1">Suggestions:</span>
+              <button
+                type="button"
+                onClick={() => handleGenerateAiSql(`Show the top 10 rows with highest values for ${columns[0]?.name || 'id'}`)}
+                className="px-2 py-0.5 rounded-md bg-white/80 hover:bg-white text-[10px] text-indigo-700 hover:text-indigo-900 border border-indigo-200/60 transition-colors cursor-pointer"
+              >
+                Top 10 by {columns[0]?.name || 'id'}
+              </button>
+              {columns[1] && (
+                <button
+                  type="button"
+                  onClick={() => handleGenerateAiSql(`Group by "${columns[1].name}" and calculate count and percentages`)}
+                  className="px-2 py-0.5 rounded-md bg-white/80 hover:bg-white text-[10px] text-indigo-700 hover:text-indigo-900 border border-indigo-200/60 transition-colors cursor-pointer"
+                >
+                  Group by {columns[1].name}
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={() => handleGenerateAiSql('Check for duplicate rows and count null values across columns')}
+                className="px-2 py-0.5 rounded-md bg-white/80 hover:bg-white text-[10px] text-indigo-700 hover:text-indigo-900 border border-indigo-200/60 transition-colors cursor-pointer"
+              >
+                Find duplicates & nulls
+              </button>
+            </div>
+
+            {aiError && (
+              <div className="p-2.5 rounded-lg bg-red-50 border border-red-200 text-red-700 text-[11px] flex items-start justify-between gap-2">
+                <div className="flex items-start gap-1.5">
+                  <AlertCircle className="size-3.5 shrink-0 text-red-500 mt-0.5" />
+                  <span>{aiError}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAiKeyModal(true)}
+                  className="underline font-semibold text-red-800 hover:text-red-900 shrink-0 cursor-pointer"
+                >
+                  Configure Key
+                </button>
+              </div>
+            )}
           </div>
 
           {/* Quick Query Template Chips */}
@@ -1303,6 +1502,112 @@ export const DataView = ({
                 fileName={`${tableName}_${inspectingCell.columnName}_row${inspectingCell.rowIndex}.json`}
                 initialExpandedDepth={3}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Gemini API Key Configuration Modal */}
+      {showAiKeyModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-xl bg-indigo-50 border border-indigo-100 flex items-center justify-center text-indigo-600 shadow-2xs">
+                  <Key className="size-4" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">Gemini AI Configuration</h3>
+                  <p className="text-[11px] text-slate-500">Cloudflare Worker & Custom Key</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setShowAiKeyModal(false)}
+                className="size-7 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 flex items-center justify-center cursor-pointer transition-colors"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+
+            <div className="space-y-3 text-xs text-slate-600">
+              <p>
+                TableView connects to Google Gemini AI to generate DuckDB SQL queries. By default, requests route through the Cloudflare Worker with <code>GEMINI_API_KEY</code>.
+              </p>
+              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 space-y-1.5">
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-500">Cloudflare Worker:</span>
+                  <span className={`font-semibold ${aiStatus?.hasServerKey ? 'text-emerald-600' : 'text-amber-600'}`}>
+                    {aiStatus?.hasServerKey ? '✓ Server Key Active' : 'No Worker Key Configured'}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-slate-500">Model:</span>
+                  <span className="font-mono text-slate-700">gemini-2.0-flash</span>
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-slate-700 mb-1">
+                  Custom Gemini API Key (Optional Override)
+                </label>
+                <input
+                  type="password"
+                  value={customApiKey}
+                  onChange={(e) => setCustomApiKey(e.target.value)}
+                  placeholder="AIzaSy..."
+                  className="w-full px-3 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 font-mono text-slate-900 shadow-2xs"
+                />
+                <p className="text-[10px] text-slate-400 mt-1">
+                  Stored securely in your local browser storage. Never shared.
+                  {' '}
+                  <a
+                    href="https://aistudio.google.com/app/apikey"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-indigo-600 hover:underline font-medium"
+                  >
+                    Get a free API key at Google AI Studio ↗
+                  </a>
+                </p>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between pt-2 border-t border-slate-100">
+              {customApiKey ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    clearStoredGeminiApiKey();
+                    setCustomApiKey('');
+                    setShowAiKeyModal(false);
+                  }}
+                  className="text-xs text-red-600 hover:text-red-700 hover:underline cursor-pointer"
+                >
+                  Clear Custom Key
+                </button>
+              ) : <div />}
+
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setShowAiKeyModal(false)}
+                  className="px-3.5 py-1.5 rounded-xl border border-slate-200 text-xs text-slate-600 hover:bg-slate-50 cursor-pointer transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setStoredGeminiApiKey(customApiKey);
+                    setAiError(null);
+                    setShowAiKeyModal(false);
+                  }}
+                  className="btn-primary px-4 py-1.5 rounded-xl text-xs font-semibold cursor-pointer shadow-xs"
+                >
+                  Save Settings
+                </button>
+              </div>
             </div>
           </div>
         </div>

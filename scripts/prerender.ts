@@ -1439,6 +1439,104 @@ function resolvePage(url: string, canonical: string): ResolvedPage {
     }
   }
 
+  // --- Website Status & Uptime Checker ------------------------------------
+  if (canonical === '/is-it-down') {
+    const meta = STATIC_PAGE_META['/is-it-down']!;
+    const faqs = [
+      {
+        q: 'How does TableView test whether a website is down?',
+        a: 'When you test a domain or URL, our Cloudflare Workers edge nodes dispatch a live HTTP probe request directly to the remote server using standard browser headers. This tests network connectivity, DNS resolution, TLS/SSL certificates, HTTP response status codes, and round-trip latency without browser CORS restrictions.',
+      },
+      {
+        q: 'What is the difference between "Down for everyone" and "Just you"?',
+        a: '"Down for everyone" means the remote web server, DNS, or hosting infrastructure returned a 5xx error or connection timeout from our global edge nodes. "Just you" means the website is online and serving traffic properly to the public internet, but your local network, DNS resolver, firewall, or ISP routing is blocking your device.',
+      },
+      {
+        q: 'How do I fix a website that is UP but I cannot access?',
+        a: 'First, flush your local operating system DNS cache using "sudo dscacheutil -flushcache" (macOS) or "ipconfig /flushdns" (Windows). Second, perform a hard refresh in your browser (Ctrl+F5 or Cmd+Shift+R) or test in an Incognito/Private window. Finally, check if your VPN or proxy is experiencing routing issues, or switch to a public DNS such as Cloudflare (1.1.1.1) or Google (8.8.8.8).',
+      },
+      {
+        q: 'What causes a website to experience a service outage?',
+        a: 'Common causes of website downtime include distributed denial-of-service (DDoS) attacks, DNS misconfigurations, expired SSL/TLS certificates, cloud provider outages (such as AWS, GCP, or Cloudflare incidents), application code errors, and database connection pool exhaustion.',
+      },
+      {
+        q: 'What do HTTP 502 Bad Gateway and 503 Service Unavailable errors mean?',
+        a: 'A 502 Bad Gateway error indicates that an edge reverse proxy received an invalid response from the upstream origin application server. A 503 Service Unavailable error typically means the server is overloaded, undergoing scheduled maintenance, or temporarily unable to handle incoming requests.',
+      },
+    ];
+
+    const label = 'Is It Down Right Now? Website Status & Uptime Checker';
+    const articleHtml = `
+      <article style="max-width: 860px; margin: 0 auto; padding: 3rem 1.5rem; color: #334155; line-height: 1.8;">
+        <header style="margin-bottom: 2.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem;">
+          <span style="background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px;">Cloudflare Edge Probing · Real-Time</span>
+          <h1 style="font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-top: 0.75rem; margin-bottom: 1rem;">${escapeHtml(label)}</h1>
+          <p style="font-size: 1.15rem; color: #64748b; line-height: 1.7;">${escapeHtml(meta.description)}</p>
+        </header>
+        <section style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 2rem; margin-bottom: 2.5rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+          <h2 style="font-size: 1.4rem; font-weight: 700; color: #0284c7; margin-bottom: 0.75rem;">Global Edge Availability Diagnostics</h2>
+          <p style="color: #334155; margin-bottom: 1rem;">Check if any website, API endpoint, or online service is experiencing downtime. Tests run across Cloudflare's worldwide edge Anycast network to eliminate false alarms caused by local connection drops, bad Wi-Fi, or ISP routing glitches.</p>
+          <p style="color: #64748b; font-size: 0.9rem; margin: 0;">Diagnose real-time HTTP status codes (200, 301, 403, 500, 502, 503, 504), round-trip latency in milliseconds, redirect hops, and reverse proxy server software.</p>
+        </section>
+        <section style="margin-bottom: 2.5rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 1rem;">How to Troubleshoot Website Connectivity Issues</h2>
+          <p>If our edge network verifies that a target domain is online and operational, but you still cannot connect, follow these diagnostic steps:</p>
+          <ul style="line-height: 2;">
+            <li><strong>Flush DNS Cache:</strong> Clear local resolver records to force fresh IP address lookups from authoritative nameservers.</li>
+            <li><strong>Bypass Browser Cache:</strong> Open a private/incognito window to prevent corrupt cookies, service workers, or HTTP cache headers from serving obsolete error pages.</li>
+            <li><strong>Check VPN &amp; Proxy Settings:</strong> Disconnect corporate VPNs or third-party proxies that might be blocked by Cloudflare or Akamai WAF rules.</li>
+            <li><strong>Configure Public DNS:</strong> Switch your router or device DNS settings to Cloudflare 1.1.1.1 or Google 8.8.8.8 to bypass ISP DNS poisoning.</li>
+          </ul>
+        </section>
+        <section style="margin-top: 3rem; border-top: 1px solid #e2e8f0; padding-top: 2rem;">
+          <h2 style="font-size: 1.5rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+          ${faqs
+            .map(
+              (f) => `
+            <div style="margin-bottom: 1.5rem; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+              <h3 style="font-size: 1.1rem; font-weight: 600; color: #0f172a; margin-bottom: 0.5rem;">${escapeHtml(f.q)}</h3>
+              <p style="color: #64748b; line-height: 1.7; margin: 0;">${escapeHtml(f.a)}</p>
+            </div>
+          `
+            )
+            .join('')}
+        </section>
+      </article>
+    `;
+
+    return {
+      ...meta,
+      route,
+      faqs,
+      h1: label,
+      intro: meta.description,
+      articleHtml,
+      jsonLd: [
+        {
+          '@type': 'WebApplication',
+          name: label,
+          url: `${SITE}/is-it-down`,
+          description: meta.description,
+          applicationCategory: 'UtilityApplication',
+          operatingSystem: 'All',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: faqs.map((f) => ({
+            '@type': 'Question',
+            name: f.q,
+            acceptedAnswer: { '@type': 'Answer', text: f.a },
+          })),
+        },
+        breadcrumb([
+          { name: 'Home', url: '/' },
+          { name: 'Website Status Checker', url: '/is-it-down' },
+        ]),
+      ],
+    };
+  }
+
   // --- Calculators with their own hand-written meta -------------------------
   const calc = CALCULATOR_META[canonical];
   if (calc) {

@@ -38,6 +38,7 @@ const APP_ROUTES = new Set([
   '/compress-png',
   '/compress-jpg',
   '/compress-webp',
+  '/is-it-down',
   '/about',
   '/contact',
   '/privacy',

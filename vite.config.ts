@@ -53,20 +53,144 @@ function parseRequestBody(req: import('node:http').IncomingMessage): Promise<any
   });
 }
 
+function readKeyFromDevVars(): string | undefined {
+  try {
+    const devVarsPath = path.join(rootDir, '.dev.vars');
+    if (fs.existsSync(devVarsPath)) {
+      const content = fs.readFileSync(devVarsPath, 'utf8');
+      const match = content.match(/^GEMINI_API_KEY=(.*)$/m);
+      if (match) return match[1].trim().replace(/^["']|["']$/g, '');
+    }
+  } catch {
+    // Ignore
+  }
+  return undefined;
+}
+
 /**
- * Development middleware to handle /api/auth endpoints when running Vite locally.
+ * Development middleware to handle /api/ endpoints when running Vite locally.
  */
 function devAuthPlugin() {
   return {
     name: 'tableview-dev-auth',
     configureServer(server: import('vite').ViteDevServer) {
       server.middlewares.use(async (req, res, next) => {
-        if (!req.url || !req.url.startsWith('/api/auth/')) {
+        if (!req.url || !req.url.startsWith('/api/')) {
           return next();
         }
 
         const pathname = req.url.split('?')[0];
         res.setHeader('Content-Type', 'application/json');
+
+        if (pathname === '/api/ai/status' && req.method === 'GET') {
+          const envKey = process.env.GEMINI_API_KEY || readKeyFromDevVars();
+          const hasKey = Boolean(envKey?.trim());
+          res.statusCode = 200;
+          res.end(
+            JSON.stringify({
+              available: hasKey,
+              model: 'gemini-2.0-flash',
+              hasServerKey: hasKey,
+            })
+          );
+          return;
+        }
+
+        if (pathname === '/api/ai/generate' && req.method === 'POST') {
+          const body = await parseRequestBody(req);
+          const envKey = process.env.GEMINI_API_KEY || readKeyFromDevVars();
+          const clientKey = (req.headers['x-gemini-api-key'] as string)?.trim();
+          const apiKey = clientKey || envKey?.trim();
+
+          if (!apiKey) {
+            res.statusCode = 401;
+            res.end(
+              JSON.stringify({
+                error:
+                  'Gemini API key is not configured. Please set GEMINI_API_KEY in .dev.vars or provide the X-Gemini-Api-Key header.',
+                code: 'MISSING_API_KEY',
+              })
+            );
+            return;
+          }
+
+          const prompt = body.prompt?.trim();
+          const contents = body.contents || (prompt ? [{ role: 'user', parts: [{ text: prompt }] }] : null);
+
+          if (!contents || contents.length === 0) {
+            res.statusCode = 400;
+            res.end(JSON.stringify({ error: 'Either prompt or contents array is required' }));
+            return;
+          }
+
+          const model = body.model?.trim() || 'gemini-2.0-flash';
+          const isStream = body.stream !== false;
+
+          const googlePayload: Record<string, any> = { contents };
+          if (body.systemInstruction) {
+            googlePayload.system_instruction = { parts: [{ text: body.systemInstruction }] };
+          }
+          if (body.generationConfig) {
+            googlePayload.generationConfig = body.generationConfig;
+          }
+
+          const endpointAction = isStream ? 'streamGenerateContent?alt=sse' : 'generateContent';
+          const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:${endpointAction}&key=${encodeURIComponent(apiKey)}`;
+
+          try {
+            const upstreamRes = await fetch(googleUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(googlePayload),
+            });
+
+            if (!upstreamRes.ok) {
+              const errText = await upstreamRes.text();
+              let parsedErr: any = null;
+              try {
+                parsedErr = JSON.parse(errText);
+              } catch {
+                parsedErr = { error: errText };
+              }
+              res.statusCode = upstreamRes.status >= 400 && upstreamRes.status < 600 ? upstreamRes.status : 500;
+              res.end(
+                JSON.stringify({
+                  error: parsedErr.error?.message || parsedErr.message || 'Gemini API call failed',
+                  upstreamStatus: upstreamRes.status,
+                  details: parsedErr,
+                })
+              );
+              return;
+            }
+
+            if (isStream) {
+              res.writeHead(200, {
+                'Content-Type': 'text/event-stream; charset=utf-8',
+                'Cache-Control': 'no-cache, no-transform',
+                'Connection': 'keep-alive',
+              });
+
+              if (upstreamRes.body) {
+                const reader = upstreamRes.body.getReader();
+                while (true) {
+                  const { done, value } = await reader.read();
+                  if (done) break;
+                  res.write(value);
+                }
+              }
+              res.end();
+            } else {
+              const data = await upstreamRes.json();
+              res.statusCode = 200;
+              res.end(JSON.stringify(data));
+            }
+          } catch (err: any) {
+            console.error('[dev-ai] Gemini gateway error:', err);
+            res.statusCode = 502;
+            res.end(JSON.stringify({ error: err?.message || 'Failed to connect to Gemini API' }));
+          }
+          return;
+        }
 
         if (pathname === '/api/auth/google' && req.method === 'POST') {
           const body = await parseRequestBody(req);

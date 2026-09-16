@@ -40,6 +40,7 @@ const JsonFormatter = lazy(() => import('./pages/JsonFormatter').then(m => ({ de
 const SqlFormatter = lazy(() => import('./pages/SqlFormatter').then(m => ({ default: m.SqlFormatter })));
 const VideoCompressor = lazy(() => import('./pages/VideoCompressor').then(m => ({ default: m.VideoCompressor })));
 const ImageCompressor = lazy(() => import('./pages/ImageCompressor').then(m => ({ default: m.ImageCompressor })));
+const WebsiteStatusChecker = lazy(() => import('./pages/WebsiteStatusChecker').then(m => ({ default: m.WebsiteStatusChecker })));
 import { AuthProvider } from './lib/authContext';
 import { AuthModal } from './components/AuthModal';
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
@@ -403,6 +404,9 @@ export function App() {
 
       case '/compress-webp':
         return <ImageCompressor />;
+
+      case '/is-it-down':
+        return <WebsiteStatusChecker />;
 
       case '/finance-calculator':
       case '/calculator':

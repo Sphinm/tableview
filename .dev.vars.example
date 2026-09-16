@@ -1,0 +1,17 @@
+# TableView Cloudflare Worker Local Environment Secrets
+# Copy this file to .dev.vars for local wrangler dev testing:
+#   cp .dev.vars.example .dev.vars
+#
+# For production deployment on Cloudflare:
+#   bun x wrangler secret put GEMINI_API_KEY
+#   bun x wrangler secret put JWT_SECRET
+#   bun x wrangler secret put RESEND_API_KEY
+
+# Google Gemini API Key (Get one free at https://aistudio.google.com/)
+GEMINI_API_KEY=your_gemini_api_key_here
+
+# JWT Secret for session signing
+JWT_SECRET=tableview-jwt-secret-local-dev-key
+
+# Optional Resend API key for email magic links
+RESEND_API_KEY=
