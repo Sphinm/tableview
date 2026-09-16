@@ -121,6 +121,8 @@ function generateHeaderHtml(): string {
           <span style="font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 9999px; background: #0369a1; color: #e0f2fe;">100% In-Browser</span>
         </a>
         <nav style="display: flex; gap: 1.5rem; font-size: 0.875rem; flex-wrap: wrap; font-weight: 500;">
+          <a href="/video-compressor" style="color: #cbd5e1; text-decoration: none;">Video Compressor</a>
+          <a href="/image-compressor" style="color: #cbd5e1; text-decoration: none;">Image Compressor</a>
           <a href="/finance-calculator" style="color: #cbd5e1; text-decoration: none;">Calculators</a>
           <a href="/data-tools" style="color: #cbd5e1; text-decoration: none;">Data Tools</a>
           <a href="/guides" style="color: #cbd5e1; text-decoration: none;">Guides</a>
@@ -168,6 +170,15 @@ function generateFooterHtml(): string {
               <li><a href="/sql-workbench" style="color: #94a3b8; text-decoration: none;">DuckDB SQL Console</a></li>
               <li><a href="/json-formatter" style="color: #94a3b8; text-decoration: none;">JSON Formatter & Prettifier</a></li>
               <li><a href="/sql-formatter" style="color: #94a3b8; text-decoration: none;">SQL Query Formatter</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 style="color: #f8fafc; font-weight: 700; margin-bottom: 0.85rem; font-size: 0.95rem;">Media & Compression Tools</h4>
+            <ul style="list-style: none; padding: 0; margin: 0; line-height: 2.1;">
+              <li><a href="/video-compressor" style="color: #94a3b8; text-decoration: none;">Video Compressor (WebAssembly)</a></li>
+              <li><a href="/image-compressor" style="color: #94a3b8; text-decoration: none;">Image Compressor (Batch & ZIP)</a></li>
+              <li><a href="/compress-video" style="color: #94a3b8; text-decoration: none;">Reduce Video Size (MP4/WebM)</a></li>
+              <li><a href="/compress-image" style="color: #94a3b8; text-decoration: none;">Batch Photo Optimizer (WebP/JPG)</a></li>
             </ul>
           </div>
           <div>
@@ -435,7 +446,213 @@ function generateStaticPageContentHtml(canonical: string): string {
     `;
   }
 
+  if (canonical === '/video-compressor') {
+    return generateVideoCompressorContentHtml();
+  }
+
+  if (canonical === '/image-compressor') {
+    return generateImageCompressorContentHtml();
+  }
+
   return '';
+}
+
+const VIDEO_COMPRESSOR_FAQS = [
+  {
+    q: 'How does in-browser video compression work without uploading to a server?',
+    a: 'TableView uses FFmpeg compiled directly to WebAssembly (Wasm). When you drop a video into the browser, the WebAssembly engine runs inside a local sandbox using your device CPU and RAM. The video data is decoded, re-encoded using H.264/AAC, and exported as a new MP4 or WebM file without a single byte ever being transmitted across the network.',
+  },
+  {
+    q: 'Will TableView add a watermark to my compressed video?',
+    a: 'No. TableView provides 100% clean video export without watermarks, branding frames, intro/outro cards, or quality downgrades. Unlike cloud services that insert watermarks to force you into paid subscriptions, TableView runs locally on your machine for free.',
+  },
+  {
+    q: 'Is there a file size limit for video compression?',
+    a: 'Because video processing occurs entirely client-side without consuming expensive cloud server bandwidth, TableView does not enforce artificial 100MB or 500MB upload limits. You can compress any video that your local device memory (RAM) can accommodate.',
+  },
+  {
+    q: 'How can I compress a video to an exact target size (e.g. 25MB for Discord or 16MB for WhatsApp)?',
+    a: 'Switch to the Target Size mode in our right-hand control panel and enter your desired target megabytes (e.g. 25MB for Discord or 16MB for WhatsApp). The engine dynamically calculates the required video bitrate based on the exact duration of your clip to ensure the output matches your target threshold.',
+  },
+  {
+    q: 'Which video formats and resolutions are supported?',
+    a: 'TableView accepts MP4, MOV, WebM, AVI, and MKV files. You can maintain original resolution or downscale to 1080p Full HD, 720p HD, or 480p SD, adjust Constant Rate Factor (CRF 18-35), and optionally remove or compress audio tracks.',
+  },
+];
+
+const IMAGE_COMPRESSOR_FAQS = [
+  {
+    q: 'How does batch image compression work in TableView?',
+    a: 'TableView uses high-performance HTML5 Canvas rendering and browser-native image codecs. You can drag and drop dozens of JPEG, PNG, or WebP images at once; each image is processed concurrently in browser memory, with real-time compression ratio calculation and a 1-click ZIP export.',
+  },
+  {
+    q: 'How does the interactive before-and-after curtain slider help evaluate quality?',
+    a: 'The visual curtain comparison slider lets you scrub horizontally across the image to compare the original uncompressed source directly against the compressed result. This allows you to verify that text remains crisp and details are preserved without compression artifacts before downloading.',
+  },
+  {
+    q: 'Which format should I choose: WebP, JPEG, or PNG?',
+    a: 'WebP provides superior compression efficiency, yielding 25%–35% smaller file sizes than JPEG at equivalent visual quality while supporting transparency. JPEG is best for universal compatibility across legacy platforms, and PNG is recommended for graphics with sharp geometric edges, logos, and alpha transparency.',
+  },
+  {
+    q: 'Are my images uploaded to any cloud server or stored online?',
+    a: 'Never. All image rendering, downscaling, compression, and ZIP packaging take place strictly within your local browser sandbox. No image data or metadata is ever sent to any remote server or third party.',
+  },
+  {
+    q: 'Can I resize image dimensions in pixels during compression?',
+    a: 'Yes. You can preserve the original aspect ratio while capping maximum dimensions to presets such as 1920px (Full HD), 1280px (HD), 800px (Web standard), or keeping original dimensions.',
+  },
+];
+
+function generateVideoCompressorContentHtml(): string {
+  return `
+    <article style="max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; color: #cbd5e1; line-height: 1.8;">
+      <header style="margin-bottom: 2.5rem; border-bottom: 1px solid #1e293b; padding-bottom: 1.5rem;">
+        <span style="background: #022c22; color: #6ee7b7; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; border: 1px solid #065f46;">Pure Client-Side WebAssembly · Zero Server Upload</span>
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: #f8fafc; margin-top: 0.75rem; margin-bottom: 1rem;">Free Online Video Compressor: 100% In-Browser &amp; No Watermark</h1>
+        <p style="font-size: 1.15rem; color: #94a3b8; line-height: 1.7;">Compress MP4, MOV, WebM, and MKV video files directly inside your browser using WebAssembly FFmpeg. Reduce file sizes by up to 90% without uploading bytes to remote servers, without watermarks, and with synchronized before-and-after video playback preview.</p>
+      </header>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem;">Why In-Browser Video Compression Changes Everything</h2>
+        <p>Traditional online video compressors (like Clideo, VideoCompress.ai, or FreeConvert) require you to upload large multi-gigabyte video files to remote cloud servers. This introduces three critical bottlenecks: slow upload times on limited connections, severe privacy risks for confidential footage or personal family videos, and aggressive paywalls with watermarks on free tiers.</p>
+        <p><strong>TableView solves this entirely on the client side:</strong> By compiling the industry-standard FFmpeg multimedia framework to WebAssembly (Wasm), video decoding, bitrate optimization, and H.264 re-encoding execute 100% inside your browser tab on your local CPU and GPU. Your video never leaves your machine.</p>
+      </section>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem;">In-Browser WebAssembly vs. Traditional Cloud Video Compressors</h2>
+        <div style="overflow-x: auto; margin: 1.5rem 0;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+            <thead>
+              <tr style="background: #0f172a; color: #f8fafc;">
+                <th style="border: 1px solid #334155; padding: 0.75rem; text-align: left;">Feature / Metric</th>
+                <th style="border: 1px solid #334155; padding: 0.75rem; text-align: left; color: #34d399;">TableView.dev (Wasm)</th>
+                <th style="border: 1px solid #334155; padding: 0.75rem; text-align: left; color: #f87171;">Traditional Cloud Compressors</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border: 1px solid #334155; padding: 0.75rem; font-weight: 600;">Data Privacy &amp; Security</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #34d399;">100% Private (0 bytes uploaded)</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #cbd5e1;">Uploaded to third-party cloud/S3 storage</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #334155; padding: 0.75rem; font-weight: 600;">Watermark Policy</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #34d399;">Zero Watermarks (Clean Video Export)</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #cbd5e1;">Branding watermark forced on free tiers</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #334155; padding: 0.75rem; font-weight: 600;">File Size Limitations</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #34d399;">No artificial cloud file caps</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #cbd5e1;">Strict 100 MB – 500 MB upload limits</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #334155; padding: 0.75rem; font-weight: 600;">Processing Latency</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #34d399;">Immediate local encoding (No upload delay)</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #cbd5e1;">Slow upload + cloud queue wait + download</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #334155; padding: 0.75rem; font-weight: 600;">Target File Size (MB)</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #34d399;">Exact target MB with auto-bitrate calculation</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #cbd5e1;">Coarse percentage estimates only</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem;">Optimized Compression Presets for Popular Platforms</h2>
+        <ul style="line-height: 2;">
+          <li><strong>Discord (25 MB / 50 MB limits):</strong> Set custom target to 24 MB to safely bypass Discord free attachment limits without losing 1080p visual sharpness.</li>
+          <li><strong>WhatsApp (16 MB limit):</strong> Compress smartphone 4K or 1080p videos down to 15 MB for instant messaging delivery.</li>
+          <li><strong>Email Attachments (20 MB / 25 MB):</strong> Shrink corporate presentations, screen recordings, and demos into lightweight email-ready MP4 files.</li>
+          <li><strong>Twitter / X (512 MB &amp; fast web streaming):</strong> Encode with web-optimized MP4 container flags for immediate video playback without buffering.</li>
+        </ul>
+      </section>
+
+      <section style="margin-top: 3rem; border-top: 1px solid #1e293b; padding-top: 2rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+        ${VIDEO_COMPRESSOR_FAQS.map(
+          (f) => `
+          <div style="margin-bottom: 1.5rem; background: #0b0f17; border: 1px solid #1e293b; border-radius: 0.75rem; padding: 1.25rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: #e2e8f0; margin-bottom: 0.5rem;">${escapeHtml(f.q)}</h3>
+            <p style="color: #94a3b8; line-height: 1.7; margin: 0;">${escapeHtml(f.a)}</p>
+          </div>
+        `
+        ).join('')}
+      </section>
+    </article>
+  `;
+}
+
+function generateImageCompressorContentHtml(): string {
+  return `
+    <article style="max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; color: #cbd5e1; line-height: 1.8;">
+      <header style="margin-bottom: 2.5rem; border-bottom: 1px solid #1e293b; padding-bottom: 1.5rem;">
+        <span style="background: #022c22; color: #6ee7b7; font-size: 0.75rem; font-weight: 600; padding: 0.2rem 0.6rem; border-radius: 9999px; border: 1px solid #065f46;">High-Speed In-Browser Canvas · Batch Processing &amp; ZIP</span>
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: #f8fafc; margin-top: 0.75rem; margin-bottom: 1rem;">Free Online Image Compressor: Batch JPG, PNG, WebP &amp; ZIP Export</h1>
+        <p style="font-size: 1.15rem; color: #94a3b8; line-height: 1.7;">Batch compress photos and graphics directly in your browser with 100% privacy. Features an interactive before-and-after curtain comparison slider, custom quality adjustments, pixel resizing, and one-click ZIP packaging.</p>
+      </header>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem;">Batch Compression Engine Powered by HTML5 Canvas</h2>
+        <p>Whether preparing product catalogs for e-commerce, optimizing web assets for Google PageSpeed Insights, or reducing smartphone photo storage, TableView provides an instant batch image optimization workstation. Drag and drop dozens of JPEG, PNG, or WebP files simultaneously; our canvas engine processes them in parallel directly in browser memory without sending a single pixel across the internet.</p>
+      </section>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem;">Format Comparison: WebP vs. JPEG vs. PNG</h2>
+        <div style="overflow-x: auto; margin: 1.5rem 0;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 0.875rem;">
+            <thead>
+              <tr style="background: #0f172a; color: #f8fafc;">
+                <th style="border: 1px solid #334155; padding: 0.75rem; text-align: left;">Format</th>
+                <th style="border: 1px solid #334155; padding: 0.75rem; text-align: left;">Recommended Use Cases</th>
+                <th style="border: 1px solid #334155; padding: 0.75rem; text-align: left;">Typical Size Savings</th>
+                <th style="border: 1px solid #334155; padding: 0.75rem; text-align: left;">Transparency Support</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="border: 1px solid #334155; padding: 0.75rem; font-weight: 600; color: #38bdf8;">WebP (Recommended)</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem;">Modern websites, mobile apps, e-commerce stores</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #34d399;">30% – 80% smaller than original</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem;">Yes (Full Alpha Channel)</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #334155; padding: 0.75rem; font-weight: 600; color: #f8fafc;">JPEG (.jpg)</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem;">Photographs, legacy platforms, email newsletters</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #34d399;">40% – 70% reduction</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem;">No</td>
+              </tr>
+              <tr>
+                <td style="border: 1px solid #334155; padding: 0.75rem; font-weight: 600; color: #f8fafc;">PNG (.png)</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem;">Logos, icons, UI screenshots with text</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem; color: #34d399;">20% – 45% lossless optimization</td>
+                <td style="border: 1px solid #334155; padding: 0.75rem;">Yes (Full Alpha Channel)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section style="margin-bottom: 2.5rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1rem;">Visual Curtain Split-Screen Inspection</h2>
+        <p>Lossy compression algorithms can introduce micro-artifacts, blurry edges, or banding in gradients. TableView includes an interactive horizontal curtain slider allowing you to scrub across the image at 100% zoom. Inspect pixels, text edges, and fine gradients before deciding to download.</p>
+      </section>
+
+      <section style="margin-top: 3rem; border-top: 1px solid #1e293b; padding-top: 2rem;">
+        <h2 style="font-size: 1.6rem; font-weight: 700; color: #f1f5f9; margin-bottom: 1.5rem;">Frequently Asked Questions</h2>
+        ${IMAGE_COMPRESSOR_FAQS.map(
+          (f) => `
+          <div style="margin-bottom: 1.5rem; background: #0b0f17; border: 1px solid #1e293b; border-radius: 0.75rem; padding: 1.25rem;">
+            <h3 style="font-size: 1.1rem; font-weight: 600; color: #e2e8f0; margin-bottom: 0.5rem;">${escapeHtml(f.q)}</h3>
+            <p style="color: #94a3b8; line-height: 1.7; margin: 0;">${escapeHtml(f.a)}</p>
+          </div>
+        `
+        ).join('')}
+      </section>
+    </article>
+  `;
 }
 
 /** Render Homepage semantic content */
@@ -481,6 +698,16 @@ function generateHomepageHtml(): string {
             <p style="color: #94a3b8; font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem;">Test the 70% Rule Maximum Allowable Offer (MAO), renovation draw schedules, and net profit margins.</p>
             <a href="/hard-money-calculator" style="font-size: 0.85rem; font-weight: 600; color: #38bdf8; text-decoration: none;">Analyze Fix & Flip →</a>
           </div>
+        </div>
+      </section>
+
+      <section style="margin-bottom: 4rem; background: linear-gradient(135deg, rgba(99,102,241,0.1), rgba(168,85,247,0.05)); border: 1px solid #3b82f6; border-radius: 1.25rem; padding: 2.5rem;">
+        <span style="background: #1e1b4b; color: #a5b4fc; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.75rem; border-radius: 9999px; display: inline-block; margin-bottom: 1rem; border: 1px solid #4338ca;">NEW · 100% PRIVATE IN-BROWSER</span>
+        <h2 style="font-size: 1.75rem; font-weight: 700; color: #f8fafc; margin-bottom: 1rem;">Client-Side Media Compression Studio</h2>
+        <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.7; margin-bottom: 1.5rem;">Compress MP4, MOV, WebM videos and JPEG, PNG, WebP images directly inside your browser using WebAssembly and Web Codecs. Zero server uploads, zero watermarks, zero quality compromises.</p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+          <a href="/video-compressor" style="background: #6366f1; color: #ffffff; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: 700; text-decoration: none;">Video Compressor →</a>
+          <a href="/image-compressor" style="background: #1e293b; color: #f8fafc; border: 1px solid #475569; padding: 0.75rem 1.5rem; border-radius: 0.75rem; font-weight: 600; text-decoration: none;">Batch Image Compressor →</a>
         </div>
       </section>
 
@@ -971,6 +1198,48 @@ function resolvePage(url: string, canonical: string): ResolvedPage {
     };
   }
 
+  // --- Media & Compression Tools ------------------------------------------
+  if (canonical === '/video-compressor' || canonical === '/image-compressor') {
+    const isVideo = canonical === '/video-compressor';
+    const label = isVideo
+      ? 'Free Online Video Compressor: 100% In-Browser & No Watermark'
+      : 'Free Online Image Compressor: Batch JPG, PNG, WebP & ZIP Export';
+    const faqs = isVideo ? VIDEO_COMPRESSOR_FAQS : IMAGE_COMPRESSOR_FAQS;
+    const meta = STATIC_PAGE_META[canonical]!;
+    return {
+      ...meta,
+      route,
+      faqs,
+      h1: label,
+      intro: meta.description,
+      articleHtml: isVideo ? generateVideoCompressorContentHtml() : generateImageCompressorContentHtml(),
+      jsonLd: [
+        {
+          '@type': 'WebApplication',
+          name: label,
+          url: `${SITE}${canonical}`,
+          description: meta.description,
+          applicationCategory: isVideo ? 'MultimediaApplication' : 'UtilitiesApplication',
+          operatingSystem: 'All',
+          browserRequirements: 'Requires modern browser with WebAssembly support.',
+          offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: faqs.map((f) => ({
+            '@type': 'Question',
+            name: f.q,
+            acceptedAnswer: { '@type': 'Answer', text: f.a },
+          })),
+        },
+        breadcrumb([
+          { name: 'Home', url: '/' },
+          { name: isVideo ? 'Video Compressor' : 'Image Compressor', url: canonical },
+        ]),
+      ],
+    };
+  }
+
   // --- Static / legal pages -------------------------------------------------
   const staticMeta = STATIC_PAGE_META[canonical];
   if (staticMeta) {
@@ -1105,6 +1374,9 @@ function writePage(outPath: string, html: string, written: Set<string>) {
 
 function priorityFor(canonical: string): { priority: string; changefreq: string } {
   if (canonical === '/') return { priority: '1.0', changefreq: 'daily' };
+  if (canonical === '/video-compressor' || canonical === '/image-compressor') {
+    return { priority: '0.95', changefreq: 'weekly' };
+  }
   if (canonical.startsWith('/guides')) return { priority: '0.85', changefreq: 'monthly' };
   if (['/about', '/contact', '/privacy', '/terms', '/disclaimer'].includes(canonical)) {
     return { priority: '0.5', changefreq: 'yearly' };
@@ -1139,6 +1411,10 @@ ${unique
 `;
 
   fs.writeFileSync(path.join(distDir, 'sitemap.xml'), xml);
+  const publicDir = path.join(rootDir, 'public');
+  if (fs.existsSync(publicDir)) {
+    fs.writeFileSync(path.join(publicDir, 'sitemap.xml'), xml);
+  }
   console.log(`[prerender] sitemap.xml regenerated with ${unique.length} canonical URLs`);
 }
 

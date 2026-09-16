@@ -8,8 +8,6 @@ import {
   BookOpen,
   Info,
   MessageSquare,
-  Sun,
-  Moon,
   RefreshCw,
   Calculator,
   Home,
@@ -30,10 +28,16 @@ import {
   Database,
   Scale,
   Building2,
-  DollarSign
+  DollarSign,
+  Video,
+  Image as ImageIcon,
+  LogOut,
+  Sun,
+  Moon
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
-import { isCalculatorRoute } from '../lib/resolveRoute';
+import { isCalculatorRoute, isCompressionRoute } from '../lib/resolveRoute';
+import { useAuth } from '../lib/useAuth';
 
 interface HeaderProps {
   onTrySample?: () => void;
@@ -44,15 +48,22 @@ interface HeaderProps {
 }
 
 export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dark', onToggleTheme }: HeaderProps) => {
+  const { user, openAuthModal, logout } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [parquetDropdownOpen, setParquetDropdownOpen] = useState(false);
   const [calcDropdownOpen, setCalcDropdownOpen] = useState(false);
+  const [compressDropdownOpen, setCompressDropdownOpen] = useState(false);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileParquetExpanded, setMobileParquetExpanded] = useState(false);
   const [mobileCalcsExpanded, setMobileCalcsExpanded] = useState(false);
+  const [mobileCompressExpanded, setMobileCompressExpanded] = useState(false);
   const parquetDropdownRef = useRef<HTMLDivElement>(null);
   const parquetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const calcDropdownRef = useRef<HTMLDivElement>(null);
   const calcTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const compressDropdownRef = useRef<HTMLDivElement>(null);
+  const compressTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
 
   // Close dropdown when clicking outside or pressing Escape
   useEffect(() => {
@@ -64,11 +75,19 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
       if (calcDropdownRef.current && !calcDropdownRef.current.contains(target)) {
         setCalcDropdownOpen(false);
       }
+      if (compressDropdownRef.current && !compressDropdownRef.current.contains(target)) {
+        setCompressDropdownOpen(false);
+      }
+      if (userMenuRef.current && !userMenuRef.current.contains(target)) {
+        setUserMenuOpen(false);
+      }
     };
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setParquetDropdownOpen(false);
         setCalcDropdownOpen(false);
+        setCompressDropdownOpen(false);
+        setUserMenuOpen(false);
       }
     };
     document.addEventListener('pointerdown', handleClickOutside);
@@ -80,6 +99,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
       document.removeEventListener('keydown', handleKeyDown);
       if (parquetTimeoutRef.current) clearTimeout(parquetTimeoutRef.current);
       if (calcTimeoutRef.current) clearTimeout(calcTimeoutRef.current);
+      if (compressTimeoutRef.current) clearTimeout(compressTimeoutRef.current);
     };
   }, []);
 
@@ -98,12 +118,20 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
 
   const toggleCalcDropdown = () => {
     setParquetDropdownOpen(false);
+    setCompressDropdownOpen(false);
     setCalcDropdownOpen((prev) => !prev);
+  };
+
+  const toggleCompressDropdown = () => {
+    setParquetDropdownOpen(false);
+    setCalcDropdownOpen(false);
+    setCompressDropdownOpen((prev) => !prev);
   };
 
   const handleParquetEnter = () => {
     if (parquetTimeoutRef.current) clearTimeout(parquetTimeoutRef.current);
     setCalcDropdownOpen(false);
+    setCompressDropdownOpen(false);
     setParquetDropdownOpen(true);
   };
 
@@ -116,12 +144,26 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
   const handleCalcEnter = () => {
     if (calcTimeoutRef.current) clearTimeout(calcTimeoutRef.current);
     setParquetDropdownOpen(false);
+    setCompressDropdownOpen(false);
     setCalcDropdownOpen(true);
   };
 
   const handleCalcLeave = () => {
     calcTimeoutRef.current = setTimeout(() => {
       setCalcDropdownOpen(false);
+    }, 180);
+  };
+
+  const handleCompressEnter = () => {
+    if (compressTimeoutRef.current) clearTimeout(compressTimeoutRef.current);
+    setParquetDropdownOpen(false);
+    setCalcDropdownOpen(false);
+    setCompressDropdownOpen(true);
+  };
+
+  const handleCompressLeave = () => {
+    compressTimeoutRef.current = setTimeout(() => {
+      setCompressDropdownOpen(false);
     }, 180);
   };
 
@@ -135,9 +177,11 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
     currentPath.startsWith('/sql-') ||
     currentPath.startsWith('/tools');
   const isCalculatorSection = isCalculatorRoute(currentPath);
+  const isCompressSection = isCompressionRoute(currentPath);
   const isGuides = currentPath.startsWith('/guides');
   const isAbout = currentPath === '/about';
   const isContact = currentPath === '/contact';
+  const isDataWorkbench = currentPath === '/' || isToolsSection;
 
   const viewerItems = [
     {
@@ -337,10 +381,27 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
     }
   ];
 
+  const compressItems = [
+    {
+      title: 'Video Compressor',
+      description: '100% in-browser video compression with target MB & presets',
+      path: '/video-compressor',
+      icon: Video,
+      badge: 'Wasm • No Watermark'
+    },
+    {
+      title: 'Image Compressor',
+      description: 'Batch compress JPG, PNG, and WebP with visual slider & ZIP',
+      path: '/image-compressor',
+      icon: ImageIcon,
+      badge: 'Batch • ZIP'
+    }
+  ];
+
   const calculatorItems = [...realEstateCalcs, ...payrollCalcs, ...cloudFinOpsCalcs];
 
   return (
-    <header className="border-b border-slate-800/80 bg-slate-950/80 backdrop-blur-xl sticky top-0 z-50 transition-colors">
+    <header className="border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-50 transition-colors shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Left: Brand + Grouped Nav */}
         <div className="flex items-center gap-7">
@@ -701,6 +762,80 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
               )}
             </div>
 
+            {/* 3. Media Compress Dropdown Menu */}
+            <div
+              ref={compressDropdownRef}
+              className="relative"
+              onMouseEnter={handleCompressEnter}
+              onMouseLeave={handleCompressLeave}
+            >
+              <button
+                type="button"
+                onClick={toggleCompressDropdown}
+                className={`px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 cursor-pointer select-none whitespace-nowrap ${
+                  isCompressSection || compressDropdownOpen
+                    ? 'bg-slate-800 text-slate-100 font-semibold border border-slate-700/60 shadow-sm'
+                    : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+                }`}
+                aria-expanded={compressDropdownOpen}
+              >
+                <Video className="size-4 text-blue-400" />
+                <span>Compress</span>
+                <span className="text-[10px] font-semibold px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 border border-blue-500/30">
+                  Free
+                </span>
+                <ChevronDown
+                  className={`size-3.5 transition-transform duration-200 opacity-70 ${
+                    compressDropdownOpen ? 'rotate-180' : ''
+                  }`}
+                />
+              </button>
+
+              {/* Compress Dropdown Panel */}
+              {compressDropdownOpen && (
+                <div className="absolute left-0 top-full pt-1.5 w-[380px] z-50 animate-in fade-in zoom-in-95 duration-150">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/98 text-slate-100 shadow-2xl backdrop-blur-2xl overflow-hidden p-3 space-y-1">
+                    <div className="px-3 pt-2 pb-2 flex items-center justify-between border-b border-slate-800/80 mb-1">
+                      <span className="text-[11px] font-mono uppercase tracking-wider text-slate-400 font-semibold">
+                        In-Browser Media Compression
+                      </span>
+                      <span className="text-[10px] text-emerald-400 font-medium bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                        100% Client-Side
+                      </span>
+                    </div>
+
+                    {compressItems.map((item) => (
+                      <a
+                        key={item.path}
+                        href={item.path}
+                        onClick={(e) => handleNav(e, item.path)}
+                        className="group flex items-start gap-3 p-2.5 rounded-xl hover:bg-slate-800/70 transition-colors"
+                      >
+                        <div className="size-8 rounded-lg bg-blue-500/10 text-blue-400 border border-blue-500/20 flex items-center justify-center shrink-0 mt-0.5 group-hover:scale-105 transition-transform">
+                          <item.icon className="size-4" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-slate-100 group-hover:text-blue-400 transition-colors">
+                              {item.title}
+                            </span>
+                            {item.badge && (
+                              <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-blue-500/15 text-blue-300 border border-blue-500/30">
+                                {item.badge}
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-[11px] text-slate-400 leading-snug mt-0.5">
+                            {item.description}
+                          </p>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             {/* 4. Guides */}
             <a
               href="/guides"
@@ -720,7 +855,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
         {/* Right action buttons */}
         <div className="flex items-center gap-2.5">
 
-          {onTrySample && !isCalculatorSection && (
+          {onTrySample && isDataWorkbench && (
             <button
               onClick={onTrySample}
               disabled={isLoading}
@@ -737,6 +872,62 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
                   <span>Try Sample</span>
                 </>
               )}
+            </button>
+          )}
+
+          {/* Auth: User Account / Sign In */}
+          {user ? (
+            <div ref={userMenuRef} className="relative">
+              <button
+                type="button"
+                onClick={() => setUserMenuOpen((prev) => !prev)}
+                className="flex items-center gap-2 py-1.5 px-2.5 rounded-xl bg-slate-800/90 hover:bg-slate-800 border border-slate-700/80 text-xs font-semibold text-slate-200 transition-all cursor-pointer shadow-sm"
+              >
+                <div className="size-6 rounded-full bg-gradient-to-tr from-blue-600 to-indigo-600 text-white flex items-center justify-center font-bold text-[10px]">
+                  {user.name ? user.name[0].toUpperCase() : 'U'}
+                </div>
+                <span className="max-w-[80px] truncate hidden sm:inline">{user.name}</span>
+                <span className="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-300 text-[10px] font-bold border border-blue-500/30">
+                  {user.credits} Cr
+                </span>
+              </button>
+
+              {userMenuOpen && (
+                <div className="absolute right-0 top-full mt-1.5 w-52 rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl p-2 z-50 animate-in fade-in zoom-in-95">
+                  <div className="px-3 py-2 border-b border-slate-800/80">
+                    <div className="text-[11px] text-slate-400">Signed in as</div>
+                    <div className="text-xs font-bold text-white truncate">{user.email}</div>
+                    <div className="mt-1 flex items-center gap-1.5">
+                      <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                        {user.plan} Plan
+                      </span>
+                      <span className="text-[10px] text-slate-400">
+                        {user.credits} Credits left
+                      </span>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logout();
+                      setUserMenuOpen(false);
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-400 hover:bg-red-500/10 rounded-xl transition-colors mt-1 font-medium cursor-pointer"
+                  >
+                    <LogOut className="size-3.5" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={openAuthModal}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white shadow-md shadow-blue-500/20 transition-all cursor-pointer whitespace-nowrap active:scale-95"
+            >
+              <Sparkles className="size-3.5 text-white" />
+              <span>Sign In</span>
             </button>
           )}
 
@@ -878,6 +1069,43 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             )}
           </div>
 
+          {/* 3. Media Compress Accordion */}
+          <div className="border border-slate-200 dark:border-slate-800/80 rounded-xl overflow-hidden bg-slate-50 dark:bg-slate-900/40">
+            <button
+              onClick={() => setMobileCompressExpanded(!mobileCompressExpanded)}
+              className="w-full px-3.5 py-2.5 flex items-center justify-between text-slate-700 dark:text-slate-200 text-sm font-semibold cursor-pointer"
+            >
+              <span className="flex items-center gap-2.5">
+                <Video className="size-4 text-blue-600 dark:text-blue-400" />
+                <span>Media Compress (Video & Image)</span>
+              </span>
+              <ChevronDown className={`size-4 transition-transform duration-200 text-slate-400 ${mobileCompressExpanded ? 'rotate-180' : ''}`} />
+            </button>
+
+            {mobileCompressExpanded && (
+              <div className="px-2 pb-2 space-y-1 border-t border-slate-200 dark:border-slate-800/60 pt-1.5">
+                {compressItems.map((p) => (
+                  <a
+                    key={p.path}
+                    href={p.path}
+                    onClick={(e) => handleNav(e, p.path)}
+                    className="flex items-center justify-between px-3 py-2 rounded-lg text-xs text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200/60 dark:hover:bg-slate-800/80 transition-colors"
+                  >
+                    <div className="flex items-center gap-2">
+                      <p.icon className="size-3.5 text-blue-400" />
+                      <span>{p.title}</span>
+                    </div>
+                    {p.badge && (
+                      <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded border bg-blue-500/10 text-blue-400 border-blue-500/20">
+                        {p.badge}
+                      </span>
+                    )}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Guides */}
           <a
             href="/guides"
@@ -919,6 +1147,38 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/', theme = 'dar
             <MessageSquare className="size-4 text-slate-400" />
             <span>Contact & Support</span>
           </a>
+
+          {/* Mobile Auth button */}
+          <div className="pt-2">
+            {user ? (
+              <div className="p-3 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+                <div>
+                  <div className="text-xs font-bold text-slate-900 dark:text-white">{user.name}</div>
+                  <div className="text-[11px] text-slate-500">{user.credits} credits remaining</div>
+                </div>
+                <button
+                  onClick={() => {
+                    logout();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="px-3 py-1.5 bg-red-500/10 text-red-500 hover:bg-red-500/20 rounded-lg text-xs font-semibold"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => {
+                  openAuthModal();
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs font-bold shadow-md shadow-blue-500/20 flex items-center justify-center gap-2"
+              >
+                <Sparkles className="size-4" />
+                <span>Sign In to TableView</span>
+              </button>
+            )}
+          </div>
 
           <div className="pt-2 border-t border-slate-900/80 flex items-center gap-2 text-xs text-emerald-500 dark:text-emerald-400">
             <ShieldCheck className="size-4" />

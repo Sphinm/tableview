@@ -38,6 +38,10 @@ const CommercialLoanCalculator = lazy(() => import('./pages/CommercialLoanCalcul
 const SalaryCalculator = lazy(() => import('./pages/SalaryCalculator').then(m => ({ default: m.SalaryCalculator })));
 const JsonFormatter = lazy(() => import('./pages/JsonFormatter').then(m => ({ default: m.JsonFormatter })));
 const SqlFormatter = lazy(() => import('./pages/SqlFormatter').then(m => ({ default: m.SqlFormatter })));
+const VideoCompressor = lazy(() => import('./pages/VideoCompressor').then(m => ({ default: m.VideoCompressor })));
+const ImageCompressor = lazy(() => import('./pages/ImageCompressor').then(m => ({ default: m.ImageCompressor })));
+import { AuthProvider } from './lib/authContext';
+import { AuthModal } from './components/AuthModal';
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
 import { TOOLS_CONFIG } from './data/tools';
 import { getInitialTheme, applyTheme, type Theme } from './lib/theme';
@@ -369,6 +373,12 @@ export function App() {
       case '/sql-formatter':
         return <SqlFormatter />;
 
+      case '/video-compressor':
+        return <VideoCompressor />;
+
+      case '/image-compressor':
+        return <ImageCompressor />;
+
       case '/finance-calculator':
       case '/calculator':
         return <FinanceCalculatorHub />;
@@ -407,28 +417,32 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col selection:bg-indigo-500 selection:text-white">
-      <div className="print:hidden">
-        <Header
-          onTrySample={handleTrySample}
-          isLoading={isLoading}
-          currentPath={path}
-          theme={theme}
-          onToggleTheme={handleToggleTheme}
-        />
-      </div>
+    <AuthProvider>
+      <div className="min-h-screen bg-slate-950 text-slate-200 flex flex-col selection:bg-indigo-500 selection:text-white">
+        <div className="print:hidden">
+          <Header
+            onTrySample={handleTrySample}
+            isLoading={isLoading}
+            currentPath={path}
+            theme={theme}
+            onToggleTheme={handleToggleTheme}
+          />
+        </div>
 
-      <main className="flex-1 flex flex-col">
-        <Suspense fallback={<PageSkeleton />}>
-          {renderCurrentView()}
-        </Suspense>
-      </main>
+        <main className="flex-1 flex flex-col">
+          <Suspense fallback={<PageSkeleton />}>
+            {renderCurrentView()}
+          </Suspense>
+        </main>
 
-      <div className="print:hidden">
-        <Footer onTrySample={handleTrySample} currentPath={path} />
-        <CookieBanner />
+        <div className="print:hidden">
+          <Footer onTrySample={handleTrySample} currentPath={path} />
+          <CookieBanner />
+        </div>
+
+        <AuthModal />
       </div>
-    </div>
+    </AuthProvider>
   );
 }
 

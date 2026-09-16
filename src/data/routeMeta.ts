@@ -144,4 +144,16 @@ export const STATIC_PAGE_META: Record<string, PageMeta> = {
       'Legal disclaimers, financial calculation disclosures, and terms of informational use for TableView.dev.',
     canonical: '/disclaimer',
   },
+  '/video-compressor': {
+    title: 'Free Online Video Compressor: 100% In-Browser & No Watermark | TableView.dev',
+    description:
+      'Fast online video compressor with zero server upload. Reduce MP4, MOV, WebM, and MKV file size with preset quality or exact target MB. 100% private in-browser.',
+    canonical: '/video-compressor',
+  },
+  '/image-compressor': {
+    title: 'Free Online Image Compressor: Batch JPG, PNG, WebP & ZIP Export | TableView.dev',
+    description:
+      'Batch compress images online without quality loss. Supports JPEG, PNG, and WebP with before/after visual comparison and 1-click ZIP packaging.',
+    canonical: '/image-compressor',
+  },
 };

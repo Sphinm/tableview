@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "tableview",
+  "main": "src/worker/index.ts",
   "compatibility_date": "2026-09-03",
   "observability": {
     "enabled": true
@@ -8,5 +9,12 @@
   "assets": {
     "directory": "./dist",
     "not_found_handling": "single-page-application"
-  }
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "tableview_db",
+      "database_id": "tableview-auth-d1"
+    }
+  ]
 }

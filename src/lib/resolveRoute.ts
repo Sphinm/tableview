@@ -93,6 +93,14 @@ const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
     pattern: /^\/(?:tools\/)?(?:sql-formatter|sql-beautifier|sql-minify|format-sql)$/,
     path: '/sql-formatter',
   },
+  {
+    pattern: /^\/(?:tools\/)?(?:video-compressor|compress-video|video-compress|reduce-video-size)$/,
+    path: '/video-compressor',
+  },
+  {
+    pattern: /^\/(?:tools\/)?(?:image-compressor|compress-image|image-compress|photo-compressor|reduce-image-size)$/,
+    path: '/image-compressor',
+  },
   { pattern: /^\/(?:finance-calculator|calculators|financial-calculators|calculator)$/, path: '/finance-calculator' },
 ];
 
@@ -190,6 +198,8 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   ...SALARY_LONG_TAIL_PAGES.map((p) => p.path),
   '/json-formatter',
   '/sql-formatter',
+  '/video-compressor',
+  '/image-compressor',
   '/about',
   '/contact',
   '/privacy',
@@ -218,6 +228,22 @@ export function isCalculatorRoute(currentPath: string): boolean {
     currentPath.includes('exchange') ||
     currentPath.includes('salary') ||
     currentPath.includes('how-much-an-hour')
+  );
+}
+
+/**
+ * Checks if a given path or alias represents a video or image compression tool.
+ */
+export function isCompressionRoute(currentPath: string): boolean {
+  if (!currentPath) return false;
+  return (
+    currentPath.includes('video-compress') ||
+    currentPath.includes('image-compress') ||
+    currentPath.includes('compress-video') ||
+    currentPath.includes('compress-image') ||
+    currentPath.includes('reduce-video') ||
+    currentPath.includes('reduce-image') ||
+    currentPath.includes('photo-compress')
   );
 }
 
@@ -289,6 +315,8 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
     ],
     '/json-formatter': ['/json-beautifier', '/json-validator', '/json-viewer-online', '/format-json'],
     '/sql-formatter': ['/sql-beautifier', '/sql-minify', '/format-sql'],
+    '/video-compressor': ['/compress-video', '/video-compress', '/reduce-video-size'],
+    '/image-compressor': ['/compress-image', '/image-compress', '/photo-compressor', '/reduce-image-size'],
   };
   for (const [canonical, aliases] of Object.entries(calculatorAliases)) {
     // The canonical itself must exist too — /finance-calculator is not in

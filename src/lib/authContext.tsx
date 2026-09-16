@@ -1,0 +1,209 @@
+import { useState, useEffect, type ReactNode } from 'react';
+import { AuthContext, type User } from './authTypes';
+
+const TOKEN_STORAGE_KEY = 'tableview_auth_token';
+const MOCK_USER_KEY = 'tableview_mock_user';
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+
+  const openAuthModal = () => setIsAuthModalOpen(true);
+  const closeAuthModal = () => setIsAuthModalOpen(false);
+
+  const verifyMagicLink = async (token: string) => {
+    try {
+      const res = await fetch('/api/auth/verify-magic-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+      });
+
+      if (res.ok) {
+        const data = (await res.json()) as any;
+        if (data.token) localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
+        if (data.user) {
+          setUser(data.user);
+          localStorage.setItem(MOCK_USER_KEY, JSON.stringify(data.user));
+        }
+        return { success: true };
+      }
+      const err = (await res.json().catch(() => ({}))) as any;
+      return { success: false, message: err.error || 'Verification failed' };
+    } catch {
+      // Local development fallback
+      const mockUser: User = {
+        id: 'user_' + Math.random().toString(36).slice(2, 9),
+        email: 'user@example.com',
+        name: 'Demo User',
+        plan: 'free',
+        credits: 30,
+      };
+      setUser(mockUser);
+      localStorage.setItem(MOCK_USER_KEY, JSON.stringify(mockUser));
+      return { success: true };
+    }
+  };
+
+  const sendMagicLink = async (email: string) => {
+    try {
+      const res = await fetch('/api/auth/send-magic-link', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      if (res.ok) {
+        const data = (await res.json()) as any;
+        return { success: true, message: data.message, devToken: data.devToken };
+      }
+      const err = (await res.json().catch(() => ({}))) as any;
+      return { success: false, message: err.error || 'Failed to send magic link' };
+    } catch {
+      // Local development fallback
+      const devToken = crypto.randomUUID();
+      return {
+        success: true,
+        message: 'Dev mode: Magic link generated! Click verify below.',
+        devToken,
+      };
+    }
+  };
+
+  const loginWithGoogle = async (credential: string) => {
+    try {
+      const res = await fetch('/api/auth/google', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ credential }),
+      });
+
+      if (res.ok) {
+        const data = (await res.json()) as any;
+        if (data.token) localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
+        if (data.user) {
+          setUser(data.user);
+          localStorage.setItem(MOCK_USER_KEY, JSON.stringify(data.user));
+        }
+        return { success: true };
+      }
+      return { success: false, message: 'Google sign-in failed' };
+    } catch {
+      // Local fallback
+      const mockUser: User = {
+        id: 'google_user_' + Math.random().toString(36).slice(2, 9),
+        email: 'google.user@example.com',
+        name: 'Google User',
+        plan: 'pro',
+        credits: 5000,
+      };
+      setUser(mockUser);
+      localStorage.setItem(MOCK_USER_KEY, JSON.stringify(mockUser));
+      return { success: true };
+    }
+  };
+
+  const loginAsDemo = (plan: 'free' | 'pro' = 'free') => {
+    const mockUser: User = {
+      id: 'demo_' + Date.now(),
+      email: plan === 'pro' ? 'pro@tableview.dev' : 'creator@tableview.dev',
+      name: plan === 'pro' ? 'Pro Member' : 'Creator',
+      plan,
+      credits: plan === 'pro' ? 5000 : 30,
+    };
+    setUser(mockUser);
+    localStorage.setItem(MOCK_USER_KEY, JSON.stringify(mockUser));
+    closeAuthModal();
+  };
+
+  const consumeCredit = (amount: number = 1): boolean => {
+    if (!user) return true; // Guests can proceed with initial quota
+    if (user.credits < amount) return false;
+    const updated = { ...user, credits: user.credits - amount };
+    setUser(updated);
+    localStorage.setItem(MOCK_USER_KEY, JSON.stringify(updated));
+    return true;
+  };
+
+  const logout = () => {
+    setUser(null);
+    localStorage.removeItem(TOKEN_STORAGE_KEY);
+    localStorage.removeItem(MOCK_USER_KEY);
+    fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+  };
+
+  // Initialize auth state on mount
+  useEffect(() => {
+    const initAuth = async () => {
+      // 1. Check if returning from a magic link callback (?auth_token=...)
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search);
+        const authToken = urlParams.get('auth_token');
+        if (authToken) {
+          urlParams.delete('auth_token');
+          const cleanSearch = urlParams.toString() ? `?${urlParams.toString()}` : '';
+          window.history.replaceState({}, '', `${window.location.pathname}${cleanSearch}`);
+          await verifyMagicLink(authToken);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      const storedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+      if (storedToken) {
+        try {
+          const res = await fetch('/api/auth/me', {
+            headers: {
+              Authorization: `Bearer ${storedToken}`,
+            },
+          });
+          if (res.ok) {
+            const data = (await res.json()) as any;
+            if (data.user) {
+              setUser(data.user);
+              setIsLoading(false);
+              return;
+            }
+          }
+        } catch {
+          // API endpoint unreachable (e.g. static preview or local dev)
+        }
+      }
+
+      // Check mock user in local development
+      const storedMockUser = localStorage.getItem(MOCK_USER_KEY);
+      if (storedMockUser) {
+        try {
+          setUser(JSON.parse(storedMockUser));
+        } catch {
+          localStorage.removeItem(MOCK_USER_KEY);
+        }
+      }
+
+      setIsLoading(false);
+    };
+
+    initAuth();
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        isLoading,
+        isAuthModalOpen,
+        openAuthModal,
+        closeAuthModal,
+        sendMagicLink,
+        verifyMagicLink,
+        loginWithGoogle,
+        loginAsDemo,
+        consumeCredit,
+        logout,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}

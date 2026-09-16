@@ -26,6 +26,8 @@ const APP_ROUTES = new Set([
   '/salary-to-hourly-calculator',
   '/json-formatter',
   '/sql-formatter',
+  '/video-compressor',
+  '/image-compressor',
   '/about',
   '/contact',
   '/privacy',
