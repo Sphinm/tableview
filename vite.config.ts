@@ -135,7 +135,8 @@ function devAuthPlugin() {
           }
 
           const endpointAction = isStream ? 'streamGenerateContent?alt=sse' : 'generateContent';
-          const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:${endpointAction}&key=${encodeURIComponent(apiKey)}`;
+          const keySep = isStream ? '&' : '?';
+          const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:${endpointAction}${keySep}key=${encodeURIComponent(apiKey)}`;
 
           try {
             const upstreamRes = await fetch(googleUrl, {
