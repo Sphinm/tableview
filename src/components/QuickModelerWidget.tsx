@@ -1,19 +1,92 @@
 import { useState, useMemo } from 'react';
 import {
   Home,
-  Building,
-  DollarSign,
   ArrowRight,
   Zap,
-  CheckCircle2,
-  Percent
+  Percent,
+  Video,
+  Image as ImageIcon,
+  Database
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 
 export const QuickModelerWidget = () => {
-  const [activeTab, setActiveTab] = useState<'mortgage' | 'dscr' | 'salary'>('mortgage');
+  const [activeTab, setActiveTab] = useState<'video' | 'image' | 'mortgage' | 'sql'>('video');
 
-  // --- Tab 1: Mortgage Inputs ---
+  // --- Tab 1: Video Compressor Simulation State ---
+  const [videoSourceSize, setVideoSourceSize] = useState<number>(120); // in MB
+  const [videoPreset, setVideoPreset] = useState<'discord' | 'email' | 'web' | 'balanced'>('balanced');
+  const [videoCodec, setVideoCodec] = useState<'h264' | 'webm'>('h264');
+
+  const videoMetrics = useMemo(() => {
+    let ratio = 0.22; // default ~78% reduction
+    let targetLabel = 'High Quality 1080p (CRF 23)';
+    let bitrate = '1,800 kbps';
+    let ssim = '98.5%';
+
+    if (videoPreset === 'discord') {
+      ratio = Math.min(0.065, 8 / videoSourceSize);
+      targetLabel = 'Discord Upload Limit (<= 8 MB)';
+      bitrate = '750 kbps';
+      ssim = '95.2%';
+    } else if (videoPreset === 'email') {
+      ratio = Math.min(0.20, 25 / videoSourceSize);
+      targetLabel = 'Email Attachment (<= 25 MB)';
+      bitrate = '1,200 kbps';
+      ssim = '97.1%';
+    } else if (videoPreset === 'web') {
+      ratio = 0.15;
+      targetLabel = 'Web Fast Streaming (720p CRF 28)';
+      bitrate = '1,000 kbps';
+      ssim = '96.4%';
+    }
+
+    const outputSize = Math.max(1.2, videoSourceSize * ratio);
+    const savingsPercent = Math.max(5, Math.round((1 - outputSize / videoSourceSize) * 100));
+    const estimatedTime = (videoSourceSize * 0.035).toFixed(1);
+
+    return {
+      outputSize,
+      savingsPercent,
+      targetLabel,
+      bitrate,
+      ssim,
+      estimatedTime
+    };
+  }, [videoSourceSize, videoPreset]);
+
+  // --- Tab 2: Image Compressor Simulation State ---
+  const [imageQuality, setImageQuality] = useState<number>(80);
+  const [imageFormat, setImageFormat] = useState<'webp' | 'avif' | 'jpeg'>('webp');
+  const [imageBatchCount, setImageBatchCount] = useState<number>(1);
+
+  const imageMetrics = useMemo(() => {
+    const singleSourceSize = 4.8; // 4.8 MB high-res photo
+    let factor = 0.15;
+
+    if (imageFormat === 'webp') {
+      factor = 0.08 + (imageQuality / 100) * 0.12; // ~15% - 20%
+    } else if (imageFormat === 'avif') {
+      factor = 0.05 + (imageQuality / 100) * 0.10; // ~10% - 15%
+    } else {
+      factor = 0.18 + (imageQuality / 100) * 0.22; // ~30% - 40%
+    }
+
+    const singleOutput = singleSourceSize * factor;
+    const totalSource = singleSourceSize * imageBatchCount;
+    const totalOutput = singleOutput * imageBatchCount;
+    const savingsPercent = Math.round((1 - totalOutput / totalSource) * 100);
+
+    return {
+      singleSourceSize,
+      singleOutput,
+      totalSource,
+      totalOutput,
+      savingsPercent
+    };
+  }, [imageQuality, imageFormat, imageBatchCount]);
+
+  // --- Tab 3: Mortgage Inputs ---
   const [homePrice, setHomePrice] = useState<number>(450000);
   const [downPercent, setDownPercent] = useState<number>(20);
   const [mortgageRate, setMortgageRate] = useState<number>(6.75);
@@ -46,56 +119,34 @@ export const QuickModelerWidget = () => {
     };
   }, [homePrice, downPercent, mortgageRate, mortgageTermYears]);
 
-  // --- Tab 2: DSCR / Commercial Inputs ---
-  const [annualRent, setAnnualRent] = useState<number>(84000);
-  const [annualExpenses, setAnnualExpenses] = useState<number>(25200);
-  const [annualDebtService, setAnnualDebtService] = useState<number>(42000);
-
-  const dscrMath = useMemo(() => {
-    const noi = Math.max(0, annualRent - annualExpenses);
-    const dscr = annualDebtService > 0 ? noi / annualDebtService : 0;
-    const netCashFlow = Math.max(0, noi - annualDebtService);
-
-    let status = 'Distressed (< 1.0x)';
-    let statusColor = 'text-rose-700 bg-rose-50 border-rose-200';
-    if (dscr >= 1.25) {
-      status = 'Prime Tier (>= 1.25x)';
-      statusColor = 'text-emerald-700 bg-emerald-50 border-emerald-200';
-    } else if (dscr >= 1.15) {
-      status = 'Standard Qualifying (1.15x - 1.24x)';
-      statusColor = 'text-indigo-700 bg-indigo-50 border-indigo-200';
-    } else if (dscr >= 1.0) {
-      status = 'Break-Even Minimum (1.0x - 1.14x)';
-      statusColor = 'text-amber-800 bg-amber-50 border-amber-200';
+  // --- Tab 4: SQL & Analytics Queries ---
+  const [selectedSqlIndex, setSelectedSqlIndex] = useState<number>(0);
+  const sqlQueries = [
+    {
+      title: 'Top 5 Customers by Revenue',
+      query: `SELECT customer_name, SUM(total_amount) AS revenue\nFROM parquet_scan('orders.parquet')\nGROUP BY 1 ORDER BY 2 DESC LIMIT 5;`,
+      time: '2.1 ms',
+      rows: [
+        { col1: 'Acme Corp', col2: '$84,200.00' },
+        { col1: 'Starlight Media', col2: '$62,150.00' },
+        { col1: 'Nexus Dynamics', col2: '$49,820.00' },
+        { col1: 'HyperScale AI', col2: '$38,900.00' },
+        { col1: 'Beacon Health', col2: '$31,450.00' }
+      ]
+    },
+    {
+      title: 'Monthly Volume Aggregation',
+      query: `SELECT DATE_TRUNC('month', created_at) AS month, COUNT(*) AS total_events\nFROM parquet_scan('telemetry.parquet')\nGROUP BY 1 ORDER BY 1 DESC;`,
+      time: '1.8 ms',
+      rows: [
+        { col1: '2026-03-01', col2: '1,420,890 events' },
+        { col1: '2026-02-01', col2: '1,289,340 events' },
+        { col1: '2026-01-01', col2: '1,154,200 events' },
+        { col1: '2025-12-01', col2: '980,100 events' },
+        { col1: '2025-11-01', col2: '895,430 events' }
+      ]
     }
-
-    return {
-      noi,
-      dscr,
-      netCashFlow,
-      status,
-      statusColor
-    };
-  }, [annualRent, annualExpenses, annualDebtService]);
-
-  // --- Tab 3: Salary Inputs ---
-  const [annualSalary, setAnnualSalary] = useState<number>(80000);
-  const [hoursPerWeek, setHoursPerWeek] = useState<number>(40);
-
-  const salaryMath = useMemo(() => {
-    const totalHoursYear = Math.max(1, hoursPerWeek * 52);
-    const hourlyRate = annualSalary / totalHoursYear;
-    const biweeklyPay = annualSalary / 26;
-    const monthlyPay = annualSalary / 12;
-    const overtimeRate = hourlyRate * 1.5;
-
-    return {
-      hourlyRate,
-      biweeklyPay,
-      monthlyPay,
-      overtimeRate
-    };
-  }, [annualSalary, hoursPerWeek]);
+  ];
 
   const fmtCurrency = (val: number, decimals = 0) =>
     val.toLocaleString('en-US', {
@@ -107,77 +158,263 @@ export const QuickModelerWidget = () => {
 
   return (
     <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 mb-16">
-      {/* Outer Card Container */}
-      <div className="rounded-3xl bg-white border border-slate-200 shadow-sm p-5 sm:p-7 md:p-8">
+      {/* Outer Card Container with double-bezel styling */}
+      <div className="rounded-3xl bg-white border border-slate-200 shadow-md p-5 sm:p-7 md:p-8 transition-all">
         {/* Header Bar: Title + Tab Controls */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
           <div>
-            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200/80 mb-2">
-              <Zap className="size-3" />
-              <span>Instant In-Browser Modeler</span>
+            <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider text-indigo-700 bg-indigo-50 border border-indigo-200/80 mb-2">
+              <Zap className="size-3 text-indigo-600" />
+              <span>Interactive Flagship Suite</span>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight [text-wrap:balance]">
-              Live Analytical Playground
+            <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+              Live In-Browser Interactive Playground
             </h2>
-            <p className="text-xs sm:text-sm text-slate-800 mt-1 [text-wrap:pretty]">
-              Run debt service, equity yields, and wage amortizations directly in memory. Zero server roundtrips.
+            <p className="text-xs sm:text-sm text-slate-600 mt-1">
+              Test compression ratios, run DuckDB SQL queries, or compute mortgage amortizations directly in your browser.
             </p>
           </div>
 
-          {/* Tab Selector */}
-          <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 self-start md:self-auto">
+          {/* Tab Selector: 4 Flagship Categories */}
+          <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 self-start md:self-auto overflow-x-auto max-w-full">
+            <button
+              type="button"
+              onClick={() => setActiveTab('video')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                activeTab === 'video'
+                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200 font-bold'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
+              }`}
+            >
+              <Video className="size-3.5 text-blue-600" />
+              <span>Video Compress</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setActiveTab('image')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                activeTab === 'image'
+                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200 font-bold'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
+              }`}
+            >
+              <ImageIcon className="size-3.5 text-emerald-600" />
+              <span>Image Compress</span>
+            </button>
+
             <button
               type="button"
               onClick={() => setActiveTab('mortgage')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
                 activeTab === 'mortgage'
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80 font-bold'
-                  : 'text-slate-900 hover:bg-slate-200/60'
+                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200 font-bold'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
               <Home className="size-3.5 text-indigo-600" />
-              <span>Mortgage Loan</span>
+              <span>Mortgage Math</span>
             </button>
 
             <button
               type="button"
-              onClick={() => setActiveTab('dscr')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
-                activeTab === 'dscr'
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80 font-bold'
-                  : 'text-slate-900 hover:bg-slate-200/60'
+              onClick={() => setActiveTab('sql')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
+                activeTab === 'sql'
+                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200 font-bold'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
               }`}
             >
-              <Building className="size-3.5 text-cyan-600" />
-              <span>DSCR Commercial</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('salary')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer ${
-                activeTab === 'salary'
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80 font-bold'
-                  : 'text-slate-900 hover:bg-slate-200/60'
-              }`}
-            >
-              <DollarSign className="size-3.5 text-emerald-600" />
-              <span>Salary to Hourly</span>
+              <Database className="size-3.5 text-purple-600" />
+              <span>DuckDB SQL</span>
             </button>
           </div>
         </div>
 
         {/* Interactive Body Grid: Inputs on Left, Output KPIs on Right */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 pt-6">
-          {/* Left Column: Sliders & Parameter Controls */}
+          {/* Left Column: Sliders & Controls */}
           <div className="lg:col-span-7 space-y-5">
+            {/* TAB 1: Video Compressor */}
+            {activeTab === 'video' && (
+              <>
+                <div>
+                  <div className="flex justify-between items-center mb-1.5 text-xs">
+                    <span className="font-bold text-slate-900">Source Video Size</span>
+                    <span className="font-mono font-bold text-blue-700 text-sm">
+                      {videoSourceSize} MB
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={20}
+                    max={600}
+                    step={10}
+                    value={videoSourceSize}
+                    onChange={(e) => setVideoSourceSize(Number(e.target.value))}
+                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                  />
+                  <div className="flex justify-between text-[10px] font-mono text-slate-500 font-medium mt-1">
+                    <span>20 MB (Short clip)</span>
+                    <span>250 MB</span>
+                    <span>600 MB (4K recording)</span>
+                  </div>
+                </div>
+
+                {/* Target Preset Pills */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-900 mb-2">
+                    Target Compression Preset
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {[
+                      { id: 'balanced', label: 'Balanced 1080p', desc: 'CRF 23 · Lossless look' },
+                      { id: 'discord', label: 'Discord (<= 8 MB)', desc: 'Fit free limit' },
+                      { id: 'email', label: 'Email (<= 25 MB)', desc: 'Gmail / Outlook ready' },
+                      { id: 'web', label: 'Fast Web Stream', desc: '720p lightweight' }
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        type="button"
+                        onClick={() => setVideoPreset(item.id as any)}
+                        className={`p-2.5 rounded-xl text-left border transition-all cursor-pointer ${
+                          videoPreset === item.id
+                            ? 'bg-blue-50 border-blue-300 text-blue-900 shadow-xs'
+                            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                        }`}
+                      >
+                        <div className="text-xs font-bold">{item.label}</div>
+                        <div className="text-[10px] text-slate-500 mt-0.5">{item.desc}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Codec Choice */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                    Output Codec Format
+                  </label>
+                  <div className="flex gap-2">
+                    {[
+                      { id: 'h264', label: 'MP4 (H.264 / AAC)', badge: 'Universal' },
+                      { id: 'webm', label: 'WebM (VP9 / Opus)', badge: 'Web Optimized' }
+                    ].map((codec) => (
+                      <button
+                        key={codec.id}
+                        type="button"
+                        onClick={() => setVideoCodec(codec.id as any)}
+                        className={`flex-1 py-2 px-3 rounded-xl text-xs font-medium transition-all flex items-center justify-between cursor-pointer ${
+                          videoCodec === codec.id
+                            ? 'bg-slate-900 text-white font-bold'
+                            : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                        }`}
+                      >
+                        <span>{codec.label}</span>
+                        <span className={`text-[9px] px-1.5 py-0.5 rounded ${
+                          videoCodec === codec.id ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-600'
+                        }`}>
+                          {codec.badge}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* TAB 2: Image Compressor */}
+            {activeTab === 'image' && (
+              <>
+                <div>
+                  <div className="flex justify-between items-center mb-1.5 text-xs">
+                    <span className="font-bold text-slate-900">Compression Quality</span>
+                    <span className="font-mono font-bold text-emerald-700 text-sm">
+                      {imageQuality}%
+                    </span>
+                  </div>
+                  <input
+                    type="range"
+                    min={10}
+                    max={100}
+                    step={5}
+                    value={imageQuality}
+                    onChange={(e) => setImageQuality(Number(e.target.value))}
+                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
+                  />
+                  <div className="flex justify-between text-[10px] font-mono text-slate-500 font-medium mt-1">
+                    <span>10% (Maximum compression)</span>
+                    <span>80% (Sweet spot)</span>
+                    <span>100% (Lossless)</span>
+                  </div>
+                </div>
+
+                {/* Target Format */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                    Target Format
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {[
+                      { id: 'webp', label: 'WebP', badge: 'Popular -85%' },
+                      { id: 'avif', label: 'AVIF', badge: 'Next-Gen -90%' },
+                      { id: 'jpeg', label: 'JPEG', badge: 'Standard -60%' }
+                    ].map((fmt) => (
+                      <button
+                        key={fmt.id}
+                        type="button"
+                        onClick={() => setImageFormat(fmt.id as any)}
+                        className={`py-2 px-3 rounded-xl text-center border transition-all cursor-pointer ${
+                          imageFormat === fmt.id
+                            ? 'bg-emerald-50 border-emerald-300 text-emerald-900 font-bold shadow-xs'
+                            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
+                        }`}
+                      >
+                        <div className="text-xs font-bold">{fmt.label}</div>
+                        <div className="text-[9px] text-slate-500 mt-0.5">{fmt.badge}</div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Batch Count Selection */}
+                <div>
+                  <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                    Simulate Batch Size
+                  </label>
+                  <div className="flex gap-2">
+                    {[
+                      { count: 1, label: 'Single Photo' },
+                      { count: 5, label: 'Batch 5 Photos' },
+                      { count: 20, label: 'Batch 20 Photos' }
+                    ].map((b) => (
+                      <button
+                        key={b.count}
+                        type="button"
+                        onClick={() => setImageBatchCount(b.count)}
+                        className={`flex-1 py-1.5 rounded-lg text-xs font-mono font-medium transition-colors cursor-pointer ${
+                          imageBatchCount === b.count
+                            ? 'bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold'
+                            : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                        }`}
+                      >
+                        {b.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* TAB 3: Mortgage Math */}
             {activeTab === 'mortgage' && (
               <>
-                {/* Home Price Input */}
                 <div>
                   <div className="flex justify-between items-center mb-1.5 text-xs">
                     <span className="font-bold text-slate-900">Property Purchase Price</span>
-                    <span className="font-mono font-bold text-slate-900 text-sm">{fmtCurrency(homePrice)}</span>
+                    <span className="font-mono font-bold text-slate-900 text-sm">
+                      {fmtCurrency(homePrice)}
+                    </span>
                   </div>
                   <input
                     type="range"
@@ -188,18 +425,19 @@ export const QuickModelerWidget = () => {
                     onChange={(e) => setHomePrice(Number(e.target.value))}
                     className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                   />
-                  <div className="flex justify-between text-[10px] font-mono text-slate-600 font-medium mt-1">
+                  <div className="flex justify-between text-[10px] font-mono text-slate-500 font-medium mt-1">
                     <span>$100k</span>
                     <span>$1.0M</span>
                     <span>$2.0M</span>
                   </div>
                 </div>
 
-                {/* Down Payment Slider */}
                 <div>
                   <div className="flex justify-between items-center mb-1.5 text-xs">
                     <span className="font-bold text-slate-900">Down Payment ({downPercent}%)</span>
-                    <span className="font-mono text-slate-800 font-medium text-xs">{fmtCurrency(mortgageMath.downAmount)}</span>
+                    <span className="font-mono text-slate-700 font-semibold text-xs">
+                      {fmtCurrency(mortgageMath.downAmount)}
+                    </span>
                   </div>
                   <div className="flex items-center gap-2">
                     {[10, 15, 20, 25, 30].map((pct) => (
@@ -207,10 +445,10 @@ export const QuickModelerWidget = () => {
                         key={pct}
                         type="button"
                         onClick={() => setDownPercent(pct)}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-mono font-medium transition-colors ${
+                        className={`flex-1 py-1.5 rounded-lg text-xs font-mono font-medium transition-colors cursor-pointer ${
                           downPercent === pct
-                            ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold shadow-2xs'
-                            : 'bg-white border border-slate-300 text-slate-900 font-semibold hover:bg-slate-100'
+                            ? 'bg-indigo-50 text-indigo-700 border border-indigo-300 font-bold shadow-2xs'
+                            : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
                         }`}
                       >
                         {pct}%
@@ -219,7 +457,6 @@ export const QuickModelerWidget = () => {
                   </div>
                 </div>
 
-                {/* Interest Rate & Term */}
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-slate-900 mb-1.5">
@@ -235,7 +472,7 @@ export const QuickModelerWidget = () => {
                         onChange={(e) => setMortgageRate(Number(e.target.value))}
                         className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-mono text-slate-900 focus:outline-none focus:border-indigo-500 shadow-2xs"
                       />
-                      <Percent className="size-3.5 text-slate-600 absolute right-3 top-3 pointer-events-none" />
+                      <Percent className="size-3.5 text-slate-400 absolute right-3 top-3 pointer-events-none" />
                     </div>
                   </div>
 
@@ -249,10 +486,10 @@ export const QuickModelerWidget = () => {
                           key={term}
                           type="button"
                           onClick={() => setMortgageTermYears(term)}
-                          className={`py-2 rounded-xl text-xs font-mono transition-colors ${
+                          className={`py-2 rounded-xl text-xs font-mono transition-colors cursor-pointer ${
                             mortgageTermYears === term
-                              ? 'bg-indigo-50 text-indigo-700 border border-indigo-200 font-bold shadow-2xs'
-                              : 'bg-white border border-slate-300 text-slate-900 font-semibold hover:bg-slate-100'
+                              ? 'bg-indigo-50 text-indigo-700 border border-indigo-300 font-bold shadow-2xs'
+                              : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
                           }`}
                         >
                           {term} Yrs
@@ -264,138 +501,146 @@ export const QuickModelerWidget = () => {
               </>
             )}
 
-            {activeTab === 'dscr' && (
+            {/* TAB 4: DuckDB SQL */}
+            {activeTab === 'sql' && (
               <>
-                {/* Gross Annual Rent */}
-                <div>
-                  <div className="flex justify-between items-center mb-1.5 text-xs">
-                    <span className="font-bold text-slate-900">Gross Annual Rental Income</span>
-                    <span className="font-mono font-bold text-slate-900 text-sm">{fmtCurrency(annualRent)}</span>
-                  </div>
-                  <input
-                    type="range"
-                    min={20000}
-                    max={500000}
-                    step={5000}
-                    value={annualRent}
-                    onChange={(e) => setAnnualRent(Number(e.target.value))}
-                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-cyan-600"
-                  />
-                  <div className="flex justify-between text-[10px] font-mono text-slate-600 font-medium mt-1">
-                    <span>$20k/yr</span>
-                    <span>$250k/yr</span>
-                    <span>$500k/yr</span>
-                  </div>
-                </div>
-
-                {/* Operating Expenses */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                      Annual Operating Expenses (Taxes, Ins, Maint)
-                    </label>
-                    <input
-                      type="number"
-                      step={1000}
-                      value={annualExpenses}
-                      onChange={(e) => setAnnualExpenses(Number(e.target.value))}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-mono text-slate-900 focus:outline-none focus:border-cyan-500 shadow-2xs"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                      Annual Debt Service (P&I)
-                    </label>
-                    <input
-                      type="number"
-                      step={1000}
-                      value={annualDebtService}
-                      onChange={(e) => setAnnualDebtService(Number(e.target.value))}
-                      className="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-mono text-slate-900 focus:outline-none focus:border-cyan-500 shadow-2xs"
-                    />
-                  </div>
-                </div>
-              </>
-            )}
-
-            {activeTab === 'salary' && (
-              <>
-                {/* Annual Salary Slider */}
-                <div>
-                  <div className="flex justify-between items-center mb-1.5 text-xs">
-                    <span className="font-bold text-slate-900">Base Annual Salary</span>
-                    <span className="font-mono font-bold text-slate-900 text-sm">{fmtCurrency(annualSalary)}</span>
-                  </div>
-                  <input
-                    type="range"
-                    min={25000}
-                    max={350000}
-                    step={2500}
-                    value={annualSalary}
-                    onChange={(e) => setAnnualSalary(Number(e.target.value))}
-                    className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
-                  />
-                  <div className="flex justify-between text-[10px] font-mono text-slate-600 font-medium mt-1">
-                    <span>$25k</span>
-                    <span>$150k</span>
-                    <span>$350k</span>
-                  </div>
-                </div>
-
-                {/* Standard Tiers */}
-                <div>
-                  <span className="block text-xs font-bold text-slate-900 mb-1.5">Common Salary Benchmarks</span>
-                  <div className="flex flex-wrap gap-2">
-                    {[40000, 50000, 65000, 80000, 100000, 120000].map((tier) => (
-                      <button
-                        key={tier}
-                        type="button"
-                        onClick={() => setAnnualSalary(tier)}
-                        className={`px-3 py-1 rounded-lg text-xs font-mono font-medium transition-colors ${
-                          annualSalary === tier
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold shadow-2xs'
-                            : 'bg-white border border-slate-300 text-slate-900 font-semibold hover:bg-slate-100'
-                        }`}
-                      >
-                        ${tier / 1000}k/yr
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Hours per Week */}
                 <div>
                   <label className="block text-xs font-bold text-slate-900 mb-1.5">
-                    Weekly Working Hours: <span className="text-emerald-700 font-mono font-bold">{hoursPerWeek} hrs</span>
+                    Select Sample Query
                   </label>
-                  <div className="flex gap-2">
-                    {[35, 40, 45, 50].map((hrs) => (
+                  <div className="flex gap-2 mb-3">
+                    {sqlQueries.map((q, idx) => (
                       <button
-                        key={hrs}
+                        key={idx}
                         type="button"
-                        onClick={() => setHoursPerWeek(hrs)}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-mono transition-colors ${
-                          hoursPerWeek === hrs
-                            ? 'bg-emerald-50 text-emerald-700 border border-emerald-200 font-bold shadow-2xs'
-                            : 'bg-white border border-slate-300 text-slate-900 font-semibold hover:bg-slate-100'
+                        onClick={() => setSelectedSqlIndex(idx)}
+                        className={`flex-1 py-1.5 px-2.5 rounded-lg text-xs font-medium text-left border transition-all cursor-pointer truncate ${
+                          selectedSqlIndex === idx
+                            ? 'bg-purple-50 border-purple-300 text-purple-900 font-bold'
+                            : 'bg-white border-slate-200 text-slate-700 hover:bg-slate-50'
                         }`}
                       >
-                        {hrs}h/wk
+                        {q.title}
                       </button>
                     ))}
+                  </div>
+
+                  {/* Code Editor Box */}
+                  <div className="rounded-xl bg-slate-950 p-3.5 font-mono text-xs text-slate-200 shadow-inner border border-slate-800 overflow-x-auto leading-relaxed">
+                    <pre className="text-emerald-400 select-all">
+                      {sqlQueries[selectedSqlIndex].query}
+                    </pre>
+                  </div>
+                  <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono mt-1.5">
+                    <span>Engine: DuckDB-Wasm (SIMD)</span>
+                    <span className="text-emerald-600 font-bold">Execution: ~{sqlQueries[selectedSqlIndex].time}</span>
                   </div>
                 </div>
               </>
             )}
           </div>
 
-          {/* Right Column: Live Output Card */}
+          {/* Right Column: Live Output KPI Card */}
           <div className="lg:col-span-5 flex flex-col justify-between rounded-2xl bg-slate-50 border border-slate-200 p-5 sm:p-6 shadow-2xs">
+            {/* Output KPI for Video */}
+            {activeTab === 'video' && (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-700 font-bold">
+                    Estimated Compression
+                  </span>
+                  <span className="text-[10px] font-mono text-blue-700 bg-blue-50 px-2 py-0.5 rounded-full border border-blue-200">
+                    Wasm Multithreaded
+                  </span>
+                </div>
+
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight">
+                    {videoMetrics.outputSize.toFixed(1)} MB
+                  </span>
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    -{videoMetrics.savingsPercent}% Space Saved
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mb-4 font-medium">
+                  {videoMetrics.targetLabel}
+                </p>
+
+                {/* Breakdown Matrix */}
+                <div className="space-y-2 pt-3 border-t border-slate-200 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 font-medium">Original File:</span>
+                    <span className="font-mono font-semibold text-slate-900">{videoSourceSize} MB</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 font-medium">Estimated Process Time:</span>
+                    <span className="font-mono font-semibold text-blue-600">~{videoMetrics.estimatedTime}s</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 font-medium">Visual Quality Score:</span>
+                    <span className="font-mono font-semibold text-emerald-600">{videoMetrics.ssim} SSIM</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 font-medium">Server Uploads:</span>
+                    <span className="font-mono font-semibold text-slate-900">0 Bytes (100% Local)</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Output KPI for Image */}
+            {activeTab === 'image' && (
+              <div>
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-700 font-bold">
+                    Image Output Size
+                  </span>
+                  <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    WebCodecs + Canvas
+                  </span>
+                </div>
+
+                <div className="flex items-baseline gap-2 mb-2">
+                  <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight">
+                    {imageMetrics.totalOutput < 1
+                      ? `${(imageMetrics.totalOutput * 1024).toFixed(0)} KB`
+                      : `${imageMetrics.totalOutput.toFixed(2)} MB`}
+                  </span>
+                  <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                    -{imageMetrics.savingsPercent}% Saved
+                  </span>
+                </div>
+                <p className="text-xs text-slate-500 mb-4 font-medium">
+                  Optimized to {imageFormat.toUpperCase()} at {imageQuality}% quality
+                </p>
+
+                {/* Breakdown Matrix */}
+                <div className="space-y-2 pt-3 border-t border-slate-200 text-xs">
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 font-medium">Original Total:</span>
+                    <span className="font-mono font-semibold text-slate-900">{imageMetrics.totalSource.toFixed(1)} MB</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 font-medium">Files Processed:</span>
+                    <span className="font-mono font-semibold text-slate-900">{imageBatchCount} image{imageBatchCount > 1 ? 's' : ''}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 font-medium">Speed:</span>
+                    <span className="font-mono font-semibold text-emerald-600">Instant (&lt; 0.2s)</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-slate-600 font-medium">Privacy:</span>
+                    <span className="font-mono font-semibold text-slate-900">Zero Server Storage</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Output KPI for Mortgage */}
             {activeTab === 'mortgage' && (
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-800 font-bold">
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-700 font-bold">
                     Estimated Monthly P&I
                   </span>
                   <span className="text-[10px] font-mono text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-full border border-indigo-200">
@@ -405,129 +650,129 @@ export const QuickModelerWidget = () => {
 
                 <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight mb-4">
                   {fmtCurrency(mortgageMath.monthlyPI, 2)}
-                  <span className="text-xs text-slate-700 font-sans font-medium ml-1.5">/ month</span>
+                  <span className="text-xs text-slate-600 font-sans font-medium ml-1.5">/ month</span>
                 </div>
 
                 {/* Breakdown Matrix */}
                 <div className="space-y-2 pt-3 border-t border-slate-200 text-xs">
                   <div className="flex justify-between">
-                    <span className="text-slate-800 font-medium">Total Loan Amount:</span>
+                    <span className="text-slate-600 font-medium">Total Loan Amount:</span>
                     <span className="font-mono font-semibold text-slate-900">{fmtCurrency(mortgageMath.loanAmount)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-800 font-medium">Lifetime Interest:</span>
+                    <span className="text-slate-600 font-medium">Lifetime Interest:</span>
                     <span className="font-mono font-semibold text-indigo-700">{fmtCurrency(mortgageMath.totalInterest)}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-800 font-medium">Total Cost of Loan:</span>
+                    <span className="text-slate-600 font-medium">Total Cost of Loan:</span>
                     <span className="font-mono font-semibold text-slate-900">{fmtCurrency(mortgageMath.totalPaid)}</span>
                   </div>
                 </div>
               </div>
             )}
 
-            {activeTab === 'dscr' && (
+            {/* Output KPI for SQL */}
+            {activeTab === 'sql' && (
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-800 font-bold">
-                    DSCR Debt Coverage Ratio
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-700 font-bold">
+                    Live Query Result
+                  </span>
+                  <span className="text-[10px] font-mono text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full border border-purple-200">
+                    DuckDB-Wasm
                   </span>
                 </div>
 
-                <div className="flex items-baseline gap-3 mb-2">
-                  <span className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight">
-                    {dscrMath.dscr.toFixed(2)}x
-                  </span>
+                {/* Mini Result Table */}
+                <div className="rounded-xl border border-slate-200 bg-white overflow-hidden shadow-2xs mb-4">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-slate-50 border-b border-slate-200 text-[10px] font-mono text-slate-500 uppercase">
+                      <tr>
+                        <th className="px-3 py-1.5 font-semibold">Column A</th>
+                        <th className="px-3 py-1.5 font-semibold text-right">Value</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-mono text-[11px]">
+                      {sqlQueries[selectedSqlIndex].rows.slice(0, 4).map((row, rIdx) => (
+                        <tr key={rIdx} className="hover:bg-slate-50/60">
+                          <td className="px-3 py-1.5 text-slate-800 font-medium">{row.col1}</td>
+                          <td className="px-3 py-1.5 text-right font-bold text-slate-900">{row.col2}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
 
-                <div className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border mb-4 ${dscrMath.statusColor}`}>
-                  <CheckCircle2 className="size-3.5 shrink-0" />
-                  <span>{dscrMath.status}</span>
-                </div>
-
-                {/* Breakdown Matrix */}
-                <div className="space-y-2 pt-3 border-t border-slate-200 text-xs">
+                <div className="space-y-1.5 text-xs border-t border-slate-200 pt-3">
                   <div className="flex justify-between">
-                    <span className="text-slate-800 font-medium">Net Operating Income (NOI):</span>
-                    <span className="font-mono font-semibold text-slate-900">{fmtCurrency(dscrMath.noi)}</span>
+                    <span className="text-slate-600">Scan Rate:</span>
+                    <span className="font-mono font-semibold text-emerald-600">1.2M rows / sec</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-slate-800 font-medium">Annual Net Cash Flow:</span>
-                    <span className="font-mono font-semibold text-cyan-700">{fmtCurrency(dscrMath.netCashFlow)}</span>
+                    <span className="text-slate-600">Cloud Data Ingestion:</span>
+                    <span className="font-mono font-semibold text-slate-900">0 KB (Zero cloud egress)</span>
                   </div>
                 </div>
               </div>
             )}
 
-            {activeTab === 'salary' && (
-              <div>
-                <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-800 font-bold">
-                    Equivalent Hourly Wage
-                  </span>
-                  <span className="text-[10px] font-mono text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                    {hoursPerWeek}h/wk Standard
-                  </span>
-                </div>
-
-                <div className="text-3xl sm:text-4xl font-extrabold text-slate-900 font-mono tracking-tight mb-4">
-                  {fmtCurrency(salaryMath.hourlyRate, 2)}
-                  <span className="text-xs text-slate-700 font-sans font-medium ml-1.5">/ hour</span>
-                </div>
-
-                {/* Breakdown Matrix */}
-                <div className="space-y-2 pt-3 border-t border-slate-200 text-xs">
-                  <div className="flex justify-between">
-                    <span className="text-slate-800 font-medium">Bi-Weekly Paycheck (26x):</span>
-                    <span className="font-mono font-semibold text-slate-900">{fmtCurrency(salaryMath.biweeklyPay, 2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-800 font-medium">Monthly Gross Pay (12x):</span>
-                    <span className="font-mono font-semibold text-slate-900">{fmtCurrency(salaryMath.monthlyPay, 2)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-slate-800 font-medium">1.5x FLSA Overtime Rate:</span>
-                    <span className="font-mono font-semibold text-emerald-700">{fmtCurrency(salaryMath.overtimeRate, 2)}/hr</span>
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* Deep Link Action Button */}
+            {/* Action CTA Button */}
             <div className="pt-5 mt-4 border-t border-slate-200">
+              {activeTab === 'video' && (
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/video-compressor')}
+                  className="group w-full h-11 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <Video className="size-4 text-blue-400" />
+                    <span>Open Video Compressor (Wasm)</span>
+                  </span>
+                  <span className="size-6 rounded-full bg-white/15 flex items-center justify-center transition-transform group-hover:translate-x-0.5">
+                    <ArrowRight className="size-3" />
+                  </span>
+                </button>
+              )}
+
+              {activeTab === 'image' && (
+                <button
+                  type="button"
+                  onClick={() => navigateTo('/image-compressor')}
+                  className="group w-full h-11 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
+                >
+                  <span className="flex items-center gap-2">
+                    <ImageIcon className="size-4 text-emerald-400" />
+                    <span>Open Image Compressor (Batch Mode)</span>
+                  </span>
+                  <span className="size-6 rounded-full bg-white/15 flex items-center justify-center transition-transform group-hover:translate-x-0.5">
+                    <ArrowRight className="size-3" />
+                  </span>
+                </button>
+              )}
+
               {activeTab === 'mortgage' && (
                 <button
                   type="button"
                   onClick={() => navigateTo('/mortgage-calculator')}
-                  className="group w-full h-10 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
+                  className="group w-full h-11 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
                 >
-                  <span>Open Full Schedule in Mortgage Calculator</span>
+                  <span>Open Full Amortization in Mortgage Calculator</span>
                   <span className="size-6 rounded-full bg-white/15 flex items-center justify-center transition-transform group-hover:translate-x-0.5">
                     <ArrowRight className="size-3" />
                   </span>
                 </button>
               )}
 
-              {activeTab === 'dscr' && (
+              {activeTab === 'sql' && (
                 <button
                   type="button"
-                  onClick={() => navigateTo('/dscr-loan-calculator')}
-                  className="group w-full h-10 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
+                  onClick={() => navigateTo('/data-tools')}
+                  className="group w-full h-11 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
                 >
-                  <span>Open Full DSCR Qualification Matrix</span>
-                  <span className="size-6 rounded-full bg-white/15 flex items-center justify-center transition-transform group-hover:translate-x-0.5">
-                    <ArrowRight className="size-3" />
+                  <span className="flex items-center gap-2">
+                    <Database className="size-4 text-purple-400" />
+                    <span>Open Full Data Tools Workbench</span>
                   </span>
-                </button>
-              )}
-
-              {activeTab === 'salary' && (
-                <button
-                  type="button"
-                  onClick={() => navigateTo('/salary-to-hourly-calculator')}
-                  className="group w-full h-10 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold flex items-center justify-between shadow-xs transition-all cursor-pointer"
-                >
-                  <span>Open 52-Week Wage Matrix & Tax Model</span>
                   <span className="size-6 rounded-full bg-white/15 flex items-center justify-center transition-transform group-hover:translate-x-0.5">
                     <ArrowRight className="size-3" />
                   </span>

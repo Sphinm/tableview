@@ -400,16 +400,19 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
     <header className="border-b border-slate-200/80 bg-white/90 backdrop-blur-md sticky top-0 z-50 transition-colors shadow-xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         {/* Left: Brand + Grouped Nav */}
-        <div className="flex items-center gap-7">
+        <div className="flex items-center gap-6 lg:gap-8">
           <a
             href="/"
             onClick={(e) => handleNav(e, '/')}
-            className="flex items-center gap-2.5 group"
+            className="flex items-center gap-2.5 group shrink-0"
           >
-            <div className="brand-icon size-8 rounded-lg flex items-center justify-center shadow-sm group-hover:scale-105 transition-all">
-              <Table className="size-4.5" />
+            <div className="brand-icon size-8.5 rounded-xl flex items-center justify-center shadow-xs group-hover:scale-105 transition-all bg-slate-950 text-white border border-slate-800">
+              <Table className="size-4.5 text-indigo-400" />
             </div>
-            <span className="text-base font-bold text-slate-900 tracking-tight">TableView</span>
+            <div className="flex items-center gap-1.5">
+              <span className="text-base font-extrabold text-slate-900 tracking-tight">TableView</span>
+              <span className="px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold bg-slate-100 text-slate-600 border border-slate-200">.dev</span>
+            </div>
           </a>
 
           {/* Desktop Nav */}
@@ -861,42 +864,141 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
               <button
                 type="button"
                 onClick={() => setUserMenuOpen((prev) => !prev)}
-                className="flex items-center gap-2 py-1.5 px-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-xs"
+                className="flex items-center gap-2 py-1 px-2 sm:px-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800 transition-all cursor-pointer shadow-xs hover:border-slate-300"
               >
-                <div className="size-6 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[10px]">
-                  {user.name ? user.name[0].toUpperCase() : 'U'}
-                </div>
-                <span className="max-w-[80px] truncate hidden sm:inline">{user.name}</span>
-                <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 text-[10px] font-bold border border-slate-200">
+                {user.avatarUrl ? (
+                  <img
+                    src={user.avatarUrl}
+                    alt={user.name || 'User avatar'}
+                    className="size-6 rounded-full object-cover ring-1 ring-slate-200"
+                    referrerPolicy="no-referrer"
+                  />
+                ) : (
+                  <div className="size-6 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-[10px]">
+                    {user.name ? user.name[0].toUpperCase() : 'U'}
+                  </div>
+                )}
+                <span className="max-w-[85px] truncate font-bold text-slate-900 hidden sm:inline">
+                  {user.name || user.email.split('@')[0]}
+                </span>
+                <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200/80 text-[10px] font-mono font-bold">
+                  <Zap className="size-2.5 text-amber-500 fill-amber-500" />
                   {user.credits} Cr
                 </span>
+                <ChevronDown className={`size-3 text-slate-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 top-full mt-1.5 w-52 rounded-2xl bg-white border border-slate-200 shadow-xl p-2 z-50 animate-in fade-in zoom-in-95">
-                  <div className="px-3 py-2 border-b border-slate-100">
-                    <div className="text-[11px] text-slate-500">Signed in as</div>
-                    <div className="text-xs font-bold text-slate-900 truncate">{user.email}</div>
-                    <div className="mt-1 flex items-center gap-1.5">
-                      <span className="text-[10px] font-semibold uppercase px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200">
-                        {user.plan} Plan
-                      </span>
-                      <span className="text-[10px] text-slate-500">
-                        {user.credits} Credits left
-                      </span>
+                <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 rounded-2xl bg-white border border-slate-200 shadow-xl p-3.5 z-50 animate-in fade-in zoom-in-95 divide-y divide-slate-100">
+                  {/* User Identity Section */}
+                  <div className="pb-3 flex items-start gap-3">
+                    {user.avatarUrl ? (
+                      <img
+                        src={user.avatarUrl}
+                        alt={user.name || 'User avatar'}
+                        className="size-11 rounded-full object-cover ring-2 ring-slate-100 shrink-0"
+                        referrerPolicy="no-referrer"
+                      />
+                    ) : (
+                      <div className="size-11 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-sm shrink-0">
+                        {user.name ? user.name[0].toUpperCase() : 'U'}
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-bold text-slate-900 truncate">
+                        {user.name || 'User'}
+                      </div>
+                      <div className="text-xs text-slate-500 truncate mt-0.5 font-medium">
+                        {user.email}
+                      </div>
+                      <div className="mt-1.5 flex items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1 text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/70">
+                          <ShieldCheck className="size-3 text-indigo-600" />
+                          {user.plan} Plan
+                        </span>
+                      </div>
                     </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      logout();
-                      setUserMenuOpen(false);
-                    }}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-xs text-red-600 hover:bg-red-50 rounded-xl transition-colors mt-1 font-medium cursor-pointer"
-                  >
-                    <LogOut className="size-3.5" />
-                    <span>Sign Out</span>
-                  </button>
+
+                  {/* Visual Credit Meter */}
+                  <div className="py-3">
+                    <div className="flex items-center justify-between text-xs mb-1.5">
+                      <span className="font-semibold text-slate-700 flex items-center gap-1">
+                        <Zap className="size-3.5 text-amber-500 fill-amber-500" />
+                        Monthly Cloud Credits
+                      </span>
+                      <span className="font-mono font-bold text-slate-900">
+                        {user.credits} / 30
+                      </span>
+                    </div>
+                    <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
+                      <div
+                        className="bg-indigo-600 h-full rounded-full transition-all duration-300"
+                        style={{ width: `${Math.min(100, Math.max(0, (user.credits / 30) * 100))}%` }}
+                      />
+                    </div>
+                    <p className="text-[10px] text-slate-500 mt-1.5 leading-normal">
+                      30 free credits every month. 100% private in-browser compression.
+                    </p>
+                  </div>
+
+                  {/* Quick Links */}
+                  <div className="py-2 space-y-0.5 text-xs">
+                    <a
+                      href="/video-compressor"
+                      onClick={(e) => handleNav(e, '/video-compressor')}
+                      className="flex items-center justify-between px-2.5 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors"
+                    >
+                      <span className="flex items-center gap-2">
+                        <Video className="size-3.5 text-blue-600" />
+                        <span className="font-medium">Video Compressor</span>
+                      </span>
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200/60">
+                        Wasm
+                      </span>
+                    </a>
+                    <a
+                      href="/image-compressor"
+                      onClick={(e) => handleNav(e, '/image-compressor')}
+                      className="flex items-center justify-between px-2.5 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors"
+                    >
+                      <span className="flex items-center gap-2">
+                        <ImageIcon className="size-3.5 text-emerald-600" />
+                        <span className="font-medium">Image Compressor</span>
+                      </span>
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                        Batch
+                      </span>
+                    </a>
+                    <a
+                      href="/data-tools"
+                      onClick={(e) => handleNav(e, '/data-tools')}
+                      className="flex items-center justify-between px-2.5 py-2 rounded-xl text-slate-700 hover:text-slate-900 hover:bg-slate-50 transition-colors"
+                    >
+                      <span className="flex items-center gap-2">
+                        <Database className="size-3.5 text-purple-600" />
+                        <span className="font-medium">Data Tools Workbench</span>
+                      </span>
+                      <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-purple-50 text-purple-700 border border-purple-200/60">
+                        DuckDB
+                      </span>
+                    </a>
+                  </div>
+
+                  {/* Sign Out */}
+                  <div className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        logout();
+                        setUserMenuOpen(false);
+                      }}
+                      className="w-full flex items-center justify-center gap-2 py-2 px-3 text-xs font-semibold text-rose-600 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer"
+                    >
+                      <LogOut className="size-3.5" />
+                      <span>Sign Out</span>
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -904,7 +1006,7 @@ export const Header = ({ onTrySample, isLoading, currentPath = '/' }: HeaderProp
             <button
               type="button"
               onClick={openAuthModal}
-              className="inline-flex items-center justify-center px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-slate-900 hover:bg-slate-800 text-white shadow-2xs transition-all cursor-pointer whitespace-nowrap active:scale-95"
+              className="inline-flex items-center justify-center px-4 py-1.5 rounded-xl text-xs sm:text-sm font-semibold bg-slate-900 hover:bg-slate-800 text-white shadow-xs hover:shadow transition-all cursor-pointer whitespace-nowrap active:scale-95"
             >
               <span>Sign In</span>
             </button>

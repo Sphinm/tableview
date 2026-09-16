@@ -270,7 +270,7 @@ export function VideoCompressor() {
                           className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
                             compareTab === 'compressed'
                               ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                              : 'text-slate-900 hover:bg-slate-300/60'
                           }`}
                         >
                           Compressed
@@ -280,7 +280,7 @@ export function VideoCompressor() {
                           className={`px-2.5 py-1 rounded-md font-semibold transition-all ${
                             compareTab === 'original'
                               ? 'bg-blue-600 text-white shadow-sm'
-                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                              : 'text-slate-900 hover:bg-slate-300/60'
                           }`}
                         >
                           Original

@@ -120,14 +120,14 @@ function generateHeaderHtml(): string {
           <span>TableView<span style="color: #0284c7;">.dev</span></span>
           <span style="font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.5rem; border-radius: 9999px; background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd;">100% In-Browser</span>
         </a>
-        <nav style="display: flex; gap: 1.5rem; font-size: 0.875rem; flex-wrap: wrap; font-weight: 500;">
-          <a href="/video-compressor" style="color: #475569; text-decoration: none;">Video Compressor</a>
-          <a href="/image-compressor" style="color: #475569; text-decoration: none;">Image Compressor</a>
-          <a href="/finance-calculator" style="color: #475569; text-decoration: none;">Calculators</a>
-          <a href="/data-tools" style="color: #475569; text-decoration: none;">Data Tools</a>
-          <a href="/guides" style="color: #475569; text-decoration: none;">Guides</a>
-          <a href="/about" style="color: #475569; text-decoration: none;">About</a>
-          <a href="/contact" style="color: #475569; text-decoration: none;">Contact</a>
+        <nav style="display: flex; gap: 1.5rem; font-size: 0.875rem; flex-wrap: wrap; font-weight: 600;">
+          <a href="/video-compressor" style="color: #0f172a; text-decoration: none;">Video Compressor</a>
+          <a href="/image-compressor" style="color: #0f172a; text-decoration: none;">Image Compressor</a>
+          <a href="/finance-calculator" style="color: #0f172a; text-decoration: none;">Calculators</a>
+          <a href="/data-tools" style="color: #0f172a; text-decoration: none;">Data Tools</a>
+          <a href="/guides" style="color: #0f172a; text-decoration: none;">Guides</a>
+          <a href="/about" style="color: #0f172a; text-decoration: none;">About</a>
+          <a href="/contact" style="color: #0f172a; text-decoration: none;">Contact</a>
         </nav>
       </div>
     </header>
@@ -143,63 +143,63 @@ function generateFooterHtml(): string {
           <div>
             <h4 style="color: #0f172a; font-weight: 700; margin-bottom: 0.85rem; font-size: 0.95rem;">Commercial Real Estate & Debt</h4>
             <ul style="list-style: none; padding: 0; margin: 0; line-height: 2.1;">
-              <li><a href="/dscr-loan-calculator" style="color: #64748b; text-decoration: none;">DSCR Loan Calculator</a></li>
-              <li><a href="/commercial-loan-calculator" style="color: #64748b; text-decoration: none;">Commercial Loan & Balloon</a></li>
-              <li><a href="/section-1031-exchange-calculator" style="color: #64748b; text-decoration: none;">IRC §1031 Tax Deferral</a></li>
-              <li><a href="/loan-comparison-calculator" style="color: #64748b; text-decoration: none;">Loan Comparison & APR</a></li>
-              <li><a href="/mortgage-calculator" style="color: #64748b; text-decoration: none;">Residential Mortgage & PITI</a></li>
-              <li><a href="/refinance-calculator" style="color: #64748b; text-decoration: none;">Refinance Break-Even</a></li>
-              <li><a href="/hard-money-calculator" style="color: #64748b; text-decoration: none;">Hard Money & Fix-and-Flip</a></li>
+              <li><a href="/dscr-loan-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">DSCR Loan Calculator</a></li>
+              <li><a href="/commercial-loan-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Commercial Loan & Balloon</a></li>
+              <li><a href="/section-1031-exchange-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">IRC §1031 Tax Deferral</a></li>
+              <li><a href="/loan-comparison-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Loan Comparison & APR</a></li>
+              <li><a href="/mortgage-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Residential Mortgage & PITI</a></li>
+              <li><a href="/refinance-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Refinance Break-Even</a></li>
+              <li><a href="/hard-money-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Hard Money & Fix-and-Flip</a></li>
             </ul>
           </div>
           <div>
             <h4 style="color: #0f172a; font-weight: 700; margin-bottom: 0.85rem; font-size: 0.95rem;">Payroll & Cloud FinOps</h4>
             <ul style="list-style: none; padding: 0; margin: 0; line-height: 2.1;">
-              <li><a href="/salary-to-hourly-calculator" style="color: #64748b; text-decoration: none;">Salary to Hourly Calculator</a></li>
-              <li><a href="/snowflake-cost-calculator" style="color: #64748b; text-decoration: none;">Snowflake Warehouse Cost</a></li>
-              <li><a href="/parquet-storage-calculator" style="color: #64748b; text-decoration: none;">Parquet Storage & Scan Savings</a></li>
+              <li><a href="/salary-to-hourly-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Salary to Hourly Calculator</a></li>
+              <li><a href="/snowflake-cost-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Snowflake Warehouse Cost</a></li>
+              <li><a href="/parquet-storage-calculator" style="color: #1e293b; text-decoration: none; font-weight: 500;">Parquet Storage & Scan Savings</a></li>
             </ul>
           </div>
           <div>
             <h4 style="color: #0f172a; font-weight: 700; margin-bottom: 0.85rem; font-size: 0.95rem;">In-Browser Data Workbench</h4>
             <ul style="list-style: none; padding: 0; margin: 0; line-height: 2.1;">
-              <li><a href="/data-tools" style="color: #64748b; text-decoration: none;">Data Workbench Console</a></li>
-              <li><a href="/csv-viewer" style="color: #64748b; text-decoration: none;">CSV Spreadsheet Viewer</a></li>
-              <li><a href="/excel-viewer" style="color: #64748b; text-decoration: none;">Excel (.xlsx) Viewer</a></li>
-              <li><a href="/parquet-viewer" style="color: #64748b; text-decoration: none;">Apache Parquet Viewer</a></li>
-              <li><a href="/sql-workbench" style="color: #64748b; text-decoration: none;">DuckDB SQL Console</a></li>
-              <li><a href="/json-formatter" style="color: #64748b; text-decoration: none;">JSON Formatter & Prettifier</a></li>
-              <li><a href="/sql-formatter" style="color: #64748b; text-decoration: none;">SQL Query Formatter</a></li>
+              <li><a href="/data-tools" style="color: #1e293b; text-decoration: none; font-weight: 500;">Data Workbench Console</a></li>
+              <li><a href="/csv-viewer" style="color: #1e293b; text-decoration: none; font-weight: 500;">CSV Spreadsheet Viewer</a></li>
+              <li><a href="/excel-viewer" style="color: #1e293b; text-decoration: none; font-weight: 500;">Excel (.xlsx) Viewer</a></li>
+              <li><a href="/parquet-viewer" style="color: #1e293b; text-decoration: none; font-weight: 500;">Apache Parquet Viewer</a></li>
+              <li><a href="/sql-workbench" style="color: #1e293b; text-decoration: none; font-weight: 500;">DuckDB SQL Console</a></li>
+              <li><a href="/json-formatter" style="color: #1e293b; text-decoration: none; font-weight: 500;">JSON Formatter & Prettifier</a></li>
+              <li><a href="/sql-formatter" style="color: #1e293b; text-decoration: none; font-weight: 500;">SQL Query Formatter</a></li>
             </ul>
           </div>
           <div>
             <h4 style="color: #0f172a; font-weight: 700; margin-bottom: 0.85rem; font-size: 0.95rem;">Media & Compression Tools</h4>
             <ul style="list-style: none; padding: 0; margin: 0; line-height: 2.1;">
-              <li><a href="/video-compressor" style="color: #64748b; text-decoration: none;">Video Compressor (WebAssembly)</a></li>
-              <li><a href="/image-compressor" style="color: #64748b; text-decoration: none;">Image Compressor (Batch & ZIP)</a></li>
-              <li><a href="/compress-video" style="color: #64748b; text-decoration: none;">Reduce Video Size (MP4/WebM)</a></li>
-              <li><a href="/compress-image" style="color: #64748b; text-decoration: none;">Batch Photo Optimizer (WebP/JPG)</a></li>
+              <li><a href="/video-compressor" style="color: #1e293b; text-decoration: none; font-weight: 500;">Video Compressor (WebAssembly)</a></li>
+              <li><a href="/image-compressor" style="color: #1e293b; text-decoration: none; font-weight: 500;">Image Compressor (Batch & ZIP)</a></li>
+              <li><a href="/compress-video" style="color: #1e293b; text-decoration: none; font-weight: 500;">Reduce Video Size (MP4/WebM)</a></li>
+              <li><a href="/compress-image" style="color: #1e293b; text-decoration: none; font-weight: 500;">Batch Photo Optimizer (WebP/JPG)</a></li>
             </ul>
           </div>
           <div>
             <h4 style="color: #0f172a; font-weight: 700; margin-bottom: 0.85rem; font-size: 0.95rem;">Guides & Research</h4>
             <ul style="list-style: none; padding: 0; margin: 0; line-height: 2.1;">
-              <li><a href="/guides" style="color: #64748b; text-decoration: none;">All 20 In-Depth Guides</a></li>
-              <li><a href="/guides/commercial-real-estate-loan-types" style="color: #64748b; text-decoration: none;">CRE Loan Types (CMBS, SBA)</a></li>
-              <li><a href="/guides/section-1031-exchange-rules-timeline" style="color: #64748b; text-decoration: none;">1031 Exchange Rules & Deadlines</a></li>
-              <li><a href="/guides/how-to-calculate-dscr" style="color: #64748b; text-decoration: none;">How to Calculate DSCR Ratio</a></li>
-              <li><a href="/guides/what-is-apache-parquet" style="color: #64748b; text-decoration: none;">What is Apache Parquet?</a></li>
-              <li><a href="/guides/duckdb-wasm-in-browser-olap" style="color: #64748b; text-decoration: none;">DuckDB-Wasm In-Browser OLAP</a></li>
+              <li><a href="/guides" style="color: #1e293b; text-decoration: none; font-weight: 500;">All 20 In-Depth Guides</a></li>
+              <li><a href="/guides/commercial-real-estate-loan-types" style="color: #1e293b; text-decoration: none; font-weight: 500;">CRE Loan Types (CMBS, SBA)</a></li>
+              <li><a href="/guides/section-1031-exchange-rules-timeline" style="color: #1e293b; text-decoration: none; font-weight: 500;">1031 Exchange Rules & Deadlines</a></li>
+              <li><a href="/guides/how-to-calculate-dscr" style="color: #1e293b; text-decoration: none; font-weight: 500;">How to Calculate DSCR Ratio</a></li>
+              <li><a href="/guides/what-is-apache-parquet" style="color: #1e293b; text-decoration: none; font-weight: 500;">What is Apache Parquet?</a></li>
+              <li><a href="/guides/duckdb-wasm-in-browser-olap" style="color: #1e293b; text-decoration: none; font-weight: 500;">DuckDB-Wasm In-Browser OLAP</a></li>
             </ul>
           </div>
           <div>
             <h4 style="color: #0f172a; font-weight: 700; margin-bottom: 0.85rem; font-size: 0.95rem;">Platform & Trust</h4>
             <ul style="list-style: none; padding: 0; margin: 0; line-height: 2.1;">
-              <li><a href="/about" style="color: #64748b; text-decoration: none;">About TableView.dev</a></li>
-              <li><a href="/contact" style="color: #64748b; text-decoration: none;">Contact & Support Desk</a></li>
-              <li><a href="/privacy" style="color: #64748b; text-decoration: none;">Privacy Policy (GDPR / AdSense)</a></li>
-              <li><a href="/terms" style="color: #64748b; text-decoration: none;">Terms of Service</a></li>
-              <li><a href="/disclaimer" style="color: #64748b; text-decoration: none;">Legal & Financial Disclaimer</a></li>
+              <li><a href="/about" style="color: #1e293b; text-decoration: none; font-weight: 500;">About TableView.dev</a></li>
+              <li><a href="/contact" style="color: #1e293b; text-decoration: none; font-weight: 500;">Contact & Support Desk</a></li>
+              <li><a href="/privacy" style="color: #1e293b; text-decoration: none; font-weight: 500;">Privacy Policy (GDPR / AdSense)</a></li>
+              <li><a href="/terms" style="color: #1e293b; text-decoration: none; font-weight: 500;">Terms of Service</a></li>
+              <li><a href="/disclaimer" style="color: #1e293b; text-decoration: none; font-weight: 500;">Legal & Financial Disclaimer</a></li>
             </ul>
           </div>
         </div>

@@ -41,7 +41,7 @@ export function CalculatorPresetsBar<T = Record<string, unknown>>({
 
   return (
     <div className={`no-print flex flex-col sm:flex-row sm:items-center gap-2 p-2.5 rounded-xl bg-white border border-slate-200 mb-6 shadow-2xs ${className}`}>
-      <div className="flex items-center gap-1.5 px-2 text-xs font-semibold text-slate-500 shrink-0">
+      <div className="flex items-center gap-1.5 px-2 text-xs font-bold text-slate-900 shrink-0">
         <Sparkles className="size-3.5 text-amber-500" />
         <span>{title}:</span>
       </div>
@@ -55,10 +55,10 @@ export function CalculatorPresetsBar<T = Record<string, unknown>>({
               type="button"
               onClick={() => handleSelect(preset)}
               title={preset.description || preset.label}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium inline-flex items-center gap-1.5 transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-lg text-xs font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer ${
                 isActive
-                  ? 'bg-slate-900 text-white font-semibold shadow-xs border border-slate-900'
-                  : 'bg-slate-50 hover:bg-slate-100 text-slate-700 hover:text-slate-900 border border-slate-200'
+                  ? 'bg-slate-900 text-white font-bold shadow-xs border border-slate-900'
+                  : 'bg-slate-100/80 hover:bg-slate-200/80 text-slate-900 border border-slate-200'
               }`}
             >
               <span>{preset.label}</span>

@@ -46,17 +46,17 @@ export const Contact = () => {
   )}`;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 text-slate-300">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 text-slate-800">
       {/* Header */}
-      <div className="mb-12 pb-8 border-b border-slate-800 text-center sm:text-left">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-medium bg-slate-900 border border-slate-800 text-slate-300 mb-4 shadow-sm">
+      <div className="mb-12 pb-8 border-b border-slate-200 text-center sm:text-left">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 border border-indigo-200 text-indigo-700 mb-4 shadow-2xs">
           <MessageSquare className="size-3.5" />
           <span>We'd Love to Hear From You</span>
         </div>
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-100 tracking-tight mb-4">
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-4">
           Contact & Support
         </h1>
-        <p className="text-sm sm:text-base text-slate-400 leading-relaxed max-w-2xl">
+        <p className="text-sm sm:text-base text-slate-800 leading-relaxed max-w-2xl">
           Have feedback, found an unsupported Parquet schema, or interested in partnership opportunities? Reach out via the form below or send directly to our team.
         </p>
       </div>
@@ -64,67 +64,67 @@ export const Contact = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
         {/* Contact Channels */}
         <div className="space-y-6">
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm">
-            <div className="size-9 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 flex items-center justify-center mb-3">
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+            <div className="size-9 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center justify-center mb-3">
               <Mail className="size-4" />
             </div>
-            <h3 className="text-slate-100 font-semibold text-sm mb-1">Direct Support</h3>
-            <p className="text-xs text-slate-400 mb-2">Technical issues & partnerships:</p>
+            <h3 className="text-slate-900 font-bold text-sm mb-1">Direct Support</h3>
+            <p className="text-xs text-slate-800 mb-2">Technical issues & partnerships:</p>
             <a
               href="mailto:support@tableview.dev"
-              className="text-xs font-mono text-slate-300 hover:text-slate-100 underline decoration-slate-600"
+              className="text-xs font-mono text-indigo-600 hover:text-indigo-800 font-semibold underline"
             >
               support@tableview.dev
             </a>
           </div>
 
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm">
-            <div className="size-9 rounded-xl bg-slate-800 text-slate-200 border border-slate-700 flex items-center justify-center mb-3">
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+            <div className="size-9 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200 flex items-center justify-center mb-3">
               <MessageSquare className="size-4" />
             </div>
             <div className="flex items-center justify-between mb-1">
-              <h3 className="text-slate-100 font-semibold text-sm">Feedback & Inquiries</h3>
+              <h3 className="text-slate-900 font-bold text-sm">Feedback & Inquiries</h3>
               <button
                 onClick={handleCopyEmail}
-                className="text-[11px] text-slate-400 hover:text-slate-200 flex items-center gap-1 cursor-pointer"
+                className="text-[11px] text-slate-600 hover:text-slate-900 flex items-center gap-1 cursor-pointer font-medium"
                 title="Copy email address"
               >
-                {copiedEmail ? <Check className="size-3 text-emerald-500" /> : <Copy className="size-3" />}
+                {copiedEmail ? <Check className="size-3 text-emerald-600" /> : <Copy className="size-3" />}
                 <span>{copiedEmail ? 'Copied' : 'Copy'}</span>
               </button>
             </div>
-            <p className="text-xs text-slate-400 mb-2">Feature ideas & format requests:</p>
+            <p className="text-xs text-slate-800 mb-2">Feature ideas & format requests:</p>
             <a
               href="mailto:feedback@tableview.dev"
-              className="text-xs font-mono text-slate-300 hover:text-slate-100 underline decoration-slate-600 font-semibold"
+              className="text-xs font-mono text-indigo-600 hover:text-indigo-800 underline font-bold"
             >
               feedback@tableview.dev
             </a>
           </div>
 
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm">
-            <div className="size-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center mb-3">
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+            <div className="size-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center mb-3">
               <HelpCircle className="size-4" />
             </div>
-            <h3 className="text-slate-100 font-semibold text-sm mb-1">Knowledge Hub</h3>
-            <p className="text-xs text-slate-400 mb-2">Check our in-depth guides for instant answers:</p>
+            <h3 className="text-slate-900 font-bold text-sm mb-1">Knowledge Hub</h3>
+            <p className="text-xs text-slate-800 mb-2">Check our in-depth guides for instant answers:</p>
             <button
               onClick={() => navigateTo('/guides')}
-              className="text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:underline cursor-pointer"
+              className="text-xs font-semibold text-emerald-700 hover:underline cursor-pointer"
             >
               Explore Guides & Articles →
             </button>
           </div>
 
-          <div className="p-5 rounded-2xl bg-slate-900 border border-slate-800 shadow-sm">
-            <div className="size-9 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center mb-3">
+          <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-2xs">
+            <div className="size-9 rounded-xl bg-amber-50 text-amber-700 border border-amber-200 flex items-center justify-center mb-3">
               <Bug className="size-4" />
             </div>
-            <h3 className="text-slate-100 font-semibold text-sm mb-1">Direct Bug Report</h3>
-            <p className="text-xs text-slate-400 mb-2">Launch your email app with our structured bug template:</p>
+            <h3 className="text-slate-900 font-bold text-sm mb-1">Direct Bug Report</h3>
+            <p className="text-xs text-slate-800 mb-2">Launch your email app with our structured bug template:</p>
             <a
               href={getBugReportMailto()}
-              className="text-xs font-medium text-amber-500 hover:underline inline-flex items-center gap-1 cursor-pointer"
+              className="text-xs font-semibold text-amber-800 hover:underline inline-flex items-center gap-1 cursor-pointer"
               title="Open email client with preset bug template"
             >
               <span>Open Email with Template →</span>
@@ -133,14 +133,14 @@ export const Contact = () => {
         </div>
 
         {/* Contact Form */}
-        <div className="md:col-span-2 p-6 sm:p-8 rounded-2xl bg-slate-900 border border-slate-800 shadow-lg">
+        <div className="md:col-span-2 p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 shadow-2xs">
           {submitted ? (
             <div className="py-10 text-center space-y-4">
-              <div className="size-12 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center mx-auto">
+              <div className="size-12 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="size-6" />
               </div>
-              <h3 className="text-lg font-bold text-slate-100">Message Dispatched to feedback@tableview.dev!</h3>
-              <p className="text-xs text-slate-400 max-w-md mx-auto leading-relaxed">
+              <h3 className="text-lg font-bold text-slate-900">Message Dispatched to feedback@tableview.dev!</h3>
+              <p className="text-xs sm:text-sm text-slate-800 max-w-md mx-auto leading-relaxed">
                 Your email client was prompted with your message details. If your browser blocked the email client or you prefer webmail, you can open it directly in Gmail or copy our address below.
               </p>
 
@@ -157,9 +157,9 @@ export const Contact = () => {
 
                 <button
                   onClick={handleCopyEmail}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 inline-flex items-center gap-2 transition-colors cursor-pointer"
+                  className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-semibold border border-slate-300 inline-flex items-center gap-2 transition-colors cursor-pointer"
                 >
-                  {copiedEmail ? <Check className="size-3.5 text-emerald-400" /> : <Copy className="size-3.5" />}
+                  {copiedEmail ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
                   <span>{copiedEmail ? 'Copied: feedback@tableview.dev' : 'Copy feedback@tableview.dev'}</span>
                 </button>
               </div>
@@ -170,7 +170,7 @@ export const Contact = () => {
                     setSubmitted(false);
                     setFormData({ name: '', email: '', subject: 'General Inquiry', message: '' });
                   }}
-                  className="text-xs text-slate-400 hover:text-slate-200 underline cursor-pointer"
+                  className="text-xs text-indigo-600 hover:underline cursor-pointer font-semibold"
                 >
                   Write Another Message
                 </button>
@@ -178,17 +178,17 @@ export const Contact = () => {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-800">
-                <h3 className="text-lg font-bold text-slate-100">Send us a Message</h3>
-                <span className="text-[11px] font-mono text-slate-400 bg-slate-950 px-2 py-1 rounded border border-slate-800">
+              <div className="flex items-center justify-between mb-4 pb-3 border-b border-slate-200">
+                <h3 className="text-lg font-bold text-slate-900">Send us a Message</h3>
+                <span className="text-[11px] font-mono text-slate-700 bg-slate-100 px-2 py-1 rounded border border-slate-200 font-medium">
                   To: feedback@tableview.dev
                 </span>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                    Your Name <span className="text-red-400">*</span>
+                  <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                    Your Name <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -196,13 +196,13 @@ export const Contact = () => {
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     placeholder="Jane Doe"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-slate-600 transition-colors"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-colors placeholder:text-slate-400"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-slate-300 mb-1.5">
-                    Your Email Address <span className="text-red-400">*</span>
+                  <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                    Your Email Address <span className="text-red-500">*</span>
                   </label>
                   <input
                     type="email"
@@ -210,13 +210,13 @@ export const Contact = () => {
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                     placeholder="jane@example.com"
-                    className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-slate-600 transition-colors"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-colors placeholder:text-slate-400"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold text-slate-900 mb-1.5">
                   Subject
                 </label>
                 <select
@@ -231,7 +231,7 @@ export const Contact = () => {
                         : prev.message
                     }));
                   }}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-slate-600 transition-colors"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-colors"
                 >
                   <option value="General Inquiry">General Inquiry</option>
                   <option value="Bug Report">Bug Report / Unsupported Schema</option>
@@ -242,14 +242,14 @@ export const Contact = () => {
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-medium text-slate-300">
-                    Your Message <span className="text-red-400">*</span>
+                  <label className="block text-xs font-bold text-slate-900">
+                    Your Message <span className="text-red-500">*</span>
                   </label>
                   {formData.subject === 'Bug Report' && (
                     <button
                       type="button"
                       onClick={() => setFormData(prev => ({ ...prev, message: getBugReportTemplate() }))}
-                      className="text-[11px] text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer transition-colors"
+                      className="text-[11px] text-amber-700 hover:text-amber-800 font-semibold flex items-center gap-1 cursor-pointer transition-colors"
                       title="Load standard bug report template"
                     >
                       <FileText className="size-3" />
@@ -267,7 +267,7 @@ export const Contact = () => {
                       ? 'Describe the bug or error message...'
                       : 'How can we help you? Describe your question or feedback...'
                   }
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:border-slate-600 transition-colors resize-none font-mono"
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-colors resize-none font-mono placeholder:text-slate-400"
                 />
               </div>
 
@@ -279,14 +279,14 @@ export const Contact = () => {
                   <Send className="size-3.5" />
                   <span>Submit & Send Email</span>
                 </button>
-                <div className="flex items-center gap-2 text-[11px] text-slate-400">
-                  <span>Direct to <code className="text-slate-300">feedback@tableview.dev</code></span>
+                <div className="flex items-center gap-2 text-[11px] text-slate-700 font-medium">
+                  <span>Direct to <code className="text-slate-900 bg-slate-100 px-1 py-0.5 rounded border border-slate-200">feedback@tableview.dev</code></span>
                   {formData.subject === 'Bug Report' && (
                     <>
                       <span>·</span>
                       <a
                         href={getBugReportMailto()}
-                        className="text-amber-400 hover:underline"
+                        className="text-amber-700 hover:underline font-semibold"
                         title="Open default email client"
                       >
                         Open in Mail Client

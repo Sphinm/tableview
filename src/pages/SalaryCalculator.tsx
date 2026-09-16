@@ -261,7 +261,7 @@ export const SalaryCalculator = ({
         }
         presets={
           <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
-            <span className="text-xs text-slate-500 font-medium shrink-0 mr-1.5">Quick Presets:</span>
+            <span className="text-xs text-slate-900 font-bold shrink-0 mr-1.5">Quick Presets:</span>
             {SALARY_PRESETS.map((preset) => {
               const isSelected = mode === 'salary-to-hourly' && amount === preset.value;
               return (
@@ -276,7 +276,7 @@ export const SalaryCalculator = ({
                   className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer border shrink-0 ${
                     isSelected
                       ? 'bg-slate-900 text-white font-bold border-slate-900 shadow-xs'
-                      : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                      : 'bg-white text-slate-900 font-semibold border-slate-200 hover:bg-slate-100 hover:border-slate-300'
                   }`}
                 >
                   {preset.label}
@@ -346,7 +346,7 @@ export const SalaryCalculator = ({
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs space-y-5">
               {/* Calculation Mode Switcher - directly above inputs */}
               <div>
-                <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">
+                <div className="text-xs font-bold text-slate-900 uppercase tracking-wider mb-2">
                   Calculation Mode
                 </div>
                 <div className="grid grid-cols-2 p-1 bg-slate-100 rounded-xl border border-slate-200">
@@ -356,7 +356,7 @@ export const SalaryCalculator = ({
                     className={`py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                       mode === 'salary-to-hourly'
                         ? 'bg-white text-slate-900 shadow-xs font-bold'
-                        : 'text-slate-600 hover:text-slate-900'
+                        : 'text-slate-900 hover:bg-slate-200/60'
                     }`}
                   >
                     Annual Salary → Hourly
@@ -367,7 +367,7 @@ export const SalaryCalculator = ({
                     className={`py-1.5 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
                       mode === 'hourly-to-salary'
                         ? 'bg-white text-slate-900 shadow-xs font-bold'
-                        : 'text-slate-600 hover:text-slate-900'
+                        : 'text-slate-900 hover:bg-slate-200/60'
                     }`}
                   >
                     Hourly Wage → Salary
@@ -377,7 +377,7 @@ export const SalaryCalculator = ({
 
               {/* Base Amount Input */}
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">
+                <label className="block text-xs font-bold text-slate-900 mb-1.5">
                   {mode === 'salary-to-hourly' ? 'Annual Base Salary ($)' : 'Hourly Pay Rate ($/hr)'}
                 </label>
                 <CurrencyInput
@@ -390,7 +390,7 @@ export const SalaryCalculator = ({
 
               {/* Hours Per Week */}
               <div>
-                <div className="flex justify-between text-xs font-medium text-slate-700 mb-1.5">
+                <div className="flex justify-between text-xs font-bold text-slate-900 mb-1.5">
                   <span>Hours Per Week</span>
                   <span className="text-emerald-700 font-semibold font-mono">{hoursPerWeek} hrs</span>
                 </div>

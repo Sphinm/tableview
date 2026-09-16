@@ -40,56 +40,17 @@
 }
 
 @theme {
-  --color-slate-950: var(--color-bg-canvas);
-  --color-slate-900: var(--color-bg-card);
-  --color-slate-800: var(--color-border-subtle);
-  --color-slate-700: var(--color-border-strong);
-  --color-slate-600: var(--color-text-tertiary);
-  --color-slate-500: var(--color-text-placeholder);
-  --color-slate-400: var(--color-text-secondary);
-  --color-slate-300: var(--color-text-sub);
-  --color-slate-200: var(--color-text-main);
-  --color-slate-100: var(--color-text-heading);
-
-  /* Semantic Accent: Indigo */
-  --color-indigo-950: var(--color-indigo-surface);
-  --color-indigo-900: var(--color-indigo-surface-hover);
-  --color-indigo-800: var(--color-indigo-border);
-  --color-indigo-400: var(--color-indigo-text-accent);
-  --color-indigo-300: var(--color-indigo-text);
-  --color-indigo-200: var(--color-indigo-text-subtle);
-
-  /* Semantic Accent: Emerald */
-  --color-emerald-950: var(--color-emerald-surface);
-  --color-emerald-900: var(--color-emerald-surface-hover);
-  --color-emerald-800: var(--color-emerald-border);
-  --color-emerald-400: var(--color-emerald-text-accent);
-  --color-emerald-300: var(--color-emerald-text);
-
-  /* Semantic Accent: Purple */
-  --color-purple-950: var(--color-purple-surface);
-  --color-purple-900: var(--color-purple-surface-hover);
-  --color-purple-800: var(--color-purple-border);
-  --color-purple-400: var(--color-purple-text-accent);
-  --color-purple-300: var(--color-purple-text);
-
-  /* Semantic Accent: Cyan */
-  --color-cyan-950: var(--color-cyan-surface);
-  --color-cyan-800: var(--color-cyan-border);
-  --color-cyan-400: var(--color-cyan-text-accent);
-  --color-cyan-300: var(--color-cyan-text);
-
-  /* Semantic Accent: Red */
-  --color-red-950: var(--color-red-surface);
-  --color-red-900: var(--color-red-surface-hover);
-  --color-red-800: var(--color-red-border);
-  --color-red-400: var(--color-red-text-accent);
-  --color-red-300: var(--color-red-text);
-  --color-red-200: var(--color-red-text-subtle);
-
-  /* Semantic Accent: Amber */
-  --color-amber-400: var(--color-amber-text-accent);
-  --color-amber-300: var(--color-amber-text);
+  --color-slate-950: #020617;
+  --color-slate-900: #0f172a;
+  --color-slate-800: #1e293b;
+  --color-slate-700: #334155;
+  --color-slate-600: #475569;
+  --color-slate-500: #64748b;
+  --color-slate-400: #94a3b8;
+  --color-slate-300: #cbd5e1;
+  --color-slate-200: #e2e8f0;
+  --color-slate-100: #f1f5f9;
+  --color-slate-50: #f8fafc;
 }
 
 :root {
@@ -104,99 +65,11 @@
   --color-text-sub: #334155;
   --color-text-main: #1e293b;
   --color-text-heading: #0f172a;
-
-  /* Indigo */
-  --color-indigo-surface: #eef2ff;
-  --color-indigo-surface-hover: #e0e7ff;
-  --color-indigo-border: #c7d2fe;
-  --color-indigo-text-accent: #4f46e5;
-  --color-indigo-text: #3730a3;
-  --color-indigo-text-subtle: #312e81;
-
-  /* Emerald */
-  --color-emerald-surface: #ecfdf5;
-  --color-emerald-surface-hover: #d1fae5;
-  --color-emerald-border: #a7f3d0;
-  --color-emerald-text-accent: #059669;
-  --color-emerald-text: #065f46;
-
-  /* Purple */
-  --color-purple-surface: #faf5ff;
-  --color-purple-surface-hover: #f3e8ff;
-  --color-purple-border: #e9d5ff;
-  --color-purple-text-accent: #9333ea;
-  --color-purple-text: #6b21a8;
-
-  /* Cyan */
-  --color-cyan-surface: #ecfeff;
-  --color-cyan-border: #a5f3fc;
-  --color-cyan-text-accent: #0891b2;
-  --color-cyan-text: #0e7490;
-
-  /* Red */
-  --color-red-surface: #fef2f2;
-  --color-red-surface-hover: #fee2e2;
-  --color-red-border: #fecaca;
-  --color-red-text-accent: #dc2626;
-  --color-red-text: #991b1b;
-  --color-red-text-subtle: #7f1d1d;
-
-  /* Amber */
-  --color-amber-text-accent: #d97706;
-  --color-amber-text: #b45309;
-}
-
-/* Maintain html.light as explicit alias */
-html.light {
-  --color-bg-canvas: #f8fafc;
-  --color-bg-card: #ffffff;
-  --color-border-subtle: #e2e8f0;
-  --color-border-strong: #cbd5e1;
-  --color-text-tertiary: #94a3b8;
-  --color-text-placeholder: #64748b;
-  --color-text-secondary: #475569;
-  --color-text-sub: #334155;
-  --color-text-main: #1e293b;
-  --color-text-heading: #0f172a;
-
-  --color-indigo-surface: #eef2ff;
-  --color-indigo-surface-hover: #e0e7ff;
-  --color-indigo-border: #c7d2fe;
-  --color-indigo-text-accent: #4f46e5;
-  --color-indigo-text: #3730a3;
-  --color-indigo-text-subtle: #312e81;
-
-  --color-emerald-surface: #ecfdf5;
-  --color-emerald-surface-hover: #d1fae5;
-  --color-emerald-border: #a7f3d0;
-  --color-emerald-text-accent: #059669;
-  --color-emerald-text: #065f46;
-
-  --color-purple-surface: #faf5ff;
-  --color-purple-surface-hover: #f3e8ff;
-  --color-purple-border: #e9d5ff;
-  --color-purple-text-accent: #9333ea;
-  --color-purple-text: #6b21a8;
-
-  --color-cyan-surface: #ecfeff;
-  --color-cyan-border: #a5f3fc;
-  --color-cyan-text-accent: #0891b2;
-  --color-cyan-text: #0e7490;
-
-  --color-red-surface: #fef2f2;
-  --color-red-surface-hover: #fee2e2;
-  --color-red-border: #fecaca;
-  --color-red-text-accent: #dc2626;
-  --color-red-text: #991b1b;
-  --color-red-text-subtle: #7f1d1d;
-
-  --color-amber-text-accent: #d97706;
-  --color-amber-text: #b45309;
 }
 
 @layer base {
   body {
-    @apply bg-slate-950 text-slate-200 antialiased selection:bg-indigo-500 selection:text-white min-h-screen text-[15px] sm:text-[16px] leading-relaxed;
+    @apply bg-slate-50 text-slate-900 antialiased selection:bg-indigo-500 selection:text-white min-h-screen text-[15px] sm:text-[16px] leading-relaxed;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   }
   code, kbd, samp, pre {
@@ -204,9 +77,9 @@ html.light {
   }
 }
 
-/* Headings automatically adapt to theme contrast */
+/* Headings automatically crisp dark slate */
 h1, h2, h3, h4, h5, h6 {
-  color: var(--color-text-heading);
+  color: #0f172a;
 }
 
 /* Primary Solid Button: High-contrast utilitarian CTA */
@@ -256,36 +129,9 @@ h1, h2, h3, h4, h5, h6 {
   color: #ffffff !important;
 }
 
-/* Safeguards: ensure active tabs, buttons, and headings maintain high contrast */
-.bg-slate-900.text-white:not(.btn-primary) {
-  background-color: #0f172a !important;
-  color: #ffffff !important;
-  border-color: #1e293b !important;
-}
-
-.bg-slate-800.text-white,
-button.bg-slate-800.text-white {
-  background-color: #ffffff !important;
-  color: #0f172a !important;
-  border-color: #cbd5e1 !important;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
-}
-
-/* High contrast headings: prevent white-on-white text */
-h1.text-white,
-h2.text-white,
-h3.text-white,
-h4.text-white,
-h5.text-white,
-h6.text-white {
-  color: #0f172a !important;
-}
-
-/* Text safeguard for unstyled text elements */
-p.text-white,
-span.text-white:not(button *, .badge-recommended, .btn-primary, [class*="bg-slate-900"], [class*="bg-black"], [class*="bg-indigo-6"], [class*="bg-indigo-7"], [class*="bg-emerald-6"], [class*="bg-emerald-7"], [class*="bg-purple-6"], [class*="bg-red-6"]),
-div.text-white:not(button *, .badge-recommended, .btn-primary, [class*="bg-slate-900"], [class*="bg-black"], [class*="bg-indigo-6"], [class*="bg-indigo-7"], [class*="bg-emerald-6"], [class*="bg-emerald-7"], [class*="bg-purple-6"], [class*="bg-red-6"]) {
-  color: #0f172a;
+.shadow-2xl,
+.shadow-xl {
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.03) !important;
 }
 
 .shadow-2xl,

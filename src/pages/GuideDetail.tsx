@@ -92,70 +92,70 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
   const relatedGuides = guidesData.filter((g) => g.slug !== guide.slug).slice(0, 2);
 
   return (
-    <article className="max-w-4xl mx-auto px-4 sm:px-6 py-10 text-slate-300">
+    <article className="max-w-4xl mx-auto px-4 sm:px-6 py-10 text-slate-800">
       {/* Breadcrumbs */}
-      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-slate-400 mb-8">
+      <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-slate-600 mb-8 font-medium">
         <a
           href="/guides"
           onClick={(e) => {
             e.preventDefault();
             navigateTo('/guides');
           }}
-          className="hover:text-slate-200 transition-colors"
+          className="hover:text-slate-900 transition-colors"
         >
           Guides
         </a>
-        <ChevronRight className="size-3 shrink-0" />
-        <span className="text-slate-400 truncate max-w-xs">{guide.title}</span>
+        <ChevronRight className="size-3 shrink-0 text-slate-400" />
+        <span className="text-slate-900 truncate max-w-xs font-semibold">{guide.title}</span>
       </nav>
 
       {/* Article Header */}
-      <header className="mb-10 pb-8 border-b border-slate-800">
+      <header className="mb-10 pb-8 border-b border-slate-200">
         <div className="flex flex-wrap items-center justify-between gap-3 mb-4">
-          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-slate-800 text-slate-200 border border-slate-700">
+          <span className="text-xs font-semibold px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-2xs">
             {guide.category}
           </span>
           <button
             onClick={handleShare}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-xs text-slate-400 hover:text-slate-100 border border-slate-800 transition-colors cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white hover:bg-slate-50 text-xs text-slate-800 hover:text-slate-900 border border-slate-200 shadow-2xs transition-colors cursor-pointer font-medium"
           >
-            {copiedLink ? <Check className="size-3.5 text-emerald-400" /> : <Share2 className="size-3.5" />}
+            {copiedLink ? <Check className="size-3.5 text-emerald-600" /> : <Share2 className="size-3.5 text-slate-600" />}
             <span>{copiedLink ? 'Link Copied!' : 'Share'}</span>
           </button>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-100 tracking-tight leading-tight mb-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
           {guide.title}
         </h1>
 
-        <p className="text-sm sm:text-base text-slate-400 leading-relaxed mb-6">
+        <p className="text-sm sm:text-base text-slate-800 leading-relaxed mb-6 font-normal">
           {guide.excerpt}
         </p>
 
         {/* Metadata row */}
-        <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-slate-400 pt-4 border-t border-slate-900">
+        <div className="flex flex-wrap items-center gap-4 sm:gap-6 text-xs text-slate-600 pt-4 border-t border-slate-200 font-medium">
           <div className="flex items-center gap-1.5">
-            <User className="size-3.5 text-slate-400" />
+            <User className="size-3.5 text-slate-500" />
             <span>{guide.author}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Calendar className="size-3.5 text-slate-400" />
+            <Calendar className="size-3.5 text-slate-500" />
             <span>{guide.date}</span>
           </div>
           <div className="flex items-center gap-1.5">
-            <Clock className="size-3.5 text-slate-400" />
+            <Clock className="size-3.5 text-slate-500" />
             <span>{guide.readTime}</span>
           </div>
         </div>
       </header>
 
       {/* Table of contents quick jumps */}
-      <div className="p-5 rounded-2xl bg-slate-900/40 border border-slate-800 mb-10">
-        <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3 flex items-center gap-1.5">
-          <BookOpen className="size-3.5 text-indigo-400" />
+      <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-2xs mb-10">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-1.5">
+          <BookOpen className="size-3.5 text-indigo-600" />
           Table of Contents
         </h3>
-        <ul className="space-y-1.5 text-xs">
+        <ul className="space-y-2 text-xs">
           {guide.sections.map((section, idx) => (
             <li key={section.id}>
               <a
@@ -168,9 +168,9 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
                     window.history.pushState(null, '', `#${section.id}`);
                   }
                 }}
-                className="text-slate-400 hover:text-indigo-300 transition-colors flex items-center gap-2 cursor-pointer"
+                className="text-slate-800 hover:text-indigo-600 font-medium transition-colors flex items-center gap-2 cursor-pointer"
               >
-                <span className="text-slate-400 font-mono text-[11px]">{idx + 1}.</span>
+                <span className="text-slate-500 font-mono text-[11px]">{idx + 1}.</span>
                 <span>{section.heading}</span>
               </a>
             </li>
@@ -187,9 +187,9 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
                     window.history.pushState(null, '', '#faqs');
                   }
                 }}
-                className="text-slate-400 hover:text-indigo-300 transition-colors flex items-center gap-2 cursor-pointer"
+                className="text-slate-800 hover:text-indigo-600 font-medium transition-colors flex items-center gap-2 cursor-pointer"
               >
-                <span className="text-slate-400 font-mono text-[11px]">{guide.sections.length + 1}.</span>
+                <span className="text-slate-500 font-mono text-[11px]">{guide.sections.length + 1}.</span>
                 <span>Frequently Asked Questions</span>
               </a>
             </li>
@@ -198,14 +198,14 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
       </div>
 
       {/* Article Sections */}
-      <div className="space-y-12 leading-relaxed text-sm text-slate-300">
+      <div className="space-y-12 leading-relaxed text-sm text-slate-800">
         {guide.sections.map((section, sectionIdx) => (
           <section key={section.id} id={section.id} className="scroll-mt-24">
-            <h2 className="text-lg sm:text-xl font-bold text-slate-100 mb-4">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">
               {section.heading}
             </h2>
 
-            <div className="space-y-3.5 text-slate-400 text-xs sm:text-sm">
+            <div className="space-y-3.5 text-slate-800 text-sm">
               {section.paragraphs.map((p, pIdx) => (
                 <p key={pIdx} className="leading-relaxed">
                   {p}
@@ -215,24 +215,24 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
 
             {/* Code Block if available */}
             {section.code && (
-              <div className="mt-5 rounded-xl border border-slate-800 bg-slate-950 overflow-hidden">
-                <div className="px-4 py-2 bg-slate-900/80 border-b border-slate-800 flex items-center justify-between text-xs text-slate-400">
-                  <span className="font-mono text-[11px] uppercase tracking-wider">{section.code.language}</span>
+              <div className="mt-5 rounded-xl border border-slate-800 bg-slate-950 overflow-hidden shadow-sm">
+                <div className="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-center justify-between text-xs text-slate-300">
+                  <span className="font-mono text-[11px] uppercase tracking-wider font-semibold">{section.code.language}</span>
                   <button
                     onClick={() => handleCopyCode(section.code!.code, sectionIdx)}
-                    className="flex items-center gap-1 hover:text-slate-100 transition-colors cursor-pointer text-[11px]"
+                    className="flex items-center gap-1 hover:text-white transition-colors cursor-pointer text-[11px] font-medium"
                   >
                     {copiedCodeIndex === sectionIdx ? (
                       <>
                         <Check className="size-3 text-emerald-400" />
-                        <span className="text-emerald-400">Copied</span>
+                        <span className="text-emerald-400 font-semibold">Copied</span>
                       </>
                     ) : (
                       <span>Copy Code</span>
                     )}
                   </button>
                 </div>
-                <pre className="p-4 text-xs font-mono text-slate-200 overflow-x-auto leading-relaxed">
+                <pre className="p-4 text-xs font-mono text-slate-100 overflow-x-auto leading-relaxed">
                   <code>{section.code.code}</code>
                 </pre>
               </div>
@@ -240,20 +240,20 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
 
             {/* Table if available */}
             {section.table && (
-              <div className="mt-6 rounded-xl border border-slate-800 overflow-x-auto bg-slate-900/30">
+              <div className="mt-6 rounded-xl border border-slate-200 overflow-x-auto bg-white shadow-2xs">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="border-b border-slate-800 bg-slate-900/80 text-slate-200">
+                    <tr className="border-b border-slate-200 bg-slate-50 text-slate-900 font-bold">
                       {section.table.headers.map((h, hIdx) => (
-                        <th key={hIdx} className="p-3 font-semibold">
+                        <th key={hIdx} className="p-3">
                           {h}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/60 text-slate-400">
+                  <tbody className="divide-y divide-slate-200 text-slate-800">
                     {section.table.rows.map((row, rIdx) => (
-                      <tr key={rIdx} className="hover:bg-slate-900/40 transition-colors">
+                      <tr key={rIdx} className="hover:bg-slate-50/80 transition-colors">
                         {row.map((cell, cIdx) => (
                           <td key={cIdx} className="p-3">
                             {cell}
@@ -273,8 +273,8 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
 
         {/* FAQ Section */}
         {guide.faqs && guide.faqs.length > 0 && (
-          <section id="faqs" className="scroll-mt-24 pt-6 border-t border-slate-800">
-            <h2 className="text-lg sm:text-xl font-bold text-slate-100 mb-6">
+          <section id="faqs" className="scroll-mt-24 pt-6 border-t border-slate-200">
+            <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-3">
@@ -283,21 +283,21 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
                 return (
                   <div
                     key={index}
-                    className="rounded-xl bg-slate-900 border border-slate-800 overflow-hidden shadow-sm"
+                    className="rounded-xl bg-white border border-slate-200 overflow-hidden shadow-2xs"
                   >
                     <button
                       onClick={() => setOpenFaq(isOpen ? null : index)}
                       className="w-full p-4 text-left flex items-center justify-between gap-4 cursor-pointer"
                     >
-                      <span className="text-xs sm:text-sm font-medium text-slate-200">{faq.q}</span>
+                      <span className="text-xs sm:text-sm font-bold text-slate-900">{faq.q}</span>
                       <ChevronDown
-                        className={`size-4 text-slate-400 transition-transform duration-200 shrink-0 ${
-                          isOpen ? 'rotate-180 text-slate-200' : ''
+                        className={`size-4 text-slate-600 transition-transform duration-200 shrink-0 ${
+                          isOpen ? 'rotate-180 text-indigo-600' : ''
                         }`}
                       />
                     </button>
                     {isOpen && (
-                      <div className="px-4 pb-4 pt-1 text-xs text-slate-400 border-t border-slate-800 leading-relaxed">
+                      <div className="px-4 pb-4 pt-1 text-xs sm:text-sm text-slate-800 border-t border-slate-100 leading-relaxed">
                         {faq.a}
                       </div>
                     )}
@@ -310,13 +310,13 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
       </div>
 
       {/* CTA Box to Workbench */}
-      <div className="my-12 p-6 sm:p-8 rounded-2xl bg-slate-900 border border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-md">
+      <div className="my-12 p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div>
-          <h3 className="text-base font-bold text-slate-100 mb-1.5 flex items-center gap-2">
-            <Table className="size-4 text-slate-400" />
+          <h3 className="text-base font-bold text-slate-900 mb-1.5 flex items-center gap-2">
+            <Table className="size-4 text-indigo-600" />
             Inspect Parquet Files Instantly
           </h3>
-          <p className="text-xs text-slate-400 max-w-md leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-800 max-w-md leading-relaxed">
             Need to inspect schemas or convert Parquet to Excel? TableView runs 100% locally in your browser with zero server uploads.
           </p>
         </div>
@@ -330,8 +330,8 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
 
       {/* Related Guides */}
       {relatedGuides.length > 0 && (
-        <div className="pt-8 border-t border-slate-800">
-          <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-400 mb-4">
+        <div className="pt-8 border-t border-slate-200">
+          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-4">
             Related Technical Guides
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -343,15 +343,15 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
                   e.preventDefault();
                   navigateTo(`/guides/${rel.slug}`);
                 }}
-                className="block p-4 rounded-xl bg-slate-900/50 hover:bg-slate-900 border border-slate-800 hover:border-slate-700 transition-colors cursor-pointer group"
+                className="block p-5 rounded-2xl bg-white hover:border-slate-300 border border-slate-200 shadow-2xs transition-all cursor-pointer group"
               >
-                <span className="text-[10px] font-semibold text-slate-400 block mb-1">
+                <span className="text-[10px] font-bold text-indigo-700 block mb-1 uppercase tracking-wider">
                   {rel.category}
                 </span>
-                <h4 className="text-xs sm:text-sm font-bold text-slate-100 group-hover:text-slate-300 transition-colors line-clamp-1 mb-1">
+                <h4 className="text-xs sm:text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors line-clamp-1 mb-1.5">
                   {rel.title}
                 </h4>
-                <p className="text-[11px] text-slate-400 line-clamp-2 leading-relaxed">
+                <p className="text-xs text-slate-800 line-clamp-2 leading-relaxed font-normal">
                   {rel.excerpt}
                 </p>
               </a>
