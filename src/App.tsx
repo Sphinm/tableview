@@ -41,6 +41,7 @@ const SqlFormatter = lazy(() => import('./pages/SqlFormatter').then(m => ({ defa
 const VideoCompressor = lazy(() => import('./pages/VideoCompressor').then(m => ({ default: m.VideoCompressor })));
 const ImageCompressor = lazy(() => import('./pages/ImageCompressor').then(m => ({ default: m.ImageCompressor })));
 const WebsiteStatusChecker = lazy(() => import('./pages/WebsiteStatusChecker').then(m => ({ default: m.WebsiteStatusChecker })));
+const AiArticlePolisher = lazy(() => import('./pages/AiArticlePolisher').then(m => ({ default: m.AiArticlePolisher })));
 import { AuthProvider } from './lib/authContext';
 import { AuthModal } from './components/AuthModal';
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
@@ -273,10 +274,20 @@ export function App() {
           {errorBanner}
           <DataToolsWorkbench
             onFileSelected={handleFileSelected}
-            onTrySample={handleTrySample}
             isLoading={isLoading}
-            loadingStatus={loadingStatus}
           />
+        </>
+      );
+    }
+
+    // 2b. Dedicated single-page tools that are listed in the /data-tools grid but
+    // must NOT render the generic file-drop landing page (they take text input,
+    // not files).
+    if (path === '/tools/:toolSlug' && slug === 'ai-article-polisher') {
+      return (
+        <>
+          {errorBanner}
+          <AiArticlePolisher />
         </>
       );
     }
@@ -416,9 +427,7 @@ export function App() {
         return (
           <DataToolsWorkbench
             onFileSelected={handleFileSelected}
-            onTrySample={handleTrySample}
             isLoading={isLoading}
-            loadingStatus={loadingStatus}
           />
         );
 

@@ -43,6 +43,10 @@ export function AuthModal() {
             text: 'continue_with',
             logo_alignment: 'left',
             width: 340,
+            // Force English button copy ("Continue with Google"). Without this,
+            // GIS falls back to the browser/account locale and renders a
+            // localized label for non-English visitors.
+            locale: 'en',
           });
         } catch (err) {
           console.warn('Google Identity initialization deferred:', err);

@@ -321,29 +321,59 @@ function devAuthPlugin() {
           }
 
           const startTime = performance.now();
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+          // Use curl subprocess for the probe. curl auto-reads the macOS system proxy
+          // (scutil --proxy), so it reaches sites like Google that require a proxy.
+          // Node.js http/https and Bun fetch do not read the macOS system proxy config.
+          const probeWithCurl = (): Promise<{ statusCode: number; statusMessage: string; finalUrl: string; server: string }> =>
+            new Promise((resolve, reject) => {
+              const { execFile } = require('node:child_process') as typeof import('child_process');
+              // -s silent, -I HEAD, -L follow redirects, --max-redirs 5, -m 8 timeout,
+              // -w write-out format, -o /dev/null discard body
+              const args = [
+                '-s', '-I', '-L', '--max-redirs', '5',
+                '-m', '8',
+                '--max-time', '8',
+                '-w', '\n%{http_code}\n%{url_effective}\n%{time_total}',
+                '-o', '/dev/null',
+                '-A', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
+                '-H', 'Accept: text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                '--dump-header', '-',
+                parsed.toString(),
+              ];
+              execFile('curl', args, { timeout: 10000 }, (err, stdout, _stderr) => {
+                if (err && !stdout) {
+                  reject(new Error(err.message || 'curl failed'));
+                  return;
+                }
+                const lines = stdout.split('\n').map(l => l.trim()).filter(Boolean);
+                // Last 3 lines from -w are: http_code, url_effective, time_total
+                const httpCode = parseInt(lines[lines.length - 3] || '0', 10);
+                const finalUrl = lines[lines.length - 2] || parsed.toString();
+                // Find Server header in dump
+                const serverLine = lines.find(l => /^server:/i.test(l));
+                const server = serverLine ? serverLine.replace(/^server:\s*/i, '') : 'Hidden';
+                const sm = httpCode >= 200 && httpCode < 300 ? 'OK' :
+                           httpCode === 301 ? 'Moved Permanently' :
+                           httpCode === 302 ? 'Found' :
+                           httpCode === 403 ? 'Forbidden' :
+                           httpCode === 404 ? 'Not Found' :
+                           httpCode === 500 ? 'Internal Server Error' : '';
+                resolve({ statusCode: httpCode || 0, statusMessage: sm, finalUrl, server });
+              });
+            });
 
           try {
-            const probeRes = await fetch(parsed.toString(), {
-              method: 'GET',
-              headers: {
-                'User-Agent':
-                  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36',
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Range': 'bytes=0-2048',
-              },
-              redirect: 'follow',
-              signal: controller.signal,
-            });
-            clearTimeout(timeoutId);
-
+            const probeResult = await probeWithCurl();
             const latencyMs = Math.round(performance.now() - startTime);
-            let status: 'UP' | 'RESTRICTED' | 'DOWN' = 'UP';
-            if (probeRes.status >= 500) {
-              status = 'DOWN';
-            } else if (probeRes.status === 401 || probeRes.status === 403) {
-              status = 'RESTRICTED';
+
+            let probeStatus: 'UP' | 'RESTRICTED' | 'DOWN' = 'UP';
+            if (probeResult.statusCode >= 500) {
+              probeStatus = 'DOWN';
+            } else if (probeResult.statusCode === 401 || probeResult.statusCode === 403) {
+              probeStatus = 'RESTRICTED';
+            } else if (probeResult.statusCode === 0) {
+              probeStatus = 'DOWN';
             }
 
             res.statusCode = 200;
@@ -352,20 +382,19 @@ function devAuthPlugin() {
               JSON.stringify({
                 domain: parsed.hostname,
                 targetUrl: parsed.toString(),
-                finalUrl: probeRes.url,
-                status,
-                httpStatus: probeRes.status,
-                httpStatusText: probeRes.statusText || 'OK',
+                finalUrl: probeResult.finalUrl,
+                status: probeStatus,
+                httpStatus: probeResult.statusCode,
+                httpStatusText: probeResult.statusMessage || 'OK',
                 responseTimeMs: latencyMs,
-                server: probeRes.headers.get('server') || 'Hidden',
+                server: probeResult.server,
                 checkedFrom: 'Vite Local Dev',
                 timestamp: Date.now(),
               })
             );
           } catch (err: any) {
-            clearTimeout(timeoutId);
             const latencyMs = Math.round(performance.now() - startTime);
-            const isTimeout = err.name === 'AbortError';
+            const isTimeout = /timeout|timed out/i.test(err.message || '');
 
             res.statusCode = 200;
             res.setHeader('Content-Type', 'application/json');

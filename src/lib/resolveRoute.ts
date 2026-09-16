@@ -47,6 +47,10 @@ export const TOOL_ALIASES: Record<string, string> = {
   'geoparquet': 'geoparquet-viewer',
   'ndjson-viewer': 'json-viewer',
   'jsonl-viewer': 'json-viewer',
+  'ai-polisher': 'ai-article-polisher',
+  'article-polisher': 'ai-article-polisher',
+  'remove-ai-tone': 'ai-article-polisher',
+  'polish-article': 'ai-article-polisher',
 };
 
 /** Calculator / hub URL families, each mapped to its canonical route. */
@@ -263,6 +267,7 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/compress-jpg',
   '/compress-webp',
   '/is-it-down',
+  '/ai-article-polisher',
   '/about',
   '/contact',
   '/privacy',

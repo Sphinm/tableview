@@ -12,6 +12,7 @@ import {
   Calculator,
   ArrowRight,
   Video,
+  Activity,
 } from 'lucide-react';
 
 interface FooterProps {
@@ -19,34 +20,15 @@ interface FooterProps {
   currentPath?: string;
 }
 
-export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
+export const Footer = ({ onTrySample: _onTrySample, currentPath }: FooterProps) => {
   const activePath = currentPath ?? (typeof window !== 'undefined' ? window.location.pathname : '/');
+  const isHome = activePath === '/';
   const isCalculator = isCalculatorRoute(activePath);
   const isCompression = isCompressionRoute(activePath);
-  const isDataWorkbench =
-    activePath === '/' ||
-    activePath === '/data-tools' ||
-    activePath.startsWith('/tools') ||
-    activePath.includes('csv') ||
-    activePath.includes('excel') ||
-    activePath.includes('parquet') ||
-    activePath.includes('sql') ||
-    activePath.includes('json');
 
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
     e.preventDefault();
     navigateTo(path);
-  };
-
-  const handleTrySampleClick = () => {
-    if (window.location.pathname !== '/') {
-      navigateTo('/');
-      setTimeout(() => {
-        onTrySample?.();
-      }, 100);
-    } else {
-      onTrySample?.();
-    }
   };
 
   const scrollToTop = () => {
@@ -60,8 +42,8 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Pre-Footer Action Banner: ONLY shown on Data Workbench to eliminate cross-domain clutter */}
-        {isDataWorkbench && !isCalculator && !isCompression && (
+        {/* Pre-Footer Action Banner: ONLY shown on homepage (subpages omit this module) */}
+        {isHome && (
           <div className="relative rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 mb-12 shadow-sm overflow-hidden">
             <div className="absolute top-0 right-0 -mt-10 -mr-10 size-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 left-1/4 -mb-10 size-48 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -81,13 +63,14 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
               </div>
 
               <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                <button
-                  onClick={handleTrySampleClick}
+                <a
+                  href="/data-tools"
+                  onClick={(e) => handleNav(e, '/data-tools')}
                   className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center gap-2 shadow-xs active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
                 >
                   <Sparkles className="size-4 text-amber-400" />
-                  <span>Try 1,000-Row Sample</span>
-                </button>
+                  <span>Open Data Workbench</span>
+                </a>
 
                 <a
                   href="/finance-calculator"
@@ -103,55 +86,8 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
           </div>
         )}
 
-        {/* Brand & Mission Row (Context-Aware) */}
-        {isCompression ? (
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 flex items-center justify-center font-bold shadow-2xs">
-                  <Video className="size-4" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-slate-900 text-base tracking-tight">TableView Compress</span>
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[11px] font-mono text-emerald-700">
-                    <span className="size-1.5 rounded-full bg-emerald-500" />
-                    Client-Side Engine
-                  </span>
-                </div>
-              </div>
-              <p className="text-xs text-slate-800 max-w-xl leading-relaxed">
-                100% private in-browser video & image compression. Powered by WebAssembly and HTML5 Canvas — zero files uploaded, no server bandwidth, no watermarks.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 bg-white border border-slate-300 px-3.5 py-1.5 rounded-lg shrink-0 shadow-2xs">
-              <ShieldCheck className="size-4 text-emerald-600" />
-              <span>Zero Data Egress · Pure Client Execution</span>
-            </div>
-          </div>
-        ) : isCalculator ? (
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-slate-200 gap-4">
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-2.5">
-                <div className="size-8 rounded-lg bg-indigo-50 border border-indigo-200 text-indigo-700 flex items-center justify-center font-bold shadow-2xs">
-                  <Calculator className="size-4" />
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-slate-900 text-base tracking-tight">TableView Calculators</span>
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-200 text-[11px] font-mono text-indigo-700">
-                    High-Precision
-                  </span>
-                </div>
-              </div>
-              <p className="text-xs text-slate-800 max-w-xl leading-relaxed">
-                Institutional-grade financial, real estate debt, and FinOps calculators with instant amortization schedules and zero telemetry.
-              </p>
-            </div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-slate-900 bg-white border border-slate-300 px-3.5 py-1.5 rounded-lg shrink-0 shadow-2xs">
-              <ShieldCheck className="size-4 text-emerald-600" />
-              <span>Instant Local Compute</span>
-            </div>
-          </div>
-        ) : (
+        {/* Brand & Mission Row: ONLY shown on homepage (subpages omit this module) */}
+        {isHome && (
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-8 border-b border-slate-200 gap-6">
             <div className="space-y-2.5">
               <div className="flex items-center gap-3">
@@ -206,6 +142,7 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
             </div>
           </div>
         )}
+
 
         {/* 2. Context-Aware Navigation Columns */}
         {isCompression ? (
@@ -973,6 +910,16 @@ export const Footer = ({ onTrySample, currentPath }: FooterProps) => {
                 Guides & Legal
               </h4>
               <ul className="space-y-2 text-xs">
+                <li>
+                  <a
+                    href="/is-it-down"
+                    onClick={(e) => handleNav(e, '/is-it-down')}
+                    className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors flex items-center gap-1.5"
+                  >
+                    <Activity className="size-3 text-slate-500 shrink-0" />
+                    Is It Down Checker
+                  </a>
+                </li>
                 <li>
                   <a
                     href="/guides"

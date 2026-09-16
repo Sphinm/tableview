@@ -26,6 +26,13 @@ export const DATA_TOOLS_META: PageMeta = {
   canonical: '/data-tools',
 };
 
+export const AI_ARTICLE_POLISHER_META: PageMeta = {
+  title: 'AI Article Polisher: Remove AI Tone & Polish Prose | TableView.dev',
+  description:
+    'Polish Chinese and English articles with Gemini AI. Cut AI-tone patterns grounded in a 2.83M-character corpus study, review every edit with a word-level diff, then copy or export.',
+  canonical: '/ai-article-polisher',
+};
+
 export const GUIDES_HUB_META: PageMeta = {
   title: 'Apache Parquet & DuckDB Guides | TableView.dev',
   description:

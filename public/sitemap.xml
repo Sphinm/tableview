@@ -205,6 +205,12 @@
     <priority>0.90</priority>
   </url>
   <url>
+    <loc>https://tableview.dev/ai-article-polisher</loc>
+    <lastmod>2026-09-16</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
     <loc>https://tableview.dev/csv-to-excel</loc>
     <lastmod>2026-09-16</lastmod>
     <changefreq>weekly</changefreq>

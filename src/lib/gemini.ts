@@ -189,6 +189,184 @@ Instructions:
   };
 }
 
+/** Builds gateway request headers, attaching a user-supplied key when present. */
+function gatewayHeaders(customApiKey?: string): Record<string, string> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  const apiKey = customApiKey?.trim() || getStoredGeminiApiKey();
+  if (apiKey) {
+    headers['X-Gemini-Api-Key'] = apiKey;
+  }
+  return headers;
+}
+
+/** Turns a failed gateway response into a human-readable message. */
+async function readGatewayError(response: Response): Promise<string> {
+  let errMsg = `AI Generation failed (${response.status})`;
+  try {
+    const errJson = (await response.json()) as any;
+    errMsg = errJson.error || errJson.message || errMsg;
+  } catch {
+    const errTxt = await response.text();
+    if (errTxt) errMsg = errTxt;
+  }
+  return errMsg;
+}
+
+export interface StreamGatewayOptions {
+  prompt: string;
+  systemInstruction: string;
+  model?: string;
+  temperature?: number;
+  maxOutputTokens?: number;
+  customApiKey?: string;
+  signal?: AbortSignal;
+  onChunk?: (accumulated: string, newChunk: string) => void;
+  /**
+   * Maps raw accumulated model output to the value handed back to the caller and
+   * to `onChunk`. SQL strips markdown fences; prose passes text through trimmed.
+   */
+  transform?: (raw: string) => string;
+  /**
+   * Extra attempts when the gateway returns a transient error (429 quota / 503
+   * capacity). Only retried when nothing has been streamed yet, so a partially
+   * delivered answer is never duplicated. Default 2 (3 attempts total).
+   */
+  retries?: number;
+  /** Override the retry backoff schedule (tests use zeros). */
+  retryBackoffMs?: number[];
+}
+
+/** Backoff schedule for transient gateway failures, in milliseconds. */
+const RETRY_BACKOFF_MS = [2000, 6000];
+
+/** 429 (quota) and 503 (capacity) are worth retrying; 4xx input errors are not. */
+function isRetriableStatus(status: number): boolean {
+  return status === 429 || status === 503;
+}
+
+function delay(ms: number, signal?: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(resolve, ms);
+    signal?.addEventListener(
+      'abort',
+      () => {
+        clearTimeout(timer);
+        reject(Object.assign(new Error('aborted'), { name: 'AbortError' }));
+      },
+      { once: true }
+    );
+  });
+}
+
+/**
+ * Streams text out of the Cloudflare Worker Gemini gateway.
+ *
+ * Shared by the DuckDB SQL generator and the article polisher so both get
+ * identical SSE framing, error handling, and final-buffer flushing.
+ *
+ * The upstream free tier is genuinely flaky: live testing produced intermittent
+ * 503 "high demand" and 429 quota responses, so transient failures are retried
+ * with backoff before surfacing an error to the user.
+ */
+export async function streamGatewayText(options: StreamGatewayOptions): Promise<string> {
+  const transform = options.transform ?? ((raw: string) => raw.trim());
+  const maxAttempts = Math.max(1, (options.retries ?? 2) + 1);
+  const backoff = options.retryBackoffMs ?? RETRY_BACKOFF_MS;
+  const waitBeforeRetry = (attempt: number) =>
+    delay(backoff[Math.min(attempt - 1, backoff.length - 1)] ?? 0, options.signal);
+  let lastError: Error | null = null;
+
+  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+    let emitted = false;
+
+    const response = await fetch('/api/ai/generate', {
+      method: 'POST',
+      headers: gatewayHeaders(options.customApiKey),
+      signal: options.signal,
+      body: JSON.stringify({
+        prompt: options.prompt,
+        systemInstruction: options.systemInstruction,
+        stream: true,
+        model: options.model || 'gemini-3.8-flash',
+        generationConfig: {
+          temperature: options.temperature ?? 0.1,
+          maxOutputTokens: options.maxOutputTokens ?? 1024,
+        },
+      }),
+    });
+
+    if (!response.ok) {
+      const message = await readGatewayError(response);
+      if (isRetriableStatus(response.status) && attempt < maxAttempts) {
+        lastError = new Error(message);
+        await waitBeforeRetry(attempt);
+        continue;
+      }
+      throw new Error(message);
+    }
+
+    if (!response.body) {
+      throw new Error('ReadableStream not supported by response');
+    }
+
+    try {
+      return await consumeGatewayStream(response.body, transform, options, () => {
+        emitted = true;
+      });
+    } catch (streamErr: any) {
+      // A failure mid-stream cannot be retried without duplicating output, and an
+      // explicit user abort must never be retried.
+      if (streamErr?.name === 'AbortError' || emitted) throw streamErr;
+      if (attempt >= maxAttempts) throw streamErr;
+      lastError = streamErr instanceof Error ? streamErr : new Error(String(streamErr));
+      await waitBeforeRetry(attempt);
+    }
+  }
+
+  throw lastError || new Error('AI Generation failed');
+}
+
+/** Reads the SSE body to completion, forwarding chunks to `options.onChunk`. */
+async function consumeGatewayStream(
+  body: ReadableStream<Uint8Array>,
+  transform: (raw: string) => string,
+  options: StreamGatewayOptions,
+  markEmitted: () => void
+): Promise<string> {
+  const reader = body.getReader();
+  const decoder = new TextDecoder('utf-8');
+  let accumulatedRaw = '';
+  let buffer = '';
+
+  const handleLine = (line: string) => {
+    const textChunk = parseSseLine(line);
+    if (!textChunk) return;
+    accumulatedRaw += textChunk;
+    markEmitted();
+    options.onChunk?.(transform(accumulatedRaw), textChunk);
+  };
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
+
+    for (const line of lines) {
+      handleLine(line);
+    }
+  }
+
+  // Flush remaining buffer if present
+  if (buffer.trim()) {
+    handleLine(buffer);
+  }
+
+  return transform(accumulatedRaw);
+}
+
 /**
  * Streams SQL query generation from Gemini via Cloudflare Worker
  */
@@ -200,82 +378,18 @@ export async function streamGenerateDuckDbSql(params: GenerateSqlParams): Promis
     sampleRows: params.sampleRows,
   });
 
-  const apiKey = params.customApiKey?.trim() || getStoredGeminiApiKey() || undefined;
-
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-  };
-
-  if (apiKey) {
-    headers['X-Gemini-Api-Key'] = apiKey;
-  }
-
-  const response = await fetch('/api/ai/generate', {
-    method: 'POST',
-    headers,
+  const finalSql = await streamGatewayText({
+    prompt,
+    systemInstruction,
+    model: 'gemini-3.8-flash',
+    temperature: 0.1, // Low temperature for deterministic, correct SQL syntax
+    maxOutputTokens: 1024,
+    customApiKey: params.customApiKey,
     signal: params.signal,
-    body: JSON.stringify({
-      prompt,
-      systemInstruction,
-      stream: true,
-      model: 'gemini-3.8-flash',
-      generationConfig: {
-        temperature: 0.1, // Low temperature for deterministic, correct SQL syntax
-        maxOutputTokens: 1024,
-      },
-    }),
+    onChunk: params.onChunk,
+    transform: cleanGeneratedSql,
   });
 
-  if (!response.ok) {
-    let errMsg = `AI Generation failed (${response.status})`;
-    try {
-      const errJson = (await response.json()) as any;
-      errMsg = errJson.error || errJson.message || errMsg;
-    } catch {
-      const errTxt = await response.text();
-      if (errTxt) errMsg = errTxt;
-    }
-    throw new Error(errMsg);
-  }
-
-  if (!response.body) {
-    throw new Error('ReadableStream not supported by response');
-  }
-
-  const reader = response.body.getReader();
-  const decoder = new TextDecoder('utf-8');
-  let accumulatedRaw = '';
-  let buffer = '';
-
-  while (true) {
-    const { done, value } = await reader.read();
-    if (done) break;
-
-    buffer += decoder.decode(value, { stream: true });
-    const lines = buffer.split('\n');
-    buffer = lines.pop() || '';
-
-    for (const line of lines) {
-      const textChunk = parseSseLine(line);
-      if (textChunk) {
-        accumulatedRaw += textChunk;
-        const currentClean = cleanGeneratedSql(accumulatedRaw);
-        params.onChunk?.(currentClean, textChunk);
-      }
-    }
-  }
-
-  // Flush remaining buffer if present
-  if (buffer.trim()) {
-    const textChunk = parseSseLine(buffer);
-    if (textChunk) {
-      accumulatedRaw += textChunk;
-      const currentClean = cleanGeneratedSql(accumulatedRaw);
-      params.onChunk?.(currentClean, textChunk);
-    }
-  }
-
-  const finalSql = cleanGeneratedSql(accumulatedRaw);
   if (!finalSql) {
     throw new Error('AI returned an empty response. Please try rephrasing your request.');
   }

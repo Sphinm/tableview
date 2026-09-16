@@ -29,7 +29,7 @@ export interface ToolConfig {
 
 export const TOOLS_CONFIG: Record<string, ToolConfig> = {
   // ==========================================
-  // VIEWERS (数据查看器)
+  // VIEWERS
   // ==========================================
   'csv-viewer': {
     slug: 'csv-viewer',
@@ -231,7 +231,7 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
   },
 
   // ==========================================
-  // CONVERTERS (格式转换)
+  // CONVERTERS
   // ==========================================
   'csv-to-excel': {
     slug: 'csv-to-excel',
@@ -646,7 +646,7 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
   },
 
   // ==========================================
-  // SQL & ANALYTICS (SQL分析与查询)
+  // SQL & ANALYTICS
   // ==========================================
   'sql-workbench': {
     slug: 'sql-workbench',
@@ -744,7 +744,7 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
   },
 
   // ==========================================
-  // CALCULATORS (专业金融与云成本计算器)
+  // CALCULATORS
   // ==========================================
   'dscr-loan-calculator': {
     slug: 'dscr-loan-calculator',
@@ -1251,6 +1251,62 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
         q: 'How is overtime calculated for salaried non-exempt employees?',
         a: 'For salaried non-exempt employees, the regular hourly rate is determined by dividing the weekly salary by 40 hours. For every hour worked above 40 in that week, the employee receives an extra half-time (0.5x) or time-and-a-half (1.5x) depending on whether the salary was intended to cover all hours worked or standard 40 hours.'
       }
+    ]
+  },
+
+  'ai-article-polisher': {
+    slug: 'ai-article-polisher',
+    path: '/ai-article-polisher',
+    badge: 'Gemini AI · Corpus-Grounded Rules',
+    title: 'AI Article Polisher: Remove AI Tone & Polish Prose',
+    shortTitle: 'AI Article Polisher',
+    metaTitle: 'AI Article Polisher: Remove AI Tone & Polish Prose | TableView.dev',
+    metaDescription: 'Remove AI tone and polish an article in one pass with Gemini AI. Rules grounded in a 2.83M-character corpus study, with a word-level diff of every edit.',
+    h1: 'AI Article',
+    h1Highlight: 'Polisher',
+    subtitle: 'Remove AI tone and copy-edit in a single pass, in English or Chinese. Compare the original and the result side by side with every edit highlighted word by word.',
+    category: 'developer',
+    tag: 'New',
+    color: 'indigo',
+    iconType: 'file',
+    acceptExtensions: '.txt,.md',
+    acceptLabel: 'Paste or type an article in English or Chinese · Markdown supported',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'cpu',
+        title: 'Grounded in a corpus, not folklore',
+        description: 'Rules come from a 2.83M-character controlled study: only validated features are applied, and disproven advice such as deleting similes or rhetorical questions is refused.',
+      },
+      {
+        icon: 'table',
+        title: 'Every edit shown word by word',
+        description: 'The result highlights additions in green and removals in red strikethrough, with a change list so each edit can be traced.',
+      },
+      {
+        icon: 'zap',
+        title: 'One pass, no configuration',
+        description: 'AI-tone removal and copy-editing happen together. No modes or language switching, and the output always stays in the language of your text.',
+      },
+    ],
+    faqs: [
+      {
+        q: 'Does the AI article polisher send my text to a server?',
+        a: 'Yes - this is the one TableView tool that does. Your article text is sent to Google Gemini for rewriting. Every other tool (file viewers, converters, SQL workbench, calculators) still runs 100% locally in your browser. Do not paste confidential material.'
+      },
+      {
+        q: 'What is "AI tone" and how is it measured?',
+        a: 'The rules come from a corpus study of 629 articles (2.83M characters) comparing 300 model-generated texts against 329 human-written texts across 26 candidate features. Eleven features showed real discrimination; the strongest was paragraph-initial commentary with no referring expression (4.4x). The study also disproved 15 popular beliefs - human writers actually use similes 2.4x more and rhetorical questions 17x more than models.'
+      },
+      {
+        q: 'Does it work for English as well as Chinese?',
+        a: 'Yes. The structural findings transfer across languages, so the English rule set covers em-dash density, "not X but Y" parallelism, colon-led lists, ordinal headings, dangling paragraph openers, and translationese. The output always stays in the input language - it never translates.'
+      },
+      {
+        q: 'Do I need a Gemini API key?',
+        a: 'The Cloudflare Worker can hold a server-side GEMINI_API_KEY. If it is not configured, open the settings panel and paste your own free Google AI Studio key, which is stored only in your browser local storage and never uploaded.'
+      },
     ]
   },
 
