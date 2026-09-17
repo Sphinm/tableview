@@ -47,7 +47,19 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
 
   const faqs = toolConfig?.faqs || defaultFaqs;
 
-  const toolsList = Object.values(TOOLS_CONFIG);
+  const allTools = Object.values(TOOLS_CONFIG);
+  const toolsList = allTools.filter((t) => {
+    if (!toolConfig) return true;
+    if (t.slug === toolConfig.slug) return false;
+    if (toolConfig.category === 'calculator') {
+      return t.category === 'calculator';
+    }
+    if (toolConfig.category === 'media') {
+      return t.category === 'media';
+    }
+    // For viewers, converters, sql, analysis -> keep data tools
+    return t.category === 'viewer' || t.category === 'converter' || t.category === 'sql' || t.category === 'analysis';
+  });
 
   // Generate FAQPage JSON-LD for search engine rich snippets
   const faqSchema = {
@@ -235,8 +247,12 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {toolsList.map((tool, index) => (
             <Fragment key={tool.slug}>
-            <div
-              onClick={() => navigateTo(tool.path)}
+            <a
+              href={tool.path}
+              onClick={(e) => {
+                e.preventDefault();
+                navigateTo(tool.path);
+              }}
               className="p-5 sm:p-6 rounded-2xl bg-white hover:bg-slate-50/80 border border-slate-200 hover:border-slate-300 transition-all cursor-pointer group flex flex-col justify-between shadow-2xs hover:shadow-md"
             >
               <div>
@@ -258,7 +274,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 <span>Launch Tool</span>
                 <span>→</span>
               </div>
-            </div>
+            </a>
 
             {/* In-feed ad. Spans the full grid width so it never looks like a tool card. */}
             {index === IN_FEED_AD_AFTER_INDEX && (

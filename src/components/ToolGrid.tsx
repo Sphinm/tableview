@@ -332,9 +332,13 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
           const isDraggingThis = dragOverSlug === tool.slug;
 
           return (
-            <div
+            <a
               key={tool.slug}
-              onClick={() => handleCardClick(tool)}
+              href={tool.path}
+              onClick={(e) => {
+                e.preventDefault();
+                handleCardClick(tool);
+              }}
               onDragOver={(e) => handleCardDragOver(e, tool)}
               onDragLeave={handleCardDragLeave}
               onDrop={(e) => handleCardDrop(e, tool)}
@@ -415,7 +419,7 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
                   <p className="text-xs text-indigo-600 font-semibold">{tool.shortTitle || tool.title}</p>
                 </div>
               )}
-            </div>
+            </a>
           );
         })}
       </div>

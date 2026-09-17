@@ -1,7 +1,7 @@
 import { useEffect, useState, lazy, Suspense } from 'react';
 
-import { Header } from './components/Header';
-import { Footer } from './components/Footer';
+import { Sidebar } from './components/Sidebar';
+import { TopBar } from './components/TopBar';
 import { DropZone } from './components/DropZone';
 import { FinancialHero } from './components/FinancialHero';
 import { QuickModelerWidget } from './components/QuickModelerWidget';
@@ -65,6 +65,23 @@ export function App() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [loadingStatus, setLoadingStatus] = useState<string>('Initializing engine...');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('tableview_sidebar_collapsed') === 'true';
+    }
+    return false;
+  });
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev;
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('tableview_sidebar_collapsed', String(next));
+      }
+      return next;
+    });
+  };
 
   // Apply light theme
   useEffect(() => {
@@ -456,7 +473,7 @@ export function App() {
 
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-indigo-500 selection:text-white">
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex selection:bg-indigo-500 selection:text-white">
         {/* Global Loading Top Bar (active during background DuckDB queries or file processing) */}
         {isLoading && (
           <div className="fixed top-0 left-0 right-0 z-[100] h-[2.5px] bg-slate-200/80 overflow-hidden pointer-events-none">
@@ -464,22 +481,32 @@ export function App() {
           </div>
         )}
 
+        {/* Left Sidebar (Desktop fixed/collapsible + Mobile drawer) */}
         <div className="print:hidden">
-          <Header
-            onTrySample={handleTrySample}
-            isLoading={isLoading}
+          <Sidebar
             currentPath={path}
+            collapsed={sidebarCollapsed}
+            onToggleCollapse={toggleSidebar}
+            mobileOpen={mobileMenuOpen}
+            onCloseMobile={() => setMobileMenuOpen(false)}
           />
         </div>
 
-        <main className="flex-1 flex flex-col">
-          <Suspense fallback={<GlobalLoading />}>
-            {renderCurrentView()}
-          </Suspense>
-        </main>
+        {/* Main Application Container */}
+        <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden">
+          <div className="print:hidden">
+            <TopBar
+              currentPath={path}
+              onOpenMobileMenu={() => setMobileMenuOpen(true)}
+            />
+          </div>
 
-        <div className="print:hidden">
-          <Footer onTrySample={handleTrySample} currentPath={path} />
+          <main className="flex-1 flex flex-col">
+            <Suspense fallback={<GlobalLoading />}>
+              {renderCurrentView()}
+            </Suspense>
+          </main>
+
           <CookieBanner />
         </div>
 
