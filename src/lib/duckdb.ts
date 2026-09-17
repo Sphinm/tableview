@@ -476,7 +476,7 @@ export async function exportToCsv(
   tableName: string,
   fileType: 'parquet' | 'csv' | 'json',
   customFilter?: string
-): Promise<void> {
+): Promise<{ size: number; filename: string }> {
   const { conn, db } = await getDuckDB();
   const tempCsvName = `export_${Date.now()}.csv`;
 
@@ -495,7 +495,9 @@ export async function exportToCsv(
 
   const buffer = await db.copyFileToBuffer(tempCsvName);
   const blob = new Blob([buffer.buffer as ArrayBuffer], { type: 'text/csv;charset=utf-8;' });
-  triggerDownload(blob, `${tableName.replace(/\.[^/.]+$/, '')}_exported.csv`);
+  const filename = `${tableName.replace(/\.[^/.]+$/, '')}_exported.csv`;
+  triggerDownload(blob, filename);
+  return { size: blob.size, filename };
 }
 
 /**
@@ -506,7 +508,7 @@ export async function exportToExcel(
   fileType: 'parquet' | 'csv' | 'json',
   limitRows: number = 50000,
   customFilter?: string
-): Promise<void> {
+): Promise<{ size: number; filename: string }> {
   const { conn } = await getDuckDB();
 
   let scanExpr = `'${tableName}'`;
@@ -543,7 +545,9 @@ export async function exportToExcel(
     type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
   });
 
-  triggerDownload(blob, `${tableName.replace(/\.[^/.]+$/, '')}_exported.xlsx`);
+  const filename = `${tableName.replace(/\.[^/.]+$/, '')}_exported.xlsx`;
+  triggerDownload(blob, filename);
+  return { size: blob.size, filename };
 }
 
 /**
@@ -553,7 +557,7 @@ export async function exportToJson(
   tableName: string,
   fileType: 'parquet' | 'csv' | 'json',
   limitRows: number = 50000
-): Promise<void> {
+): Promise<{ size: number; filename: string }> {
   const { conn } = await getDuckDB();
 
   let scanExpr = `'${tableName}'`;
@@ -567,7 +571,9 @@ export async function exportToJson(
 
   const jsonStr = JSON.stringify(rows, null, 2);
   const blob = new Blob([jsonStr], { type: 'application/json' });
-  triggerDownload(blob, `${tableName.replace(/\.[^/.]+$/, '')}_exported.json`);
+  const filename = `${tableName.replace(/\.[^/.]+$/, '')}_exported.json`;
+  triggerDownload(blob, filename);
+  return { size: blob.size, filename };
 }
 
 /**
@@ -578,7 +584,7 @@ export async function exportToParquet(
   fileType: 'parquet' | 'csv' | 'json',
   compression: 'ZSTD' | 'SNAPPY' | 'GZIP' | 'UNCOMPRESSED' = 'ZSTD',
   customFilter?: string
-): Promise<void> {
+): Promise<{ size: number; filename: string }> {
   const { conn, db } = await getDuckDB();
   const tempParquetName = `export_${Date.now()}.parquet`;
 
@@ -597,7 +603,37 @@ export async function exportToParquet(
 
   const buffer = await db.copyFileToBuffer(tempParquetName);
   const blob = new Blob([buffer.buffer as ArrayBuffer], { type: 'application/octet-stream' });
-  triggerDownload(blob, `${tableName.replace(/\.[^/.]+$/, '')}_converted_${compression.toLowerCase()}.parquet`);
+  const filename = `${tableName.replace(/\.[^/.]+$/, '')}_converted_${compression.toLowerCase()}.parquet`;
+  triggerDownload(blob, filename);
+  return { size: blob.size, filename };
+}
+
+/**
+ * Quick preview query for datasets (first 5 rows + total row count)
+ */
+export async function queryTablePreview(
+  tableName: string,
+  fileType: 'parquet' | 'csv' | 'json',
+  limitRows = 5
+): Promise<{ columns: ColumnSchema[]; rows: Record<string, any>[]; totalRows: number }> {
+  const { conn } = await getDuckDB();
+
+  let scanExpr = `'${tableName}'`;
+  if (fileType === 'parquet') scanExpr = `parquet_scan('${tableName}')`;
+  else if (fileType === 'csv') scanExpr = `read_csv_auto('${tableName}')`;
+  else if (fileType === 'json') scanExpr = `read_json_auto('${tableName}')`;
+
+  const countRes = await conn.query(`SELECT count(*) AS cnt FROM ${scanExpr};`);
+  const totalRows = Number(countRes.toArray()[0]?.toJSON()?.cnt ?? 0);
+
+  const previewRes = await conn.query(`SELECT * FROM ${scanExpr} LIMIT ${limitRows};`);
+  const columns: ColumnSchema[] = previewRes.schema.fields.map(f => ({
+    name: f.name,
+    type: f.type.toString()
+  }));
+  const rows = previewRes.toArray().map(row => sanitizeRowValues(row.toJSON()));
+
+  return { columns, rows, totalRows };
 }
 
 export interface ColumnSummary {

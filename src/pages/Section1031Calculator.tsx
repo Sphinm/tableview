@@ -35,6 +35,7 @@ import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
 import { getUrlParams } from '../lib/urlState';
 import { PageHeader, PrintReportButton } from '../components/calculator-kit';
+import { SuiteSubNav } from '../components/SuiteSubNav';
 
 const PATH = '/section-1031-exchange-calculator';
 const faqs = getCalculatorFaqs(PATH);
@@ -456,6 +457,8 @@ export const Section1031Calculator = () => {
           </>
         }
       />
+
+      <SuiteSubNav suite="1031" />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* ---- Inputs ---- */}

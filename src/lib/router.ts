@@ -206,6 +206,7 @@ export function useRouter() {
 
   return {
     ...route,
+    pathname: typeof window !== 'undefined' ? window.location.pathname : '/',
     navigate: navigateTo
   };
 }

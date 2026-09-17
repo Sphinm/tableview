@@ -1,4 +1,5 @@
-import { Sparkles } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Sparkles, ChevronDown, Check } from 'lucide-react';
 
 export interface CalculatorPreset<T = Record<string, unknown>> {
   id: string;
@@ -28,25 +29,72 @@ export function CalculatorPresetsBar<T = Record<string, unknown>>({
   title = 'Quick Presets',
   className = '',
 }: CalculatorPresetsBarProps<T>) {
+  const [isOpen, setIsOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   if (!presets || presets.length === 0) return null;
 
   const currentActiveId = activePresetId !== undefined ? activePresetId : activeId;
+  const activePreset = presets.find((p) => p.id === currentActiveId) || presets[0];
+
   const handleSelect = (preset: CalculatorPreset<T>) => {
     if (onSelectPreset) {
       onSelectPreset(preset);
     } else if (onSelect) {
       onSelect(preset);
     }
+    setIsOpen(false);
   };
 
   return (
-    <div className={`no-print flex flex-col sm:flex-row sm:items-center gap-2 p-2.5 rounded-xl bg-white border border-slate-200 mb-6 shadow-2xs ${className}`}>
+    <div className={`no-print flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2.5 rounded-xl bg-white border border-slate-200 mb-6 shadow-2xs ${className}`}>
       <div className="flex items-center gap-1.5 px-2 text-xs font-bold text-slate-900 shrink-0">
         <Sparkles className="size-3.5 text-amber-500" />
         <span>{title}:</span>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2 overflow-x-auto pb-1 sm:pb-0">
+      {/* Mobile: Dropdown Selector */}
+      <div ref={dropdownRef} className="relative sm:hidden w-full">
+        <button
+          type="button"
+          onClick={() => setIsOpen(!isOpen)}
+          className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-800"
+        >
+          <span className="truncate">{activePreset.label}</span>
+          <ChevronDown className={`size-3.5 text-slate-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+
+        {isOpen && (
+          <div className="absolute left-0 right-0 top-full mt-1 bg-white rounded-xl border border-slate-200 shadow-xl py-1 z-30 animate-in fade-in duration-100">
+            {presets.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => handleSelect(preset)}
+                className={`w-full flex items-center justify-between px-3 py-2 text-left text-xs ${
+                  currentActiveId === preset.id ? 'bg-indigo-50 text-indigo-700 font-bold' : 'hover:bg-slate-50 text-slate-700'
+                }`}
+              >
+                <span>{preset.label}</span>
+                {currentActiveId === preset.id && <Check className="size-3.5 text-indigo-600" />}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* Desktop: Clean flex-wrap without overflow-x-auto */}
+      <div className="hidden sm:flex flex-wrap items-center gap-2">
         {presets.map((preset) => {
           const isActive = currentActiveId === preset.id;
           return (

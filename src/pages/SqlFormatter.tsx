@@ -12,6 +12,7 @@ import {
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { AdSlot } from '../components/AdSlot';
 import { PageHeader } from '../components/calculator-kit';
+import { CodeEditor } from '../components/CodeEditor';
 
 const sqlFormatterSchemas = [
   {
@@ -222,12 +223,12 @@ export const SqlFormatter = () => {
             <span>Raw SQL Query</span>
             <span>{inputSql.length} chars</span>
           </div>
-          <textarea
+          <CodeEditor
+            language="sql"
             value={inputSql}
-            onChange={(e) => setInputSql(e.target.value)}
+            onChange={setInputSql}
             placeholder="Paste raw SQL query here..."
-            spellCheck={false}
-            className="w-full flex-1 p-4 bg-transparent text-slate-800 font-mono text-xs leading-relaxed resize-none focus:outline-none focus:ring-1 focus:ring-cyan-500/50"
+            className="flex-1"
           />
         </div>
 
@@ -237,9 +238,13 @@ export const SqlFormatter = () => {
             <span>Formatted SQL ({dialect.toUpperCase()})</span>
             <span>{formattedSql.split('\n').length} lines</span>
           </div>
-          <pre className="w-full flex-1 p-4 bg-slate-50/50 text-slate-800 font-mono text-xs leading-relaxed overflow-auto select-text scrollbar-thin">
-            {formattedSql || <span className="text-slate-400">// Formatted SQL will appear here...</span>}
-          </pre>
+          <CodeEditor
+            language="sql"
+            value={formattedSql}
+            readOnly={true}
+            placeholder="// Formatted SQL will appear here..."
+            className="flex-1 bg-slate-50/50"
+          />
         </div>
       </div>
 

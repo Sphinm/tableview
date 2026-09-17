@@ -1,12 +1,25 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { guidesData, type GuideItem } from '../data/guides';
 import { navigateTo } from '../lib/router';
-import { BookOpen, Search, Clock, ArrowRight } from 'lucide-react';
+import { BookOpen, Search, Clock, ArrowRight, Filter, ChevronDown, Check, X } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
 
 export const GuidesHub = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const categories = [
     'All',
@@ -45,37 +58,153 @@ export const GuidesHub = () => {
         </p>
       </div>
 
-      {/* Search & Category Filter Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mb-10 pb-6 border-b border-slate-200">
-        {/* Search */}
-        <div className="relative w-full sm:w-80">
-          <Search className="size-4 text-slate-500 absolute left-3.5 top-3 pointer-events-none" />
+      {/* Search & Category Dropdown Bar */}
+      <div className="flex flex-col sm:flex-row items-center gap-3 mb-6">
+        {/* Balanced Search Bar */}
+        <div className="relative w-full sm:w-80 md:w-96">
+          <Search className="size-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search guides (e.g. DuckDB, Excel)..."
-            className="w-full pl-9 pr-4 py-2 rounded-xl bg-white border border-slate-300 text-xs sm:text-sm text-slate-900 placeholder-slate-500 focus:outline-none focus:border-slate-500 transition-colors shadow-2xs"
+            placeholder="Search guides (e.g. DuckDB, Parquet)..."
+            className="w-full pl-10 pr-9 py-2 rounded-xl bg-white border border-slate-300 hover:border-slate-400 focus:border-indigo-500 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-2xs"
           />
+          {searchQuery && (
+            <button
+              type="button"
+              onClick={() => setSearchQuery('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 p-0.5 rounded-md hover:bg-slate-100 text-slate-400 hover:text-slate-600 cursor-pointer"
+              title="Clear search"
+            >
+              <X className="size-3.5" />
+            </button>
+          )}
         </div>
 
-        {/* Category Filter Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto w-full sm:w-auto pb-1 text-xs">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-3 py-1.5 rounded-lg whitespace-nowrap transition-colors cursor-pointer ${
-                selectedCategory === cat
-                  ? 'bg-indigo-600 text-white font-semibold shadow-xs'
-                  : 'bg-white text-slate-900 font-semibold hover:bg-slate-100 border border-slate-300'
+        {/* Category Dropdown Filter */}
+        <div className="relative w-full sm:w-auto shrink-0" ref={dropdownRef}>
+          <button
+            type="button"
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className={`w-full sm:w-auto flex items-center justify-between gap-2.5 px-3.5 py-2 rounded-xl border text-xs sm:text-sm font-semibold shadow-2xs transition-all cursor-pointer ${
+              selectedCategory !== 'All'
+                ? 'bg-indigo-50/80 border-indigo-200 text-indigo-700'
+                : 'bg-white border-slate-300 hover:border-slate-400 text-slate-800'
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <Filter className={`size-3.5 ${selectedCategory !== 'All' ? 'text-indigo-600' : 'text-slate-400'}`} />
+              <span>{selectedCategory === 'All' ? 'All Categories' : selectedCategory}</span>
+              <span className={`text-[10px] font-mono px-1.5 py-0.2 rounded-full font-bold ${
+                selectedCategory !== 'All' ? 'bg-indigo-200/80 text-indigo-800' : 'bg-slate-100 text-slate-600'
+              }`}>
+                {selectedCategory === 'All'
+                  ? guidesData.length
+                  : guidesData.filter((g) => g.category === selectedCategory).length}
+              </span>
+            </div>
+            <ChevronDown
+              className={`size-4 text-slate-400 transition-transform duration-200 ${
+                dropdownOpen ? 'rotate-180' : ''
               }`}
-            >
-              {cat}
-            </button>
-          ))}
+            />
+          </button>
+
+          {/* Dropdown Menu */}
+          {dropdownOpen && (
+            <div className="absolute left-0 sm:left-auto sm:right-0 mt-1.5 w-full sm:w-64 bg-white rounded-xl border border-slate-200 shadow-xl py-1.5 z-20 animate-in fade-in zoom-in-95 duration-100">
+              <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider border-b border-slate-100 flex items-center justify-between">
+                <span>Filter by Category</span>
+                <span className="text-[10px] font-normal text-slate-400">{categories.length - 1} categories</span>
+              </div>
+              <div className="max-h-64 overflow-y-auto py-1 scrollbar-thin">
+                {categories.map((cat) => {
+                  const count = cat === 'All'
+                    ? guidesData.length
+                    : guidesData.filter((g) => g.category === cat).length;
+                  const isSelected = selectedCategory === cat;
+
+                  return (
+                    <button
+                      key={cat}
+                      type="button"
+                      onClick={() => {
+                        setSelectedCategory(cat);
+                        setDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 text-xs text-left transition-colors cursor-pointer ${
+                        isSelected
+                          ? 'bg-indigo-50 text-indigo-700 font-semibold'
+                          : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-medium'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 truncate">
+                        {isSelected ? (
+                          <Check className="size-3.5 text-indigo-600 shrink-0" />
+                        ) : (
+                          <span className="size-3.5 shrink-0" />
+                        )}
+                        <span className="truncate">{cat === 'All' ? 'All Categories' : cat}</span>
+                      </div>
+                      <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded-full ${
+                        isSelected ? 'bg-indigo-100 text-indigo-700 font-bold' : 'bg-slate-100 text-slate-500'
+                      }`}>
+                        {count}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </div>
+
+      {/* Active Filter Chips & Reset */}
+      {(selectedCategory !== 'All' || searchQuery) && (
+        <div className="flex items-center justify-between flex-wrap gap-2 mb-8 pb-4 border-b border-slate-200 text-xs text-slate-600">
+          <div className="flex items-center gap-2 flex-wrap">
+            {selectedCategory !== 'All' && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200 font-semibold text-[11px]">
+                <span>Category: {selectedCategory}</span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedCategory('All')}
+                  className="hover:text-indigo-900 hover:bg-indigo-100/80 p-0.5 rounded transition-colors cursor-pointer"
+                  title="Clear category filter"
+                >
+                  <X className="size-3" />
+                </button>
+              </span>
+            )}
+            {searchQuery && (
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 text-slate-800 border border-slate-200 font-medium text-[11px]">
+                <span>"{searchQuery}"</span>
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="hover:text-slate-900 hover:bg-slate-200 p-0.5 rounded transition-colors cursor-pointer"
+                  title="Clear search query"
+                >
+                  <X className="size-3" />
+                </button>
+              </span>
+            )}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedCategory('All');
+              setSearchQuery('');
+            }}
+            className="text-xs text-indigo-600 hover:text-indigo-800 font-semibold hover:underline cursor-pointer"
+          >
+            Reset filters
+          </button>
+        </div>
+      )}
 
       {/* Guides Grid */}
       {filteredGuides.length === 0 ? (

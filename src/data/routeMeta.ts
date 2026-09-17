@@ -26,6 +26,13 @@ export const DATA_TOOLS_META: PageMeta = {
   canonical: '/data-tools',
 };
 
+export const DATA_CONVERTER_META: PageMeta = {
+  title: 'Universal Data Converter: Convert CSV, Excel, Parquet & JSON | TableView.dev',
+  description:
+    'Convert datasets between Apache Parquet, Microsoft Excel (.xlsx), CSV, and JSON 100% in your browser. Powered by DuckDB-Wasm, ZSTD columnar compression, zero server uploads, completely private.',
+  canonical: '/data-converter',
+};
+
 export const AI_ARTICLE_POLISHER_META: PageMeta = {
   title: 'AI Article Polisher: Remove AI Tone & Polish Prose | TableView.dev',
   description:
@@ -181,6 +188,12 @@ export const STATIC_PAGE_META: Record<string, PageMeta> = {
       'Legal disclaimers, financial calculation disclosures, and terms of informational use for TableView.dev.',
     canonical: '/disclaimer',
   },
+  '/media-tools': {
+    title: 'Media Compression Studio: In-Browser Video & Image Optimizer | TableView.dev',
+    description:
+      'Compress videos and batch optimize images 100% in your browser. Wasm-powered MP4, WebM, PNG, and JPG compression with zero server uploads and no watermarks.',
+    canonical: '/media-tools',
+  },
   '/video-compressor': {
     title: 'Free Online Video Compressor: 100% In-Browser & No Watermark | TableView.dev',
     description:
@@ -229,4 +242,5 @@ export const STATIC_PAGE_META: Record<string, PageMeta> = {
       'Check if a website is down for everyone or just you. Instant real-time server status and response code tested from global edge nodes.',
     canonical: '/is-it-down',
   },
+  '/data-converter': DATA_CONVERTER_META,
 };

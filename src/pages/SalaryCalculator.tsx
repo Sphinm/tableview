@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import {
   Clock,
@@ -22,6 +22,7 @@ import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { AdSlot } from '../components/AdSlot';
 import { PrintReportButton, PrintableReportHeader, PageHeader } from '../components/calculator-kit';
+import { SuiteSubNav } from '../components/SuiteSubNav';
 
 const salaryCalculatorSchemas = [
   {
@@ -99,6 +100,18 @@ export const SalaryCalculator = ({
 
   const [copied, setCopied] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [isPresetOpen, setIsPresetOpen] = useState<boolean>(false);
+  const presetDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (presetDropdownRef.current && !presetDropdownRef.current.contains(event.target as Node)) {
+        setIsPresetOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   // Clean, human-friendly on-page H1 and badge
   const { displayTitle, displayBadge } = useMemo(() => {
@@ -260,32 +273,56 @@ export const SalaryCalculator = ({
           </>
         }
         presets={
-          <div className="flex items-center gap-1.5 overflow-x-auto scrollbar-none pb-1">
-            <span className="text-xs text-slate-900 font-bold shrink-0 mr-1.5">Quick Presets:</span>
-            {SALARY_PRESETS.map((preset) => {
-              const isSelected = mode === 'salary-to-hourly' && amount === preset.value;
-              return (
-                <button
-                  key={preset.value}
-                  type="button"
-                  onClick={() => {
-                    setMode('salary-to-hourly');
-                    setAmount(preset.value);
-                    navigateTo(preset.path);
-                  }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all cursor-pointer border shrink-0 ${
-                    isSelected
-                      ? 'bg-indigo-600 text-white font-bold border-indigo-600 shadow-xs'
-                      : 'bg-white text-slate-900 font-semibold border-slate-200 hover:bg-slate-100 hover:border-slate-300'
-                  }`}
-                >
-                  {preset.label}
-                </button>
-              );
-            })}
+          <div ref={presetDropdownRef} className="relative inline-block">
+            <button
+              type="button"
+              onClick={() => setIsPresetOpen(!isPresetOpen)}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white border border-slate-200 hover:border-slate-300 shadow-2xs text-xs font-semibold text-slate-800 cursor-pointer transition-all"
+            >
+              <Sparkles className="size-3 text-amber-500" />
+              <span>
+                {SALARY_PRESETS.find((p) => mode === 'salary-to-hourly' && amount === p.value)
+                  ? `Salary Preset: ${SALARY_PRESETS.find((p) => mode === 'salary-to-hourly' && amount === p.value)?.label}`
+                  : 'Quick Salary Presets'}
+              </span>
+              <ChevronDown className={`size-3.5 text-slate-400 transition-transform duration-200 ${isPresetOpen ? 'rotate-180' : ''}`} />
+            </button>
+
+            {isPresetOpen && (
+              <div className="absolute left-0 top-full mt-1.5 w-60 bg-white rounded-2xl border border-slate-200 shadow-xl py-1 z-30 animate-in fade-in zoom-in-95 duration-150">
+                <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  Select Benchmark Salary
+                </div>
+                <div className="max-h-56 overflow-y-auto py-0.5">
+                  {SALARY_PRESETS.map((preset) => {
+                    const isSelected = mode === 'salary-to-hourly' && amount === preset.value;
+                    return (
+                      <button
+                        key={preset.value}
+                        type="button"
+                        onClick={() => {
+                          setMode('salary-to-hourly');
+                          setAmount(preset.value);
+                          navigateTo(preset.path);
+                          setIsPresetOpen(false);
+                        }}
+                        className={`w-full flex items-center justify-between px-3 py-1.5 text-left text-xs font-mono transition-colors cursor-pointer ${
+                          isSelected ? 'bg-indigo-50 text-indigo-700 font-bold' : 'hover:bg-slate-50 text-slate-700'
+                        }`}
+                      >
+                        <span>{preset.label} / year</span>
+                        {isSelected && <Check className="size-3.5 text-indigo-600" />}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         }
       />
+
+      <SuiteSubNav suite="personal" />
 
       {/* Hero Answer Banner - Instantly answers the search intent */}
       <div className="relative overflow-hidden rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 sm:p-6 shadow-xs mb-8">

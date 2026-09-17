@@ -35,6 +35,7 @@ import {
   PageHeader,
   PrintReportButton,
 } from '../components/calculator-kit';
+import { SuiteSubNav } from '../components/SuiteSubNav';
 
 const HARD_MONEY_PRESETS: CalculatorPreset<HardMoneyInputs>[] = [
   {
@@ -458,6 +459,8 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
             />
           }
         />
+
+        <SuiteSubNav suite="commercial" />
 
         {/* Main Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

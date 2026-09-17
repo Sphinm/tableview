@@ -233,6 +233,54 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
   // ==========================================
   // CONVERTERS
   // ==========================================
+  'data-converter': {
+    slug: 'data-converter',
+    path: '/data-converter',
+    badge: '100% In-Browser · DuckDB Wasm · Zero Uploads',
+    title: 'Universal Data Converter (CSV, Excel, Parquet, JSON)',
+    shortTitle: 'Data Converter',
+    metaTitle: 'Universal In-Browser Data Converter: CSV, Excel, Parquet & JSON',
+    metaDescription: 'Convert datasets between Apache Parquet, Microsoft Excel (.xlsx), CSV, and JSON 100% in your browser. Fast DuckDB-Wasm engine, zero server uploads.',
+    h1: 'Universal In-Browser',
+    h1Highlight: 'Data Converter',
+    subtitle: 'Transform datasets between Apache Parquet, Excel (.xlsx), CSV, and JSON with ZSTD compression and instant downloads in client-side WebAssembly.',
+    category: 'converter',
+    tag: 'Flagship',
+    color: 'indigo',
+    iconType: 'parquet',
+    acceptExtensions: '.parquet,.geoparquet,.csv,.tsv,.xlsx,.xls,.json,.ndjson,.jsonl',
+    acceptLabel: 'Drop CSV, Excel, Parquet, or JSON to convert formats',
+    primaryExport: 'parquet',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'zap',
+        title: 'All-in-One Format Conversion',
+        description: 'Effortlessly switch between CSV, Excel, Parquet, and JSON in one unified workspace.'
+      },
+      {
+        icon: 'shield',
+        title: '100% Client-Side Privacy',
+        description: 'All conversions run strictly in local browser memory. Sensitive datasets are never sent to external servers.'
+      },
+      {
+        icon: 'download',
+        title: 'High-Ratio ZSTD Compression',
+        description: 'Compress bulky text spreadsheets into high-speed columnar Parquet files up to 90% smaller.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Which formats can I convert between?',
+        a: 'You can convert between CSV, TSV, Microsoft Excel (.xlsx), Apache Parquet, and JSON / NDJSON in any combination.'
+      },
+      {
+        q: 'Do my files get uploaded to a cloud server?',
+        a: 'No. Conversions run entirely inside your browser tab using DuckDB-Wasm and SheetJS in local RAM.'
+      }
+    ]
+  },
+
   'csv-to-excel': {
     slug: 'csv-to-excel',
     path: '/csv-to-excel',

@@ -40,6 +40,8 @@ const JsonFormatter = lazy(() => import('./pages/JsonFormatter').then(m => ({ de
 const SqlFormatter = lazy(() => import('./pages/SqlFormatter').then(m => ({ default: m.SqlFormatter })));
 const VideoCompressor = lazy(() => import('./pages/VideoCompressor').then(m => ({ default: m.VideoCompressor })));
 const ImageCompressor = lazy(() => import('./pages/ImageCompressor').then(m => ({ default: m.ImageCompressor })));
+const MediaToolsHub = lazy(() => import('./pages/MediaToolsHub').then(m => ({ default: m.MediaToolsHub })));
+const DataConverter = lazy(() => import('./pages/DataConverter').then(m => ({ default: m.DataConverter })));
 const WebsiteStatusChecker = lazy(() => import('./pages/WebsiteStatusChecker').then(m => ({ default: m.WebsiteStatusChecker })));
 const AiArticlePolisher = lazy(() => import('./pages/AiArticlePolisher').then(m => ({ default: m.AiArticlePolisher })));
 import { AuthProvider } from './lib/authContext';
@@ -57,7 +59,8 @@ import { isKnownRoute } from './lib/resolveRoute';
 import { SALARY_LONG_TAIL_SLUG_MAP } from './data/salaryLongTail';
 
 export function App() {
-  const { path, slug } = useRouter();
+  const { path, slug, pathname } = useRouter();
+  const currentNavPath = pathname || path;
   const [currentTable, setCurrentTable] = useState<string | null>(null);
   const [fileType, setFileType] = useState<'parquet' | 'csv' | 'json'>('parquet');
   // Populated only for multi-sheet Excel workbooks; drives the sheet switcher.
@@ -433,12 +436,18 @@ export function App() {
       case '/compress-webp':
         return <ImageCompressor />;
 
+      case '/media-tools':
+        return <MediaToolsHub />;
+
       case '/is-it-down':
         return <WebsiteStatusChecker />;
 
       case '/finance-calculator':
       case '/calculator':
         return <FinanceCalculatorHub />;
+
+      case '/data-converter':
+        return <DataConverter />;
 
       case '/data-tools':
         return (
@@ -484,7 +493,7 @@ export function App() {
         {/* Left Sidebar (Desktop fixed/collapsible + Mobile drawer) */}
         <div className="print:hidden">
           <Sidebar
-            currentPath={path}
+            currentPath={currentNavPath}
             collapsed={sidebarCollapsed}
             onToggleCollapse={toggleSidebar}
             mobileOpen={mobileMenuOpen}
@@ -496,7 +505,7 @@ export function App() {
         <div className="flex-1 flex flex-col min-w-0 min-h-screen overflow-x-hidden">
           <div className="print:hidden">
             <TopBar
-              currentPath={path}
+              currentPath={currentNavPath}
               onOpenMobileMenu={() => setMobileMenuOpen(true)}
             />
           </div>

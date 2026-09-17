@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import {
   Home,
   ArrowRight,
@@ -6,12 +6,65 @@ import {
   Percent,
   Video,
   Image as ImageIcon,
-  Database
+  Database,
+  ChevronDown,
+  Check,
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
+import { CodeEditor } from './CodeEditor';
 
 export const QuickModelerWidget = () => {
   const [activeTab, setActiveTab] = useState<'video' | 'image' | 'mortgage' | 'sql'>('video');
+  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const PLAYGROUND_OPTIONS = [
+    {
+      id: 'video' as const,
+      label: 'Video Compress',
+      icon: Video,
+      color: 'text-blue-600',
+      bg: 'bg-blue-50',
+      desc: 'Wasm H.264 video compression',
+    },
+    {
+      id: 'image' as const,
+      label: 'Image Compress',
+      icon: ImageIcon,
+      color: 'text-emerald-600',
+      bg: 'bg-emerald-50',
+      desc: 'Canvas batch image optimizer',
+    },
+    {
+      id: 'mortgage' as const,
+      label: 'Mortgage Math',
+      icon: Home,
+      color: 'text-indigo-600',
+      bg: 'bg-indigo-50',
+      desc: 'Amortization & PMI calculator',
+    },
+    {
+      id: 'sql' as const,
+      label: 'DuckDB SQL',
+      icon: Database,
+      color: 'text-purple-600',
+      bg: 'bg-purple-50',
+      desc: 'In-browser analytical SQL engine',
+    },
+  ];
+
+  const currentOption = PLAYGROUND_OPTIONS.find((opt) => opt.id === activeTab) || PLAYGROUND_OPTIONS[0];
+  const CurrentIcon = currentOption.icon;
 
   // --- Tab 1: Video Compressor Simulation State ---
   const [videoSourceSize, setVideoSourceSize] = useState<number>(120); // in MB
@@ -175,59 +228,63 @@ export const QuickModelerWidget = () => {
             </p>
           </div>
 
-          {/* Tab Selector: 4 Flagship Categories */}
-          <div className="flex items-center p-1 rounded-xl bg-slate-100 border border-slate-200 self-start md:self-auto overflow-x-auto max-w-full">
+          {/* Dropdown Menu for Playground Categories */}
+          <div ref={dropdownRef} className="relative self-start md:self-auto min-w-[200px] sm:min-w-[220px]">
             <button
               type="button"
-              onClick={() => setActiveTab('video')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
-                activeTab === 'video'
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200 font-bold'
-                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
-              }`}
+              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+              className="w-full flex items-center justify-between gap-3 px-3.5 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50/80 shadow-2xs transition-all cursor-pointer text-slate-800"
             >
-              <Video className="size-3.5 text-blue-600" />
-              <span>Video Compress</span>
+              <div className="flex items-center gap-2 min-w-0">
+                <div className={`size-6 rounded-md ${currentOption.bg} flex items-center justify-center shrink-0`}>
+                  <CurrentIcon className={`size-3.5 ${currentOption.color}`} />
+                </div>
+                <span className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                  {currentOption.label}
+                </span>
+              </div>
+              <ChevronDown className={`size-4 text-slate-400 transition-transform duration-200 shrink-0 ${isDropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
-            <button
-              type="button"
-              onClick={() => setActiveTab('image')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
-                activeTab === 'image'
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200 font-bold'
-                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
-              }`}
-            >
-              <ImageIcon className="size-3.5 text-emerald-600" />
-              <span>Image Compress</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('mortgage')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
-                activeTab === 'mortgage'
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200 font-bold'
-                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
-              }`}
-            >
-              <Home className="size-3.5 text-indigo-600" />
-              <span>Mortgage Math</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setActiveTab('sql')}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all duration-200 cursor-pointer whitespace-nowrap ${
-                activeTab === 'sql'
-                  ? 'bg-white text-slate-900 shadow-xs border border-slate-200 font-bold'
-                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-200/60'
-              }`}
-            >
-              <Database className="size-3.5 text-purple-600" />
-              <span>DuckDB SQL</span>
-            </button>
+            {isDropdownOpen && (
+              <div className="absolute right-0 top-full mt-2 w-64 sm:w-72 bg-white rounded-2xl border border-slate-200 shadow-xl py-1.5 z-30 animate-in fade-in zoom-in-95 duration-150">
+                <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                  Select Interactive Tool
+                </div>
+                {PLAYGROUND_OPTIONS.map((opt) => {
+                  const Icon = opt.icon;
+                  const isSelected = activeTab === opt.id;
+                  return (
+                    <button
+                      key={opt.id}
+                      type="button"
+                      onClick={() => {
+                        setActiveTab(opt.id);
+                        setIsDropdownOpen(false);
+                      }}
+                      className={`w-full flex items-center justify-between px-3 py-2 text-left transition-colors cursor-pointer ${
+                        isSelected ? 'bg-indigo-50/60 text-indigo-950 font-bold' : 'hover:bg-slate-50 text-slate-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5 min-w-0">
+                        <div className={`size-7 rounded-lg ${opt.bg} flex items-center justify-center shrink-0`}>
+                          <Icon className={`size-4 ${opt.color}`} />
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs sm:text-sm font-semibold text-slate-900 truncate">
+                            {opt.label}
+                          </div>
+                          <div className="text-[10px] text-slate-400 truncate">
+                            {opt.desc}
+                          </div>
+                        </div>
+                      </div>
+                      {isSelected && <Check className="size-4 text-indigo-600 shrink-0 ml-2" />}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
           </div>
         </div>
 
@@ -526,10 +583,14 @@ export const QuickModelerWidget = () => {
                   </div>
 
                   {/* Code Editor Box */}
-                  <div className="rounded-xl bg-slate-50 p-3.5 font-mono text-xs text-slate-800 shadow-2xs border border-slate-200 overflow-x-auto leading-relaxed">
-                    <pre className="text-emerald-700 font-medium select-all">
-                      {sqlQueries[selectedSqlIndex].query}
-                    </pre>
+                  <div className="rounded-xl overflow-hidden shadow-2xs border border-slate-200">
+                    <CodeEditor
+                      language="sql"
+                      value={sqlQueries[selectedSqlIndex].query}
+                      readOnly={true}
+                      showLineNumbers={false}
+                      className="bg-slate-50"
+                    />
                   </div>
                   <div className="flex items-center justify-between text-[10px] text-slate-500 font-mono mt-1.5">
                     <span>Engine: DuckDB-Wasm (SIMD)</span>

@@ -9,6 +9,7 @@ import { SALARY_LONG_TAIL_MAP } from '../../data/salaryLongTail';
 const APP_ROUTES = new Set([
   '/',
   '/data-tools',
+  '/data-converter',
   '/tools/:toolSlug',
   '/guides',
   '/guides/:slug',
@@ -31,6 +32,7 @@ const APP_ROUTES = new Set([
   '/salary-to-hourly-calculator',
   '/json-formatter',
   '/sql-formatter',
+  '/media-tools',
   '/video-compressor',
   '/compress-mp4',
   '/compress-video-for-discord',
@@ -245,6 +247,20 @@ describe('Known-route classification (drives the noindex 404 guard)', () => {
       expect(isCalculatorRoute('/guides')).toBe(false);
       expect(isCalculatorRoute('/about')).toBe(false);
       expect(isCalculatorRoute('/privacy')).toBe(false);
+
+      // Regression: Guides containing financial keywords like "loan", "dscr", "exchange", "mortgage"
+      // must NEVER be misclassified as calculator routes!
+      expect(isCalculatorRoute('/guides/dscr-loans-complete-investor-guide')).toBe(false);
+      expect(isCalculatorRoute('/guides/section-1031-exchange-rules-timeline')).toBe(false);
+      expect(isCalculatorRoute('/guides/how-to-calculate-dscr')).toBe(false);
+      expect(isCalculatorRoute('/guides/commercial-real-estate-loan-types')).toBe(false);
+      expect(isCalculatorRoute('/guides/commercial-balloon-mortgages-risks')).toBe(false);
+      expect(isCalculatorRoute('/guides/mortgage-refinance-break-even-guide')).toBe(false);
+      expect(isCalculatorRoute('/guides/hard-money-loans-for-fix-and-flip')).toBe(false);
+
+      // Bare slug forms must also never be misclassified as calculator routes
+      expect(isCalculatorRoute('/dscr-loans-complete-investor-guide')).toBe(false);
+      expect(isCalculatorRoute('/section-1031-exchange-rules-timeline')).toBe(false);
     });
   });
 });

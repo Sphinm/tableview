@@ -27,6 +27,7 @@ import {
   ComparisonBarChart,
   PageHeader,
 } from '../components/calculator-kit';
+import { SuiteSubNav } from '../components/SuiteSubNav';
 
 const LOAN_PRESETS: CalculatorPreset<{ a: LoanParameters; b: LoanParameters }>[] = [
   {
@@ -287,6 +288,8 @@ export const LoanComparisonCalculator = () => {
           </>
         }
       />
+
+      <SuiteSubNav suite="mortgage" />
 
       {/* Main Verdict Recommendation Banner */}
       <div className={`p-6 rounded-2xl border mb-8 shadow-xs transition-all ${

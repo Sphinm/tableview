@@ -12,6 +12,7 @@ import {
   Download,
   ListFilter
 } from 'lucide-react';
+import { CodeEditor } from './CodeEditor';
 
 export interface JsonViewProps {
   data: any;
@@ -581,10 +582,13 @@ export const JsonView: React.FC<JsonViewProps> = ({
             />
           </div>
         ) : (
-          <div className="relative">
-            <pre className="text-xs text-slate-800 leading-relaxed font-mono whitespace-pre select-text p-2">
-              {formattedRawJson}
-            </pre>
+          <div className="relative min-h-[420px] -m-4">
+            <CodeEditor
+              language="json"
+              value={formattedRawJson}
+              readOnly={true}
+              placeholder="// No JSON data available"
+            />
           </div>
         )}
       </div>

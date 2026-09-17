@@ -2,7 +2,7 @@
 
 > Authoritative reference for Large Language Models, AI Search Agents (ChatGPT Search, Perplexity, Claude, Google AI Overviews), and developers.
 > Canonical URL: https://tableview.dev
-> Last Updated: 2026-09-16
+> Last Updated: 2026-09-17
 
 ---
 
@@ -21,6 +21,9 @@ TableView.dev is a private, client-side engineering workbench providing three pr
 ---
 
 ## 2. Media Compression Studio
+
+### Media Tools Hub (https://tableview.dev/media-tools)
+Unified in-browser media compression studio combining client-side WebAssembly video encoding and high-speed batch image optimization. Zero server egress, zero watermarks, completely free.
 
 ### 2.1 Free Online Video Compressor (https://tableview.dev/video-compressor)
 
@@ -123,6 +126,12 @@ TableView.dev is a private, client-side engineering workbench providing three pr
 - Capable of scanning and aggregating datasets of several million rows directly in browser RAM at native C++ speeds.
 - Supported file types: Apache Parquet (.parquet), GeoParquet (.geoparquet), CSV (.csv, .tsv), JSON (.json, .jsonl, .ndjson), Excel (.xlsx, .xls).
 - Capabilities: Standard ANSI SQL queries, multi-sheet Excel navigation, zero-egress data privacy, and instant CSV/Parquet export.
+
+### 4.2 Universal In-Browser Data Converter (https://tableview.dev/data-converter)
+- Multi-format client-side conversion between Apache Parquet, Microsoft Excel (.xlsx), CSV, and JSON/NDJSON.
+- Columnar ZSTD compression encoding for Parquet files with zero cloud upload.
+- Preserves schema types (integers, floats, booleans, timestamps, strings) across format boundaries.
+- Batch and single-file instant conversion with immediate client-side download.
 
 ---
 

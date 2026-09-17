@@ -41,6 +41,7 @@ import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
 import { CalculatorPresetsBar, PrintReportButton, PageHeader } from '../components/calculator-kit';
+import { SuiteSubNav } from '../components/SuiteSubNav';
 
 // Sourced from the shared registry: see the note in MortgageCalculator.tsx.
 const refinanceFaqs = getCalculatorFaqs('/refinance-calculator');
@@ -421,6 +422,8 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
           />
         }
       />
+
+      <SuiteSubNav suite="mortgage" />
 
       {/* Main Grid: Inputs vs Results */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

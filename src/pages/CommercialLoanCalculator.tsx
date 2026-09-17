@@ -28,6 +28,7 @@ import {
   CommercialBalloonChart,
   PageHeader,
 } from '../components/calculator-kit';
+import { SuiteSubNav } from '../components/SuiteSubNav';
 
 const COMMERCIAL_PRESETS: CalculatorPreset<CommercialLoanInputs>[] = [
   {
@@ -293,6 +294,8 @@ export const CommercialLoanCalculator = () => {
           </>
         }
       />
+
+      <SuiteSubNav suite="commercial" />
 
       {/* Balloon Maturity Risk Alert Banner */}
       {summary.hasBalloonPayment && (

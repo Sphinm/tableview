@@ -169,6 +169,7 @@ function generateFooterHtml(): string {
             <h4 style="color: #0f172a; font-weight: 700; margin-bottom: 0.85rem; font-size: 0.95rem;">In-Browser Data Workbench</h4>
             <ul style="list-style: none; padding: 0; margin: 0; line-height: 2.1;">
               <li><a href="/data-tools" style="color: #1e293b; text-decoration: none; font-weight: 500;">Data Workbench Console</a></li>
+              <li><a href="/data-converter" style="color: #1e293b; text-decoration: none; font-weight: 500;">Universal Data Converter</a></li>
               <li><a href="/csv-viewer" style="color: #1e293b; text-decoration: none; font-weight: 500;">CSV Spreadsheet Viewer</a></li>
               <li><a href="/excel-viewer" style="color: #1e293b; text-decoration: none; font-weight: 500;">Excel (.xlsx) Viewer</a></li>
               <li><a href="/parquet-viewer" style="color: #1e293b; text-decoration: none; font-weight: 500;">Apache Parquet Viewer</a></li>
@@ -185,6 +186,7 @@ function generateFooterHtml(): string {
           <div>
             <h4 style="color: #0f172a; font-weight: 700; margin-bottom: 0.85rem; font-size: 0.95rem;">Media & Compression Tools</h4>
             <ul style="list-style: none; padding: 0; margin: 0; line-height: 2.1;">
+              <li><a href="/media-tools" style="color: #1e293b; text-decoration: none; font-weight: 500;">Media Compression Studio</a></li>
               <li><a href="/video-compressor" style="color: #1e293b; text-decoration: none; font-weight: 500;">Video Compressor (WebAssembly)</a></li>
               <li><a href="/compress-mp4" style="color: #1e293b; text-decoration: none; font-weight: 500;">Compress MP4 Video</a></li>
               <li><a href="/compress-video-for-discord" style="color: #1e293b; text-decoration: none; font-weight: 500;">Compress Video for Discord</a></li>
@@ -459,6 +461,10 @@ function generateStaticPageContentHtml(canonical: string): string {
         <p>Using our website does not create any fiduciary, agency, or advisory relationship. Always review transaction structures with licensed mortgage loan officers, certified CPAs, and qualified 1031 exchange intermediaries before executing agreements.</p>
       </article>
     `;
+  }
+
+  if (canonical === '/media-tools') {
+    return generateMediaToolsHubContentHtml();
   }
 
   if (canonical === '/video-compressor') {
@@ -1084,6 +1090,59 @@ function generateHomepageHtml(): string {
   `;
 }
 
+/** Render Media Tools Hub semantic content */
+function generateMediaToolsHubContentHtml(): string {
+  return `
+    <div style="max-width: 1200px; margin: 0 auto; padding: 3.5rem 1.5rem;">
+      <header style="text-align: center; margin-bottom: 3.5rem;">
+        <span style="background: #eef2ff; color: #4338ca; border: 1px solid #c7d2fe; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 9999px; display: inline-block; margin-bottom: 1rem;">100% Client-Side WebAssembly Studio</span>
+        <h1 style="font-size: 2.75rem; font-weight: 800; color: #0f172a; line-height: 1.25; margin-bottom: 1rem;">Media Compression Studio</h1>
+        <p style="font-size: 1.2rem; color: #64748b; max-width: 820px; margin: 0 auto; line-height: 1.7;">Compress MP4, MOV, WebM videos and batch optimize JPG, PNG, and WebP images directly in your browser. Powered by WebAssembly FFmpeg and canvas codecs. Zero server uploads, no watermarks.</p>
+      </header>
+
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-size: 1.75rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Video Compression Tools</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/video-compressor" style="color: #0f172a; text-decoration: none;">Free Video Compressor</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Compress MP4, MOV, WebM, and MKV files locally with CRF quality presets or exact target MB limits.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/compress-mp4" style="color: #0f172a; text-decoration: none;">Compress MP4 Online</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Shrink MP4 video file size up to 90% in your browser without watermarks or quality degradation.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/compress-video-for-discord" style="color: #0f172a; text-decoration: none;">Compress Video for Discord</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Quickly downscale and compress clips under Discord's 25MB or 50MB attachment limit.</p>
+          </div>
+        </div>
+      </section>
+
+      <section style="margin-bottom: 4rem;">
+        <h2 style="font-size: 1.75rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Image Compression Tools</h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/image-compressor" style="color: #0f172a; text-decoration: none;">Batch Image Compressor</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Batch optimize JPEG, PNG, and WebP images with interactive before/after preview and 1-click ZIP export.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/compress-png" style="color: #0f172a; text-decoration: none;">Compress PNG Online</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Shrink transparent PNG files while maintaining sharp line-art and clean alpha channels.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/compress-jpg" style="color: #0f172a; text-decoration: none;">Compress JPG Online</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Reduce JPG photo size with fine-grained visual quality control and EXIF options.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/compress-webp" style="color: #0f172a; text-decoration: none;">Compress WebP Online</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Create highly optimized modern WebP images for web performance and Google Core Web Vitals.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+  `;
+}
+
 /** Render Data Tools Workbench semantic content */
 function generateDataToolsHtml(): string {
   return `
@@ -1097,6 +1156,10 @@ function generateDataToolsHtml(): string {
       <section style="margin-bottom: 4rem;">
         <h2 style="font-size: 1.75rem; font-weight: 700; color: #0f172a; margin-bottom: 1.5rem;">Spreadsheet Viewers &amp; Data Converters</h2>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.25rem;">
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
+            <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/data-converter" style="color: #0f172a; text-decoration: none;">Universal Data Converter</a></h3>
+            <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Convert between CSV, Excel, Apache Parquet, and JSON with ZSTD compression.</p>
+          </div>
           <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 0.75rem; padding: 1.25rem; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);">
             <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem;"><a href="/csv-viewer" style="color: #0f172a; text-decoration: none;">CSV Spreadsheet Viewer</a></h3>
             <p style="color: #64748b; font-size: 0.85rem; line-height: 1.5;">Open, search, sort, and filter large CSV files in browser memory.</p>
@@ -1639,6 +1702,62 @@ function resolvePage(url: string, canonical: string): ResolvedPage {
 
   // --- Media & Compression Tools ------------------------------------------
   if (isCompressionRoute(canonical)) {
+    if (canonical === '/media-tools') {
+      const meta = STATIC_PAGE_META['/media-tools']!;
+      const label = meta.title.split('|')[0].trim();
+      const faqs = [
+        {
+          q: 'How does in-browser video and image compression work without server uploads?',
+          a: 'TableView runs FFmpeg compiled to WebAssembly (Wasm) and native browser canvas image decoders locally in your browser memory. Processing runs directly on your device CPU and RAM with zero bytes uploaded to remote servers.',
+        },
+        {
+          q: 'Are my videos or photos uploaded to any external server or cloud?',
+          a: 'No. Everything executes 100% client-side inside a sandboxed WebAssembly environment. Your files are completely private and never leave your machine.',
+        },
+        {
+          q: 'Is there any watermark, subscription, or file size limitation?',
+          a: 'No watermarks, no subscriptions, and no arbitrary file size limits. You can compress any video or batch of images that fits within your device memory.',
+        },
+        {
+          q: 'Can I compress videos to fit specific platforms like Discord (25MB) or WhatsApp (16MB)?',
+          a: 'Yes. In the Video Compressor, switch to Target Size mode to specify an exact MB limit, and the engine dynamically tunes bitrate and duration to guarantee the file fits under the threshold.',
+        },
+      ];
+
+      return {
+        ...meta,
+        route,
+        faqs,
+        h1: label,
+        intro: meta.description,
+        articleHtml: generateMediaToolsHubContentHtml(),
+        jsonLd: [
+          {
+            '@type': 'WebApplication',
+            name: label,
+            url: `${SITE}/media-tools`,
+            description: meta.description,
+            applicationCategory: 'MultimediaApplication',
+            operatingSystem: 'All',
+            browserRequirements: 'Requires modern browser with WebAssembly support.',
+            offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD' },
+          },
+          {
+            '@type': 'FAQPage',
+            mainEntity: faqs.map((f) => ({
+              '@type': 'Question',
+              name: f.q,
+              acceptedAnswer: { '@type': 'Answer', text: f.a },
+            })),
+          },
+          breadcrumb([
+            { name: 'Home', url: '/' },
+            { name: 'Media Tools', url: '/media-tools' },
+          ]),
+        ],
+      };
+    }
+
     const isVideo =
       canonical === '/video-compressor' ||
       canonical === '/compress-mp4' ||

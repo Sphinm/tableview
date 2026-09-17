@@ -97,6 +97,12 @@
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>https://tableview.dev/media-tools</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>https://tableview.dev/mortgage-calculator</loc>
     <lastmod>2026-09-17</lastmod>
     <changefreq>weekly</changefreq>
@@ -230,6 +236,12 @@
   </url>
   <url>
     <loc>https://tableview.dev/csv-viewer</loc>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://tableview.dev/data-converter</loc>
     <lastmod>2026-09-17</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.90</priority>

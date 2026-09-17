@@ -61,8 +61,8 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
         <BookOpen className="size-12 text-slate-400 mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-slate-100 mb-2">Guide Not Found</h1>
-        <p className="text-xs sm:text-sm text-slate-400 mb-6">
+        <h1 className="text-2xl font-bold text-slate-900 mb-2">Guide Not Found</h1>
+        <p className="text-xs sm:text-sm text-slate-600 mb-6">
           The requested technical guide could not be found or may have been updated.
         </p>
         <button

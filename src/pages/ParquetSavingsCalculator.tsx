@@ -24,6 +24,7 @@ import { AdSlot } from '../components/AdSlot';
 import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { NumericInput } from '../components/NumericInput';
+import { SuiteSubNav } from '../components/SuiteSubNav';
 
 const parquetSchemas = [
   {
@@ -311,6 +312,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
 
       {/* Main Calculator Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        <SuiteSubNav suite="finops" />
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           {/* Left Column: Inputs (5 cols) */}
           <div className="lg:col-span-5 space-y-6">

@@ -37,6 +37,7 @@ import { AmortizationChart } from '../components/AmortizationChart';
 import { PrintableMortgageReport } from '../components/PrintableMortgageReport';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CalculatorPresetsBar, PrintReportButton, PageHeader } from '../components/calculator-kit';
+import { SuiteSubNav } from '../components/SuiteSubNav';
 
 // Sourced from the shared registry so the rendered page, the JSON-LD and the
 // prerendered HTML can never disagree. This page previously declared FAQPage
@@ -426,6 +427,8 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
           />
         }
       />
+
+      <SuiteSubNav suite="mortgage" />
 
       {/* Main 2-Column Calculator Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">

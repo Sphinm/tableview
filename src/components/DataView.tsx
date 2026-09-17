@@ -46,6 +46,7 @@ import {
   type AiStatus
 } from '../lib/gemini';
 import { JsonView } from './JsonView';
+import { CodeEditor } from './CodeEditor';
 import { type ToolConfig } from '../data/tools';
 import { buildSearchFilter } from '../lib/sqlUtils';
 
@@ -1137,13 +1138,20 @@ export const DataView = ({
             )}
           </div>
 
-          <textarea
-            value={customSql}
-            onChange={(e) => setCustomSql(e.target.value)}
-            rows={4}
-            className="w-full p-3 rounded-xl bg-slate-50 focus:bg-white border border-slate-200 font-mono text-xs text-slate-900 focus:outline-none focus:border-indigo-500 transition-colors resize-y"
-            placeholder="SELECT * FROM table LIMIT 50;"
-          />
+          <div className="h-[140px] rounded-xl border border-slate-200 overflow-hidden bg-white shadow-2xs focus-within:border-indigo-500 transition-colors">
+            <CodeEditor
+              language="sql"
+              value={customSql}
+              onChange={setCustomSql}
+              placeholder="SELECT * FROM table LIMIT 50;"
+              onKeyDown={(e) => {
+                if ((e.metaKey || e.ctrlKey) && e.key === 'Enter') {
+                  e.preventDefault();
+                  handleExecuteSql();
+                }
+              }}
+            />
+          </div>
 
           {sqlError && (
             <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-start gap-2">

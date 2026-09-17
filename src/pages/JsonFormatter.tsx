@@ -13,6 +13,7 @@ import {
 import { updatePageMeta } from '../lib/router';
 import { AdSlot } from '../components/AdSlot';
 import { PageHeader } from '../components/calculator-kit';
+import { CodeEditor } from '../components/CodeEditor';
 
 const jsonFormatterSchemas = [
   {
@@ -267,12 +268,12 @@ export const JsonFormatter = () => {
             <span>Raw Input (Paste JSON)</span>
             <span>{inputJson.length} chars</span>
           </div>
-          <textarea
+          <CodeEditor
+            language="json"
             value={inputJson}
-            onChange={(e) => setInputJson(e.target.value)}
+            onChange={setInputJson}
             placeholder="Paste raw JSON here or drop file..."
-            spellCheck={false}
-            className="w-full flex-1 p-4 bg-transparent text-slate-800 font-mono text-xs leading-relaxed resize-none focus:outline-none focus:ring-1 focus:ring-indigo-500/50"
+            className="flex-1"
           />
         </div>
 
@@ -284,9 +285,13 @@ export const JsonFormatter = () => {
               <span>{(parseResult.stats.bytes / 1024).toFixed(1)} KB</span>
             )}
           </div>
-          <pre className="w-full flex-1 p-4 bg-slate-50/50 text-slate-800 font-mono text-xs leading-relaxed overflow-auto select-text scrollbar-thin">
-            {parseResult.formatted || <span className="text-slate-400">// Formatted output will render here...</span>}
-          </pre>
+          <CodeEditor
+            language="json"
+            value={parseResult.formatted}
+            readOnly={true}
+            placeholder="// Formatted output will render here..."
+            className="flex-1 bg-slate-50/50"
+          />
         </div>
       </div>
 

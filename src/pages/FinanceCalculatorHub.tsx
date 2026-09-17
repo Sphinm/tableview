@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import {
   Car,
   CreditCard,
@@ -15,11 +15,14 @@ import {
   Zap,
   HelpCircle,
   Scale,
-  DollarSign
+  DollarSign,
+  ChevronDown,
+  Check,
 } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
+import { SuiteSubNav } from '../components/SuiteSubNav';
 import {
   calculateAutoLoan,
   calculatePersonalLoan,
@@ -43,6 +46,48 @@ export const FinanceCalculatorHub = () => {
   }, []);
 
   const [activeTab, setActiveTab] = useState<'auto' | 'personal' | 'savings' | 'creditCard'>('auto');
+  const [isTabDropdownOpen, setIsTabDropdownOpen] = useState<boolean>(false);
+  const tabDropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (tabDropdownRef.current && !tabDropdownRef.current.contains(event.target as Node)) {
+        setIsTabDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const CALCULATOR_TABS = [
+    {
+      id: 'auto' as const,
+      label: 'Auto Loan Calculator',
+      icon: Car,
+      desc: 'Vehicle financing & monthly loan payment'
+    },
+    {
+      id: 'personal' as const,
+      label: 'Personal Loan Calculator',
+      icon: CreditCard,
+      desc: 'Unsecured installment loan modeling'
+    },
+    {
+      id: 'savings' as const,
+      label: 'Compound Savings & Growth',
+      icon: TrendingUp,
+      desc: 'APY compounding interest & wealth projections'
+    },
+    {
+      id: 'creditCard' as const,
+      label: 'Credit Card Payoff',
+      icon: PiggyBank,
+      desc: 'Accelerated debt elimination schedule'
+    },
+  ];
+
+  const currentTab = CALCULATOR_TABS.find((t) => t.id === activeTab) || CALCULATOR_TABS[0];
+  const CurrentTabIcon = currentTab.icon;
 
   // Currency Formatter
   const fmt = (val: number) =>
@@ -122,7 +167,7 @@ export const FinanceCalculatorHub = () => {
   const ccResult = useMemo(() => calculateCreditCardPayoff(ccInputs), [ccInputs]);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-10">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
       {/* Top Banner & Header */}
       <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
@@ -151,6 +196,8 @@ export const FinanceCalculatorHub = () => {
           </p>
         </div>
       </div>
+
+      <SuiteSubNav suite="personal" />
 
       {/* Featured Flagship Real Estate, FinOps & Mortgage Calculators */}
       <div className="space-y-3">
@@ -409,55 +456,74 @@ export const FinanceCalculatorHub = () => {
         </div>
       </div>
 
-      {/* Tool Categories Tab Bar */}
-      <div className="flex items-center gap-2 border-b border-slate-200 pb-2 overflow-x-auto">
-        <button
-          onClick={() => setActiveTab('auto')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'auto'
-              ? 'btn-primary shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 shadow-2xs'
-          }`}
-        >
-          <Car className="size-4" />
-          <span>Auto Loan Calculator</span>
-        </button>
+      {/* Interactive Calculator Dropdown Selector */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-4">
+        <div>
+          <h2 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
+            Interactive Calculator Workspace
+          </h2>
+          <p className="text-xs text-slate-500 mt-0.5">
+            Switch between vehicle financing, personal loans, compound growth, and debt payoff
+          </p>
+        </div>
 
-        <button
-          onClick={() => setActiveTab('personal')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'personal'
-              ? 'btn-primary shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 shadow-2xs'
-          }`}
-        >
-          <CreditCard className="size-4" />
-          <span>Personal Loan Calculator</span>
-        </button>
+        <div ref={tabDropdownRef} className="relative min-w-[220px] sm:min-w-[260px]">
+          <button
+            type="button"
+            onClick={() => setIsTabDropdownOpen(!isTabDropdownOpen)}
+            className="w-full flex items-center justify-between gap-3 px-3.5 py-2.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:bg-slate-50/80 shadow-2xs transition-all cursor-pointer text-slate-800"
+          >
+            <div className="flex items-center gap-2.5 min-w-0">
+              <div className="size-7 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+                <CurrentTabIcon className="size-4 text-indigo-600" />
+              </div>
+              <span className="text-xs sm:text-sm font-bold text-slate-900 truncate">
+                {currentTab.label}
+              </span>
+            </div>
+            <ChevronDown className={`size-4 text-slate-400 transition-transform duration-200 shrink-0 ${isTabDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
 
-        <button
-          onClick={() => setActiveTab('savings')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'savings'
-              ? 'btn-primary shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 shadow-2xs'
-          }`}
-        >
-          <TrendingUp className="size-4" />
-          <span>Compound Savings & Growth</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('creditCard')}
-          className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold transition-all cursor-pointer whitespace-nowrap ${
-            activeTab === 'creditCard'
-              ? 'btn-primary shadow-xs'
-              : 'text-slate-600 hover:text-slate-900 bg-white hover:bg-slate-50 border border-slate-200 shadow-2xs'
-          }`}
-        >
-          <PiggyBank className="size-4" />
-          <span>Credit Card Payoff</span>
-        </button>
+          {isTabDropdownOpen && (
+            <div className="absolute right-0 top-full mt-2 w-72 sm:w-80 bg-white rounded-2xl border border-slate-200 shadow-xl py-1.5 z-30 animate-in fade-in zoom-in-95 duration-150">
+              <div className="px-3 py-1.5 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                Select Financial Calculator
+              </div>
+              {CALCULATOR_TABS.map((tab) => {
+                const Icon = tab.icon;
+                const isSelected = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => {
+                      setActiveTab(tab.id);
+                      setIsTabDropdownOpen(false);
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-2 text-left transition-colors cursor-pointer ${
+                      isSelected ? 'bg-indigo-50/60 text-indigo-950 font-bold' : 'hover:bg-slate-50 text-slate-700'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <div className="size-7 rounded-lg bg-indigo-50 flex items-center justify-center shrink-0">
+                        <Icon className="size-4 text-indigo-600" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-semibold text-slate-900 truncate">
+                          {tab.label}
+                        </div>
+                        <div className="text-[10px] text-slate-400 truncate">
+                          {tab.desc}
+                        </div>
+                      </div>
+                    </div>
+                    {isSelected && <Check className="size-4 text-indigo-600 shrink-0 ml-2" />}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* --- TAB 1: Auto Loan Calculator --- */}

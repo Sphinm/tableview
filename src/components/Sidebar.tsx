@@ -1,19 +1,12 @@
-import { useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import {
   Table,
   Building,
-  Building2,
-  Hammer,
   Scale,
   Home,
-  ArrowRightLeft,
-  DollarSign,
-  FileText,
   FileSpreadsheet,
   Database,
-  FileCode,
   Terminal,
-  Layers,
   Zap,
   Video,
   Image as ImageIcon,
@@ -21,16 +14,26 @@ import {
   Activity,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
   Calculator,
+  ArrowRightLeft,
   LogOut,
   User,
   Info,
   X,
-  PiggyBank
+  PiggyBank,
+  Search,
+  Film,
+  Home as HomeIcon,
+  Braces,
+  Code2,
+  FileCode,
+  Cpu
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 import { useAuth } from '../lib/useAuth';
 import { openCookieSettings } from '../lib/consent';
+import { getCanonicalPath, getRouteCategory } from '../lib/resolveRoute';
 
 interface SidebarProps {
   currentPath: string;
@@ -40,21 +43,264 @@ interface SidebarProps {
   onCloseMobile: () => void;
 }
 
-interface NavItem {
+interface Level2Item {
   title: string;
   shortTitle?: string;
   path: string;
   icon: any;
-  badge?: string;
-  badgeColor?: string;
 }
 
-interface NavGroup {
+interface Level1Category {
   id: string;
-  label: string;
+  title: string;
+  shortTitle?: string;
+  path: string; // Navigating to this displays ALL feature cards for this module
   icon: any;
-  items: NavItem[];
+  cardCountLabel?: string;
+  children?: Level2Item[];
 }
+
+const isPathActive = (targetPath: string, current: string): boolean => {
+  const canonicalTarget = getCanonicalPath(targetPath);
+  const canonicalCurrent = getCanonicalPath(current);
+
+  if (canonicalTarget === '/') return canonicalCurrent === '/';
+  if (canonicalTarget === canonicalCurrent) return true;
+
+  // Data Converter parent matching
+  if (canonicalTarget === '/data-converter') {
+    return [
+      '/data-converter',
+      '/converters',
+      '/csv-to-excel',
+      '/csv-to-parquet',
+      '/csv-to-json',
+      '/parquet-to-csv',
+      '/parquet-to-excel',
+      '/parquet-to-json',
+      '/excel-to-csv',
+      '/excel-to-parquet',
+      '/excel-to-json',
+      '/json-to-csv',
+      '/json-to-parquet'
+    ].includes(canonicalCurrent);
+  }
+
+  // Data Viewer parent matching
+  if (canonicalTarget === '/csv-viewer') {
+    return [
+      '/csv-viewer',
+      '/excel-viewer',
+      '/parquet-viewer',
+      '/json-viewer',
+      '/tsv-viewer',
+      '/geoparquet-viewer'
+    ].includes(canonicalCurrent);
+  }
+
+  // Mortgage & Refinance Suite parent matching
+  if (canonicalTarget === '/mortgage-calculator') {
+    return [
+      '/mortgage-calculator',
+      '/amortization-schedule-calculator',
+      '/mortgage-payoff-calculator',
+      '/refinance-calculator',
+      '/cash-out-refinance-calculator',
+      '/loan-comparison-calculator',
+      '/balloon-payment-calculator'
+    ].includes(canonicalCurrent);
+  }
+
+  // Commercial & Investment Loans parent matching
+  if (canonicalTarget === '/dscr-loan-calculator') {
+    return [
+      '/dscr-loan-calculator',
+      '/commercial-loan-calculator',
+      '/hard-money-calculator'
+    ].includes(canonicalCurrent);
+  }
+
+  // Section 1031 Exchange parent matching
+  if (canonicalTarget === '/section-1031-exchange-calculator') {
+    return [
+      '/section-1031-exchange-calculator',
+      '/1031-exchange-timeline-calculator'
+    ].includes(canonicalCurrent);
+  }
+
+  // Personal Finance & Salary parent matching
+  if (canonicalTarget === '/salary-to-hourly-calculator') {
+    return [
+      '/salary-to-hourly-calculator',
+      '/finance-calculator',
+      '/calculator'
+    ].includes(canonicalCurrent);
+  }
+
+  // Cloud FinOps parent matching
+  if (canonicalTarget === '/snowflake-cost-calculator') {
+    return [
+      '/snowflake-cost-calculator',
+      '/parquet-storage-calculator',
+      '/parquet-savings-calculator'
+    ].includes(canonicalCurrent);
+  }
+
+  return false;
+};
+
+const NAV_CATEGORIES: Level1Category[] = [
+  {
+    id: 'home',
+    title: 'Platform Overview',
+    shortTitle: 'Home',
+    path: '/',
+    icon: Home
+  },
+  {
+    id: 'calculators',
+    title: 'Financial Calculators',
+    shortTitle: 'Calculators',
+    path: '/finance-calculator', // Clicking Level 1 shows all Calculator Cards
+    icon: Calculator,
+    cardCountLabel: '4 Suites',
+    children: [
+      {
+        title: 'Mortgage & Refinance Suite',
+        shortTitle: 'Mortgage & Refi',
+        path: '/mortgage-calculator',
+        icon: HomeIcon
+      },
+      {
+        title: 'Commercial & Investment Loans',
+        shortTitle: 'Commercial & DSCR',
+        path: '/dscr-loan-calculator',
+        icon: Building
+      },
+      {
+        title: 'Section 1031 Exchange & Deadlines',
+        shortTitle: '1031 Exchange',
+        path: '/section-1031-exchange-calculator',
+        icon: Scale
+      },
+      {
+        title: 'Personal Finance & Salary',
+        shortTitle: 'Salary & Personal',
+        path: '/salary-to-hourly-calculator',
+        icon: PiggyBank
+      }
+    ]
+  },
+  {
+    id: 'data',
+    title: 'Data Workbench',
+    shortTitle: 'Data Tools',
+    path: '/data-tools', // Clicking Level 1 shows all Data Tools Cards
+    icon: Database,
+    cardCountLabel: '6 Tools',
+    children: [
+      {
+        title: 'Data Viewer & SQL (CSV / Parquet / Excel)',
+        shortTitle: 'Data Viewer',
+        path: '/csv-viewer',
+        icon: FileSpreadsheet
+      },
+      {
+        title: 'Universal Data Converter (All Formats)',
+        shortTitle: 'Data Converter',
+        path: '/data-converter',
+        icon: ArrowRightLeft
+      },
+      {
+        title: 'DuckDB In-Browser SQL Console',
+        shortTitle: 'SQL Console',
+        path: '/sql-workbench',
+        icon: Terminal
+      },
+      {
+        title: 'JSON Beautifier & Validator',
+        shortTitle: 'JSON Formatter',
+        path: '/json-formatter',
+        icon: Braces
+      },
+      {
+        title: 'SQL Query Beautifier & Minifier',
+        shortTitle: 'SQL Formatter',
+        path: '/sql-formatter',
+        icon: Code2
+      },
+      {
+        title: 'Cloud Data FinOps (Snowflake & Parquet)',
+        shortTitle: 'Cloud FinOps',
+        path: '/snowflake-cost-calculator',
+        icon: Zap
+      }
+    ]
+  },
+  {
+    id: 'media',
+    title: 'Media Studio',
+    shortTitle: 'Media Tools',
+    path: '/media-tools', // Clicking Level 1 shows all Media Cards
+    icon: Film,
+    cardCountLabel: '2 Tools',
+    children: [
+      {
+        title: 'Video Compressor (Wasm FFmpeg)',
+        shortTitle: 'Video Compressor',
+        path: '/video-compressor',
+        icon: Video
+      },
+      {
+        title: 'Batch Image Compressor (Client)',
+        shortTitle: 'Image Compressor',
+        path: '/image-compressor',
+        icon: ImageIcon
+      }
+    ]
+  },
+  {
+    id: 'guides',
+    title: 'Technical Guides',
+    shortTitle: 'Guides',
+    path: '/guides', // Clicking Level 1 shows all Guide Cards
+    icon: BookOpen,
+    cardCountLabel: '20 Guides',
+    children: [
+      {
+        title: 'What is Apache Parquet?',
+        shortTitle: 'Apache Parquet',
+        path: '/guides/what-is-apache-parquet',
+        icon: FileCode
+      },
+      {
+        title: 'DuckDB vs Traditional Data Warehouses',
+        shortTitle: 'DuckDB Architecture',
+        path: '/guides/duckdb-wasm-in-browser-olap',
+        icon: Cpu
+      },
+      {
+        title: 'DSCR Loan Underwriting Guide',
+        shortTitle: 'DSCR Guide',
+        path: '/guides/dscr-loans-complete-investor-guide',
+        icon: Building
+      },
+      {
+        title: 'Section 1031 Exchange Rules & 45/180 Deadlines',
+        shortTitle: '1031 Exchange Guide',
+        path: '/guides/section-1031-exchange-rules-timeline',
+        icon: Scale
+      }
+    ]
+  },
+  {
+    id: 'system',
+    title: 'System & Diagnostics',
+    shortTitle: 'Diagnostics',
+    path: '/is-it-down',
+    icon: Activity
+  }
+];
 
 export const Sidebar = ({
   currentPath,
@@ -64,6 +310,49 @@ export const Sidebar = ({
   onCloseMobile
 }: SidebarProps) => {
   const { user, openAuthModal, logout } = useAuth();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [manuallyToggled, setManuallyToggled] = useState<Record<string, boolean>>({});
+
+  const isCurrentActive = (path: string) => isPathActive(path, currentPath);
+  const currentCategory = getRouteCategory(currentPath);
+
+  const checkCategoryActive = (cat: Level1Category): boolean => {
+    return cat.id === currentCategory;
+  };
+
+  const isGroupOpen = (cat: Level1Category): boolean => {
+    if (searchQuery) return true;
+    if (typeof manuallyToggled[cat.id] === 'boolean') {
+      return manuallyToggled[cat.id];
+    }
+    const hasActiveChild = Boolean(cat.children?.some((child) => isPathActive(child.path, currentPath)));
+    return hasActiveChild || cat.id === currentCategory;
+  };
+
+  const toggleGroup = (groupId: string, currentlyOpen: boolean) => {
+    setManuallyToggled((prev) => ({
+      ...prev,
+      [groupId]: !currentlyOpen
+    }));
+  };
+
+  const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
+    e.preventDefault();
+    navigateTo(path);
+    onCloseMobile();
+  };
+
+  const handleLevel1Click = (e: React.MouseEvent<HTMLAnchorElement>, cat: Level1Category) => {
+    e.preventDefault();
+    // 1. Navigate to the Level 1 hub (shows all feature cards!)
+    navigateTo(cat.path);
+    onCloseMobile();
+    // 2. Toggle this category's Level 2 submenu in the sidebar (展开 / 收起)
+    if (cat.children && cat.children.length > 0) {
+      const currentlyOpen = isGroupOpen(cat);
+      setManuallyToggled((prev) => ({ ...prev, [cat.id]: !currentlyOpen }));
+    }
+  };
 
   // Close mobile drawer on escape
   useEffect(() => {
@@ -76,226 +365,44 @@ export const Sidebar = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onCloseMobile]);
 
-  const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
-    e.preventDefault();
-    navigateTo(path);
-    onCloseMobile();
-  };
+  // Filter categories and children when searching
+  const filteredCategories = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return NAV_CATEGORIES;
 
-  const navGroups: NavGroup[] = [
-    {
-      id: 'financial',
-      label: 'Financial & Debt Models',
-      icon: Calculator,
-      items: [
-        {
-          title: 'Financial Engine',
-          shortTitle: 'Engine',
-          path: '/',
-          icon: Home,
-          badge: 'Core',
-          badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200'
-        },
-        {
-          title: 'DSCR Loan Underwriting',
-          shortTitle: 'DSCR Loan',
-          path: '/dscr-loan-calculator',
-          icon: Building,
-          badge: 'Rental ROI',
-          badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
-        },
-        {
-          title: 'Commercial Loan & Balloon',
-          shortTitle: 'Commercial Loan',
-          path: '/commercial-loan-calculator',
-          icon: Building2,
-          badge: 'Commercial',
-          badgeColor: 'bg-sky-50 text-sky-700 border-sky-200'
-        },
-        {
-          title: '1031 Exchange Tax Shield',
-          shortTitle: '1031 Exchange',
-          path: '/section-1031-exchange-calculator',
-          icon: Scale,
-          badge: 'Tax',
-          badgeColor: 'bg-purple-50 text-purple-700 border-purple-200'
-        },
-        {
-          title: 'Mortgage & Amortization',
-          shortTitle: 'Mortgage',
-          path: '/mortgage-calculator',
-          icon: Home,
-          badge: 'PITI',
-          badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
-        },
-        {
-          title: 'Refinance Break-Even',
-          shortTitle: 'Refinance',
-          path: '/refinance-calculator',
-          icon: ArrowRightLeft
-        },
-        {
-          title: 'Hard Money (70% Rule)',
-          shortTitle: 'Hard Money',
-          path: '/hard-money-calculator',
-          icon: Hammer
-        },
-        {
-          title: 'Loan Comparison',
-          shortTitle: 'Compare Loans',
-          path: '/loan-comparison-calculator',
-          icon: Scale
-        },
-        {
-          title: 'Balloon Payment',
-          shortTitle: 'Balloon Payoff',
-          path: '/balloon-payment-calculator',
-          icon: PiggyBank
-        },
-        {
-          title: 'Salary to Hourly Matrix',
-          shortTitle: 'Salary/Hourly',
-          path: '/salary-to-hourly-calculator',
-          icon: DollarSign
-        },
-        {
-          title: 'Browse All Calculators',
-          shortTitle: 'All Calculators',
-          path: '/finance-calculator',
-          icon: Calculator,
-          badge: '14 Tools',
-          badgeColor: 'bg-indigo-50 text-indigo-700 border-indigo-200'
-        }
-      ]
-    },
-    {
-      id: 'data',
-      label: 'Data Workbench (DuckDB)',
-      icon: Database,
-      items: [
-        {
-          title: 'Data Workbench Studio',
-          shortTitle: 'Workbench',
-          path: '/data-tools',
-          icon: Table,
-          badge: 'Wasm',
-          badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
-        },
-        {
-          title: 'CSV Viewer & Search',
-          shortTitle: 'CSV Viewer',
-          path: '/csv-viewer',
-          icon: FileText
-        },
-        {
-          title: 'Excel Viewer (.xlsx)',
-          shortTitle: 'Excel Viewer',
-          path: '/excel-viewer',
-          icon: FileSpreadsheet
-        },
-        {
-          title: 'Parquet Viewer & OLAP',
-          shortTitle: 'Parquet Viewer',
-          path: '/parquet-viewer',
-          icon: Database
-        },
-        {
-          title: 'DuckDB SQL Console',
-          shortTitle: 'SQL Console',
-          path: '/sql-workbench',
-          icon: Terminal,
-          badge: 'SQL',
-          badgeColor: 'bg-amber-50 text-amber-700 border-amber-200'
-        },
-        {
-          title: 'Schema & DDL Inspector',
-          shortTitle: 'Schema DDL',
-          path: '/parquet-schema-inspector',
-          icon: Layers
-        },
-        {
-          title: 'JSON Formatter & Validator',
-          shortTitle: 'JSON Format',
-          path: '/json-formatter',
-          icon: FileCode
-        },
-        {
-          title: 'SQL Formatter & Beautifier',
-          shortTitle: 'SQL Format',
-          path: '/sql-formatter',
-          icon: Terminal
-        },
-        {
-          title: 'Parquet Storage Savings',
-          shortTitle: 'Parquet FinOps',
-          path: '/parquet-storage-calculator',
-          icon: Zap
-        },
-        {
-          title: 'Snowflake Warehouse Cost',
-          shortTitle: 'Snowflake Cost',
-          path: '/snowflake-cost-calculator',
-          icon: Zap
-        }
-      ]
-    },
-    {
-      id: 'media',
-      label: 'Media Compression Studio',
-      icon: Video,
-      items: [
-        {
-          title: 'Video Compressor (Wasm)',
-          shortTitle: 'Video Comp',
-          path: '/video-compressor',
-          icon: Video,
-          badge: 'Wasm',
-          badgeColor: 'bg-emerald-50 text-emerald-700 border-emerald-200'
-        },
-        {
-          title: 'Image Compressor (Batch)',
-          shortTitle: 'Image Comp',
-          path: '/image-compressor',
-          icon: ImageIcon,
-          badge: 'Batch',
-          badgeColor: 'bg-cyan-50 text-cyan-700 border-cyan-200'
-        }
-      ]
-    },
-    {
-      id: 'resources',
-      label: 'Guides & Diagnostics',
-      icon: BookOpen,
-      items: [
-        {
-          title: 'Technical Guides (20)',
-          shortTitle: 'Guides',
-          path: '/guides',
-          icon: BookOpen,
-          badge: 'E-E-A-T',
-          badgeColor: 'bg-purple-50 text-purple-700 border-purple-200'
-        },
-        {
-          title: 'Is It Down? (Status)',
-          shortTitle: 'Uptime Check',
-          path: '/is-it-down',
-          icon: Activity
-        }
-      ]
-    }
-  ];
+    return NAV_CATEGORIES
+      .map((cat): Level1Category | null => {
+        const catMatches =
+          cat.title.toLowerCase().includes(query) ||
+          cat.shortTitle?.toLowerCase().includes(query) ||
+          cat.path.toLowerCase().includes(query);
 
-  const isCurrentActive = (path: string) => {
-    if (path === '/') return currentPath === '/';
-    return currentPath.startsWith(path);
-  };
+        const matchingChildren = cat.children?.filter(
+          (child) =>
+            child.title.toLowerCase().includes(query) ||
+            child.shortTitle?.toLowerCase().includes(query) ||
+            child.path.toLowerCase().includes(query)
+        );
+
+        if (catMatches || (matchingChildren && matchingChildren.length > 0)) {
+          return {
+            ...cat,
+            children: matchingChildren && matchingChildren.length > 0 ? matchingChildren : cat.children
+          };
+        }
+        return null;
+      })
+      .filter((cat): cat is Level1Category => cat !== null);
+  }, [searchQuery]);
 
   const renderSidebar = (isCollapsed: boolean) => (
-    <div className="h-full flex flex-col bg-white border-r border-slate-200 text-slate-700 select-none">
-      {/* 1. Header: Brand Logo & Collapse Toggle */}
-      <div className={`h-14 px-4 flex items-center border-b border-slate-200 shrink-0 ${
-        isCollapsed ? 'justify-center' : 'justify-between'
-      }`}>
+    <div className="h-full flex flex-col bg-white border-r border-slate-200/90 text-slate-700 select-none">
+      {/* 1. Brand Logo & Collapse Toggle */}
+      <div
+        className={`h-14 px-3.5 flex items-center border-b border-slate-200/80 shrink-0 ${
+          isCollapsed ? 'justify-center' : 'justify-between'
+        }`}
+      >
         {!isCollapsed ? (
           <a
             href="/"
@@ -309,9 +416,8 @@ export const Sidebar = ({
               <span className="text-sm font-bold text-slate-900 tracking-tight leading-none group-hover:text-indigo-600 transition-colors">
                 TableView<span className="text-indigo-600">.dev</span>
               </span>
-              <span className="text-[10px] text-emerald-700 font-semibold flex items-center gap-1 mt-0.5">
-                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                Local Sandbox
+              <span className="text-[10px] text-slate-400 font-medium mt-0.5">
+                Client-Side Suite
               </span>
             </div>
           </a>
@@ -326,11 +432,11 @@ export const Sidebar = ({
           </a>
         )}
 
-        {/* Desktop Collapse Toggle Button */}
+        {/* Desktop Collapse Button */}
         <button
           type="button"
           onClick={onToggleCollapse}
-          className="hidden md:flex size-7 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 items-center justify-center transition-colors cursor-pointer"
+          className="hidden md:flex size-7 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 items-center justify-center transition-colors cursor-pointer"
           title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           {isCollapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
@@ -340,198 +446,238 @@ export const Sidebar = ({
         <button
           type="button"
           onClick={onCloseMobile}
-          className="md:hidden size-8 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
+          className="md:hidden size-8 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 flex items-center justify-center transition-colors cursor-pointer"
         >
           <X className="size-5" />
         </button>
       </div>
 
-      {/* 2. Scrollable Navigation Groups */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden p-2.5 space-y-5 scrollbar-thin">
-        {navGroups.map((group) => (
-          <div key={group.id} className="space-y-1">
-            {!isCollapsed ? (
-              <div className="px-2.5 py-1 text-[10px] font-mono uppercase tracking-wider text-slate-700 font-bold flex items-center gap-1.5">
-                <group.icon className="size-3 text-slate-700" />
-                <span>{group.label}</span>
-              </div>
-            ) : (
-              <div className="w-full h-px bg-slate-200 my-2" />
+      {/* 2. Search Tools Input (when expanded) */}
+      {!isCollapsed && (
+        <div className="p-2 border-b border-slate-100">
+          <div className="relative flex items-center">
+            <Search className="size-3.5 absolute left-2.5 text-slate-400 pointer-events-none" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search tools... (e.g. dscr, csv)"
+              className="w-full pl-8 pr-7 py-1.5 text-xs bg-slate-50 hover:bg-slate-100/80 focus:bg-white text-slate-800 placeholder-slate-400 rounded-lg border border-slate-200/80 focus:border-indigo-500 focus:outline-hidden focus:ring-1 focus:ring-indigo-500/30 transition-all"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="size-3" />
+              </button>
             )}
+          </div>
+        </div>
+      )}
 
-            <div className="space-y-0.5">
-              {group.items.map((item) => {
-                const active = isCurrentActive(item.path);
-                const Icon = item.icon;
+      {/* 3. Hierarchical Level 1 & Level 2 Menu */}
+      <div className="flex-1 overflow-y-auto overflow-x-hidden p-2 space-y-1 scrollbar-thin">
+        {filteredCategories.map((cat) => {
+          const hasChildren = Boolean(cat.children && cat.children.length > 0);
+          const catActive = checkCategoryActive(cat);
+          const isOpen = isGroupOpen(cat);
+          const CategoryIcon = cat.icon;
 
-                return (
-                  <a
-                    key={item.path}
-                    href={item.path}
-                    onClick={(e) => handleNav(e, item.path)}
-                    title={isCollapsed ? item.title : undefined}
-                    className={`group flex items-center rounded-xl transition-all cursor-pointer ${
-                      isCollapsed
-                        ? 'size-10 justify-center mx-auto'
-                        : 'px-2.5 py-2 justify-between gap-2 text-xs'
-                    } ${
-                      active
-                        ? 'bg-indigo-50/90 text-indigo-700 font-semibold border border-indigo-200/80 shadow-2xs'
-                        : 'text-slate-800 hover:text-slate-900 hover:bg-slate-100 font-medium'
+          if (isCollapsed) {
+            return (
+              <a
+                key={cat.id}
+                href={cat.path}
+                onClick={(e) => handleNav(e, cat.path)}
+                title={cat.title}
+                className={`size-9 mx-auto rounded-xl flex items-center justify-center transition-colors cursor-pointer ${
+                  catActive
+                    ? 'bg-indigo-50 text-indigo-600 border border-indigo-200 shadow-2xs font-bold'
+                    : 'text-slate-500 hover:text-slate-900 hover:bg-slate-100'
+                }`}
+              >
+                <CategoryIcon className="size-4" />
+              </a>
+            );
+          }
+
+          return (
+            <div key={cat.id} className="space-y-0.5">
+              {/* Level 1 Parent Item Row */}
+              <div
+                className={`group flex items-center justify-between rounded-xl transition-all ${
+                  catActive
+                    ? 'bg-slate-100/90 text-slate-900 font-semibold'
+                    : 'text-slate-700 hover:bg-slate-50 hover:text-slate-900 font-medium'
+                }`}
+              >
+                {/* Clicking icon + title navigates to Level 1 hub page (shows all cards!) */}
+                <a
+                  href={cat.path}
+                  onClick={(e) => handleLevel1Click(e, cat)}
+                  className="flex-1 flex items-center gap-2.5 px-2.5 py-2 min-w-0 cursor-pointer"
+                  title={`Open ${cat.title} overview`}
+                >
+                  <div
+                    className={`size-6 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${
+                      catActive
+                        ? 'bg-indigo-600 text-white shadow-2xs'
+                        : 'bg-slate-100 text-slate-500 group-hover:bg-indigo-50 group-hover:text-indigo-600'
                     }`}
                   >
-                    <div className="flex items-center gap-2.5 min-w-0">
-                      <div
-                        className={`size-6 rounded-lg flex items-center justify-center shrink-0 transition-transform group-hover:scale-105 ${
-                          active
-                            ? 'bg-indigo-600 text-white shadow-2xs'
-                            : 'bg-slate-100 text-slate-700 group-hover:bg-indigo-50 group-hover:text-indigo-600'
-                        }`}
-                      >
-                        <Icon className="size-3.5" />
-                      </div>
-                      {!isCollapsed && (
-                        <span className="truncate text-slate-900 group-hover:text-indigo-600 transition-colors">
-                          {item.shortTitle || item.title}
-                        </span>
-                      )}
-                    </div>
+                    <CategoryIcon className="size-3.5" />
+                  </div>
+                  <span className="text-xs truncate font-semibold">
+                    {cat.title}
+                  </span>
+                </a>
 
-                    {!isCollapsed && item.badge && (
-                      <span
-                        className={`text-[9px] font-bold px-1.5 py-0.5 rounded border uppercase tracking-wider shrink-0 ${
-                          item.badgeColor || 'bg-slate-100 text-slate-700 border-slate-200'
+                {/* Independent Chevron Toggle Button for Level 2 Accordion */}
+                {hasChildren && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      e.preventDefault();
+                      toggleGroup(cat.id, isOpen);
+                    }}
+                    className="p-2 text-slate-400 hover:text-slate-700 hover:bg-slate-200/50 rounded-lg transition-colors cursor-pointer mr-1"
+                    title={isOpen ? 'Collapse submenu' : 'Expand submenu'}
+                  >
+                    <ChevronDown
+                      className={`size-3.5 transition-transform duration-200 ${
+                        isOpen ? 'rotate-0 text-slate-600' : '-rotate-90'
+                      }`}
+                    />
+                  </button>
+                )}
+              </div>
+
+              {/* Level 2 Submenu Items (Indented with tree guide line) */}
+              {hasChildren && isOpen && (
+                <div className="ml-4 pl-3.5 border-l border-slate-200/80 space-y-0.5 py-1">
+                  {cat.children!.map((child) => {
+                    const isChildActive = isCurrentActive(child.path);
+                    const ChildIcon = child.icon;
+
+                    return (
+                      <a
+                        key={child.path}
+                        href={child.path}
+                        onClick={(e) => handleNav(e, child.path)}
+                        title={child.title}
+                        className={`group flex items-center justify-between px-2 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
+                          isChildActive
+                            ? 'bg-indigo-50 text-indigo-700 font-semibold border border-indigo-200/60 shadow-2xs'
+                            : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70 font-normal'
                         }`}
                       >
-                        {item.badge}
-                      </span>
-                    )}
-                  </a>
-                );
-              })}
+                        <div className="flex items-center gap-2 min-w-0">
+                          <ChildIcon
+                            className={`size-3 shrink-0 transition-colors ${
+                              isChildActive
+                                ? 'text-indigo-600'
+                                : 'text-slate-400 group-hover:text-slate-600'
+                            }`}
+                          />
+                          <span className="truncate">
+                            {child.shortTitle || child.title}
+                          </span>
+                        </div>
+                      </a>
+                    );
+                  })}
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      {/* 3. Bottom Widget: Engine Health, User Profile & Legal Popover */}
-      <div className="p-2.5 border-t border-slate-200 shrink-0 space-y-2 bg-slate-50/60">
-        {/* Engine status indicator */}
+      {/* 4. Bottom User Account & Privacy Badge */}
+      <div className="p-2 border-t border-slate-200/80 shrink-0 space-y-1.5 bg-slate-50/50">
         {!isCollapsed ? (
-          <div className="px-2.5 py-2 rounded-xl bg-white border border-slate-200 flex items-center justify-between text-[11px] shadow-2xs">
-            <div className="flex items-center gap-1.5 text-emerald-700 font-medium">
-              <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>Engine Active</span>
-            </div>
-            <span className="text-[10px] font-mono text-slate-700 bg-slate-100 px-1.5 py-0.5 rounded">
-              0 B Egress
-            </span>
-          </div>
-        ) : (
-          <div className="flex justify-center" title="Engine Operational · 0 B Server Egress">
-            <span className="size-2.5 rounded-full bg-emerald-500" />
-          </div>
-        )}
-
-        {/* User Account / Auth */}
-        {!isCollapsed ? (
-          <div className="flex items-center justify-between gap-2 px-2 py-1.5 rounded-xl bg-white border border-slate-200 shadow-2xs">
+          <>
             {user ? (
-              <>
+              <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
                 <div className="flex items-center gap-2 min-w-0">
                   <div className="size-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0">
                     {user.email?.[0]?.toUpperCase() || 'U'}
                   </div>
-                  <span className="text-xs text-slate-900 font-medium truncate">
+                  <span className="text-xs text-slate-800 font-medium truncate">
                     {user.email?.split('@')[0]}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={logout}
-                  className="text-slate-700 hover:text-red-600 p-1 rounded hover:bg-slate-100 transition-colors cursor-pointer"
+                  className="text-slate-400 hover:text-red-600 p-1 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
                   title="Log out"
                 >
                   <LogOut className="size-3.5" />
                 </button>
-              </>
+              </div>
             ) : (
               <button
                 type="button"
                 onClick={openAuthModal}
-                className="w-full text-xs font-semibold text-slate-900 hover:text-indigo-600 flex items-center justify-center gap-1.5 py-1 cursor-pointer"
+                className="w-full text-xs font-semibold text-slate-700 hover:text-indigo-600 flex items-center justify-center gap-1.5 py-1.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs hover:border-indigo-200 transition-colors cursor-pointer"
               >
                 <User className="size-3.5" />
-                <span>Sign In / Sync</span>
+                <span>Sign In</span>
               </button>
             )}
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={user ? logout : openAuthModal}
-            className="size-10 mx-auto rounded-xl bg-white border border-slate-200 flex items-center justify-center text-slate-700 hover:text-indigo-600 transition-colors shadow-2xs cursor-pointer"
-            title={user ? `Signed in as ${user.email} (Click to logout)` : 'Sign in'}
-          >
-            {user ? <LogOut className="size-4" /> : <User className="size-4" />}
-          </button>
-        )}
 
-        {/* Legal & Compliance Mini Menu */}
-        {!isCollapsed ? (
-          <div className="pt-1.5 text-center">
-            <div className="flex items-center justify-center gap-2 flex-wrap text-[10px] text-slate-700">
-              <a
-                href="/about"
-                onClick={(e) => handleNav(e, '/about')}
-                className="hover:text-slate-900 hover:underline"
-              >
-                About
-              </a>
-              <span>·</span>
-              <a
-                href="/privacy"
-                onClick={(e) => handleNav(e, '/privacy')}
-                className="hover:text-slate-900 hover:underline"
-              >
-                Privacy
-              </a>
-              <span>·</span>
-              <a
-                href="/terms"
-                onClick={(e) => handleNav(e, '/terms')}
-                className="hover:text-slate-900 hover:underline"
-              >
-                Terms
-              </a>
-              <span>·</span>
-              <a
-                href="/disclaimer"
-                onClick={(e) => handleNav(e, '/disclaimer')}
-                className="hover:text-slate-900 hover:underline"
-              >
-                Disclaimer
-              </a>
-              <span>·</span>
-              <button
-                type="button"
-                onClick={openCookieSettings}
-                className="hover:text-slate-900 hover:underline cursor-pointer"
-              >
-                Cookies
-              </button>
+            {/* Privacy Guarantee & Legal Links */}
+            <div className="pt-1 px-1 flex items-center justify-between text-[10px] text-slate-400">
+              <span className="flex items-center gap-1 font-medium text-emerald-600">
+                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                100% Local
+              </span>
+              <div className="flex items-center gap-1.5">
+                <a
+                  href="/about"
+                  onClick={(e) => handleNav(e, '/about')}
+                  className="hover:text-slate-600 hover:underline"
+                >
+                  About
+                </a>
+                <span>·</span>
+                <a
+                  href="/privacy"
+                  onClick={(e) => handleNav(e, '/privacy')}
+                  className="hover:text-slate-600 hover:underline"
+                >
+                  Privacy
+                </a>
+                <span>·</span>
+                <button
+                  type="button"
+                  onClick={openCookieSettings}
+                  className="hover:text-slate-600 hover:underline cursor-pointer"
+                >
+                  Cookies
+                </button>
+              </div>
             </div>
-            <div className="mt-1 text-[9px] text-slate-700 font-mono">
-              © 2026 TableView.dev
-            </div>
-          </div>
+          </>
         ) : (
-          <div className="flex justify-center">
+          <div className="flex flex-col items-center gap-2">
+            <button
+              type="button"
+              onClick={user ? logout : openAuthModal}
+              className="size-9 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-slate-500 hover:text-indigo-600 transition-colors shadow-2xs cursor-pointer"
+              title={user ? `Signed in as ${user.email} (Logout)` : 'Sign in'}
+            >
+              {user ? <LogOut className="size-4" /> : <User className="size-4" />}
+            </button>
             <a
               href="/about"
               onClick={(e) => handleNav(e, '/about')}
-              className="size-8 rounded-lg text-slate-700 hover:text-slate-900 flex items-center justify-center"
-              title="About & Legal Policies"
+              className="size-7 rounded-lg text-slate-400 hover:text-slate-700 flex items-center justify-center"
+              title="About & Privacy"
             >
               <Info className="size-3.5" />
             </a>
@@ -561,7 +707,7 @@ export const Sidebar = ({
             onClick={onCloseMobile}
           />
 
-          {/* Drawer Panel: Always expanded for mobile readability */}
+          {/* Drawer Panel */}
           <div className="relative w-72 max-w-[85vw] h-full shadow-2xl z-10 animate-slide-in">
             {renderSidebar(false)}
           </div>
