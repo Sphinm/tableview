@@ -12,8 +12,8 @@ import {
   Image as ImageIcon,
   BookOpen,
   Activity,
-  ChevronLeft,
-  ChevronRight,
+  PanelLeftClose,
+  PanelLeftOpen,
   ChevronDown,
   Calculator,
   ArrowRightLeft,
@@ -400,43 +400,46 @@ export const Sidebar = ({
         }`}
       >
         {!isCollapsed ? (
-          <a
-            href="/"
-            onClick={(e) => handleNav(e, '/')}
-            className="flex items-center gap-2.5 group cursor-pointer"
-          >
-            <div className="size-8 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform">
-              <Table className="size-4" />
-            </div>
-            <div className="flex flex-col">
-              <span className="text-sm font-bold text-slate-900 tracking-tight leading-none group-hover:text-indigo-600 transition-colors">
-                TableView<span className="text-indigo-600">.dev</span>
-              </span>
-              <span className="text-[10px] text-slate-400 font-medium mt-0.5">
-                Client-Side Suite
-              </span>
-            </div>
-          </a>
-        ) : (
-          <a
-            href="/"
-            onClick={(e) => handleNav(e, '/')}
-            className="size-8 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 text-white flex items-center justify-center shadow-xs hover:scale-105 transition-transform"
-            title="TableView.dev Home"
-          >
-            <Table className="size-4" />
-          </a>
-        )}
+          <>
+            <a
+              href="/"
+              onClick={(e) => handleNav(e, '/')}
+              className="flex items-center gap-2.5 group cursor-pointer min-w-0"
+            >
+              <div className="size-8 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform shrink-0">
+                <Table className="size-4" />
+              </div>
+              <div className="flex flex-col min-w-0">
+                <span className="text-sm font-bold text-slate-900 tracking-tight leading-none group-hover:text-indigo-600 transition-colors truncate">
+                  TableView<span className="text-indigo-600">.dev</span>
+                </span>
+                <span className="text-[10px] text-slate-400 font-medium mt-0.5 truncate">
+                  Client-Side Suite
+                </span>
+              </div>
+            </a>
 
-        {/* Desktop Collapse Button */}
-        <button
-          type="button"
-          onClick={onToggleCollapse}
-          className="hidden md:flex size-7 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 items-center justify-center transition-colors cursor-pointer"
-          title={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          {isCollapsed ? <ChevronRight className="size-4" /> : <ChevronLeft className="size-4" />}
-        </button>
+            {/* Desktop Collapse Button */}
+            <button
+              type="button"
+              onClick={onToggleCollapse}
+              className="hidden md:flex size-7 rounded-lg text-slate-400 hover:text-slate-800 hover:bg-slate-100 items-center justify-center transition-colors cursor-pointer shrink-0"
+              title="Collapse sidebar"
+            >
+              <PanelLeftClose className="size-4" />
+            </button>
+          </>
+        ) : (
+          /* Desktop Expand Button (Centered single button when collapsed) */
+          <button
+            type="button"
+            onClick={onToggleCollapse}
+            className="hidden md:flex size-9 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-slate-100 items-center justify-center transition-colors cursor-pointer"
+            title="Expand sidebar"
+          >
+            <PanelLeftOpen className="size-5" />
+          </button>
+        )}
 
         {/* Mobile Close Button */}
         <button
