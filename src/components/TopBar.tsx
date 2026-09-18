@@ -1,4 +1,15 @@
-import { Menu, Mail, Table, ChevronRight, User } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import {
+  Menu,
+  Mail,
+  Table,
+  ChevronRight,
+  User,
+  LogOut,
+  ChevronDown,
+  Sparkles,
+  ShieldCheck
+} from 'lucide-react';
 import { navigateTo } from '../lib/router';
 import { useAuth } from '../lib/useAuth';
 import { getBugReportMailto } from '../lib/feedback';
@@ -11,7 +22,32 @@ interface TopBarProps {
 }
 
 export const TopBar = ({ currentPath, onOpenMobileMenu }: TopBarProps) => {
-  const { user, openAuthModal } = useAuth();
+  const { user, openAuthModal, logout } = useAuth();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isDropdownOpen]);
 
   const getBreadcrumbs = () => {
     const canonical = getCanonicalPath(currentPath);
@@ -192,18 +228,122 @@ export const TopBar = ({ currentPath, onOpenMobileMenu }: TopBarProps) => {
           <span className="hidden lg:inline">Feedback</span>
         </a>
 
-        {/* User profile button */}
+        {/* User profile dropdown or Sign in button */}
         {user ? (
-          <div className="size-7 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold shadow-2xs">
-            {user.email?.[0]?.toUpperCase() || 'U'}
+          <div className="relative" ref={dropdownRef}>
+            <button
+              type="button"
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+              aria-expanded={isDropdownOpen}
+              aria-haspopup="true"
+              className={`flex items-center gap-1.5 p-1 pl-1.5 pr-2 rounded-full border transition-all cursor-pointer ${
+                isDropdownOpen
+                  ? 'border-indigo-300 bg-indigo-50/70 shadow-xs ring-2 ring-indigo-500/10'
+                  : 'border-slate-200/90 bg-white hover:border-slate-300 hover:bg-slate-50 shadow-2xs'
+              }`}
+              title={`Signed in as ${user.email}`}
+            >
+              {user.avatarUrl ? (
+                <img
+                  src={user.avatarUrl}
+                  alt={user.name || user.email}
+                  className="size-6 rounded-full object-cover shrink-0"
+                />
+              ) : (
+                <div className="size-6 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center text-[11px] font-bold shrink-0 shadow-2xs">
+                  {user.email?.[0]?.toUpperCase() || 'U'}
+                </div>
+              )}
+              <span className="hidden sm:inline-block max-w-[100px] truncate text-xs font-medium text-slate-700">
+                {user.name || user.email.split('@')[0]}
+              </span>
+              <ChevronDown
+                className={`size-3 text-slate-400 transition-transform duration-200 ${
+                  isDropdownOpen ? 'rotate-180 text-indigo-600' : ''
+                }`}
+              />
+            </button>
+
+            {/* Dropdown Menu */}
+            {isDropdownOpen && (
+              <div
+                role="menu"
+                className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-1.5rem)] origin-top-right rounded-2xl bg-white p-2 text-slate-800 shadow-xl border border-slate-200/90 z-50 animate-in fade-in zoom-in-95 duration-100"
+              >
+                {/* User Info Header */}
+                <div className="p-2.5 rounded-xl bg-slate-50/80 border border-slate-100 flex items-start gap-2.5">
+                  {user.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt={user.name || user.email}
+                      className="size-9 rounded-full object-cover shrink-0 border border-slate-200"
+                    />
+                  ) : (
+                    <div className="size-9 rounded-full bg-gradient-to-br from-indigo-500 to-indigo-700 text-white flex items-center justify-center text-sm font-bold shrink-0 shadow-xs">
+                      {user.email?.[0]?.toUpperCase() || 'U'}
+                    </div>
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <div className="text-xs font-semibold text-slate-900 truncate">
+                      {user.name || user.email.split('@')[0]}
+                    </div>
+                    <div className="text-[11px] text-slate-500 truncate" title={user.email}>
+                      {user.email}
+                    </div>
+                    <div className="mt-1.5 flex items-center gap-1.5">
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-semibold tracking-wide uppercase bg-indigo-100 text-indigo-700">
+                        <Sparkles className="size-2.5" />
+                        {user.plan || 'Free'}
+                      </span>
+                      <span className="text-[10px] text-slate-400 font-medium">
+                        {user.credits ?? 10} credits
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Actions & Privacy Info */}
+                <div className="my-1.5 border-t border-slate-100 px-1 py-1 space-y-0.5">
+                  <a
+                    href={getBugReportMailto()}
+                    onClick={() => setIsDropdownOpen(false)}
+                    className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-slate-600 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition-colors"
+                  >
+                    <Mail className="size-3.5 text-slate-400" />
+                    <span>Send Feedback / Support</span>
+                  </a>
+                  <div className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-slate-500 rounded-lg bg-slate-50/50">
+                    <ShieldCheck className="size-3.5 text-emerald-600 shrink-0" />
+                    <span className="text-[11px] text-slate-500">
+                      Local sandbox · Zero telemetry
+                    </span>
+                  </div>
+                </div>
+
+                {/* Sign Out Button */}
+                <div className="border-t border-slate-100 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsDropdownOpen(false);
+                      logout();
+                    }}
+                    className="w-full flex items-center gap-2 px-2.5 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors cursor-pointer"
+                  >
+                    <LogOut className="size-3.5 text-red-500" />
+                    <span>Sign Out</span>
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         ) : (
           <button
             type="button"
             onClick={openAuthModal}
-            className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-800 transition-colors flex items-center gap-1 cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs hover:shadow transition-all cursor-pointer"
           >
-            <User className="size-3" />
+            <User className="size-3.5" />
             <span>Sign In</span>
           </button>
         )}

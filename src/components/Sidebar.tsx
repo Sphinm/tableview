@@ -17,8 +17,6 @@ import {
   ChevronDown,
   Calculator,
   ArrowRightLeft,
-  LogOut,
-  User,
   Info,
   X,
   PiggyBank,
@@ -31,7 +29,6 @@ import {
   Cpu
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
-import { useAuth } from '../lib/useAuth';
 import { openCookieSettings } from '../lib/consent';
 import { getCanonicalPath, getRouteCategory } from '../lib/resolveRoute';
 
@@ -309,7 +306,6 @@ export const Sidebar = ({
   mobileOpen,
   onCloseMobile
 }: SidebarProps) => {
-  const { user, openAuthModal, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [manuallyToggled, setManuallyToggled] = useState<Record<string, boolean>>({});
 
@@ -596,90 +592,49 @@ export const Sidebar = ({
         })}
       </div>
 
-      {/* 4. Bottom User Account & Privacy Badge */}
-      <div className="p-2 border-t border-slate-200/80 shrink-0 space-y-1.5 bg-slate-50/50">
+      {/* 4. Bottom Privacy Badge & Legal Links */}
+      <div className="p-2.5 border-t border-slate-200/80 shrink-0 bg-slate-50/50">
         {!isCollapsed ? (
-          <>
-            {user ? (
-              <div className="flex items-center justify-between gap-2 px-2.5 py-1.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs">
-                <div className="flex items-center gap-2 min-w-0">
-                  <div className="size-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-[10px] font-bold shrink-0">
-                    {user.email?.[0]?.toUpperCase() || 'U'}
-                  </div>
-                  <span className="text-xs text-slate-800 font-medium truncate">
-                    {user.email?.split('@')[0]}
-                  </span>
-                </div>
-                <button
-                  type="button"
-                  onClick={logout}
-                  className="text-slate-400 hover:text-red-600 p-1 rounded-md hover:bg-slate-100 transition-colors cursor-pointer"
-                  title="Log out"
-                >
-                  <LogOut className="size-3.5" />
-                </button>
-              </div>
-            ) : (
+          <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
+            <span className="flex items-center gap-1.5 font-medium text-emerald-600">
+              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              100% Local
+            </span>
+            <div className="flex items-center gap-1.5 text-[10px]">
+              <a
+                href="/about"
+                onClick={(e) => handleNav(e, '/about')}
+                className="hover:text-slate-600 hover:underline"
+              >
+                About
+              </a>
+              <span>·</span>
+              <a
+                href="/privacy"
+                onClick={(e) => handleNav(e, '/privacy')}
+                className="hover:text-slate-600 hover:underline"
+              >
+                Privacy
+              </a>
+              <span>·</span>
               <button
                 type="button"
-                onClick={openAuthModal}
-                className="w-full text-xs font-semibold text-slate-700 hover:text-indigo-600 flex items-center justify-center gap-1.5 py-1.5 rounded-xl bg-white border border-slate-200/80 shadow-2xs hover:border-indigo-200 transition-colors cursor-pointer"
+                onClick={openCookieSettings}
+                className="hover:text-slate-600 hover:underline cursor-pointer"
               >
-                <User className="size-3.5" />
-                <span>Sign In</span>
+                Cookies
               </button>
-            )}
-
-            {/* Privacy Guarantee & Legal Links */}
-            <div className="pt-1 px-1 flex items-center justify-between text-[10px] text-slate-400">
-              <span className="flex items-center gap-1 font-medium text-emerald-600">
-                <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                100% Local
-              </span>
-              <div className="flex items-center gap-1.5">
-                <a
-                  href="/about"
-                  onClick={(e) => handleNav(e, '/about')}
-                  className="hover:text-slate-600 hover:underline"
-                >
-                  About
-                </a>
-                <span>·</span>
-                <a
-                  href="/privacy"
-                  onClick={(e) => handleNav(e, '/privacy')}
-                  className="hover:text-slate-600 hover:underline"
-                >
-                  Privacy
-                </a>
-                <span>·</span>
-                <button
-                  type="button"
-                  onClick={openCookieSettings}
-                  className="hover:text-slate-600 hover:underline cursor-pointer"
-                >
-                  Cookies
-                </button>
-              </div>
             </div>
-          </>
+          </div>
         ) : (
-          <div className="flex flex-col items-center gap-2">
-            <button
-              type="button"
-              onClick={user ? logout : openAuthModal}
-              className="size-9 rounded-xl bg-white border border-slate-200/80 flex items-center justify-center text-slate-500 hover:text-indigo-600 transition-colors shadow-2xs cursor-pointer"
-              title={user ? `Signed in as ${user.email} (Logout)` : 'Sign in'}
-            >
-              {user ? <LogOut className="size-4" /> : <User className="size-4" />}
-            </button>
+          <div className="flex flex-col items-center">
             <a
               href="/about"
               onClick={(e) => handleNav(e, '/about')}
-              className="size-7 rounded-lg text-slate-400 hover:text-slate-700 flex items-center justify-center"
+              className="size-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors"
               title="About & Privacy"
             >
-              <Info className="size-3.5" />
+              <Info className="size-4" />
             </a>
           </div>
         )}
