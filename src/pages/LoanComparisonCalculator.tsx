@@ -373,10 +373,10 @@ export const LoanComparisonCalculator = () => {
       />
 
       {/* Mobile Segmented Switcher */}
-      <div className="flex lg:hidden items-center p-1 bg-white/95 border border-slate-200 rounded-xl mb-6 text-xs font-semibold sticky top-16 z-20 backdrop-blur-md shadow-xs">
+      <div className="flex lg:hidden items-center p-1 bg-white border border-slate-300 rounded-xl mb-6 text-xs font-semibold sticky top-16 z-20 backdrop-blur-md shadow-sm">
         <button
           onClick={() => setMobileTab('both')}
-          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'both' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'both' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
         >
           Both
         </button>
@@ -388,13 +388,13 @@ export const LoanComparisonCalculator = () => {
         </button>
         <button
           onClick={() => setMobileTab('b')}
-          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'b' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'b' ? 'bg-emerald-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
         >
           Option B
         </button>
         <button
           onClick={() => setMobileTab('verdict')}
-          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'verdict' ? 'bg-indigo-600 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
+          className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'verdict' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
         >
           Breakdown
         </button>
@@ -403,7 +403,7 @@ export const LoanComparisonCalculator = () => {
       {/* Side-by-Side Input Columns */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
         {/* Loan A Card */}
-        <div className={`p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between ${mobileTab === 'b' || mobileTab === 'verdict' ? 'hidden lg:flex' : 'flex'}`}>
+        <div className={`p-6 rounded-2xl bg-white border border-slate-300 border-t-4 border-t-indigo-600 shadow-sm flex flex-col justify-between ${mobileTab === 'b' || mobileTab === 'verdict' ? 'hidden lg:flex' : 'flex'}`}>
           <div>
             <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-200">
               <input
@@ -412,7 +412,7 @@ export const LoanComparisonCalculator = () => {
                 onChange={(e) => setLoanA({ ...loanA, name: e.target.value })}
                 className="bg-transparent text-lg font-bold text-indigo-700 focus:outline-none focus:border-b border-indigo-500 w-full"
               />
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0 ml-2 font-medium">
+              <span className="text-xs font-mono px-2.5 py-0.5 rounded-lg bg-indigo-600 text-white font-bold shrink-0 ml-2 shadow-2xs">
                 Option A
               </span>
             </div>
@@ -442,7 +442,7 @@ export const LoanComparisonCalculator = () => {
                   <select
                     value={loanA.termYears}
                     onChange={(e) => setLoanA({ ...loanA, termYears: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:border-indigo-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:border-indigo-500 focus:outline-none"
                   >
                     <option value={10}>10 Years</option>
                     <option value={15}>15 Years</option>
@@ -486,30 +486,30 @@ export const LoanComparisonCalculator = () => {
           </div>
 
           {/* Loan A Result Summary Footer */}
-          <div className="mt-8 pt-5 border-t border-slate-200 bg-slate-50 -mx-6 -mb-6 p-6 rounded-b-2xl space-y-3">
+          <div className="mt-8 pt-5 border-t border-indigo-200 bg-indigo-50/50 -mx-6 -mb-6 p-6 rounded-b-2xl space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500">Monthly Payment</span>
-              <span className="text-xl font-bold font-mono text-slate-900">
+              <span className="text-xs text-indigo-900/70 font-medium">Monthly Payment</span>
+              <span className="text-xl font-black font-mono text-indigo-950">
                 ${comparison.loanA.actualMonthlyPayment.toLocaleString()}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500">Total Interest Paid</span>
-              <span className="font-mono text-slate-700">${comparison.loanA.totalInterestPaid.toLocaleString()}</span>
+              <span className="text-indigo-900/70 font-medium">Total Interest Paid</span>
+              <span className="font-mono text-slate-800 font-semibold">${comparison.loanA.totalInterestPaid.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500">Upfront Costs</span>
-              <span className="font-mono text-slate-700">${comparison.loanA.upfrontClosingCosts.toLocaleString()}</span>
+              <span className="text-indigo-900/70 font-medium">Upfront Costs</span>
+              <span className="font-mono text-slate-800 font-semibold">${comparison.loanA.upfrontClosingCosts.toLocaleString()}</span>
             </div>
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200 font-semibold">
-              <span className="text-slate-700">Total Lifetime Cost</span>
-              <span className="font-mono text-indigo-700">${comparison.loanA.totalLoanCost.toLocaleString()}</span>
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-indigo-200 font-semibold">
+              <span className="text-indigo-950">Total Lifetime Cost</span>
+              <span className="font-mono text-indigo-700 font-bold">${comparison.loanA.totalLoanCost.toLocaleString()}</span>
             </div>
           </div>
         </div>
 
         {/* Loan B Card */}
-        <div className={`p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between ${mobileTab === 'a' || mobileTab === 'verdict' ? 'hidden lg:flex' : 'flex'}`}>
+        <div className={`p-6 rounded-2xl bg-white border border-slate-300 border-t-4 border-t-emerald-600 shadow-sm flex flex-col justify-between ${mobileTab === 'a' || mobileTab === 'verdict' ? 'hidden lg:flex' : 'flex'}`}>
           <div>
             <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-200">
               <input
@@ -518,7 +518,7 @@ export const LoanComparisonCalculator = () => {
                 onChange={(e) => setLoanB({ ...loanB, name: e.target.value })}
                 className="bg-transparent text-lg font-bold text-emerald-700 focus:outline-none focus:border-b border-emerald-500 w-full"
               />
-              <span className="text-xs font-mono px-2 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0 ml-2 font-medium">
+              <span className="text-xs font-mono px-2.5 py-0.5 rounded-lg bg-emerald-600 text-white font-bold shrink-0 ml-2 shadow-2xs">
                 Option B
               </span>
             </div>
@@ -548,7 +548,7 @@ export const LoanComparisonCalculator = () => {
                   <select
                     value={loanB.termYears}
                     onChange={(e) => setLoanB({ ...loanB, termYears: Number(e.target.value) })}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-xl text-sm font-semibold text-slate-900 focus:border-emerald-500 focus:outline-none"
+                    className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:border-emerald-500 focus:outline-none"
                   >
                     <option value={10}>10 Years</option>
                     <option value={15}>15 Years</option>
@@ -592,24 +592,24 @@ export const LoanComparisonCalculator = () => {
           </div>
 
           {/* Loan B Result Summary Footer */}
-          <div className="mt-8 pt-5 border-t border-slate-200 bg-slate-50 -mx-6 -mb-6 p-6 rounded-b-2xl space-y-3">
+          <div className="mt-8 pt-5 border-t border-emerald-200 bg-emerald-50/50 -mx-6 -mb-6 p-6 rounded-b-2xl space-y-3">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-slate-500">Monthly Payment</span>
-              <span className="text-xl font-bold font-mono text-slate-900">
+              <span className="text-xs text-emerald-900/70 font-medium">Monthly Payment</span>
+              <span className="text-xl font-black font-mono text-emerald-950">
                 ${comparison.loanB.actualMonthlyPayment.toLocaleString()}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500">Total Interest Paid</span>
-              <span className="font-mono text-slate-700">${comparison.loanB.totalInterestPaid.toLocaleString()}</span>
+              <span className="text-emerald-900/70 font-medium">Total Interest Paid</span>
+              <span className="font-mono text-slate-800 font-semibold">${comparison.loanB.totalInterestPaid.toLocaleString()}</span>
             </div>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-slate-500">Upfront Costs</span>
-              <span className="font-mono text-slate-700">${comparison.loanB.upfrontClosingCosts.toLocaleString()}</span>
+              <span className="text-emerald-900/70 font-medium">Upfront Costs</span>
+              <span className="font-mono text-slate-800 font-semibold">${comparison.loanB.upfrontClosingCosts.toLocaleString()}</span>
             </div>
-            <div className="flex items-center justify-between text-xs pt-2 border-t border-slate-200 font-semibold">
-              <span className="text-slate-700">Total Lifetime Cost</span>
-              <span className="font-mono text-emerald-700">${comparison.loanB.totalLoanCost.toLocaleString()}</span>
+            <div className="flex items-center justify-between text-xs pt-2 border-t border-emerald-200 font-semibold">
+              <span className="text-emerald-950">Total Lifetime Cost</span>
+              <span className="font-mono text-emerald-700 font-bold">${comparison.loanB.totalLoanCost.toLocaleString()}</span>
             </div>
           </div>
         </div>

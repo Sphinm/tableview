@@ -19,12 +19,12 @@ import {
   getAnnualAmortizationSchedule,
   getAmortizationChartData,
   calculateBiweeklyComparison,
-  exportAmortizationToCsv,
-  getMonthName
+  exportAmortizationToCsv
 } from '../lib/mortgageCalculator';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
+import { MonthYearPicker } from '../components/MonthYearPicker';
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { ShareCalculationButton } from '../components/ShareCalculationButton';
@@ -125,6 +125,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
   const [scheduleView, setScheduleView] = useState<'annual' | 'monthly'>('annual');
   const [monthlyPage, setMonthlyPage] = useState<number>(1);
   const [activePreset, setActivePreset] = useState<string | null>('30-yr-conventional');
+  const [activeAnalysisTab, setActiveAnalysisTab] = useState<'breakdown' | 'payoff' | 'schedule'>('breakdown');
 
   const MORTGAGE_PRESETS = [
     {
@@ -434,8 +435,8 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Loan Input Parameters (5 Cols) */}
         <div className="lg:col-span-6 space-y-6">
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 space-y-5 shadow-xs">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <div className="bg-white border border-slate-300/80 rounded-2xl p-5 sm:p-7 space-y-5 shadow-sm">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200/80 pb-3 flex items-center gap-2">
               <DollarSign className="size-4 text-emerald-600" />
               Property & Loan Information
             </h2>
@@ -481,13 +482,13 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                   Down Payment
                 </label>
                 {/* $ or % Toggle */}
-                <div className="inline-flex rounded-lg border border-slate-200 bg-slate-100 p-0.5 text-xs font-semibold">
+                <div className="inline-flex rounded-lg border border-slate-300 bg-slate-100 p-0.5 text-xs font-semibold shadow-2xs">
                   <button
                     type="button"
                     onClick={() => handleDownPaymentTypeChange('money')}
                     className={`px-3 py-1 sm:py-0.5 rounded-md transition-all cursor-pointer ${
                       downPaymentType === 'money'
-                        ? 'bg-indigo-600 text-white shadow-sm'
+                        ? 'bg-slate-900 text-white shadow-xs font-bold'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
@@ -498,7 +499,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                     onClick={() => handleDownPaymentTypeChange('percent')}
                     className={`px-3 py-1 sm:py-0.5 rounded-md transition-all cursor-pointer ${
                       downPaymentType === 'percent'
-                        ? 'bg-indigo-600 text-white shadow-sm'
+                        ? 'bg-slate-900 text-white shadow-xs font-bold'
                         : 'text-slate-600 hover:text-slate-900'
                     }`}
                   >
@@ -563,17 +564,17 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             </div>
 
             {/* Term presets */}
-            <div className="flex items-center gap-2 pt-0.5">
-              <span className="text-[11px] text-slate-500">Quick Terms:</span>
+            <div className="flex items-center gap-2 pt-0.5 flex-wrap">
+              <span className="text-[11px] font-semibold text-slate-600">Quick Terms:</span>
               {termPresets.map(term => (
                 <button
                   key={term}
                   type="button"
                   onClick={() => setLoanTermYears(term)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-medium transition-colors cursor-pointer ${
+                  className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer shadow-2xs ${
                     loanTermYears === term
-                      ? 'bg-indigo-600 text-white font-bold border border-indigo-600'
-                      : 'bg-white text-slate-700 hover:text-slate-900 border border-slate-200'
+                      ? 'bg-slate-900 text-white border border-slate-900 ring-2 ring-slate-900/10'
+                      : 'bg-white text-slate-700 hover:bg-slate-100 hover:text-slate-900 border border-slate-300'
                   }`}
                 >
                   {term} Yrs
@@ -582,44 +583,25 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             </div>
 
             {/* Start Date */}
-            <div className="grid grid-cols-2 gap-3 pt-2">
-              <div className="space-y-1.5">
-                <label htmlFor="start-month" className="text-xs font-semibold text-slate-700">
-                  Start Month
-                </label>
-                <select
-                  id="start-month"
-                  value={startMonth}
-                  onChange={(e) => setStartMonth(Number(e.target.value))}
-                  className="w-full px-3 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-medium outline-none cursor-pointer focus:border-indigo-500"
-                >
-                  {Array.from({ length: 12 }, (_, i) => i + 1).map(m => (
-                    <option key={m} value={m}>
-                      {getMonthName(m)}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="space-y-1.5">
-                <label htmlFor="start-year" className="text-xs font-semibold text-slate-700">
-                  Start Year
-                </label>
-                <NumericInput
-                  id="start-year"
-                  value={startYear}
-                  onChange={setStartYear}
-                  min={1990}
-                  max={2100}
-                  className="py-2.5 text-xs font-medium"
-                />
-              </div>
+            <div className="pt-2">
+              <label className="text-xs font-semibold text-slate-700 block mb-1.5">
+                First Payment Start Date
+              </label>
+              <MonthYearPicker
+                id="mortgage-start-date"
+                month={startMonth}
+                year={startYear}
+                onChange={({ month, year }) => {
+                  setStartMonth(month);
+                  setStartYear(year);
+                }}
+              />
             </div>
           </div>
 
           {/* Taxes, Insurance, and HOA Fees Card */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 space-y-5 shadow-xs">
-            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 flex items-center gap-2">
+          <div className="bg-white border border-slate-300/80 rounded-2xl p-5 sm:p-7 space-y-5 shadow-sm">
+            <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200/80 pb-3 flex items-center gap-2">
               <ShieldCheck className="size-4 text-cyan-600" />
               Taxes, Insurance & Fees
             </h2>
@@ -756,33 +738,33 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
         </div>
 
         {/* Right Column: Results & Repayment Breakdown (6 Cols) */}
-        <div id="results-section" className="lg:col-span-6 space-y-6 scroll-mt-20">
-          {/* Main Monthly Payment Card */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xs relative overflow-hidden">
-            <div className="absolute top-0 right-0 -mt-10 -mr-10 size-48 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
+        <div id="results-section" className="lg:col-span-6 space-y-5 scroll-mt-20">
+          {/* Main Monthly Payment Hero Card (High Contrast Dark Slate) */}
+          <div className="bg-slate-900 text-white rounded-2xl p-6 sm:p-7 space-y-5 shadow-lg border border-slate-800 relative overflow-hidden">
+            <div className="absolute top-0 right-0 -mt-10 -mr-10 size-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-800 pb-5 relative z-10">
               <div>
-                <span className="text-xs uppercase tracking-wider font-semibold text-slate-500">
+                <span className="text-xs uppercase tracking-wider font-semibold text-slate-400">
                   Estimated Total Monthly Payment
                 </span>
-                <div className="text-3xl sm:text-5xl font-black text-slate-900 tracking-tight mt-1">
+                <div className="text-3xl sm:text-5xl font-black text-white tracking-tight mt-1">
                   {fmt(summary.totalMonthlyPayment)}
-                  <span className="text-sm sm:text-base font-normal text-slate-500 ml-1.5">/month</span>
+                  <span className="text-sm sm:text-base font-normal text-slate-400 ml-1.5">/month</span>
                 </div>
               </div>
 
-              <div className="text-left sm:text-right">
-                <span className="text-xs text-slate-500 block">Annual Payment:</span>
-                <span className="text-base font-bold text-slate-900 font-mono">
+              <div className="text-left sm:text-right bg-slate-800/90 px-4 py-2 rounded-xl border border-slate-700/80">
+                <span className="text-[11px] text-slate-400 block">Annual Payment</span>
+                <span className="text-base font-bold text-emerald-400 font-mono">
                   {fmt(summary.annualPaymentAmount)}
                 </span>
               </div>
             </div>
 
             {/* Visual Stacked Bar Breakdown */}
-            <div className="space-y-2">
-              <div className="h-3.5 w-full bg-slate-100 rounded-full overflow-hidden flex border border-slate-200 p-0.5">
+            <div className="space-y-2.5 relative z-10">
+              <div className="h-4 w-full bg-slate-800 rounded-full overflow-hidden flex border border-slate-700 p-0.5 shadow-inner">
                 <div
                   style={{ width: `${piPct}%` }}
                   className="bg-indigo-500 rounded-l-full h-full transition-all duration-300"
@@ -790,262 +772,338 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                 />
                 <div
                   style={{ width: `${taxPct}%` }}
-                  className="bg-cyan-500 h-full transition-all duration-300"
+                  className="bg-cyan-400 h-full transition-all duration-300"
                   title={`Taxes: ${fmt(summary.monthlyPropertyTax)} (${taxPct.toFixed(1)}%)`}
                 />
                 <div
                   style={{ width: `${insPct}%` }}
-                  className="bg-emerald-500 h-full transition-all duration-300"
+                  className="bg-emerald-400 h-full transition-all duration-300"
                   title={`Insurance: ${fmt(summary.monthlyHomeInsurance)} (${insPct.toFixed(1)}%)`}
                 />
                 {pmiPct > 0 && (
                   <div
                     style={{ width: `${pmiPct}%` }}
-                    className="bg-amber-500 h-full transition-all duration-300"
+                    className="bg-amber-400 h-full transition-all duration-300"
                     title={`PMI: ${fmt(summary.monthlyPmi)} (${pmiPct.toFixed(1)}%)`}
                   />
                 )}
                 {hoaPct > 0 && (
                   <div
                     style={{ width: `${hoaPct}%` }}
-                    className="bg-purple-500 rounded-r-full h-full transition-all duration-300"
+                    className="bg-purple-400 rounded-r-full h-full transition-all duration-300"
                     title={`HOA: ${fmt(summary.monthlyHoa)} (${hoaPct.toFixed(1)}%)`}
                   />
                 )}
               </div>
 
               {/* Legend & Breakdown Items */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2">
-                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                  <div className="flex items-center gap-1.5 text-xs text-indigo-600 font-medium">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
+                <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-indigo-400 font-medium">
                     <span className="size-2 rounded-full bg-indigo-500" />
                     <span>Principal & Interest</span>
                   </div>
-                  <div className="text-sm font-bold text-slate-900 font-mono">
+                  <div className="text-sm font-bold text-white font-mono">
                     {fmt(summary.monthlyPrincipalAndInterest)}
                   </div>
-                  <div className="text-[11px] text-slate-500">{piPct.toFixed(1)}% of total</div>
+                  <div className="text-[11px] text-slate-400">{piPct.toFixed(1)}% of total</div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                  <div className="flex items-center gap-1.5 text-xs text-cyan-600 font-medium">
-                    <span className="size-2 rounded-full bg-cyan-500" />
+                <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-cyan-400 font-medium">
+                    <span className="size-2 rounded-full bg-cyan-400" />
                     <span>Property Taxes</span>
                   </div>
-                  <div className="text-sm font-bold text-slate-900 font-mono">
+                  <div className="text-sm font-bold text-white font-mono">
                     {fmt(summary.monthlyPropertyTax)}
                   </div>
-                  <div className="text-[11px] text-slate-500">{taxPct.toFixed(1)}% of total</div>
+                  <div className="text-[11px] text-slate-400">{taxPct.toFixed(1)}% of total</div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                  <div className="flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
-                    <span className="size-2 rounded-full bg-emerald-500" />
+                <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-emerald-400 font-medium">
+                    <span className="size-2 rounded-full bg-emerald-400" />
                     <span>Home Insurance</span>
                   </div>
-                  <div className="text-sm font-bold text-slate-900 font-mono">
+                  <div className="text-sm font-bold text-white font-mono">
                     {fmt(summary.monthlyHomeInsurance)}
                   </div>
-                  <div className="text-[11px] text-slate-500">{insPct.toFixed(1)}% of total</div>
+                  <div className="text-[11px] text-slate-400">{insPct.toFixed(1)}% of total</div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                  <div className="flex items-center gap-1.5 text-xs text-amber-700 font-medium">
-                    <span className="size-2 rounded-full bg-amber-500" />
+                <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-amber-300 font-medium">
+                    <span className="size-2 rounded-full bg-amber-400" />
                     <span>PMI Insurance</span>
                   </div>
-                  <div className="text-sm font-bold text-slate-900 font-mono">
+                  <div className="text-sm font-bold text-white font-mono">
                     {summary.monthlyPmi > 0 ? fmt(summary.monthlyPmi) : '$0.00'}
                   </div>
-                  <div className="text-[11px] text-slate-500">
+                  <div className="text-[11px] text-slate-400">
                     {summary.monthlyPmi > 0 ? `${pmiPct.toFixed(1)}% of total` : 'Not required'}
                   </div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                  <div className="flex items-center gap-1.5 text-xs text-purple-600 font-medium">
-                    <span className="size-2 rounded-full bg-purple-500" />
+                <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-purple-400 font-medium">
+                    <span className="size-2 rounded-full bg-purple-400" />
                     <span>Monthly HOA</span>
                   </div>
-                  <div className="text-sm font-bold text-slate-900 font-mono">
+                  <div className="text-sm font-bold text-white font-mono">
                     {fmt(summary.monthlyHoa)}
                   </div>
-                  <div className="text-[11px] text-slate-500">{hoaPct.toFixed(1)}% of total</div>
+                  <div className="text-[11px] text-slate-400">{hoaPct.toFixed(1)}% of total</div>
                 </div>
 
-                <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-200 space-y-1">
-                  <div className="flex items-center gap-1.5 text-xs text-slate-700 font-medium">
-                    <Calendar className="size-3 text-slate-500" />
+                <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-0.5">
+                  <div className="flex items-center gap-1.5 text-xs text-slate-300 font-medium">
+                    <Calendar className="size-3 text-slate-400" />
                     <span>Loan Pay-off Date</span>
                   </div>
-                  <div className="text-sm font-bold text-slate-900 font-mono">
+                  <div className="text-sm font-bold text-white font-mono">
                     {summary.payoffDateString}
                   </div>
-                  <div className="text-[11px] text-slate-500">{summary.totalMonths} total payments</div>
+                  <div className="text-[11px] text-slate-400">{summary.totalMonths} total payments</div>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Loan Life Totals & Metrics Grid */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
-              <PiggyBank className="size-4 text-amber-500" />
-              Total Cost Over Life of Loan ({summary.totalMonths} Months)
-            </h3>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-xs text-slate-500 block">Total Interest Paid</span>
-                <span className="text-lg font-bold text-slate-900 font-mono">
-                  {fmt(summary.totalInterestPaid)}
-                </span>
-                <span className="text-[11px] text-slate-500 block mt-0.5">
-                  {(summary.totalInterestPaid / (summary.loanAmount || 1) * 100).toFixed(0)}% of principal
-                </span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-xs text-slate-500 block">Total Principal Paid</span>
-                <span className="text-lg font-bold text-slate-900 font-mono">
-                  {fmt(summary.loanAmount)}
-                </span>
-                <span className="text-[11px] text-slate-500 block mt-0.5">
-                  100% of original loan
-                </span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-xs text-slate-500 block">Total Taxes & Insurance</span>
-                <span className="text-lg font-bold text-slate-900 font-mono">
-                  {fmt(summary.totalPropertyTaxPaid + summary.totalHomeInsurancePaid + summary.totalPmiPaid)}
-                </span>
-                <span className="text-[11px] text-slate-500 block mt-0.5">
-                  Over {loanTermYears} years
-                </span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-xs text-slate-500 block">Total of All Payments</span>
-                <span className="text-lg font-bold text-emerald-600 font-mono">
-                  {fmt(summary.totalOfAllPayments)}
-                </span>
-                <span className="text-[11px] text-slate-500 block mt-0.5">
-                  P&I, taxes, insurance, fees
-                </span>
-              </div>
-            </div>
-
-            {/* Visual Donut Chart Breakdown */}
-            <PaymentDonutChart
-              principalAndInterest={summary.monthlyPrincipalAndInterest}
-              propertyTax={summary.monthlyPropertyTax}
-              homeInsurance={summary.monthlyHomeInsurance}
-              hoa={summary.monthlyHoa}
-              pmi={summary.monthlyPmi}
-              totalMonthly={summary.totalMonthlyPayment}
-            />
-
-            {/* Quick Metrics Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-500 text-[11px] block">Loan Amount</span>
-                <span className="text-sm font-bold text-slate-900 font-mono">{fmt(summary.loanAmount)}</span>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-500 text-[11px] block">Total Interest</span>
-                <span className="text-sm font-bold text-rose-600 font-mono">{fmt(summary.totalInterestPaid)}</span>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-500 text-[11px] block">Payoff Date</span>
-                <span className="text-sm font-bold text-indigo-600 font-mono">{summary.payoffDateString}</span>
-              </div>
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-slate-500 text-[11px] block">Total Payments</span>
-                <span className="text-sm font-bold text-slate-900 font-mono">{fmt(summary.totalOfAllPayments)}</span>
-              </div>
-            </div>
+          {/* Focused Analysis Tabs - High Contrast Segmented Control */}
+          <div className="flex items-center p-1 bg-white border border-slate-300 rounded-xl shadow-xs gap-1">
+            <button
+              type="button"
+              onClick={() => setActiveAnalysisTab('breakdown')}
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                activeAnalysisTab === 'breakdown'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+              }`}
+            >
+              <PiggyBank className="size-3.5 text-amber-500" />
+              <span>Cost Breakdown</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveAnalysisTab('payoff')}
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                activeAnalysisTab === 'payoff'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+              }`}
+            >
+              <Sparkles className="size-3.5 text-emerald-500" />
+              <span>Payoff Simulator</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveAnalysisTab('schedule')}
+              className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                activeAnalysisTab === 'schedule'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+              }`}
+            >
+              <Calendar className="size-3.5 text-indigo-500" />
+              <span>Amortization</span>
+            </button>
           </div>
 
-          {/* Bi-Weekly Accelerated Savings Optimizer */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-4 shadow-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="size-4 text-emerald-600" />
-                <h3 className="text-sm font-bold text-slate-900">
-                  Bi-Weekly Mortgage & Early Payoff Acceleration
-                </h3>
-              </div>
-              <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-700">
-                26 half-payments/yr
-              </span>
-            </div>
+          {/* Tab 1: Breakdown & Totals */}
+          {activeAnalysisTab === 'breakdown' && (
+            <div className="bg-white border border-slate-300/90 rounded-2xl p-5 sm:p-6 space-y-4 shadow-xs animate-in fade-in-50 duration-200">
+              <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                <PiggyBank className="size-4 text-amber-500" />
+                Total Cost Over Life of Loan ({summary.totalMonths} Months)
+              </h3>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-xs text-slate-500 block">Interest Savings</span>
-                <span className="text-base font-bold text-emerald-600 font-mono">
-                  {fmt(biweekly.interestSaved)}
+              <div className="grid grid-cols-2 gap-3.5">
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-xs text-slate-500 block">Total Interest Paid</span>
+                  <span className="text-lg font-bold text-slate-900 font-mono">
+                    {fmt(summary.totalInterestPaid)}
+                  </span>
+                  <span className="text-[11px] text-slate-500 block mt-0.5">
+                    {(summary.totalInterestPaid / (summary.loanAmount || 1) * 100).toFixed(0)}% of principal
+                  </span>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-xs text-slate-500 block">Total Principal Paid</span>
+                  <span className="text-lg font-bold text-slate-900 font-mono">
+                    {fmt(summary.loanAmount)}
+                  </span>
+                  <span className="text-[11px] text-slate-500 block mt-0.5">
+                    100% of original loan
+                  </span>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-xs text-slate-500 block">Total Taxes & Insurance</span>
+                  <span className="text-lg font-bold text-slate-900 font-mono">
+                    {fmt(summary.totalPropertyTaxPaid + summary.totalHomeInsurancePaid + summary.totalPmiPaid)}
+                  </span>
+                  <span className="text-[11px] text-slate-500 block mt-0.5">
+                    Over {loanTermYears} years
+                  </span>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-xs text-slate-500 block">Total of All Payments</span>
+                  <span className="text-lg font-bold text-emerald-600 font-mono">
+                    {fmt(summary.totalOfAllPayments)}
+                  </span>
+                  <span className="text-[11px] text-slate-500 block mt-0.5">
+                    P&I, taxes, insurance, fees
+                  </span>
+                </div>
+              </div>
+
+              {/* Visual Donut Chart Breakdown */}
+              <PaymentDonutChart
+                principalAndInterest={summary.monthlyPrincipalAndInterest}
+                propertyTax={summary.monthlyPropertyTax}
+                homeInsurance={summary.monthlyHomeInsurance}
+                hoa={summary.monthlyHoa}
+                pmi={summary.monthlyPmi}
+                totalMonthly={summary.totalMonthlyPayment}
+              />
+
+              {/* Quick Metrics Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-slate-500 text-[11px] block">Loan Amount</span>
+                  <span className="text-sm font-bold text-slate-900 font-mono">{fmt(summary.loanAmount)}</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-slate-500 text-[11px] block">Total Interest</span>
+                  <span className="text-sm font-bold text-rose-600 font-mono">{fmt(summary.totalInterestPaid)}</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-slate-500 text-[11px] block">Payoff Date</span>
+                  <span className="text-sm font-bold text-indigo-600 font-mono">{summary.payoffDateString}</span>
+                </div>
+                <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
+                  <span className="text-slate-500 text-[11px] block">Total Payments</span>
+                  <span className="text-sm font-bold text-slate-900 font-mono">{fmt(summary.totalOfAllPayments)}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab 2: Payoff Simulator */}
+          {activeAnalysisTab === 'payoff' && (
+            <div className="bg-white border border-slate-300/90 rounded-2xl p-6 space-y-4 shadow-xs animate-in fade-in-50 duration-200">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <Sparkles className="size-4 text-emerald-600" />
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Bi-Weekly Mortgage & Early Payoff Acceleration
+                  </h3>
+                </div>
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-700">
+                  26 half-payments/yr
                 </span>
-                <span className="text-[11px] text-slate-500 block">Saved in mortgage interest</span>
               </div>
 
-              <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <span className="text-xs text-slate-500 block">Pay Off Early By</span>
-                <span className="text-base font-bold text-indigo-600 font-mono">
-                  {biweekly.yearsSaved} Years ({biweekly.monthsSaved} Months)
-                </span>
-                <span className="text-[11px] text-slate-500 block">Shortens your loan term</span>
-              </div>
-            </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div className="p-3.5 rounded-xl bg-emerald-50/50 border border-emerald-200/80">
+                  <span className="text-xs text-emerald-800 font-medium block">Interest Savings</span>
+                  <span className="text-xl font-black text-emerald-700 font-mono mt-0.5">
+                    {fmt(biweekly.interestSaved)}
+                  </span>
+                  <span className="text-[11px] text-emerald-600 block mt-0.5">Saved in mortgage interest</span>
+                </div>
 
-            {/* Extra Monthly Payment simulator */}
-            <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-3">
-              <label htmlFor="extra-monthly-principal" className="text-xs text-slate-700 font-medium">
-                Add Extra Monthly Principal:
-              </label>
-              <div className="w-36">
-                <CurrencyInput
-                  id="extra-monthly-principal"
-                  value={extraMonthlyPrincipal}
-                  onChange={setExtraMonthlyPrincipal}
-                  placeholder="0"
-                  className="py-1.5 text-base sm:text-xs font-semibold"
-                />
+                <div className="p-3.5 rounded-xl bg-indigo-50/50 border border-indigo-200/80">
+                  <span className="text-xs text-indigo-800 font-medium block">Pay Off Early By</span>
+                  <span className="text-xl font-black text-indigo-700 font-mono mt-0.5">
+                    {biweekly.yearsSaved} Yrs ({biweekly.monthsSaved} Mo)
+                  </span>
+                  <span className="text-[11px] text-indigo-600 block mt-0.5">Shortens your loan term</span>
+                </div>
               </div>
-            </div>
 
-            {/* One-Time Lump Sum Simulator */}
-            <div className="pt-2 border-t border-slate-100 space-y-2">
-              <div className="flex items-center justify-between gap-3">
-                <label htmlFor="extra-lump-sum" className="text-xs text-slate-700 font-medium">
-                  One-time Lump Sum Principal:
+              {/* Extra Monthly Payment simulator */}
+              <div className="pt-3 border-t border-slate-200/80 flex items-center justify-between gap-3">
+                <label htmlFor="extra-monthly-principal" className="text-xs text-slate-700 font-semibold">
+                  Add Extra Monthly Principal:
                 </label>
                 <div className="w-36">
                   <CurrencyInput
-                    id="extra-lump-sum"
-                    value={extraLumpSumAmount}
-                    onChange={setExtraLumpSumAmount}
+                    id="extra-monthly-principal"
+                    value={extraMonthlyPrincipal}
+                    onChange={setExtraMonthlyPrincipal}
                     placeholder="0"
                     className="py-1.5 text-base sm:text-xs font-semibold"
                   />
                 </div>
               </div>
-              {extraLumpSumAmount > 0 && (
-                <div className="flex items-center justify-between text-[11px] text-slate-500 pl-1">
-                  <span>Pay at Month #{extraLumpSumMonth} (Yr {(extraLumpSumMonth / 12).toFixed(1)}):</span>
-                  <input
-                    type="range"
-                    min="1"
-                    max={Math.min(360, loanTermYears * 12)}
-                    value={extraLumpSumMonth}
-                    onChange={(e) => setExtraLumpSumMonth(Number(e.target.value))}
-                    className="w-32 accent-indigo-600 cursor-pointer"
-                  />
+
+              {/* One-Time Lump Sum Simulator */}
+              <div className="pt-3 border-t border-slate-200/80 space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <label htmlFor="extra-lump-sum" className="text-xs text-slate-700 font-semibold">
+                    One-time Lump Sum Principal:
+                  </label>
+                  <div className="w-36">
+                    <CurrencyInput
+                      id="extra-lump-sum"
+                      value={extraLumpSumAmount}
+                      onChange={setExtraLumpSumAmount}
+                      placeholder="0"
+                      className="py-1.5 text-base sm:text-xs font-semibold"
+                    />
+                  </div>
                 </div>
-              )}
+                {extraLumpSumAmount > 0 && (
+                  <div className="flex items-center justify-between text-[11px] text-slate-600 pl-1">
+                    <span>Pay at Month #{extraLumpSumMonth} (Yr {(extraLumpSumMonth / 12).toFixed(1)}):</span>
+                    <input
+                      type="range"
+                      min="1"
+                      max={Math.min(360, loanTermYears * 12)}
+                      value={extraLumpSumMonth}
+                      onChange={(e) => setExtraLumpSumMonth(Number(e.target.value))}
+                      className="w-32 accent-indigo-600 cursor-pointer"
+                    />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
+          )}
+
+          {/* Tab 3: Schedule Quick Summary */}
+          {activeAnalysisTab === 'schedule' && (
+            <div className="bg-white border border-slate-300/90 rounded-2xl p-6 space-y-4 shadow-xs animate-in fade-in-50 duration-200">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                <div className="flex items-center gap-2">
+                  <Calendar className="size-4 text-indigo-600" />
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Amortization Summary
+                  </h3>
+                </div>
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-indigo-50 border border-indigo-200 text-indigo-700 font-mono">
+                  {summary.totalMonths} payments
+                </span>
+              </div>
+
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Over {loanTermYears} years, you will make {summary.totalMonths} payments totaling <strong className="text-slate-900 font-mono">{fmt(summary.totalOfAllPayments)}</strong>, with <strong className="text-slate-900 font-mono">{fmt(summary.totalInterestPaid)}</strong> in interest.
+              </p>
+
+              <div className="pt-2">
+                <a
+                  href="#amortization-schedule-section"
+                  className="w-full py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold inline-flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs"
+                >
+                  <Calendar className="size-3.5" />
+                  <span>View Full Schedule & Export Table Below</span>
+                  <ArrowRight className="size-3.5" />
+                </a>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -1053,8 +1111,8 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
       <AmortizationChart data={chartData} />
 
       {/* Full Amortization Schedule Section */}
-      <div className="bg-white border border-slate-200 rounded-2xl p-6 sm:p-8 space-y-6 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-5">
+      <div id="amortization-schedule-section" className="bg-white border border-slate-300/80 rounded-2xl p-6 sm:p-8 space-y-6 shadow-sm scroll-mt-20">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200/80 pb-5">
           <div className="space-y-1">
             <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
               <Calendar className="size-5 text-indigo-600" />
