@@ -46,6 +46,7 @@ const WebsiteStatusChecker = lazy(() => import('./pages/WebsiteStatusChecker').t
 const AiArticlePolisher = lazy(() => import('./pages/AiArticlePolisher').then(m => ({ default: m.AiArticlePolisher })));
 import { AuthProvider } from './lib/authContext';
 import { AuthModal } from './components/AuthModal';
+import { GoogleOneTap } from './components/GoogleOneTap';
 import { useRouter, navigateTo, updatePageMeta } from './lib/router';
 import { TOOLS_CONFIG } from './data/tools';
 import { applyTheme } from './lib/theme';
@@ -520,6 +521,7 @@ export function App() {
         </div>
 
         <AuthModal />
+        <GoogleOneTap />
       </div>
     </AuthProvider>
   );
