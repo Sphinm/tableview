@@ -28,8 +28,19 @@ export interface RefinanceInputs {
   federalTaxRate: number; // e.g. 25 (%)
   stateTaxRate: number; // e.g. 5 (%)
 
+  // NPV discount rate (opportunity cost of capital)
+  discountRate?: number; // e.g. 5.0 (%) — expected annual return on alternative investment
+
   // Refinance options
   rollCostsIntoLoan?: boolean; // roll closing costs into the new loan balance ($0 out of pocket)
+
+  // PMI
+  currentMonthlyPmi?: number; // e.g. $185/mo (current PMI payment, 0 if none)
+  newMonthlyPmi?: number; // e.g. $0/mo (new PMI payment after refi, 0 if equity >= 20%)
+
+  // Refinance loan programs
+  refiProgram?: 'conventional' | 'fha_streamline' | 'va_irrrl'; // default: 'conventional'
+  fhaOriginalUfmip?: number; // original UFMIP paid (for calculating 36-month refund credit)
 }
 
 export interface RefinanceSummary {
@@ -48,6 +59,9 @@ export interface RefinanceSummary {
   isResettingClock: boolean;
   extraMonthsAdded: number;
   clockResetWarning?: string;
+  refiProgram: string;
+  governmentUpfrontFee: number; // FHA UFMIP net of refund, or VA 0.5% funding fee
+  fhaUfmipRefundCredit: number; // refund credit if FHA Streamline refi <= 36 months
 
   // Closing Costs
   discountPointsCost: number;
@@ -86,11 +100,19 @@ export interface RefinanceSummary {
 
   // Net Refinancing Benefit
   totalNetBenefit: number; // balanceDiffLessTaxShift + paymentSavingsHorizon - totalClosingCosts
+  npvNetBenefit: number; // Net Present Value of refinancing benefit
+  discountRateUsed: number; // the rate used for discounting
 
   // Full Lifetime Totals
   lifetimeInterestOldRemaining: number;
   lifetimeInterestNew: number;
   lifetimeInterestSaved: number;
+
+  // PMI Savings
+  currentMonthlyPmi: number;
+  newMonthlyPmi: number;
+  monthlyPmiSavings: number;
+  horizonPmiSavings: number;
 }
 
 export interface RefinanceScheduleRow {
@@ -192,13 +214,39 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
   const baseLoan = currentBalance + (cashOutAmount > 0 ? cashOutAmount : 0);
   const discountPointsCost = baseLoan * (Math.max(0, discountPoints) / 100);
   const originationFeeCost = baseLoan * (Math.max(0, originationPercent) / 100);
-  const totalClosingCosts = discountPointsCost + originationFeeCost + Math.max(0, otherClosingCosts);
+
+  // Government refinance program fees
+  const refiProgram = inputs.refiProgram ?? 'conventional';
+  let governmentUpfrontFee = 0;
+  let fhaUfmipRefundCredit = 0;
+
+  if (refiProgram === 'fha_streamline') {
+    const grossUfmip = baseLoan * 0.0175; // standard 1.75% UFMIP
+    if (monthsAlreadyPaid < 36 && inputs.fhaOriginalUfmip) {
+      // HUD 36-month declining refund credit schedule
+      const refundPercent = Math.max(0, ((36 - monthsAlreadyPaid) / 36) * 0.80);
+      fhaUfmipRefundCredit = inputs.fhaOriginalUfmip * refundPercent;
+    }
+    governmentUpfrontFee = Math.max(0, grossUfmip - fhaUfmipRefundCredit);
+  } else if (refiProgram === 'va_irrrl') {
+    // VA IRRRL flat funding fee of 0.50%
+    governmentUpfrontFee = baseLoan * 0.005;
+  }
+
+  const totalClosingCosts = discountPointsCost + originationFeeCost + Math.max(0, otherClosingCosts) + governmentUpfrontFee;
 
   // 3. New refinanced loan amount & payment (with optional rolled-in closing costs)
   const rollCosts = !!inputs.rollCostsIntoLoan;
   const newLoanAmount = baseLoan + (rollCosts ? totalClosingCosts : 0);
   const newMonthlyPayment = calculateMonthlyPayment(newLoanAmount, newInterestRate, newTermYears);
-  const monthlyPaymentSavings = currentMonthlyPayment - newMonthlyPayment;
+  const monthlyPaymentSavingsPI = currentMonthlyPayment - newMonthlyPayment;
+
+  // PMI savings
+  const currentMonthlyPmi = Math.max(0, inputs.currentMonthlyPmi ?? 0);
+  const newMonthlyPmi = Math.max(0, inputs.newMonthlyPmi ?? 0);
+  const monthlyPmiSavings = currentMonthlyPmi - newMonthlyPmi;
+
+  const monthlyPaymentSavings = monthlyPaymentSavingsPI + monthlyPmiSavings;
 
   // 4. Break-even in months (Monthly payment savings vs closing costs)
   let breakEvenMonths: number | null = null;
@@ -222,6 +270,10 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
 
   const totalTaxRate = (Math.max(0, federalTaxRate) + Math.max(0, stateTaxRate)) / 100;
   let equityBreakEvenMonths: number | null = null;
+
+  const annualDiscountRate = Math.max(0, inputs.discountRate ?? 0) / 100;
+  const monthlyDiscountRate = annualDiscountRate > 0 ? Math.pow(1 + annualDiscountRate, 1/12) - 1 : 0;
+  let npvCumulativeBenefit = -totalClosingCosts; // upfront cost is at time 0, no discounting
 
   for (let m = 1; m <= horizonMonths; m++) {
     // Old loan month step
@@ -250,6 +302,11 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
     totalPaymentsNewHorizon += newPay;
     totalInterestNewHorizon += newInt;
 
+    // NPV: discount each month's payment savings to present value
+    const monthlyNetSaving = oldPay - newPay;
+    const discountFactor = monthlyDiscountRate > 0 ? Math.pow(1 + monthlyDiscountRate, -m) : 1;
+    npvCumulativeBenefit += monthlyNetSaving * discountFactor;
+
     // Check equity & interest break-even
     if (equityBreakEvenMonths === null && totalClosingCosts > 0) {
       const cumInterestSaved = totalInterestOldHorizon - totalInterestNewHorizon;
@@ -276,7 +333,12 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
 
   // Total Refinancing Benefit Over Horizon Years:
   // Loan Balance Savings + Monetary Savings - Total Closing Costs
-  const totalNetBenefit = balanceDiffLessTaxShift + paymentSavingsHorizon - totalClosingCosts;
+  const horizonPmiSavings = monthlyPmiSavings * horizonMonths;
+  const totalNetBenefit = balanceDiffLessTaxShift + paymentSavingsHorizon + horizonPmiSavings - totalClosingCosts;
+
+  // Also add discounted equity difference at horizon
+  const horizonDiscountFactor = monthlyDiscountRate > 0 ? Math.pow(1 + monthlyDiscountRate, -horizonMonths) : 1;
+  const npvNetBenefit = npvCumulativeBenefit + (balanceDiffLessTaxShift * horizonDiscountFactor);
 
   // 6. Full Lifetime Calculations
   // Total interest remaining on old loan
@@ -350,9 +412,18 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
     balanceDifferenceAtHorizon,
     balanceDiffLessTaxShift,
     totalNetBenefit,
+    npvNetBenefit,
+    discountRateUsed: inputs.discountRate ?? 0,
     lifetimeInterestOldRemaining,
     lifetimeInterestNew,
-    lifetimeInterestSaved
+    lifetimeInterestSaved,
+    currentMonthlyPmi,
+    newMonthlyPmi,
+    monthlyPmiSavings,
+    horizonPmiSavings,
+    refiProgram,
+    governmentUpfrontFee: Math.round(governmentUpfrontFee * 100) / 100,
+    fhaUfmipRefundCredit: Math.round(fhaUfmipRefundCredit * 100) / 100
   };
 }
 

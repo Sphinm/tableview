@@ -52,4 +52,19 @@ describe('Hard Money Loan Calculator Engine', () => {
     expect(res.annualizedRoiPercent).toBeGreaterThan(res.roiPercent);
     expect(['excellent', 'profitable', 'marginal']).toContain(res.dealVerdict);
   });
+
+  it('accurately incorporates draw schedule inspection fees into total costs', () => {
+    const withDraws = calculateHardMoney({
+      ...sampleInputs,
+      numberOfDraws: 4,
+      drawInspectionFee: 250
+    });
+    const withoutDraws = calculateHardMoney(sampleInputs);
+
+    // 4 draws * $250 = $1,000 in draw inspection fees
+    expect(withDraws.totalDrawFees).toBe(1000);
+    expect(withoutDraws.totalDrawFees).toBe(0);
+    expect(withDraws.totalProjectCost).toBe(withoutDraws.totalProjectCost + 1000);
+    expect(withDraws.netProfit).toBe(withoutDraws.netProfit - 1000);
+  });
 });

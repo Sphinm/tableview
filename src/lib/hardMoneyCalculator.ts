@@ -14,6 +14,10 @@ export interface HardMoneyInputs {
   projectDurationMonths: number; // e.g. 6 months
   monthlyHoldingCosts: number; // utilities, property tax, insurance, lawn care ($500/mo)
   
+  // Draw schedule (rehab escrow)
+  numberOfDraws?: number; // e.g. 4 draws for rehab disbursements
+  drawInspectionFee?: number; // e.g. $250 per draw inspection
+  
   // Exit selling costs
   realtorCommissionPercent: number; // e.g. 5.0%
   exitClosingCostsPercent: number; // e.g. 1.5%
@@ -35,6 +39,7 @@ export interface HardMoneyResult {
   monthlyInterestPayment: number;
   totalInterestPaid: number;
   totalHoldingCosts: number;
+  totalDrawFees: number;
   
   // Selling Costs
   realtorCommission: number;
@@ -88,6 +93,11 @@ export function calculateHardMoney(inputs: HardMoneyInputs): HardMoneyResult {
   const totalInterestPaid = monthlyInterestPayment * duration;
   const totalHoldingCosts = Math.max(0, inputs.monthlyHoldingCosts) * duration;
   
+  // Draw inspection fees
+  const numberOfDraws = Math.max(0, inputs.numberOfDraws || 0);
+  const drawInspectionFee = Math.max(0, inputs.drawInspectionFee || 0);
+  const totalDrawFees = numberOfDraws * drawInspectionFee;
+  
   // Exit / Selling costs
   const realtorCommission = (arv * Math.max(0, inputs.realtorCommissionPercent)) / 100;
   const exitClosingCosts = (arv * Math.max(0, inputs.exitClosingCostsPercent)) / 100;
@@ -101,6 +111,7 @@ export function calculateHardMoney(inputs: HardMoneyInputs): HardMoneyResult {
     underwritingFees +
     totalInterestPaid +
     totalHoldingCosts +
+    totalDrawFees +
     totalExitCosts;
     
   // 70% Rule of House Flipping
@@ -109,7 +120,7 @@ export function calculateHardMoney(inputs: HardMoneyInputs): HardMoneyResult {
   const is70RuleCompliant = purchasePrice <= maxAllowableOffer70Rule;
   
   // Total cash invested over the entire flip
-  const totalCashInvested = initialCashRequired + totalInterestPaid + totalHoldingCosts;
+  const totalCashInvested = initialCashRequired + totalInterestPaid + totalHoldingCosts + totalDrawFees;
   
   // Bottom line profit
   const netProfit = arv - totalProjectCost;
@@ -156,6 +167,7 @@ export function calculateHardMoney(inputs: HardMoneyInputs): HardMoneyResult {
     monthlyInterestPayment: Math.round(monthlyInterestPayment * 100) / 100,
     totalInterestPaid: Math.round(totalInterestPaid * 100) / 100,
     totalHoldingCosts: Math.round(totalHoldingCosts * 100) / 100,
+    totalDrawFees: Math.round(totalDrawFees * 100) / 100,
     realtorCommission: Math.round(realtorCommission * 100) / 100,
     exitClosingCosts: Math.round(exitClosingCosts * 100) / 100,
     totalExitCosts: Math.round(totalExitCosts * 100) / 100,

@@ -52,4 +52,84 @@ describe('Salary to Hourly & Overtime Calculator Engine', () => {
     // 25 days * 8 hrs * $50 = $10,000
     expect(res.ptoMonetaryValue).toBe(10000);
   });
+
+  it('calculates 2025 federal tax, FICA, and take-home pay for Single filer in no-tax state', () => {
+    const res = calculateSalary({
+      mode: 'salary-to-hourly',
+      amount: 100000,
+      taxInputs: {
+        filingStatus: 'single',
+        state: 'TX' // 0% state tax
+      }
+    });
+
+    const tax = res.takeHomePay!;
+    expect(tax).toBeDefined();
+    expect(tax.grossAnnualIncome).toBe(100000);
+    // Standard deduction for single (2025): $15,000
+    expect(tax.standardDeduction).toBe(15000);
+    expect(tax.federalTaxableIncome).toBe(85000);
+
+    // 2025 brackets on $85k taxable:
+    // 10% on first $11,925 = $1,192.50
+    // 12% on ($48,475 - $11,925 = $36,550) = $4,386.00
+    // 22% on ($85,000 - $48,475 = $36,525) = $8,035.50
+    // Total federal = $13,614.00
+    expect(tax.federalIncomeTax).toBeCloseTo(13614.00, 0);
+
+    // FICA:
+    // Social Security: 6.2% of 100k = $6,200
+    expect(tax.socialSecurityTax).toBe(6200);
+    // Medicare: 1.45% of 100k = $1,450 (no additional medicare since < $200k)
+    expect(tax.medicareTax).toBe(1450);
+    expect(tax.additionalMedicareTax).toBe(0);
+    expect(tax.totalFicaTax).toBe(7650);
+
+    // TX state tax = $0
+    expect(tax.stateIncomeTax).toBe(0);
+
+    // Total tax: 13,614 + 7,650 = 21,264
+    expect(tax.totalTax).toBeCloseTo(21264, 0);
+    // Take-home pay: 100,000 - 21,264 = $78,736
+    expect(tax.annualTakeHome).toBeCloseTo(78736, 0);
+    expect(tax.monthlyTakeHome).toBeCloseTo(78736 / 12, 1);
+    expect(tax.biWeeklyTakeHome).toBeCloseTo(78736 / 26, 1);
+  });
+
+  it('correctly caps Social Security at $176,100 wage base limit and applies Additional Medicare Tax', () => {
+    const res = calculateSalary({
+      mode: 'salary-to-hourly',
+      amount: 250000,
+      taxInputs: {
+        filingStatus: 'single',
+        state: 'FL'
+      }
+    });
+
+    const tax = res.takeHomePay!;
+    // SS capped at $176,100 * 6.2% = $10,918.20
+    expect(tax.socialSecurityTax).toBe(10918.20);
+    // Medicare: 1.45% of $250k = $3,625
+    // Additional Medicare: 0.9% on excess over $200k ($50,000 * 0.9% = $450)
+    expect(tax.additionalMedicareTax).toBe(450);
+    expect(tax.medicareTax).toBe(3625 + 450);
+  });
+
+  it('correctly uses Married Filing Jointly standard deduction and brackets', () => {
+    const res = calculateSalary({
+      mode: 'salary-to-hourly',
+      amount: 120000,
+      taxInputs: {
+        filingStatus: 'married',
+        state: 'WA'
+      }
+    });
+
+    const tax = res.takeHomePay!;
+    // 2025 MFJ standard deduction = $30,000
+    expect(tax.standardDeduction).toBe(30000);
+    expect(tax.federalTaxableIncome).toBe(90000);
+    // Because MFJ brackets are wider, federal tax is lower than single
+    expect(tax.effectiveFederalRate).toBeLessThan(10);
+  });
 });

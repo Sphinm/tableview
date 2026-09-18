@@ -61,4 +61,74 @@ describe('Commercial Real Estate Loan & Balloon Calculator Engine', () => {
     expect(res.balloonDueAmount).toBe(0);
     expect(res.refinanceRiskLevel).toBe('Low');
   });
+
+  it('correctly models Actual/360 day count convention yielding higher interest', () => {
+    const standard30360 = calculateCommercialLoan({
+      ...standardInputs,
+      dayCountConvention: '30/360'
+    });
+    const actual360 = calculateCommercialLoan({
+      ...standardInputs,
+      dayCountConvention: 'actual/360'
+    });
+
+    // Actual/360 charges ~365/360 ratio of interest each month
+    expect(actual360.totalInterestBeforeBalloon).toBeGreaterThan(standard30360.totalInterestBeforeBalloon);
+    // Because more of the monthly payment went to interest, less went to principal
+    expect(actual360.balloonDueAmount).toBeGreaterThan(standard30360.balloonDueAmount);
+  });
+
+  it('correctly calculates SBA 7(a) guarantee fees', () => {
+    const sba7a = calculateCommercialLoan({
+      ...standardInputs,
+      loanProgram: 'sba7a',
+      sba7aGuaranteePercent: 75
+    });
+    // Loan is 750,000 (> 700k tier -> 3.5% fee on 75% guaranteed portion)
+    // 750k * 75% = 562,500 * 3.5% = 19,687.50
+    expect(sba7a.sbaGuaranteeFee).toBe(19688);
+    expect(sba7a.upfrontCosts).toBe(7500 + 5000 + 19688);
+  });
+
+  it('correctly calculates SBA 504 CDC fees', () => {
+    const sba504 = calculateCommercialLoan({
+      ...standardInputs,
+      loanProgram: 'sba504',
+      sba504CdcPercent: 40
+    });
+    // Property price = 1,000,000. 40% CDC debenture = 400,000
+    // Fees: 1.5% CDC processing (6,000) + 0.5% SBA guarantee (2,000) + 0.25% funding (1,000) = 9,000
+    expect(sba504.sbaGuaranteeFee).toBe(9000);
+    expect(sba504.upfrontCosts).toBe(7500 + 5000 + 9000);
+  });
+
+  it('accurately calculates Step-Down prepayment penalties upon early exit', () => {
+    // Pay off at month 24 (Year 2) with default 5-4-3-2-1% schedule -> 4% penalty
+    const res = calculateCommercialLoan({
+      ...standardInputs,
+      prepaymentPenaltyType: 'stepdown',
+      prepaymentPayoffMonth: 24,
+      stepdownSchedule: [5, 4, 3, 2, 1]
+    });
+
+    expect(res.prepaymentPenaltyType).toBe('stepdown');
+    expect(res.prepaymentPayoffMonth).toBe(24);
+    // 4% of balance at month 24
+    expect(res.prepaymentPenaltyAmount).toBeCloseTo(res.prepaymentPayoffBalance * 0.04, 0);
+    expect(res.totalPayoffWithPenalty).toBe(res.prepaymentPayoffBalance + res.prepaymentPenaltyAmount);
+  });
+
+  it('accurately calculates Yield Maintenance prepayment penalty with floor', () => {
+    const res = calculateCommercialLoan({
+      ...standardInputs,
+      prepaymentPenaltyType: 'yield_maintenance',
+      prepaymentPayoffMonth: 36, // Month 36 (24 months remaining to 60-month balloon)
+      treasuryRateAtPayoff: 4.5 // Note is 7.0%, spread = 2.5%
+    });
+
+    expect(res.prepaymentPenaltyType).toBe('yield_maintenance');
+    // Lost yield = balance * 2.5% * (24/12 = 2 years) = balance * 5.0%
+    expect(res.prepaymentPenaltyAmount).toBeCloseTo(res.prepaymentPayoffBalance * 0.05, 0);
+    expect(res.totalPayoffWithPenalty).toBe(res.prepaymentPayoffBalance + res.prepaymentPenaltyAmount);
+  });
 });

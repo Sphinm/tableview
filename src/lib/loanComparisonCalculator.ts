@@ -16,11 +16,14 @@ export interface LoanParameters {
   armFixedMonths?: number; // e.g. 84 for a 7/1 ARM (7 years)
   armAdjustedRate?: number; // expected rate after adjustment, e.g. 8.0%
   armRateCap?: number; // max lifetime rate cap, e.g. 11.5%
+  rollCostsIntoLoan?: boolean; // roll closing costs and points into the financed loan balance
 }
 
 export interface SingleLoanResult {
   name: string;
   loanAmount: number;
+  financedLoanAmount: number;
+  rollCostsIntoLoan: boolean;
   interestRate: number;
   termYears: number;
   scheduledMonthlyPayment: number;
@@ -72,20 +75,23 @@ export function calculateSingleLoan(params: LoanParameters): SingleLoanResult {
   const totalMonthsScheduled = Math.round(termYears * 12);
   const monthlyRate = interestRate > 0 ? interestRate / 100 / 12 : 0;
 
-  // Scheduled Monthly P&I
+  const rollCosts = params.rollCostsIntoLoan ?? false;
+  const upfrontClosingCosts = (loanAmount * (originationPoints / 100)) + upfrontFees;
+  const financedLoanAmount = rollCosts ? loanAmount + upfrontClosingCosts : loanAmount;
+
+  // Scheduled Monthly P&I based on financed balance
   let scheduledMonthlyPayment = 0;
   if (monthlyRate === 0) {
-    scheduledMonthlyPayment = totalMonthsScheduled > 0 ? loanAmount / totalMonthsScheduled : 0;
+    scheduledMonthlyPayment = totalMonthsScheduled > 0 ? financedLoanAmount / totalMonthsScheduled : 0;
   } else {
     const factor = Math.pow(1 + monthlyRate, totalMonthsScheduled);
-    scheduledMonthlyPayment = totalMonthsScheduled > 0 ? (loanAmount * monthlyRate * factor) / (factor - 1) : 0;
+    scheduledMonthlyPayment = totalMonthsScheduled > 0 ? (financedLoanAmount * monthlyRate * factor) / (factor - 1) : 0;
   }
 
   const actualMonthlyPayment = scheduledMonthlyPayment + Math.max(0, extraMonthlyPayment);
-  const upfrontClosingCosts = (loanAmount * (originationPoints / 100)) + upfrontFees;
 
-  // Simulate monthly amortization
-  let balance = loanAmount;
+  // Simulate monthly amortization starting from financedLoanAmount
+  let balance = financedLoanAmount;
   let cumulativeInterest = 0;
   let monthsCount = 0;
 
@@ -152,11 +158,15 @@ export function calculateSingleLoan(params: LoanParameters): SingleLoanResult {
 
   const actualMonthsToPayoff = monthsCount;
   const actualYearsToPayoff = Number((actualMonthsToPayoff / 12).toFixed(1));
-  const totalLoanCost = loanAmount + cumulativeInterest + upfrontClosingCosts;
+  const totalLoanCost = rollCosts
+    ? financedLoanAmount + cumulativeInterest
+    : loanAmount + cumulativeInterest + upfrontClosingCosts;
 
   return {
     name,
     loanAmount: Math.round(loanAmount),
+    financedLoanAmount: Math.round(financedLoanAmount),
+    rollCostsIntoLoan: rollCosts,
     interestRate,
     termYears,
     scheduledMonthlyPayment: Number(scheduledMonthlyPayment.toFixed(2)),
@@ -165,7 +175,7 @@ export function calculateSingleLoan(params: LoanParameters): SingleLoanResult {
     actualMonthsToPayoff,
     actualYearsToPayoff,
     totalInterestPaid: Math.round(cumulativeInterest),
-    upfrontClosingCosts: Math.round(upfrontClosingCosts),
+    upfrontClosingCosts: rollCosts ? 0 : Math.round(upfrontClosingCosts),
     totalLoanCost: Math.round(totalLoanCost),
     amortizationPreview: yearlyData
   };

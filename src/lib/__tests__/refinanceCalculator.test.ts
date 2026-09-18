@@ -191,4 +191,112 @@ describe('Refinance Calculator Engine', () => {
     expect(res.clockResetWarning).toBeDefined();
     expect(res.clockResetWarning).toContain('Resetting your loan term adds');
   });
+
+  it('correctly incorporates current vs new PMI into monthly and horizon savings', () => {
+    const baseInputs: RefinanceInputs = {
+      homePrice: 400000,
+      downPayment: 40000, // 10% down initially
+      originalLoanAmount: 360000,
+      originalTermYears: 30,
+      currentInterestRate: 6.5,
+      monthsAlreadyPaid: 48, // 4 years in
+      newTermYears: 30,
+      newInterestRate: 6.0,
+      yearsBeforeSell: 5,
+      discountPoints: 0,
+      originationPercent: 0,
+      otherClosingCosts: 3000,
+      federalTaxRate: 0,
+      stateTaxRate: 0,
+      currentMonthlyPmi: 180, // paying $180/mo PMI
+      newMonthlyPmi: 0 // refi eliminates PMI because home appreciated
+    };
+
+    const res = calculateRefinance(baseInputs);
+    expect(res.currentMonthlyPmi).toBe(180);
+    expect(res.newMonthlyPmi).toBe(0);
+    expect(res.monthlyPmiSavings).toBe(180);
+    // 5 years * 12 months = 60 months * $180 = $10,800
+    expect(res.horizonPmiSavings).toBe(10800);
+  });
+
+  it('correctly calculates NPV discounted net benefit', () => {
+    const inputs: RefinanceInputs = {
+      homePrice: 400000,
+      downPayment: 80000,
+      originalLoanAmount: 320000,
+      originalTermYears: 30,
+      currentInterestRate: 7.0,
+      monthsAlreadyPaid: 12,
+      newTermYears: 30,
+      newInterestRate: 5.5,
+      yearsBeforeSell: 10,
+      discountPoints: 1.0,
+      originationPercent: 0,
+      otherClosingCosts: 2500,
+      federalTaxRate: 0,
+      stateTaxRate: 0,
+      discountRate: 6.0 // 6% annual discount rate
+    };
+
+    const res = calculateRefinance(inputs);
+    expect(res.discountRateUsed).toBe(6.0);
+    // Because future savings are discounted at 6%, NPV net benefit should be less than nominal net benefit
+    expect(res.npvNetBenefit).toBeLessThan(res.totalNetBenefit);
+  });
+
+  it('correctly calculates FHA Streamline UFMIP and 36-month refund credit', () => {
+    const fhaInputs: RefinanceInputs = {
+      homePrice: 350000,
+      downPayment: 12250,
+      originalLoanAmount: 337750,
+      originalTermYears: 30,
+      currentInterestRate: 6.75,
+      monthsAlreadyPaid: 12, // 1 year in (< 36 months)
+      newTermYears: 30,
+      newInterestRate: 5.75,
+      yearsBeforeSell: 7,
+      discountPoints: 0,
+      originationPercent: 0,
+      otherClosingCosts: 2000,
+      federalTaxRate: 0,
+      stateTaxRate: 0,
+      refiProgram: 'fha_streamline',
+      fhaOriginalUfmip: 5910 // 1.75% of original
+    };
+
+    const res = calculateRefinance(fhaInputs);
+    expect(res.refiProgram).toBe('fha_streamline');
+    // After 12 months, refund credit is ~53% (24/36 * 80%) of $5,910
+    expect(res.fhaUfmipRefundCredit).toBeGreaterThan(3000);
+    // Government fee should be net of the refund credit
+    expect(res.governmentUpfrontFee).toBeLessThan(res.currentBalance * 0.0175);
+    expect(res.totalClosingCosts).toBeCloseTo(2000 + res.governmentUpfrontFee, 2);
+  });
+
+  it('correctly calculates VA IRRRL 0.50% funding fee', () => {
+    const vaInputs: RefinanceInputs = {
+      homePrice: 450000,
+      downPayment: 0,
+      originalLoanAmount: 450000,
+      originalTermYears: 30,
+      currentInterestRate: 6.5,
+      monthsAlreadyPaid: 24,
+      newTermYears: 30,
+      newInterestRate: 5.5,
+      yearsBeforeSell: 5,
+      discountPoints: 0,
+      originationPercent: 0,
+      otherClosingCosts: 1500,
+      federalTaxRate: 0,
+      stateTaxRate: 0,
+      refiProgram: 'va_irrrl'
+    };
+
+    const res = calculateRefinance(vaInputs);
+    expect(res.refiProgram).toBe('va_irrrl');
+    // VA IRRRL flat 0.50% funding fee
+    expect(res.governmentUpfrontFee).toBeCloseTo(res.currentBalance * 0.005, 0);
+    expect(res.totalClosingCosts).toBeCloseTo(1500 + res.governmentUpfrontFee, 2);
+  });
 });

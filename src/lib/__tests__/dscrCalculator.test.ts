@@ -66,4 +66,25 @@ describe('DSCR Loan Calculator Engine', () => {
     expect(schedule.length).toBe(360);
     expect(schedule[schedule.length - 1].balance).toBe(0);
   });
+
+  it('correctly models additional expense categories (utilities, capex, other)', () => {
+    const withExtraExpenses = calculateDscr({
+      ...sampleInputs,
+      monthlyUtilities: 200,
+      monthlyCapexReserve: 150,
+      monthlyOtherExpenses: 75
+    });
+    const withoutExtra = calculateDscr(sampleInputs);
+
+    expect(withExtraExpenses.monthlyUtilities).toBe(200);
+    expect(withExtraExpenses.monthlyCapexReserve).toBe(150);
+    expect(withExtraExpenses.monthlyOtherExpenses).toBe(75);
+
+    // Total expenses should increase by 200 + 150 + 75 = 425
+    expect(withExtraExpenses.monthlyTotalOperatingExpenses).toBeCloseTo(withoutExtra.monthlyTotalOperatingExpenses + 425, 1);
+    // NOI should decrease by 425
+    expect(withExtraExpenses.monthlyNetOperatingIncome).toBeCloseTo(withoutExtra.monthlyNetOperatingIncome - 425, 1);
+    // Net cash flow should decrease by 425
+    expect(withExtraExpenses.monthlyNetCashFlow).toBeCloseTo(withoutExtra.monthlyNetCashFlow - 425, 1);
+  });
 });

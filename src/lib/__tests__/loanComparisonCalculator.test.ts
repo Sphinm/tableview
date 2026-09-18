@@ -122,4 +122,54 @@ describe('Loan Comparison Calculator Engine', () => {
     // Sub-headline must contain the extracted e.g. notes
     expect(comp.recommendation.subHeadline).toBe('(e.g. 15-Yr or Lower Rate vs. 30-Yr Fixed)');
   });
+
+  it('correctly supports rolling closing costs and points into the loan balance', () => {
+    const rolled = calculateSingleLoan({
+      ...loanA,
+      originationPoints: 1.0, // 4,000
+      upfrontFees: 2000, // 2,000 -> Total $6,000
+      rollCostsIntoLoan: true
+    });
+    const paidUpfront = calculateSingleLoan({
+      ...loanA,
+      originationPoints: 1.0,
+      upfrontFees: 2000,
+      rollCostsIntoLoan: false
+    });
+
+    expect(rolled.rollCostsIntoLoan).toBe(true);
+    expect(rolled.financedLoanAmount).toBe(406000);
+    expect(rolled.upfrontClosingCosts).toBe(0); // $0 out of pocket at closing
+    expect(paidUpfront.upfrontClosingCosts).toBe(6000);
+    // Financed loan has slightly higher monthly payment because $6,000 was added to debt
+    expect(rolled.scheduledMonthlyPayment).toBeGreaterThan(paidUpfront.scheduledMonthlyPayment);
+  });
+
+  it('correctly models ARM rate adjustments after the introductory fixed period', () => {
+    const armLoan = calculateSingleLoan({
+      name: '7/1 ARM',
+      loanAmount: 400000,
+      interestRate: 5.5,
+      termYears: 30,
+      originationPoints: 0,
+      upfrontFees: 1000,
+      extraMonthlyPayment: 0,
+      isArm: true,
+      armFixedMonths: 84, // 7 years
+      armAdjustedRate: 7.5 // adjusts to 7.5%
+    });
+
+    const fixedLoan = calculateSingleLoan({
+      name: '30-Yr Fixed at 5.5%',
+      loanAmount: 400000,
+      interestRate: 5.5,
+      termYears: 30,
+      originationPoints: 0,
+      upfrontFees: 1000,
+      extraMonthlyPayment: 0
+    });
+
+    // Because ARM rate adjusts higher after year 7, lifetime interest must be higher
+    expect(armLoan.totalInterestPaid).toBeGreaterThan(fixedLoan.totalInterestPaid);
+  });
 });

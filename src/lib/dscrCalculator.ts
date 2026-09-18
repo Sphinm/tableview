@@ -13,6 +13,9 @@ export interface DscrInputs {
   vacancyRate: number; // e.g. 5%
   managementFeeRate: number; // e.g. 8%
   annualMaintenanceReserve: number; // e.g. 1% of property value or fixed $
+  monthlyUtilities?: number; // e.g. $150 (water, trash, electric)
+  monthlyCapexReserve?: number; // e.g. $100 (roof, HVAC capital expenditures reserve)
+  monthlyOtherExpenses?: number; // e.g. $50 (landscaping, pest control, accounting)
   targetDscr: number; // e.g. 1.25
 }
 
@@ -31,6 +34,9 @@ export interface DscrResult {
   effectiveMonthlyIncome: number;
   monthlyManagementFee: number;
   monthlyMaintenance: number;
+  monthlyUtilities: number;
+  monthlyCapexReserve: number;
+  monthlyOtherExpenses: number;
   monthlyTotalOperatingExpenses: number;
   monthlyNetOperatingIncome: number; // NOI
   
@@ -119,9 +125,19 @@ export function calculateDscr(inputs: DscrInputs): DscrResult {
   
   const monthlyManagementFee = effectiveMonthlyIncome * (Math.max(0, inputs.managementFeeRate) / 100);
   const monthlyMaintenance = Math.max(0, inputs.annualMaintenanceReserve / 12);
+  const monthlyUtilities = Math.max(0, inputs.monthlyUtilities || 0);
+  const monthlyCapexReserve = Math.max(0, inputs.monthlyCapexReserve || 0);
+  const monthlyOtherExpenses = Math.max(0, inputs.monthlyOtherExpenses || 0);
   
   const monthlyTotalOperatingExpenses =
-    monthlyTaxes + monthlyInsurance + monthlyHoa + monthlyManagementFee + monthlyMaintenance;
+    monthlyTaxes +
+    monthlyInsurance +
+    monthlyHoa +
+    monthlyManagementFee +
+    monthlyMaintenance +
+    monthlyUtilities +
+    monthlyCapexReserve +
+    monthlyOtherExpenses;
     
   const monthlyNetOperatingIncome = effectiveMonthlyIncome - monthlyTotalOperatingExpenses;
   
@@ -132,8 +148,8 @@ export function calculateDscr(inputs: DscrInputs): DscrResult {
       ? Number(((monthlyNetOperatingIncome * 12) / (monthlyPrincipalAndInterest * 12)).toFixed(3))
       : 0;
       
-  // Net cash flow
-  const monthlyNetCashFlow = effectiveMonthlyIncome - monthlyPitia - monthlyManagementFee - monthlyMaintenance;
+  // Net cash flow (effective income minus all debt service and non-PITIA operating expenses)
+  const monthlyNetCashFlow = monthlyNetOperatingIncome - monthlyPrincipalAndInterest;
   const annualNetCashFlow = monthlyNetCashFlow * 12;
   
   const estimatedClosingCosts = loanAmount * 0.025; // 2.5% standard lending closing costs
@@ -199,6 +215,9 @@ export function calculateDscr(inputs: DscrInputs): DscrResult {
     effectiveMonthlyIncome: Math.round(effectiveMonthlyIncome * 100) / 100,
     monthlyManagementFee: Math.round(monthlyManagementFee * 100) / 100,
     monthlyMaintenance: Math.round(monthlyMaintenance * 100) / 100,
+    monthlyUtilities: Math.round(monthlyUtilities * 100) / 100,
+    monthlyCapexReserve: Math.round(monthlyCapexReserve * 100) / 100,
+    monthlyOtherExpenses: Math.round(monthlyOtherExpenses * 100) / 100,
     monthlyTotalOperatingExpenses: Math.round(monthlyTotalOperatingExpenses * 100) / 100,
     monthlyNetOperatingIncome: Math.round(monthlyNetOperatingIncome * 100) / 100,
     grossDscr,
