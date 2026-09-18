@@ -10,10 +10,19 @@ import {
   Sparkles,
   ArrowRight,
   Printer,
-  Bookmark
+  Bookmark,
+  Wallet,
+  CheckCircle2,
+  AlertCircle,
+  Scale,
+  Receipt
 } from 'lucide-react';
 import {
   type MortgageInputs,
+  type FicoScoreTier,
+  FICO_PROFILES,
+  estimateCashToClose,
+  calculateDtiAffordability,
   calculateMortgage,
   generateAmortizationSchedule,
   getAnnualAmortizationSchedule,
@@ -111,6 +120,10 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
   const [startYear, setStartYear] = useState<number>(2026);
   const [propertyTaxYearly, setPropertyTaxYearly] = useState<number>(() => getNumQuery('tax', 3000));
   const [pmiRate, setPmiRate] = useState<number>(0.5);
+  const [ficoTier, setFicoTier] = useState<FicoScoreTier>('760+');
+  const [closingCostPercent, setClosingCostPercent] = useState<number>(3.0);
+  const [grossAnnualIncome, setGrossAnnualIncome] = useState<number>(120000);
+  const [monthlyOtherDebts, setMonthlyOtherDebts] = useState<number>(600);
   const [homeInsuranceYearly, setHomeInsuranceYearly] = useState<number>(() => getNumQuery('insurance', 1500));
   const [monthlyHoa, setMonthlyHoa] = useState<number>(() => getNumQuery('hoa', 0));
   const [loanType, setLoanType] = useState<'conventional' | 'fha' | 'va' | 'usda'>('conventional');
@@ -125,7 +138,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
   const [scheduleView, setScheduleView] = useState<'annual' | 'monthly'>('annual');
   const [monthlyPage, setMonthlyPage] = useState<number>(1);
   const [activePreset, setActivePreset] = useState<string | null>('30-yr-conventional');
-  const [activeAnalysisTab, setActiveAnalysisTab] = useState<'breakdown' | 'payoff' | 'schedule'>('breakdown');
+  const [activeAnalysisTab, setActiveAnalysisTab] = useState<'breakdown' | 'cashToClose' | 'dti' | 'payoff' | 'schedule'>('breakdown');
 
   const MORTGAGE_PRESETS = [
     {
@@ -283,6 +296,19 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
     [monthlySchedule]
   );
   const biweekly = useMemo(() => calculateBiweeklyComparison(inputs), [inputs]);
+
+  const cashToClose = useMemo(() => {
+    return estimateCashToClose(homeValue, summary.downPaymentAmount, closingCostPercent);
+  }, [homeValue, summary.downPaymentAmount, closingCostPercent]);
+
+  const dtiAnalysis = useMemo(() => {
+    return calculateDtiAffordability(grossAnnualIncome, monthlyOtherDebts, summary.totalMonthlyPayment);
+  }, [grossAnnualIncome, monthlyOtherDebts, summary.totalMonthlyPayment]);
+
+  const handleSelectFicoTier = (tier: FicoScoreTier) => {
+    setFicoTier(tier);
+    setPmiRate(FICO_PROFILES[tier].defaultPmiRate);
+  };
 
   // Format Currency Helper
   const fmt = (val: number) =>
@@ -695,6 +721,33 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                   suffix="%"
                   className="py-2 text-xs"
                 />
+                {summary.isPmiRequired && (
+                  <div className="pt-2 border-t border-slate-100 space-y-1.5">
+                    <div className="flex items-center justify-between text-[11px]">
+                      <span className="font-semibold text-slate-700">FICO Credit Tier:</span>
+                      <span className="text-slate-500 font-medium">{FICO_PROFILES[ficoTier].creditRating}</span>
+                    </div>
+                    <div className="grid grid-cols-5 gap-1">
+                      {(['760+', '720-759', '680-719', '640-679', '620-639'] as FicoScoreTier[]).map((tier) => (
+                        <button
+                          key={tier}
+                          type="button"
+                          onClick={() => handleSelectFicoTier(tier)}
+                          className={`py-1 text-[10px] font-bold rounded border transition-all cursor-pointer text-center ${
+                            ficoTier === tier
+                              ? 'bg-slate-900 text-white border-slate-900 shadow-2xs'
+                              : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                          }`}
+                        >
+                          {tier}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="text-[10px] text-slate-500 leading-tight pt-0.5">
+                      {FICO_PROFILES[ficoTier].description} (Fannie Mae LLPA: +{FICO_PROFILES[ficoTier].llpaRateAdjustment}%)
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Monthly HOA */}

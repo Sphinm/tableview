@@ -532,3 +532,159 @@ export function exportAmortizationToCsv(schedule: AmortizationRow[]): string {
 
   return [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
 }
+
+/**
+ * FICO Credit Score Profiles & Market Benchmarks
+ * Modeled after Fannie Mae / Freddie Mac LLPA matrices & standard private mortgage insurer rate cards
+ */
+export type FicoScoreTier = '760+' | '720-759' | '680-719' | '640-679' | '620-639';
+
+export interface FicoProfile {
+  tier: FicoScoreTier;
+  label: string;
+  creditRating: string;
+  defaultPmiRate: number; // typical annual PMI % when LTV > 80%
+  llpaRateAdjustment: number; // Fannie Mae Loan-Level Price Adjustment spread %
+  description: string;
+}
+
+export const FICO_PROFILES: Record<FicoScoreTier, FicoProfile> = {
+  '760+': {
+    tier: '760+',
+    label: '760+',
+    creditRating: 'Excellent',
+    defaultPmiRate: 0.28,
+    llpaRateAdjustment: 0.0,
+    description: 'Prime tier. Lowest PMI rates, zero LLPA rate penalties, and maximum lender pricing credits.'
+  },
+  '720-759': {
+    tier: '720-759',
+    label: '720–759',
+    creditRating: 'Very Good',
+    defaultPmiRate: 0.45,
+    llpaRateAdjustment: 0.125,
+    description: 'Strong credit profile. Modest LLPA adjustments, highly competitive conventional pricing.'
+  },
+  '680-719': {
+    tier: '680-719',
+    label: '680–719',
+    creditRating: 'Good',
+    defaultPmiRate: 0.72,
+    llpaRateAdjustment: 0.375,
+    description: 'Average conventional borrower. Moderate PMI increase; consider comparing with FHA loans.'
+  },
+  '640-679': {
+    tier: '640-679',
+    label: '640–679',
+    creditRating: 'Fair',
+    defaultPmiRate: 1.08,
+    llpaRateAdjustment: 0.625,
+    description: 'Sub-prime conventional tier. Substantial PMI surcharge; FHA is often significantly cheaper.'
+  },
+  '620-639': {
+    tier: '620-639',
+    label: '620–639',
+    creditRating: 'Minimum Conforming',
+    defaultPmiRate: 1.45,
+    llpaRateAdjustment: 0.875,
+    description: 'Minimum conventional cutoff. High risk pricing adjustments; government FHA strongly recommended.'
+  }
+};
+
+/**
+ * Cash to Close Breakdown
+ * Realistic closing costs and prepaids for US home purchases
+ */
+export interface CashToCloseBreakdown {
+  downPayment: number;
+  closingCostsPercent: number;
+  totalClosingCosts: number;
+  lenderFees: number; // origination, processing, underwriting (~1.0% or min $1,400)
+  thirdPartyServices: number; // appraisal (~$550), credit report, flood cert
+  titleAndEscrow: number; // lender title insurance, settlement/closing fee (~$2,200)
+  prepaidsAndEscrow: number; // prepaid daily interest, 3-6 mos taxes & hazard insurance escrow (~$3,200)
+  governmentFees: number; // recording fees, transfer taxes (~$750)
+  totalCashToClose: number;
+}
+
+export function estimateCashToClose(
+  homeValue: number,
+  downPaymentAmount: number,
+  closingCostPercent = 3.0
+): CashToCloseBreakdown {
+  const loanAmount = Math.max(0, homeValue - downPaymentAmount);
+  const totalClosingCosts = Math.round((loanAmount * (closingCostPercent / 100)) * 100) / 100;
+  
+  // Standard US industry proportional allocation of closing costs
+  const lenderFees = Math.round(Math.max(1200, totalClosingCosts * 0.22) * 100) / 100;
+  const thirdPartyServices = Math.round(Math.max(500, totalClosingCosts * 0.10) * 100) / 100;
+  const titleAndEscrow = Math.round(Math.max(1600, totalClosingCosts * 0.28) * 100) / 100;
+  const prepaidsAndEscrow = Math.round(Math.max(2000, totalClosingCosts * 0.30) * 100) / 100;
+  const governmentFees = Math.max(0, Math.round((totalClosingCosts - (lenderFees + thirdPartyServices + titleAndEscrow + prepaidsAndEscrow)) * 100) / 100);
+
+  const totalCashToClose = Math.round((downPaymentAmount + totalClosingCosts) * 100) / 100;
+
+  return {
+    downPayment: downPaymentAmount,
+    closingCostsPercent: closingCostPercent,
+    totalClosingCosts,
+    lenderFees,
+    thirdPartyServices,
+    titleAndEscrow,
+    prepaidsAndEscrow,
+    governmentFees,
+    totalCashToClose
+  };
+}
+
+/**
+ * DTI (Debt-to-Income) Affordability Qualification
+ * Models CFPB 28/43 rule for Qualified Mortgages (QM)
+ */
+export interface DtiAffordabilityResult {
+  monthlyGrossIncome: number;
+  monthlyOtherDebts: number;
+  totalMonthlyHousingPayment: number;
+  frontEndDti: number; // percentage, e.g. 28.5
+  backEndDti: number; // percentage, e.g. 41.2
+  frontEndStatus: 'ideal' | 'acceptable' | 'high'; // <= 28% ideal, <= 36% acceptable, > 36% high
+  backEndStatus: 'ideal' | 'acceptable' | 'high'; // <= 36% ideal, <= 43% acceptable (QM conforming cap), > 43% high
+  isQualifiedMortgage: boolean; // backEnd <= 43%
+  maxSuggestedHousingPayment: number; // housing payment that achieves 43% back-end DTI
+}
+
+export function calculateDtiAffordability(
+  grossAnnualIncome: number,
+  monthlyOtherDebts: number,
+  totalMonthlyHousingPayment: number
+): DtiAffordabilityResult {
+  const monthlyGrossIncome = Math.max(1, grossAnnualIncome / 12);
+  const debts = Math.max(0, monthlyOtherDebts);
+  const housing = Math.max(0, totalMonthlyHousingPayment);
+
+  const frontEndDti = Math.round(((housing / monthlyGrossIncome) * 100) * 10) / 10;
+  const backEndDti = Math.round((((housing + debts) / monthlyGrossIncome) * 100) * 10) / 10;
+
+  const frontEndStatus: 'ideal' | 'acceptable' | 'high' =
+    frontEndDti <= 28 ? 'ideal' : frontEndDti <= 36 ? 'acceptable' : 'high';
+
+  const backEndStatus: 'ideal' | 'acceptable' | 'high' =
+    backEndDti <= 36 ? 'ideal' : backEndDti <= 43 ? 'acceptable' : 'high';
+
+  const isQualifiedMortgage = backEndDti <= 43;
+
+  // Maximum housing payment allowable under 43% QM Back-end guideline
+  const maxSuggestedHousingPayment = Math.max(0, Math.round(monthlyGrossIncome * 0.43 - debts));
+
+  return {
+    monthlyGrossIncome,
+    monthlyOtherDebts: debts,
+    totalMonthlyHousingPayment: housing,
+    frontEndDti,
+    backEndDti,
+    frontEndStatus,
+    backEndStatus,
+    isQualifiedMortgage,
+    maxSuggestedHousingPayment
+  };
+}

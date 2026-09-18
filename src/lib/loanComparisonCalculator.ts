@@ -34,6 +34,13 @@ export interface SingleLoanResult {
   totalInterestPaid: number;
   upfrontClosingCosts: number;
   totalLoanCost: number; // loan amount + interest + upfront fees
+  // CFPB Loan Estimate Page 3 Metrics
+  in5YearsTotalPaid: number; // total payments made over first 5 years (or loan payoff)
+  in5YearsPrincipalPaid: number; // principal paid off over first 5 years
+  in5YearsInterestPaid: number; // interest paid over first 5 years
+  in5YearsEndingBalance: number; // loan balance at month 60
+  in5YearsNetCost: number; // net cost = payments + upfront fees - principal reduction
+  totalInterestPercentage: number; // TIP: total interest as % of original loan amount
   amortizationPreview: {
     year: number;
     balance: number;
@@ -50,6 +57,7 @@ export interface LoanComparisonSummary {
   totalInterestDiff: number; // A - B (positive: B has less interest)
   totalCostDiff: number; // A - B (positive: B has lower total cost)
   upfrontCostDiff: number; // A - B (positive: A costs more upfront)
+  in5YearsNetCostDiff: number; // A - B (positive: B has lower 5-year net cost)
   breakEvenMonths: number | null; // months for lower-rate loan to recoup higher upfront fees
   recommendation: {
     betterOverall: 'A' | 'B' | 'TIE';
@@ -106,6 +114,12 @@ export function calculateSingleLoan(params: LoanParameters): SingleLoanResult {
   let currentYearInterest = 0;
   let currentYearPrincipal = 0;
 
+  // CFPB 5-Year Horizon tracking
+  let in5YearsTotalPaid = 0;
+  let in5YearsPrincipalPaid = 0;
+  let in5YearsInterestPaid = 0;
+  let in5YearsEndingBalance = financedLoanAmount;
+
   // ARM support: track rate changes
   const isArm = params.isArm ?? false;
   const armFixedMonths = params.armFixedMonths ?? 84; // default 7 years
@@ -142,6 +156,13 @@ export function calculateSingleLoan(params: LoanParameters): SingleLoanResult {
     currentYearInterest += monthlyInterest;
     currentYearPrincipal += principalPaid;
 
+    if (monthsCount <= 60) {
+      in5YearsTotalPaid += payment;
+      in5YearsPrincipalPaid += principalPaid;
+      in5YearsInterestPaid += monthlyInterest;
+      in5YearsEndingBalance = balance;
+    }
+
     if (monthsCount % 12 === 0 || balance <= 0.01) {
       const year = Math.ceil(monthsCount / 12);
       yearlyData.push({
@@ -162,6 +183,11 @@ export function calculateSingleLoan(params: LoanParameters): SingleLoanResult {
     ? financedLoanAmount + cumulativeInterest
     : loanAmount + cumulativeInterest + upfrontClosingCosts;
 
+  const in5YearsNetCost = Math.round(in5YearsTotalPaid + (rollCosts ? 0 : upfrontClosingCosts) - in5YearsPrincipalPaid);
+  const totalInterestPercentage = loanAmount > 0
+    ? Number(((cumulativeInterest / loanAmount) * 100).toFixed(2))
+    : 0;
+
   return {
     name,
     loanAmount: Math.round(loanAmount),
@@ -177,6 +203,12 @@ export function calculateSingleLoan(params: LoanParameters): SingleLoanResult {
     totalInterestPaid: Math.round(cumulativeInterest),
     upfrontClosingCosts: rollCosts ? 0 : Math.round(upfrontClosingCosts),
     totalLoanCost: Math.round(totalLoanCost),
+    in5YearsTotalPaid: Math.round(in5YearsTotalPaid),
+    in5YearsPrincipalPaid: Math.round(in5YearsPrincipalPaid),
+    in5YearsInterestPaid: Math.round(in5YearsInterestPaid),
+    in5YearsEndingBalance: Math.round(in5YearsEndingBalance),
+    in5YearsNetCost,
+    totalInterestPercentage,
     amortizationPreview: yearlyData
   };
 }
@@ -189,6 +221,7 @@ export function compareLoans(loanAParams: LoanParameters, loanBParams: LoanParam
   const totalInterestDiff = loanA.totalInterestPaid - loanB.totalInterestPaid;
   const totalCostDiff = loanA.totalLoanCost - loanB.totalLoanCost;
   const upfrontCostDiff = loanA.upfrontClosingCosts - loanB.upfrontClosingCosts;
+  const in5YearsNetCostDiff = loanA.in5YearsNetCost - loanB.in5YearsNetCost;
 
   // Calculate Break-Even Months (if one loan has higher upfront fees but lower monthly payments)
   let breakEvenMonths: number | null = null;
@@ -280,6 +313,7 @@ export function compareLoans(loanAParams: LoanParameters, loanBParams: LoanParam
     totalInterestDiff,
     totalCostDiff,
     upfrontCostDiff,
+    in5YearsNetCostDiff,
     breakEvenMonths,
     recommendation: {
       betterOverall,

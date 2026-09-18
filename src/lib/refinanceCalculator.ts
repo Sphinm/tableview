@@ -113,6 +113,11 @@ export interface RefinanceSummary {
   newMonthlyPmi: number;
   monthlyPmiSavings: number;
   horizonPmiSavings: number;
+
+  // LTV & Cash-Out Guardrail
+  cashOutLtv: number; // e.g. 82.5%
+  maxAllowedCashOut: number; // cash-out dollar amount that hits 80% LTV
+  isExceedingCashOutLtv: boolean; // true if cashOutAmount > 0 and cashOutLtv > 80%
 }
 
 export interface RefinanceScheduleRow {
@@ -379,6 +384,13 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
     clockResetWarning = `Resetting your loan term adds ${extraYears} year(s) to your total debt payoff horizon, which increases lifetime interest by $${addedCost} despite the lower monthly payments. Consider making extra principal payments to avoid paying more overall.`;
   }
 
+  const homePrice = Math.max(0, inputs.homePrice ?? 0);
+  const cashOutLtv = homePrice > 0 ? (newLoanAmount / homePrice) * 100 : 0;
+  const maxAllowedCashOut = homePrice > 0
+    ? Math.max(0, (homePrice * 0.80) - currentBalance - (rollCosts ? totalClosingCosts : 0))
+    : 0;
+  const isExceedingCashOutLtv = (cashOutAmount ?? 0) > 0 && cashOutLtv > 80.0001;
+
   return {
     currentMonthlyPayment,
     currentBalance,
@@ -423,7 +435,10 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
     horizonPmiSavings,
     refiProgram,
     governmentUpfrontFee: Math.round(governmentUpfrontFee * 100) / 100,
-    fhaUfmipRefundCredit: Math.round(fhaUfmipRefundCredit * 100) / 100
+    fhaUfmipRefundCredit: Math.round(fhaUfmipRefundCredit * 100) / 100,
+    cashOutLtv: Math.round(cashOutLtv * 10) / 10,
+    maxAllowedCashOut: Math.round(maxAllowedCashOut),
+    isExceedingCashOutLtv
   };
 }
 
