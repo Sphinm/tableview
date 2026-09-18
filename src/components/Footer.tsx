@@ -14,6 +14,7 @@ import {
   Video,
   Activity,
 } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 
 interface FooterProps {
   onTrySample?: () => void;
@@ -91,9 +92,7 @@ export const Footer = ({ onTrySample: _onTrySample, currentPath }: FooterProps) 
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-8 border-b border-slate-200 gap-6">
             <div className="space-y-2.5">
               <div className="flex items-center gap-3">
-                <div className="brand-icon size-9 rounded-xl flex items-center justify-center font-bold shadow-2xs ring-1 ring-slate-200">
-                  <Table className="size-5" />
-                </div>
+                <BrandLogo size={36} className="shadow-xs shrink-0" />
                 <div className="flex items-center gap-2">
                   <span className="font-bold text-slate-900 text-lg tracking-tight">TableView.dev</span>
                   <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[11px] font-mono font-medium text-emerald-700">

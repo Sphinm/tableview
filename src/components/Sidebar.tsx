@@ -1,6 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
 import {
-  Table,
   Building,
   Scale,
   Home,
@@ -28,6 +27,7 @@ import {
   FileCode,
   Cpu
 } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 import { navigateTo } from '../lib/router';
 import { openCookieSettings } from '../lib/consent';
 import { getCanonicalPath, getRouteCategory } from '../lib/resolveRoute';
@@ -406,9 +406,7 @@ export const Sidebar = ({
               onClick={(e) => handleNav(e, '/')}
               className="flex items-center gap-2.5 group cursor-pointer min-w-0"
             >
-              <div className="size-8 rounded-xl bg-gradient-to-br from-indigo-600 to-indigo-700 text-white flex items-center justify-center shadow-xs group-hover:scale-105 transition-transform shrink-0">
-                <Table className="size-4" />
-              </div>
+              <BrandLogo size={32} className="group-hover:scale-105 transition-transform shrink-0 drop-shadow-xs" />
               <div className="flex flex-col min-w-0">
                 <span className="text-sm font-bold text-slate-900 tracking-tight leading-none group-hover:text-indigo-600 transition-colors truncate">
                   TableView<span className="text-indigo-600">.dev</span>

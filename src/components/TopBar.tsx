@@ -2,13 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import {
   Menu,
   Mail,
-  Table,
   ChevronRight,
   User,
   LogOut,
   ChevronDown,
   Sparkles
 } from 'lucide-react';
+import { BrandLogo } from './BrandLogo';
 import { navigateTo } from '../lib/router';
 import { useAuth } from '../lib/useAuth';
 import { getBugReportMailto } from '../lib/feedback';
@@ -172,9 +172,7 @@ export const TopBar = ({ currentPath, onOpenMobileMenu }: TopBarProps) => {
         </button>
 
         <div className="flex items-center gap-2 md:hidden">
-          <div className="size-6 rounded-lg bg-indigo-600 text-white flex items-center justify-center shadow-xs">
-            <Table className="size-3.5" />
-          </div>
+          <BrandLogo size={24} className="shrink-0 drop-shadow-xs" />
           <span className="font-bold text-slate-900 text-sm tracking-tight">
             TableView<span className="text-indigo-600">.dev</span>
           </span>

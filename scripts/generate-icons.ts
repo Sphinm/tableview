@@ -21,30 +21,38 @@ const publicDir = path.join(rootDir, 'public');
 // --- Geometry (identical to favicon.svg, expressed in a 32x32 viewBox) --------
 const VIEWBOX = 32;
 const CORNER_RADIUS = 8;
-const BRAND = { r: 0x4f, g: 0x46, b: 0xe5 }; // #4f46e5
-const STROKE_WIDTH = 2;
 
-const STROKES: { x1: number; y1: number; x2: number; y2: number }[] = [
-  { x1: 7, y1: 10, x2: 25, y2: 10 },
-  { x1: 7, y1: 16, x2: 25, y2: 16 },
-  { x1: 7, y1: 22, x2: 25, y2: 22 },
-  { x1: 13, y1: 7, x2: 13, y2: 25 },
-  { x1: 19, y1: 7, x2: 19, y2: 25 },
-];
-
-/** Distance from point p to segment ab, in viewBox units. */
-function distanceToSegment(px: number, py: number, x1: number, y1: number, x2: number, y2: number) {
-  const dx = x2 - x1;
-  const dy = y2 - y1;
-  const lengthSq = dx * dx + dy * dy;
-  let t = lengthSq === 0 ? 0 : ((px - x1) * dx + (py - y1) * dy) / lengthSq;
-  t = Math.max(0, Math.min(1, t));
-  const cx = x1 + t * dx;
-  const cy = y1 + t * dy;
-  return Math.hypot(px - cx, py - cy);
+interface Cell {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  r: number;
+  color: { r: number; g: number; b: number; a: number };
 }
 
-/** Signed-ish coverage of a rounded rectangle: 1 inside, 0 outside. */
+const CELLS: Cell[] = [
+  // Table Header Bar
+  { x: 6, y: 6, w: 20, h: 4.5, r: 2.2, color: { r: 255, g: 255, b: 255, a: 1.0 } },
+  // Left Data Column Pillar
+  { x: 6, y: 13.5, w: 8.5, h: 12.5, r: 2.2, color: { r: 255, g: 255, b: 255, a: 0.95 } },
+  // Right Top Cell (Active calculation / Sky blue #38bdf8)
+  { x: 17.5, y: 13.5, w: 8.5, h: 5, r: 2.2, color: { r: 0x38, g: 0xbd, b: 0xf8, a: 1.0 } },
+  // Right Bottom Cell
+  { x: 17.5, y: 21, w: 8.5, h: 5, r: 2.2, color: { r: 255, g: 255, b: 255, a: 0.65 } },
+];
+
+/** Checks whether point (px, py) is inside rounded rectangle (x, y, w, h, r). */
+function insideBox(px: number, py: number, x: number, y: number, w: number, h: number, r: number): boolean {
+  if (px < x || px > x + w || py < y || py > y + h) return false;
+  const clampedX = Math.min(Math.max(px, x + r), x + w - r);
+  const clampedY = Math.min(Math.max(py, y + r), y + h - r);
+  if (px >= x + r && px <= x + w - r) return true;
+  if (py >= y + r && py <= y + h - r) return true;
+  return Math.hypot(px - clampedX, py - clampedY) <= r;
+}
+
+/** Signed-ish coverage of a rounded rectangle: true inside, false outside. */
 function insideRoundedRect(px: number, py: number, size: number, radius: number): boolean {
   const r = radius;
   const clampedX = Math.min(Math.max(px, r), size - r);
@@ -58,15 +66,12 @@ function insideRoundedRect(px: number, py: number, size: number, radius: number)
  * Supersampled RGBA rasteriser.
  *
  * @param maskable when true, paints a full-bleed square with the glyph scaled
- *   into the 80% "safe zone", as required for `purpose: maskable`. A rounded,
- *   transparent-cornered icon used as maskable gets its corners cropped into a
- *   circle by Android, clipping the artwork.
+ *   into the 80% "safe zone", as required for `purpose: maskable`.
  */
 function rasterize(size: number, maskable = false, samples = 4): Buffer {
   const rgba = Buffer.alloc(size * size * 4);
   const scale = size / VIEWBOX;
   const radius = maskable ? 0 : CORNER_RADIUS * scale;
-  // Maskable artwork is drawn at 60% and centred, keeping it inside the safe zone.
   const glyphScale = maskable ? 0.6 : 1;
   const offset = maskable ? (VIEWBOX * (1 - glyphScale)) / 2 : 0;
   const step = 1 / samples;
@@ -75,7 +80,9 @@ function rasterize(size: number, maskable = false, samples = 4): Buffer {
   for (let y = 0; y < size; y++) {
     for (let x = 0; x < size; x++) {
       let bgHits = 0;
-      let strokeHits = 0;
+      let totalR = 0;
+      let totalG = 0;
+      let totalB = 0;
 
       for (let sy = 0; sy < samples; sy++) {
         for (let sx = 0; sx < samples; sx++) {
@@ -87,11 +94,30 @@ function rasterize(size: number, maskable = false, samples = 4): Buffer {
 
           const ux = px / scale / glyphScale - offset / glyphScale;
           const uy = py / scale / glyphScale - offset / glyphScale;
-          for (const s of STROKES) {
-            if (distanceToSegment(ux, uy, s.x1, s.y1, s.x2, s.y2) <= STROKE_WIDTH / 2) {
-              strokeHits++;
+
+          // Diagonal gradient background (#4f46e5 to #3730a3)
+          const gradT = Math.max(0, Math.min(1, (ux + uy) / 64));
+          const bgR = 0x4f * (1 - gradT) + 0x37 * gradT;
+          const bgG = 0x46 * (1 - gradT) + 0x30 * gradT;
+          const bgB = 0xe5 * (1 - gradT) + 0xa3 * gradT;
+
+          let hitCell: Cell | null = null;
+          for (const cell of CELLS) {
+            if (insideBox(ux, uy, cell.x, cell.y, cell.w, cell.h, cell.r)) {
+              hitCell = cell;
               break;
             }
+          }
+
+          if (hitCell) {
+            const ca = hitCell.color.a;
+            totalR += hitCell.color.r * ca + bgR * (1 - ca);
+            totalG += hitCell.color.g * ca + bgG * (1 - ca);
+            totalB += hitCell.color.b * ca + bgB * (1 - ca);
+          } else {
+            totalR += bgR;
+            totalG += bgG;
+            totalB += bgB;
           }
         }
       }
@@ -104,15 +130,12 @@ function rasterize(size: number, maskable = false, samples = 4): Buffer {
         rgba[i + 1] = 0;
         rgba[i + 2] = 0;
         rgba[i + 3] = 0;
-        continue;
+      } else {
+        rgba[i] = Math.round(totalR / total);
+        rgba[i + 1] = Math.round(totalG / total);
+        rgba[i + 2] = Math.round(totalB / total);
+        rgba[i + 3] = Math.round(alpha * 255);
       }
-
-      // Composite white strokes over the brand fill, weighted by coverage.
-      const strokeRatio = strokeHits / bgHits;
-      rgba[i] = Math.round(BRAND.r * (1 - strokeRatio) + 255 * strokeRatio);
-      rgba[i + 1] = Math.round(BRAND.g * (1 - strokeRatio) + 255 * strokeRatio);
-      rgba[i + 2] = Math.round(BRAND.b * (1 - strokeRatio) + 255 * strokeRatio);
-      rgba[i + 3] = Math.round(alpha * 255);
     }
   }
 
@@ -173,80 +196,87 @@ function encodePng(rgba: Buffer, size: number, height: number = size): Buffer {
 /**
  * A 1200x630 social card.
  *
- * Needed for two separate reasons:
- *   1. The site declared `twitter:card = summary_large_image` but shipped no
- *      og:image, so every share rendered a blank preview.
- *   2. Google's Article rich result wants an image; the guides' TechArticle
- *      markup had none, making them ineligible.
- *
- * Drawn with the same rasteriser as the icons — geometric only, no text, because
- * rasterising type would mean bundling a font engine for a decorative asset.
+ * Renders the centered brand mark with ambient background radial glow.
  */
 function rasterizeOgCard(width: number, height: number, samples = 3): Buffer {
   const rgba = Buffer.alloc(width * height * 4);
   const step = 1 / samples;
   const total = samples * samples;
 
-  // Brand palette, matching src/index.css.
   const BG = { r: 0x05, g: 0x06, b: 0x08 };
   const INDIGO = { r: 0x4f, g: 0x46, b: 0xe5 };
-  const ACCENT = { r: 0x81, g: 0x8c, b: 0xf8 };
 
-  // Logo mark, centred: a rounded square with the 3x3 grid motif.
-  const markSize = 190;
+  // Centered logo tile: 192x192
+  const markSize = 192;
   const markX = (width - markSize) / 2;
   const markY = (height - markSize) / 2 - 20;
-  const markRadius = markSize * 0.22;
-  const gridInset = markSize * 0.24;
-  const strokeHalf = markSize * 0.022;
-
-  const gridLines: { x1: number; y1: number; x2: number; y2: number }[] = [];
-  for (let i = 0; i < 3; i++) {
-    const offset = gridInset + ((markSize - gridInset * 2) / 2) * i;
-    gridLines.push({ x1: markX + offset, y1: markY + gridInset, x2: markX + offset, y2: markY + markSize - gridInset });
-    gridLines.push({ x1: markX + gridInset, y1: markY + offset, x2: markX + markSize - gridInset, y2: markY + offset });
-  }
+  const markRadius = (markSize / VIEWBOX) * CORNER_RADIUS;
+  const scale = markSize / VIEWBOX;
 
   for (let y = 0; y < height; y++) {
     for (let x = 0; x < width; x++) {
       let markHits = 0;
-      let strokeHits = 0;
+      let totalMarkR = 0;
+      let totalMarkG = 0;
+      let totalMarkB = 0;
 
       for (let sy = 0; sy < samples; sy++) {
         for (let sx = 0; sx < samples; sx++) {
           const px = x + (sx + 0.5) * step;
           const py = y + (sy + 0.5) * step;
 
-          if (!insideRoundedRect(px - markX, py - markY, markSize, markRadius)) continue;
+          const localX = px - markX;
+          const localY = py - markY;
+
+          if (!insideRoundedRect(localX, localY, markSize, markRadius)) continue;
           markHits++;
 
-          for (const l of gridLines) {
-            if (distanceToSegment(px, py, l.x1, l.y1, l.x2, l.y2) <= strokeHalf) {
-              strokeHits++;
+          const ux = localX / scale;
+          const uy = localY / scale;
+
+          const gradT = Math.max(0, Math.min(1, (ux + uy) / 64));
+          const bgR = 0x4f * (1 - gradT) + 0x37 * gradT;
+          const bgG = 0x46 * (1 - gradT) + 0x30 * gradT;
+          const bgB = 0xe5 * (1 - gradT) + 0xa3 * gradT;
+
+          let hitCell: Cell | null = null;
+          for (const cell of CELLS) {
+            if (insideBox(ux, uy, cell.x, cell.y, cell.w, cell.h, cell.r)) {
+              hitCell = cell;
               break;
             }
+          }
+
+          if (hitCell) {
+            const ca = hitCell.color.a;
+            totalMarkR += hitCell.color.r * ca + bgR * (1 - ca);
+            totalMarkG += hitCell.color.g * ca + bgG * (1 - ca);
+            totalMarkB += hitCell.color.b * ca + bgB * (1 - ca);
+          } else {
+            totalMarkR += bgR;
+            totalMarkG += bgG;
+            totalMarkB += bgB;
           }
         }
       }
 
       const i = (y * width + x) * 4;
 
-      // Subtle radial lift behind the mark so the card is not flat black.
+      // Radial background glow
       const dx = (x - width / 2) / (width / 2);
       const dy = (y - height / 2) / (height / 2);
       const dist = Math.min(1, Math.sqrt(dx * dx + dy * dy));
-      const lift = (1 - dist) * 0.16;
+      const lift = (1 - dist) * 0.18;
 
       let r = BG.r + (INDIGO.r - BG.r) * lift;
       let g = BG.g + (INDIGO.g - BG.g) * lift;
       let b = BG.b + (INDIGO.b - BG.b) * lift;
 
       if (markHits > 0) {
-        const ratio = strokeHits / markHits;
         const t = markHits / total;
-        const mr = INDIGO.r * (1 - ratio) + ACCENT.r * ratio;
-        const mg = INDIGO.g * (1 - ratio) + ACCENT.g * ratio;
-        const mb = INDIGO.b * (1 - ratio) + ACCENT.b * ratio;
+        const mr = totalMarkR / markHits;
+        const mg = totalMarkG / markHits;
+        const mb = totalMarkB / markHits;
         r = r * (1 - t) + mr * t;
         g = g * (1 - t) + mg * t;
         b = b * (1 - t) + mb * t;
