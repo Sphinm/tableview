@@ -13,9 +13,7 @@ import {
   Bookmark,
   Wallet,
   CheckCircle2,
-  AlertCircle,
-  Scale,
-  Receipt
+  Scale
 } from 'lucide-react';
 import {
   type MortgageInputs,
@@ -923,11 +921,11 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
           </div>
 
           {/* Focused Analysis Tabs - High Contrast Segmented Control */}
-          <div className="flex items-center p-1 bg-white border border-slate-300 rounded-xl shadow-xs gap-1">
+          <div className="flex items-center p-1 bg-white border border-slate-300 rounded-xl shadow-xs gap-1 overflow-x-auto">
             <button
               type="button"
               onClick={() => setActiveAnalysisTab('breakdown')}
-              className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`py-2 px-2.5 sm:px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 sm:flex-1 ${
                 activeAnalysisTab === 'breakdown'
                   ? 'bg-slate-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
@@ -938,20 +936,44 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             </button>
             <button
               type="button"
+              onClick={() => setActiveAnalysisTab('cashToClose')}
+              className={`py-2 px-2.5 sm:px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 sm:flex-1 ${
+                activeAnalysisTab === 'cashToClose'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+              }`}
+            >
+              <Wallet className="size-3.5 text-emerald-500" />
+              <span>Cash to Close</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveAnalysisTab('dti')}
+              className={`py-2 px-2.5 sm:px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 sm:flex-1 ${
+                activeAnalysisTab === 'dti'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
+              }`}
+            >
+              <Scale className="size-3.5 text-blue-500" />
+              <span>DTI & Qualify</span>
+            </button>
+            <button
+              type="button"
               onClick={() => setActiveAnalysisTab('payoff')}
-              className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`py-2 px-2.5 sm:px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 sm:flex-1 ${
                 activeAnalysisTab === 'payoff'
                   ? 'bg-slate-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
               }`}
             >
-              <Sparkles className="size-3.5 text-emerald-500" />
+              <Sparkles className="size-3.5 text-amber-400" />
               <span>Payoff Simulator</span>
             </button>
             <button
               type="button"
               onClick={() => setActiveAnalysisTab('schedule')}
-              className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+              className={`py-2 px-2.5 sm:px-3 rounded-lg text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 shrink-0 sm:flex-1 ${
                 activeAnalysisTab === 'schedule'
                   ? 'bg-slate-900 text-white shadow-xs'
                   : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/70'
@@ -1040,6 +1062,247 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                   <span className="text-slate-500 text-[11px] block">Total Payments</span>
                   <span className="text-sm font-bold text-slate-900 font-mono">{fmt(summary.totalOfAllPayments)}</span>
                 </div>
+              </div>
+            </div>
+          )}
+
+          {/* Tab: Cash to Close Breakdown */}
+          {activeAnalysisTab === 'cashToClose' && (
+            <div className="bg-white border border-slate-300/90 rounded-2xl p-5 sm:p-6 space-y-5 shadow-xs animate-in fade-in-50 duration-200">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div className="flex items-center gap-2">
+                  <Wallet className="size-4 text-emerald-600" />
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Estimated Cash to Close Breakdown
+                  </h3>
+                </div>
+                <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-emerald-50 border border-emerald-200 text-emerald-700">
+                  Due on Settlement Day
+                </span>
+              </div>
+
+              {/* Top Banner with Total Required */}
+              <div className="p-4 rounded-xl bg-gradient-to-br from-slate-900 to-slate-800 text-white shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <span className="text-xs text-slate-300 uppercase tracking-wider font-semibold block">Total Estimated Cash to Close</span>
+                  <div className="text-2xl sm:text-3xl font-black font-mono text-emerald-400 mt-0.5">
+                    {fmtInt(cashToClose.totalCashToClose)}
+                  </div>
+                  <p className="text-[11px] text-slate-300 mt-1">
+                    Down Payment ({fmtInt(cashToClose.downPayment)}) + Closing Costs & Prepaids ({fmtInt(cashToClose.totalClosingCosts)})
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-2 self-start sm:self-auto bg-slate-800/80 p-2 rounded-lg border border-slate-700 text-xs">
+                  <label htmlFor="closing-pct" className="text-slate-300 font-medium">Closing Cost Est:</label>
+                  <select
+                    id="closing-pct"
+                    value={closingCostPercent}
+                    onChange={(e) => setClosingCostPercent(Number(e.target.value))}
+                    className="bg-slate-900 text-white font-mono font-bold px-2 py-1 rounded border border-slate-600 text-xs outline-none cursor-pointer"
+                  >
+                    <option value={2.0}>2.0% (Low Cost)</option>
+                    <option value={2.5}>2.5% (Competitive)</option>
+                    <option value={3.0}>3.0% (National Avg)</option>
+                    <option value={3.5}>3.5% (High Escrow)</option>
+                    <option value={4.0}>4.0% (Conservative)</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Itemized Table */}
+              <div className="border border-slate-200 rounded-xl overflow-hidden">
+                <div className="bg-slate-50 px-4 py-2.5 border-b border-slate-200 text-xs font-bold text-slate-700 flex justify-between">
+                  <span>Itemized Closing Expense</span>
+                  <span>Estimated Amount</span>
+                </div>
+                <div className="divide-y divide-slate-100 text-xs">
+                  <div className="px-4 py-3 flex justify-between items-center hover:bg-slate-50/60">
+                    <div>
+                      <span className="font-semibold text-slate-900 block">Down Payment</span>
+                      <span className="text-[11px] text-slate-500">Your upfront equity investment ({summary.downPaymentPercent.toFixed(1)}%)</span>
+                    </div>
+                    <span className="font-mono font-bold text-slate-900">{fmtInt(cashToClose.downPayment)}</span>
+                  </div>
+
+                  <div className="px-4 py-3 flex justify-between items-center hover:bg-slate-50/60">
+                    <div>
+                      <span className="font-semibold text-slate-900 block">Lender Origination & Processing</span>
+                      <span className="text-[11px] text-slate-500">Underwriting, processing, credit report, application fee</span>
+                    </div>
+                    <span className="font-mono text-slate-800 font-medium">{fmt(cashToClose.lenderFees)}</span>
+                  </div>
+
+                  <div className="px-4 py-3 flex justify-between items-center hover:bg-slate-50/60">
+                    <div>
+                      <span className="font-semibold text-slate-900 block">Title & Settlement Fees</span>
+                      <span className="text-[11px] text-slate-500">Lender title insurance policy, escrow/closing attorney, title search</span>
+                    </div>
+                    <span className="font-mono text-slate-800 font-medium">{fmt(cashToClose.titleAndEscrow)}</span>
+                  </div>
+
+                  <div className="px-4 py-3 flex justify-between items-center hover:bg-slate-50/60">
+                    <div>
+                      <span className="font-semibold text-slate-900 block">Prepaids & Escrow Reserves</span>
+                      <span className="text-[11px] text-slate-500">Prepaid daily interest + 3 to 6 months homeowners insurance & property tax buffer</span>
+                    </div>
+                    <span className="font-mono text-slate-800 font-medium">{fmt(cashToClose.prepaidsAndEscrow)}</span>
+                  </div>
+
+                  <div className="px-4 py-3 flex justify-between items-center hover:bg-slate-50/60">
+                    <div>
+                      <span className="font-semibold text-slate-900 block">Third-Party Appraisals & Inspections</span>
+                      <span className="text-[11px] text-slate-500">Licensed residential appraisal, pest/radon inspections, flood certification</span>
+                    </div>
+                    <span className="font-mono text-slate-800 font-medium">{fmt(cashToClose.thirdPartyServices)}</span>
+                  </div>
+
+                  <div className="px-4 py-3 flex justify-between items-center hover:bg-slate-50/60">
+                    <div>
+                      <span className="font-semibold text-slate-900 block">Government Recording & Transfer Taxes</span>
+                      <span className="text-[11px] text-slate-500">County deed and mortgage recording fees, local transfer stamps</span>
+                    </div>
+                    <span className="font-mono text-slate-800 font-medium">{fmt(cashToClose.governmentFees)}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-3.5 bg-blue-50/70 border border-blue-200 rounded-xl text-xs text-blue-900 space-y-1">
+                <span className="font-bold flex items-center gap-1.5 text-blue-950">
+                  <CheckCircle2 className="size-4 text-blue-600" />
+                  Borrower Tip: Closing Day Wire
+                </span>
+                <p className="text-[11px] text-blue-800 leading-relaxed">
+                  Lenders will issue a formal Closing Disclosure (CD) at least 3 business days before settlement showing the exact penny-accurate cash required. In the US, closing funds must typically be sent via wire transfer or cashier's check.
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Tab: DTI Affordability & Qualification Check */}
+          {activeAnalysisTab === 'dti' && (
+            <div className="bg-white border border-slate-300/90 rounded-2xl p-5 sm:p-6 space-y-5 shadow-xs animate-in fade-in-50 duration-200">
+              <div className="flex items-center justify-between border-b border-slate-200 pb-3">
+                <div className="flex items-center gap-2">
+                  <Scale className="size-4 text-blue-600" />
+                  <h3 className="text-sm font-bold text-slate-900">
+                    Debt-to-Income (DTI) Qualification Check
+                  </h3>
+                </div>
+                <span className={`text-[11px] font-bold px-2 py-0.5 rounded border ${
+                  dtiAnalysis.isQualifiedMortgage
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-rose-50 text-rose-700 border-rose-200'
+                }`}>
+                  {dtiAnalysis.isQualifiedMortgage ? 'QM Conforming Qualified' : 'Exceeds QM 43% Cap'}
+                </span>
+              </div>
+
+              {/* Income and Debts Quick Inputs */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Gross Annual Household Income ($)
+                  </label>
+                  <CurrencyInput
+                    value={grossAnnualIncome}
+                    onChange={setGrossAnnualIncome}
+                    className="py-2 text-xs font-mono"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-1 block">
+                    Pre-tax income = {fmtInt(dtiAnalysis.monthlyGrossIncome)}/mo
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                    Monthly Debt Obligations ($/mo)
+                  </label>
+                  <CurrencyInput
+                    value={monthlyOtherDebts}
+                    onChange={setMonthlyOtherDebts}
+                    className="py-2 text-xs font-mono"
+                  />
+                  <span className="text-[10px] text-slate-500 mt-1 block">
+                    Auto loans, student loans, credit card min. payments
+                  </span>
+                </div>
+              </div>
+
+              {/* Front-End & Back-End DTI Meters */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {/* Front-End */}
+                <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-slate-700">Front-End DTI (Housing)</span>
+                    <span className="font-mono font-bold text-slate-900 text-base">{dtiAnalysis.frontEndDti}%</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        dtiAnalysis.frontEndStatus === 'ideal'
+                          ? 'bg-emerald-500'
+                          : dtiAnalysis.frontEndStatus === 'acceptable'
+                          ? 'bg-amber-500'
+                          : 'bg-rose-500'
+                      }`}
+                      style={{ width: `${Math.min(100, (dtiAnalysis.frontEndDti / 50) * 100)}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+                    <span>Target: &le; 28%</span>
+                    <span className={`font-semibold ${
+                      dtiAnalysis.frontEndStatus === 'ideal' ? 'text-emerald-700' : 'text-slate-700'
+                    }`}>
+                      {dtiAnalysis.frontEndStatus === 'ideal' ? 'Ideal (≤ 28%)' : dtiAnalysis.frontEndStatus === 'acceptable' ? 'Acceptable' : 'High (> 36%)'}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 pt-1 leading-tight">
+                    Housing payment ({fmt(summary.totalMonthlyPayment)}) divided by gross monthly income ({fmtInt(dtiAnalysis.monthlyGrossIncome)}).
+                  </p>
+                </div>
+
+                {/* Back-End */}
+                <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="font-bold text-slate-700">Back-End DTI (Total Debt)</span>
+                    <span className="font-mono font-bold text-slate-900 text-base">{dtiAnalysis.backEndDti}%</span>
+                  </div>
+                  <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all ${
+                        dtiAnalysis.backEndStatus === 'ideal'
+                          ? 'bg-emerald-500'
+                          : dtiAnalysis.backEndStatus === 'acceptable'
+                          ? 'bg-amber-500'
+                          : 'bg-rose-500'
+                      }`}
+                      style={{ width: `${Math.min(100, (dtiAnalysis.backEndDti / 60) * 100)}%` }}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+                    <span>QM Guideline: &le; 43%</span>
+                    <span className={`font-semibold ${
+                      dtiAnalysis.backEndStatus === 'ideal' ? 'text-emerald-700' : dtiAnalysis.backEndStatus === 'acceptable' ? 'text-amber-700' : 'text-rose-700'
+                    }`}>
+                      {dtiAnalysis.backEndStatus === 'ideal' ? 'Conservative' : dtiAnalysis.backEndStatus === 'acceptable' ? 'Conforming QM Cap' : 'High (> 43%)'}
+                    </span>
+                  </div>
+                  <p className="text-[10px] text-slate-500 pt-1 leading-tight">
+                    Housing + debts ({fmt(summary.totalMonthlyPayment + monthlyOtherDebts)}) divided by gross monthly income.
+                  </p>
+                </div>
+              </div>
+
+              {/* Max Recommended Payment Callout */}
+              <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
+                <div>
+                  <span className="text-slate-600 block">Max Recommended Monthly Housing at 43% QM Cap:</span>
+                  <span className="text-[11px] text-slate-500">Assuming current ${monthlyOtherDebts.toLocaleString()}/mo debt load</span>
+                </div>
+                <span className="text-base font-bold font-mono text-slate-900">
+                  {fmtInt(dtiAnalysis.maxSuggestedHousingPayment)}/mo
+                </span>
               </div>
             </div>
           )}

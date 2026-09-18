@@ -210,6 +210,12 @@ export const LoanComparisonCalculator = () => {
       ['Total Lifetime Interest Paid', `$${comparison.loanA.totalInterestPaid.toLocaleString()}`, `$${comparison.loanB.totalInterestPaid.toLocaleString()}`, `$${comparison.totalInterestDiff.toLocaleString()}`],
       ['Total Lifetime Loan Cost', `$${comparison.loanA.totalLoanCost.toLocaleString()}`, `$${comparison.loanB.totalLoanCost.toLocaleString()}`, `$${comparison.totalCostDiff.toLocaleString()}`],
       [],
+      ['CFPB Loan Estimate (LE) Benchmarks', '', '', ''],
+      ['In 5 Years: Total Payments', `$${comparison.loanA.in5YearsTotalPaid.toLocaleString()}`, `$${comparison.loanB.in5YearsTotalPaid.toLocaleString()}`, `$${(comparison.loanA.in5YearsTotalPaid - comparison.loanB.in5YearsTotalPaid).toLocaleString()}`],
+      ['In 5 Years: Principal Paid Off (Equity)', `$${comparison.loanA.in5YearsPrincipalPaid.toLocaleString()}`, `$${comparison.loanB.in5YearsPrincipalPaid.toLocaleString()}`, `$${(comparison.loanA.in5YearsPrincipalPaid - comparison.loanB.in5YearsPrincipalPaid).toLocaleString()}`],
+      ['In 5 Years: Net Borrowing Cost', `$${comparison.loanA.in5YearsNetCost.toLocaleString()}`, `$${comparison.loanB.in5YearsNetCost.toLocaleString()}`, `$${comparison.in5YearsNetCostDiff.toLocaleString()}`],
+      ['Total Interest Percentage (TIP)', `${comparison.loanA.totalInterestPercentage}%`, `${comparison.loanB.totalInterestPercentage}%`, `${(comparison.loanA.totalInterestPercentage - comparison.loanB.totalInterestPercentage).toFixed(2)}%`],
+      [],
       ['Decision Recommendation', comparison.recommendation.headline],
       ['Analysis Notes', comparison.recommendation.description]
     ];
@@ -321,7 +327,7 @@ export const LoanComparisonCalculator = () => {
           </div>
 
           {/* Quick Stats Pill */}
-          <div className="grid grid-cols-2 gap-3 shrink-0 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 shrink-0 bg-white p-4 rounded-xl border border-slate-200 shadow-xs">
             <div>
               <span className="text-[11px] text-slate-500 block font-medium">Monthly Diff</span>
               <span className={`text-base font-bold font-mono ${
@@ -335,9 +341,17 @@ export const LoanComparisonCalculator = () => {
               </span>
             </div>
             <div>
-              <span className="text-[11px] text-slate-500 block font-medium">Interest Saved</span>
+              <span className="text-[11px] text-slate-500 block font-medium">5-Yr Net Savings</span>
+              <span className={`text-base font-bold font-mono ${
+                comparison.in5YearsNetCostDiff !== 0 ? 'text-emerald-600' : 'text-slate-800'
+              }`}>
+                ${Math.abs(comparison.in5YearsNetCostDiff).toLocaleString()}
+              </span>
+            </div>
+            <div className="col-span-2 sm:col-span-1">
+              <span className="text-[11px] text-slate-500 block font-medium">Lifetime Cost Saved</span>
               <span className="text-base font-bold font-mono text-emerald-600">
-                ${Math.abs(comparison.totalInterestDiff).toLocaleString()}
+                ${Math.abs(comparison.totalCostDiff).toLocaleString()}
               </span>
             </div>
           </div>
@@ -672,6 +686,67 @@ export const LoanComparisonCalculator = () => {
                 <td className="p-4 font-mono text-emerald-700">${comparison.loanB.totalLoanCost.toLocaleString()}</td>
                 <td className="p-4 font-mono text-right text-emerald-600 font-extrabold">
                   ${Math.abs(comparison.totalCostDiff).toLocaleString()} {comparison.totalCostDiff > 0 ? 'Savings on B' : 'Savings on A'}
+                </td>
+              </tr>
+
+              {/* CFPB Loan Estimate (LE) Page 3 Benchmarks */}
+              <tr className="bg-slate-100/90 border-t-2 border-slate-300">
+                <td colSpan={4} className="p-3 font-bold text-slate-800 text-[11px] uppercase tracking-wider">
+                  CFPB Loan Estimate (LE) Page 3 Benchmarks (5-Year Horizon & TIP)
+                </td>
+              </tr>
+              <tr className="hover:bg-slate-50/80 transition-colors">
+                <td className="p-4 font-medium text-slate-900">
+                  <span>In 5 Years: Total Payments Made</span>
+                  <span className="text-[10px] text-slate-500 block">Total P&I payments made over the first 60 months</span>
+                </td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.in5YearsTotalPaid.toLocaleString()}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.in5YearsTotalPaid.toLocaleString()}</td>
+                <td className="p-4 font-mono text-right text-slate-600">
+                  {comparison.loanA.in5YearsTotalPaid !== comparison.loanB.in5YearsTotalPaid
+                    ? `$${Math.abs(comparison.loanA.in5YearsTotalPaid - comparison.loanB.in5YearsTotalPaid).toLocaleString()} ${comparison.loanA.in5YearsTotalPaid > comparison.loanB.in5YearsTotalPaid ? 'less with B' : 'less with A'}`
+                    : 'Equal'}
+                </td>
+              </tr>
+              <tr className="hover:bg-slate-50/80 transition-colors">
+                <td className="p-4 font-medium text-slate-900">
+                  <span>In 5 Years: Principal Paid Off (Equity Built)</span>
+                  <span className="text-[10px] text-slate-500 block">Debt eliminated and converted to home equity</span>
+                </td>
+                <td className="p-4 font-mono font-semibold text-indigo-700">${comparison.loanA.in5YearsPrincipalPaid.toLocaleString()}</td>
+                <td className="p-4 font-mono font-semibold text-emerald-700">${comparison.loanB.in5YearsPrincipalPaid.toLocaleString()}</td>
+                <td className="p-4 font-mono text-right font-semibold text-emerald-600">
+                  ${Math.abs(comparison.loanA.in5YearsPrincipalPaid - comparison.loanB.in5YearsPrincipalPaid).toLocaleString()} {comparison.loanB.in5YearsPrincipalPaid > comparison.loanA.in5YearsPrincipalPaid ? 'more equity with B' : 'more equity with A'}
+                </td>
+              </tr>
+              <tr className="hover:bg-slate-50/80 transition-colors">
+                <td className="p-4 font-medium text-slate-900">
+                  <span>In 5 Years: Net Cost of Borrowing</span>
+                  <span className="text-[10px] text-slate-500 block">Interest + Upfront Fees minus Equity Built</span>
+                </td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.in5YearsNetCost.toLocaleString()}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.in5YearsNetCost.toLocaleString()}</td>
+                <td className="p-4 font-mono text-right font-bold text-emerald-600">
+                  ${Math.abs(comparison.in5YearsNetCostDiff).toLocaleString()} {comparison.in5YearsNetCostDiff > 0 ? 'lower net cost on B' : 'lower net cost on A'}
+                </td>
+              </tr>
+              <tr className="hover:bg-slate-50/80 transition-colors">
+                <td className="p-4 font-medium text-slate-900">5-Year Ending Balance (Month 60)</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.in5YearsEndingBalance.toLocaleString()}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.in5YearsEndingBalance.toLocaleString()}</td>
+                <td className="p-4 font-mono text-right text-slate-600">
+                  ${Math.abs(comparison.loanA.in5YearsEndingBalance - comparison.loanB.in5YearsEndingBalance).toLocaleString()} diff
+                </td>
+              </tr>
+              <tr className="hover:bg-slate-50/80 transition-colors">
+                <td className="p-4 font-medium text-slate-900">
+                  <span>Total Interest Percentage (TIP)</span>
+                  <span className="text-[10px] text-slate-500 block">CFPB federal benchmark: total interest as % of loan amount</span>
+                </td>
+                <td className="p-4 font-mono text-slate-800 font-semibold">{comparison.loanA.totalInterestPercentage}%</td>
+                <td className="p-4 font-mono text-slate-800 font-semibold">{comparison.loanB.totalInterestPercentage}%</td>
+                <td className="p-4 font-mono text-right text-slate-600 font-medium">
+                  {Math.abs(comparison.loanA.totalInterestPercentage - comparison.loanB.totalInterestPercentage).toFixed(2)}% spread
                 </td>
               </tr>
             </tbody>

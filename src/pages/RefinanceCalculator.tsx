@@ -670,8 +670,50 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                   onChange={setCashOutAmount}
                   className="py-2 text-xs font-mono"
                 />
+                {cashOutAmount > 0 && (
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 mt-1">
+                    <span>
+                      Resulting LTV:{' '}
+                      <strong className={`font-mono ${summary.isExceedingCashOutLtv ? 'text-rose-600 font-bold' : 'text-slate-800'}`}>
+                        {summary.cashOutLtv}%
+                      </strong>{' '}
+                      (Conventional Max: 80%)
+                    </span>
+                    {summary.maxAllowedCashOut > 0 && summary.isExceedingCashOutLtv && (
+                      <button
+                        type="button"
+                        onClick={() => setCashOutAmount(summary.maxAllowedCashOut)}
+                        className="text-indigo-600 hover:text-indigo-800 font-medium cursor-pointer underline text-[10px]"
+                      >
+                        Cap to {fmt(summary.maxAllowedCashOut)}
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
+
+            {/* 80% LTV Guardrail Alert for Cash-Out Refinance */}
+            {summary.isExceedingCashOutLtv && (
+              <div className="p-3.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 space-y-1.5 shadow-2xs">
+                <div className="font-bold flex items-center gap-1.5 text-amber-950">
+                  <AlertTriangle className="size-4 text-amber-600 shrink-0" />
+                  <span>Conventional 80.0% Cash-Out LTV Limit Exceeded ({summary.cashOutLtv}% &gt; 80.0%)</span>
+                </div>
+                <p className="text-[11px] text-amber-800 leading-relaxed">
+                  Fannie Mae and Freddie Mac cap conventional cash-out refinances at an <strong>80.0% Loan-to-Value (LTV)</strong> ceiling. Your new proposed loan balance is ${Math.round(summary.newLoanAmount).toLocaleString()}. To qualify conventionally, limit cash-out to <strong>{fmt(summary.maxAllowedCashOut)}</strong>, or consider an FHA cash-out refinance (up to 85% LTV with upfront + monthly MIP).
+                </p>
+                <div className="pt-0.5">
+                  <button
+                    type="button"
+                    onClick={() => setCashOutAmount(summary.maxAllowedCashOut)}
+                    className="px-2.5 py-1 rounded-lg bg-amber-700 hover:bg-amber-800 text-white font-bold text-[11px] cursor-pointer shadow-2xs transition-colors"
+                  >
+                    Set to Max 80% Allowed ({fmt(summary.maxAllowedCashOut)})
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* New Loan Output Pill */}
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
