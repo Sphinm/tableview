@@ -7,8 +7,7 @@ import {
   User,
   LogOut,
   ChevronDown,
-  Sparkles,
-  ShieldCheck
+  Sparkles
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 import { useAuth } from '../lib/useAuth';
@@ -218,16 +217,6 @@ export const TopBar = ({ currentPath, onOpenMobileMenu }: TopBarProps) => {
           <span>100% Client-Side</span>
         </div>
 
-        {/* Bug report */}
-        <a
-          href={getBugReportMailto()}
-          className="text-slate-500 hover:text-slate-800 px-2 py-1 rounded-md hover:bg-slate-100 transition-colors flex items-center gap-1.5 text-xs font-medium"
-          title="Report Bug / Feedback"
-        >
-          <Mail className="size-3.5" />
-          <span className="hidden lg:inline">Feedback</span>
-        </a>
-
         {/* User profile dropdown or Sign in button */}
         {user ? (
           <div className="relative" ref={dropdownRef}>
@@ -302,22 +291,16 @@ export const TopBar = ({ currentPath, onOpenMobileMenu }: TopBarProps) => {
                   </div>
                 </div>
 
-                {/* Quick Actions & Privacy Info */}
-                <div className="my-1.5 border-t border-slate-100 px-1 py-1 space-y-0.5">
+                {/* Feedback */}
+                <div className="my-1.5 border-t border-slate-100 px-1 py-1">
                   <a
                     href={getBugReportMailto()}
                     onClick={() => setIsDropdownOpen(false)}
                     className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-slate-600 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition-colors"
                   >
                     <Mail className="size-3.5 text-slate-400" />
-                    <span>Send Feedback / Support</span>
+                    <span>Feedback</span>
                   </a>
-                  <div className="flex items-center gap-2 px-2.5 py-1.5 text-xs text-slate-500 rounded-lg bg-slate-50/50">
-                    <ShieldCheck className="size-3.5 text-emerald-600 shrink-0" />
-                    <span className="text-[11px] text-slate-500">
-                      Local sandbox · Zero telemetry
-                    </span>
-                  </div>
                 </div>
 
                 {/* Sign Out Button */}
