@@ -54,7 +54,7 @@ export const DropZone = ({
       <div className="text-center max-w-3xl mx-auto mb-8">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-slate-200 text-slate-800 text-xs font-semibold mb-4 shadow-2xs">
           <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span>{toolConfig?.badge || 'DuckDB-Wasm · 100% Client-Side Privacy'}</span>
+          <span>{toolConfig?.badge || 'DuckDB-Wasm · In-Browser Privacy'}</span>
         </div>
 
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-slate-900 tracking-tight leading-[1.15] mb-3">

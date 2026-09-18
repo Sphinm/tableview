@@ -11,7 +11,7 @@ export const CompareSection = () => {
     },
     {
       feature: 'Data Privacy & Security',
-      tableview: { text: '100% Local RAM · Zero bytes uploaded', highlight: true, icon: Check },
+      tableview: { text: 'In-Browser Memory · Zero bytes uploaded', highlight: true, icon: Check },
       pandas: { text: 'Local on device', icon: Check },
       desktop: { text: 'Local on device', icon: Check },
       cloud: { text: 'Critical Risk · Uploaded to 3rd party', highlightBad: true, icon: ShieldAlert }

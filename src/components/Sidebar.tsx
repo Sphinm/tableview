@@ -592,39 +592,33 @@ export const Sidebar = ({
         })}
       </div>
 
-      {/* 4. Bottom Privacy Badge & Legal Links */}
+      {/* 4. Bottom Legal Links */}
       <div className="p-2.5 border-t border-slate-200/80 shrink-0 bg-slate-50/50">
         {!isCollapsed ? (
-          <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
-            <span className="flex items-center gap-1.5 font-medium text-emerald-600">
-              <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              100% Local
-            </span>
-            <div className="flex items-center gap-1.5 text-[10px]">
-              <a
-                href="/about"
-                onClick={(e) => handleNav(e, '/about')}
-                className="hover:text-slate-600 hover:underline"
-              >
-                About
-              </a>
-              <span>·</span>
-              <a
-                href="/privacy"
-                onClick={(e) => handleNav(e, '/privacy')}
-                className="hover:text-slate-600 hover:underline"
-              >
-                Privacy
-              </a>
-              <span>·</span>
-              <button
-                type="button"
-                onClick={openCookieSettings}
-                className="hover:text-slate-600 hover:underline cursor-pointer"
-              >
-                Cookies
-              </button>
-            </div>
+          <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 px-1">
+            <a
+              href="/about"
+              onClick={(e) => handleNav(e, '/about')}
+              className="hover:text-slate-600 hover:underline"
+            >
+              About
+            </a>
+            <span>·</span>
+            <a
+              href="/privacy"
+              onClick={(e) => handleNav(e, '/privacy')}
+              className="hover:text-slate-600 hover:underline"
+            >
+              Privacy
+            </a>
+            <span>·</span>
+            <button
+              type="button"
+              onClick={openCookieSettings}
+              className="hover:text-slate-600 hover:underline cursor-pointer"
+            >
+              Cookies
+            </button>
           </div>
         ) : (
           <div className="flex flex-col items-center">

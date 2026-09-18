@@ -173,7 +173,7 @@ export const FinanceCalculatorHub = () => {
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700">
             <ShieldCheck className="size-3.5 text-emerald-600" />
-            <span>100% Client-Side Financial Planning · Zero Tracking or Data Storage</span>
+            <span>Private Financial Planning · Zero Tracking or Data Storage</span>
           </div>
 
           <button

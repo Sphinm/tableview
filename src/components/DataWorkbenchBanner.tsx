@@ -58,7 +58,7 @@ export const DataWorkbenchBanner = () => {
 
           <div className="flex items-center gap-1.5 text-xs text-slate-800 font-semibold">
             <ShieldCheck className="size-3.5 text-emerald-600" />
-            <span>0 Bytes Uploaded · 100% Client-Side</span>
+            <span>0 Bytes Uploaded · In-Browser Processing</span>
           </div>
         </div>
       </div>

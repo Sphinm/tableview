@@ -122,7 +122,7 @@ export const HeroSection = ({
         <div className="flex flex-wrap items-center justify-center gap-5 text-xs text-slate-400">
           <div className="flex items-center gap-1.5 text-emerald-400 font-medium">
             <ShieldCheck className="size-4 shrink-0" />
-            <span>0 Bytes Uploaded (100% Local RAM)</span>
+            <span>0 Bytes Uploaded (In-Browser Memory)</span>
           </div>
           <div className="hidden sm:inline-block text-slate-700">·</div>
           <div className="flex items-center gap-1.5 text-indigo-300 font-medium">

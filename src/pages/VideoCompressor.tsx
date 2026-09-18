@@ -727,7 +727,7 @@ export function VideoCompressor() {
             <div className="size-10 rounded-xl bg-indigo-50 border border-indigo-100 text-indigo-600 flex items-center justify-center">
               <Shield className="size-5" />
             </div>
-            <h3 className="font-bold text-sm text-slate-900">100% Client-Side Privacy</h3>
+            <h3 className="font-bold text-sm text-slate-900">In-Browser Privacy</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
               Never upload your private videos to a remote server. FFmpeg compiles to WebAssembly and processes everything in your browser RAM.
             </p>

@@ -45,7 +45,7 @@ export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosu
             },
             {
               icon: Lock,
-              title: '100% Client-Side Privacy Guarantee',
+              title: 'In-Browser Privacy Guarantee',
               desc: 'No personal credit scores, home values, or mortgage balances are ever sent to remote servers or shared with loan brokers.'
             }
           ]
@@ -138,7 +138,7 @@ export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosu
             },
             {
               icon: Lock,
-              title: '100% Client-Side Privacy Guarantee',
+              title: 'In-Browser Privacy Guarantee',
               desc: 'All loan figures, proposed interest rates, and financial terms are processed solely in local memory with zero remote transmission.'
             }
           ]
@@ -182,7 +182,7 @@ export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosu
             },
             {
               icon: Lock,
-              title: '100% Client-Side Privacy Guarantee',
+              title: 'In-Browser Privacy Guarantee',
               desc: 'No compensation figures, hourly rates, or payroll terms are ever transmitted to any server or tracked.'
             }
           ]
@@ -205,7 +205,7 @@ export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosu
             },
             {
               icon: Lock,
-              title: '100% Client-Side Privacy Guarantee',
+              title: 'In-Browser Privacy Guarantee',
               desc: 'No personal financial data, property values, or household income inputs are ever transmitted over the network.'
             }
           ]

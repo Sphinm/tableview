@@ -1243,7 +1243,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             </thead>
             <tbody className="divide-y divide-slate-100">
               <tr className="hover:bg-slate-50/80">
-                <td className="py-3 px-4 font-semibold text-slate-900">100% Client-Side Privacy</td>
+                <td className="py-3 px-4 font-semibold text-slate-900">In-Browser Privacy</td>
                 <td className="py-3 px-4 text-emerald-600 font-bold">Yes (Zero Data Egress)</td>
                 <td className="py-3 px-4 text-slate-500">No (Server-Tracked)</td>
                 <td className="py-3 px-4 text-slate-500">No (Account / Cloud Tracking)</td>
@@ -1326,7 +1326,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
           </div>
 
           <div className="space-y-2">
-            <h4 className="font-semibold text-slate-900 text-sm">100% Client-Side Privacy Guarantee</h4>
+            <h4 className="font-semibold text-slate-900 text-sm">In-Browser Privacy Guarantee</h4>
             <p>
               None of your financial inputs, loan balances, or income assumptions are ever transmitted to any remote server or tracked by third-party advertisers. All amortization mathematics and CSV exports execute exclusively in local browser WebAssembly and JavaScript memory.
             </p>

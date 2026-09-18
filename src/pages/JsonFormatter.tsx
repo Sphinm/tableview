@@ -152,11 +152,11 @@ export const JsonFormatter = () => {
         ]}
         badge={{
           icon: ShieldCheck,
-          label: '100% Client-Side · Zero Server Telemetry',
+          label: 'In-Browser · Zero Server Telemetry',
           tone: 'emerald'
         }}
         title="Online JSON Formatter & Validator"
-        description="Format, beautify, and validate JSON payloads instantly. All parsing runs 100% locally in your browser memory: safe for confidential tokens, database dumps, and internal API responses."
+        description="Format, beautify, and validate JSON payloads instantly. All parsing runs in your browser memory: safe for confidential tokens, database dumps, and internal API responses."
         actions={
           <>
             <button

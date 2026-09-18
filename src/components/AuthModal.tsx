@@ -199,7 +199,7 @@ export function AuthModal() {
           {/* Privacy Trust Guarantee Badge */}
           <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-center gap-2 text-xs text-slate-500">
             <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
-            <span>100% Client-Side Privacy: Your files never leave your device</span>
+            <span>Privacy First: Your files never leave your device</span>
           </div>
         </div>
       </div>

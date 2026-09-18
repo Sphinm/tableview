@@ -52,7 +52,7 @@ export const DataToolsWorkbench = ({
             { label: 'In-Browser Workbench' }
           ]}
           badge={{
-            label: 'DuckDB-Wasm SIMD · 100% Client-Side',
+            label: 'DuckDB-Wasm SIMD · In-Browser Processing',
             tone: 'emerald'
           }}
           title="In-Browser Data Workbench & DuckDB SQL Console"

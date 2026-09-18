@@ -62,7 +62,7 @@ export const MediaToolsHub = () => {
       <PageHeader
         badge={{
           icon: Sparkles,
-          label: 'Client-Side WebAssembly & Codecs · 100% Local',
+          label: 'Client-Side WebAssembly & Codecs · In-Browser',
           tone: 'indigo'
         }}
         title="Media Compression Studio"

@@ -27,9 +27,7 @@ export const FinancialHero = ({ onExploreClick }: FinancialHeroProps) => {
         {/* Version / Trust badge */}
         <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-xs font-semibold bg-white border border-slate-200 text-slate-800 shadow-2xs mb-4">
           <span className="size-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="font-mono text-[11px] tracking-wide uppercase text-slate-700 font-bold">100% Client-Side</span>
-          <span className="text-slate-300">|</span>
-          <span className="text-slate-600">Zero Server Uploads · Wasm Speed · Private & Free</span>
+          <span className="text-slate-700">Zero Server Uploads · Wasm Speed · Private & Free</span>
         </div>
 
         {/* Main Headline */}
@@ -88,7 +86,7 @@ export const FinancialHero = ({ onExploreClick }: FinancialHeroProps) => {
         <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6 text-xs font-semibold text-slate-700">
           <div className="flex items-center gap-1.5">
             <ShieldCheck className="size-4 text-emerald-600 shrink-0" />
-            <span>0 Bytes Uploaded · 100% Local Device</span>
+            <span>0 Bytes Uploaded · Private In-Browser Sandbox</span>
           </div>
           <span className="hidden sm:inline text-slate-300">·</span>
           <div className="flex items-center gap-1.5">

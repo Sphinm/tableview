@@ -1384,7 +1384,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   </tr>
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">Data Privacy (Zero Data Egress)</td>
-                    <td className="py-3 px-4 text-emerald-700 font-bold">100% Client-Side Private</td>
+                    <td className="py-3 px-4 text-emerald-700 font-bold">In-Browser Private</td>
                     <td className="py-3 px-4 text-slate-600">Saved to Cloud Account</td>
                     <td className="py-3 px-4 text-rose-600 font-medium">Captured for Sales Outreach</td>
                   </tr>

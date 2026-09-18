@@ -209,14 +209,8 @@ export const TopBar = ({ currentPath, onOpenMobileMenu }: TopBarProps) => {
         </nav>
       </div>
 
-      {/* Right: Privacy badge, Report bug, User profile */}
+      {/* Right: User profile */}
       <div className="flex items-center gap-2.5 shrink-0">
-        {/* Privacy badge */}
-        <div className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-          <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-          <span>100% Client-Side</span>
-        </div>
-
         {/* User profile dropdown or Sign in button */}
         {user ? (
           <div className="relative" ref={dropdownRef}>

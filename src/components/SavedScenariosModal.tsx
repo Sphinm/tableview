@@ -126,7 +126,7 @@ export function SavedScenariosModal<T>({
             </div>
             <div>
               <h3 className="text-base font-bold text-slate-900">Saved Deal Scenarios</h3>
-              <p className="text-xs text-slate-600">Stored 100% locally in your browser. Zero cloud tracking.</p>
+              <p className="text-xs text-slate-600">Stored locally in your browser. Zero cloud tracking.</p>
             </div>
           </div>
           <button

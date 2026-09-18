@@ -643,7 +643,7 @@ export const QuickModelerWidget = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-slate-600 font-medium">Server Uploads:</span>
-                    <span className="font-mono font-semibold text-slate-900">0 Bytes (100% Local)</span>
+                    <span className="font-mono font-semibold text-slate-900">0 Bytes (In-Browser)</span>
                   </div>
                 </div>
               </div>

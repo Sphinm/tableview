@@ -1419,7 +1419,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             </thead>
             <tbody className="divide-y divide-slate-200">
               <tr className="hover:bg-slate-50/80">
-                <td className="py-3 px-4 font-semibold text-slate-900">100% Client-Side Privacy</td>
+                <td className="py-3 px-4 font-semibold text-slate-900">In-Browser Privacy</td>
                 <td className="py-3 px-4 text-emerald-600 font-bold">Yes (Zero Data Egress)</td>
                 <td className="py-3 px-4 text-slate-600">No (Server-Tracked)</td>
                 <td className="py-3 px-4 text-slate-600">No (Lead Capture)</td>

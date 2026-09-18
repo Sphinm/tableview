@@ -711,7 +711,7 @@ export function ImageCompressor() {
             <div className="size-10 rounded-xl bg-purple-50 border border-purple-100 text-purple-600 flex items-center justify-center">
               <Shield className="size-5" />
             </div>
-            <h3 className="font-bold text-sm text-slate-900">100% Client-Side Memory</h3>
+            <h3 className="font-bold text-sm text-slate-900">In-Browser Memory</h3>
             <p className="text-xs text-slate-500 leading-relaxed">
               Your photos are processed purely using your browser canvas memory. Zero files are uploaded to any server.
             </p>

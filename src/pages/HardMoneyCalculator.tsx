@@ -1099,7 +1099,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <td className="py-3 px-4 text-rose-600 font-medium">Not Supported</td>
                   </tr>
                   <tr className="hover:bg-slate-50/50">
-                    <td className="py-3 px-4 font-semibold text-slate-900">100% Client-Side Privacy</td>
+                    <td className="py-3 px-4 font-semibold text-slate-900">In-Browser Privacy</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">Yes (Zero Data Egress)</td>
                     <td className="py-3 px-4 text-slate-600">Stored in Cloud Database</td>
                     <td className="py-3 px-4 text-rose-600 font-medium">Lender Sales Call List</td>

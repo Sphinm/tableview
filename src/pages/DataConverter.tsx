@@ -260,7 +260,7 @@ export const DataConverter: React.FC = () => {
           { label: 'Universal Data Converter' }
         ]}
         badge={{
-          label: 'DuckDB-Wasm · 100% Client-Side Privacy',
+          label: 'DuckDB-Wasm · In-Browser Privacy',
           tone: 'emerald'
         }}
         title="Universal In-Browser Data Converter"
