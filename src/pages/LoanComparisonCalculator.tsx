@@ -18,6 +18,7 @@ import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RelatedCalculators } from '../components/RelatedCalculators';
+import { PmmsRateTicker } from '../components/PmmsRateTicker';
 import { AdSlot } from '../components/AdSlot';
 import {
   CalculatorPresetsBar,
@@ -379,15 +380,17 @@ export const LoanComparisonCalculator = () => {
       </div>
 
       {/* Scenario Presets Bar */}
-      <CalculatorPresetsBar
-        presets={LOAN_PRESETS}
-        activeId={activePresetId}
-        onSelect={handleSelectPreset}
-        title="Scenario Presets"
-      />
+      <div className="print:hidden">
+        <CalculatorPresetsBar
+          presets={LOAN_PRESETS}
+          activeId={activePresetId}
+          onSelect={handleSelectPreset}
+          title="Scenario Presets"
+        />
+      </div>
 
       {/* Mobile Segmented Switcher */}
-      <div className="flex lg:hidden items-center p-1 bg-white border border-slate-300 rounded-xl mb-6 text-xs font-semibold sticky top-16 z-20 backdrop-blur-md shadow-sm">
+      <div className="flex lg:hidden print:hidden items-center p-1 bg-white border border-slate-300 rounded-xl mb-6 text-xs font-semibold sticky top-16 z-20 backdrop-blur-md shadow-sm">
         <button
           onClick={() => setMobileTab('both')}
           className={`flex-1 py-2 text-center rounded-lg transition-colors cursor-pointer ${mobileTab === 'both' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'}`}
@@ -412,6 +415,29 @@ export const LoanComparisonCalculator = () => {
         >
           Breakdown
         </button>
+      </div>
+
+      {/* Freddie Mac PMMS Benchmark Rate Bar */}
+      <div className="mb-6 print:hidden">
+        <PmmsRateTicker
+          onSelectRate={(rate, term) => {
+            if (term === 15) {
+              setLoanB({
+                ...loanB,
+                name: 'Option B (15-Yr Fixed)',
+                interestRate: rate,
+                termYears: 15
+              });
+            } else {
+              setLoanA({
+                ...loanA,
+                name: 'Option A (30-Yr Fixed)',
+                interestRate: rate,
+                termYears: 30
+              });
+            }
+          }}
+        />
       </div>
 
       {/* Side-by-Side Input Columns */}
@@ -443,7 +469,17 @@ export const LoanComparisonCalculator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Interest Rate (%)</label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-medium text-slate-700">Interest Rate (%)</label>
+                    <button
+                      type="button"
+                      onClick={() => setLoanA({ ...loanA, interestRate: 6.42 })}
+                      className="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer underline"
+                      title="Apply Freddie Mac PMMS 30Y Conforming Benchmark"
+                    >
+                      PMMS 6.42%
+                    </button>
+                  </div>
                   <NumericInput
                     value={loanA.interestRate}
                     onChange={(val) => setLoanA({ ...loanA, interestRate: val })}
@@ -549,7 +585,17 @@ export const LoanComparisonCalculator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Interest Rate (%)</label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-medium text-slate-700">Interest Rate (%)</label>
+                    <button
+                      type="button"
+                      onClick={() => setLoanB({ ...loanB, interestRate: 5.68 })}
+                      className="text-[10px] text-emerald-600 hover:text-emerald-800 font-semibold cursor-pointer underline"
+                      title="Apply Freddie Mac PMMS 15Y Conforming Benchmark"
+                    >
+                      PMMS 5.68%
+                    </button>
+                  </div>
                   <NumericInput
                     value={loanB.interestRate}
                     onChange={(val) => setLoanB({ ...loanB, interestRate: val })}
@@ -630,7 +676,7 @@ export const LoanComparisonCalculator = () => {
       </div>
 
       {/* Comprehensive Metric Comparison Table */}
-      <div className={`mb-14 rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs ${mobileTab === 'a' || mobileTab === 'b' ? 'hidden lg:block' : 'block'}`}>
+      <div className={`mb-14 rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs print:block ${mobileTab === 'a' || mobileTab === 'b' ? 'hidden lg:block' : 'block'}`}>
         <div className="p-5 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <h3 className="text-base font-bold text-slate-900">Side-by-Side Detailed Breakdown</h3>
           <span className="text-xs text-slate-500 font-mono">100% In-Memory Calculation</span>
@@ -754,7 +800,7 @@ export const LoanComparisonCalculator = () => {
         </div>
 
         {/* In-Browser Excel Viewer contextual link */}
-        <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600">
+        <div className="p-3.5 bg-slate-50 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-600 print:hidden">
           <span>Need to inspect or customize your exported comparison spreadsheet?</span>
           <a
             href="/excel-viewer"
@@ -768,12 +814,12 @@ export const LoanComparisonCalculator = () => {
       </div>
 
       {/* Related Calculators Cross-Sell */}
-      <div className="mb-12">
+      <div className="mb-12 print:hidden">
         <RelatedCalculators currentSlug="loan-comparison-calculator" category="real-estate" />
       </div>
 
       {/* FAQs */}
-      <div className="max-w-3xl mx-auto mb-12">
+      <div className="max-w-3xl mx-auto mb-12 print:hidden">
         <h2 className="text-xl sm:text-2xl font-bold text-slate-900 text-center mb-6">
           Loan Comparison FAQs
         </h2>
@@ -800,8 +846,10 @@ export const LoanComparisonCalculator = () => {
         </div>
       </div>
 
-      <MethodologyDisclosure type="loanComparison" />
-      <AdSlot className="mt-8" />
+      <div className="print:hidden">
+        <MethodologyDisclosure type="loanComparison" />
+        <AdSlot className="mt-8" />
+      </div>
     </div>
   );
 };

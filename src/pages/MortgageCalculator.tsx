@@ -42,6 +42,7 @@ import { getCalculatorFaqs } from '../data/calculatorFaqs';
 import { PaymentDonutChart } from '../components/PaymentDonutChart';
 import { AmortizationChart } from '../components/AmortizationChart';
 import { PrintableMortgageReport } from '../components/PrintableMortgageReport';
+import { PmmsRateTicker } from '../components/PmmsRateTicker';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CalculatorPresetsBar, PrintReportButton, PageHeader } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
@@ -557,6 +558,15 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                 </span>
               </div>
             </div>
+
+            {/* Freddie Mac PMMS Benchmark Rate Ticker */}
+            <PmmsRateTicker
+              currentRate={interestRate}
+              onSelectRate={(rate, term) => {
+                setInterestRate(rate);
+                if (term) setLoanTermYears(term);
+              }}
+            />
 
             {/* Interest Rate & Term */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -1796,6 +1806,9 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
       monthlySchedule={monthlySchedule}
       scheduleView={scheduleView}
       extraMonthlyPrincipal={extraMonthlyPrincipal}
+      cashToClose={cashToClose}
+      dtiAnalysis={dtiAnalysis}
+      ficoTier={ficoTier}
     />
   </>
   );

@@ -1453,7 +1453,7 @@ function resolvePage(url: string, canonical: string): ResolvedPage {
     const guide = GUIDES_BY_SLUG.get(slug);
     if (guide) {
       return {
-        title: `${guide.title} | TableView.dev`,
+        title: guide.metaTitle || `${guide.title} | TableView.dev`,
         description: guide.excerpt,
         canonical,
         route,

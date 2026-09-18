@@ -29,7 +29,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
   useEffect(() => {
     if (guide) {
       updatePageMeta(
-        `${guide.title} | TableView.dev`,
+        guide.metaTitle || `${guide.title} | TableView.dev`,
         guide.excerpt,
         `/guides/${guide.slug}`,
         [

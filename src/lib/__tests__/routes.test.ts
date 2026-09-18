@@ -57,7 +57,7 @@ function titleFor(canonical: string): string | undefined {
 
   if (canonical.startsWith('/guides/')) {
     const guide = guidesData.find((g) => g.slug === canonical.replace('/guides/', ''));
-    return guide ? `${guide.title} | TableView.dev` : undefined;
+    return guide ? (guide.metaTitle || `${guide.title} | TableView.dev`) : undefined;
   }
 
   const calc = CALCULATOR_META[canonical];

@@ -36,6 +36,7 @@ import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { getCalculatorFaqs } from '../data/calculatorFaqs';
 import { RefinanceBalanceChart } from '../components/RefinanceBalanceChart';
 import { PrintableRefinanceReport } from '../components/PrintableRefinanceReport';
+import { PmmsRateTicker } from '../components/PmmsRateTicker';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CurrencyInput } from '../components/CurrencyInput';
@@ -614,6 +615,15 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               </h2>
               <span className="text-xs font-mono px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">New Terms</span>
             </div>
+
+            {/* Freddie Mac PMMS Benchmark Rate Ticker */}
+            <PmmsRateTicker
+              currentRate={newInterestRate}
+              onSelectRate={(rate, term) => {
+                setNewInterestRate(rate);
+                if (term) setNewTermYears(term);
+              }}
+            />
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>

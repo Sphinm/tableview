@@ -110,6 +110,20 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
                 {inputs.rollCostsIntoLoan ? 'Financed into loan' : 'Paid out-of-pocket'}
               </td>
             </tr>
+            {(inputs.cashOutAmount ?? 0) > 0 && (
+              <tr className="bg-amber-50/50">
+                <td className="py-2 px-4 text-slate-700 font-medium">Cash-Out Amount & Resulting LTV</td>
+                <td className="py-2 px-4 text-right font-mono text-slate-400">-</td>
+                <td className="py-2 px-4 text-right font-mono font-bold text-slate-900">
+                  {fmt(inputs.cashOutAmount || 0)} ({summary.cashOutLtv}% LTV)
+                </td>
+                <td className={`py-2 px-4 text-right font-bold text-xs ${
+                  summary.isExceedingCashOutLtv ? 'text-rose-700' : 'text-emerald-700'
+                }`}>
+                  {summary.isExceedingCashOutLtv ? 'Exceeds 80% Conforming Limit' : 'Conforming Compliant (≤80% LTV)'}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

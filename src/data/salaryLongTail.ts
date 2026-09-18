@@ -19,7 +19,7 @@ export const SALARY_LONG_TAIL_PAGES: SalaryLongTailPage[] = [
     biweekly: '1,153.85',
     monthly: '2,500.00',
     title: '$30,000 a Year is How Much an Hour? ($14.42/hr Breakdown)',
-    metaTitle: '$30,000 a Year is How Much an Hour? ($14.42/hr Full Wage Breakdown) | TableView.dev',
+    metaTitle: '$30,000 a Year is How Much an Hour? | TableView',
     metaDescription:
       '$30,000 a year is $14.42 per hour for a 40-hour workweek. See full bi-weekly ($1,154), monthly ($2,500), and FLSA overtime calculations with 100% private in-browser modeling.'
   },
@@ -31,7 +31,7 @@ export const SALARY_LONG_TAIL_PAGES: SalaryLongTailPage[] = [
     biweekly: '1,538.46',
     monthly: '3,333.33',
     title: '$40,000 a Year is How Much an Hour? ($19.23/hr Breakdown)',
-    metaTitle: '$40,000 a Year is How Much an Hour? ($19.23/hr Full Wage Breakdown) | TableView.dev',
+    metaTitle: '$40,000 a Year is How Much an Hour? | TableView',
     metaDescription:
       '$40,000 a year is $19.23 per hour for a standard 2,080-hour work year. View bi-weekly ($1,538), monthly ($3,333), and 1.5x overtime ($28.85/hr) schedules.'
   },
@@ -43,7 +43,7 @@ export const SALARY_LONG_TAIL_PAGES: SalaryLongTailPage[] = [
     biweekly: '1,923.08',
     monthly: '4,166.67',
     title: '$50,000 a Year is How Much an Hour? ($24.04/hr Breakdown)',
-    metaTitle: '$50,000 a Year is How Much an Hour? ($24.04/hr Full Wage Breakdown) | TableView.dev',
+    metaTitle: '$50,000 a Year is How Much an Hour? | TableView',
     metaDescription:
       '$50,000 a year is $24.04 per hour for 40 hours per week. Calculate your daily, weekly, bi-weekly ($1,923), and monthly paycheck with interactive wage adjustments.'
   },
@@ -55,7 +55,7 @@ export const SALARY_LONG_TAIL_PAGES: SalaryLongTailPage[] = [
     biweekly: '2,307.69',
     monthly: '5,000.00',
     title: '$60,000 a Year is How Much an Hour? ($28.85/hr Breakdown)',
-    metaTitle: '$60,000 a Year is How Much an Hour? ($28.85/hr Full Wage Breakdown) | TableView.dev',
+    metaTitle: '$60,000 a Year is How Much an Hour? | TableView',
     metaDescription:
       '$60,000 a year is $28.85 per hour (2,080 annual work hours). View bi-weekly ($2,308), monthly ($5,000), and overtime calculations with instant Excel export.'
   },
@@ -67,7 +67,7 @@ export const SALARY_LONG_TAIL_PAGES: SalaryLongTailPage[] = [
     biweekly: '2,692.31',
     monthly: '5,833.33',
     title: '$70,000 a Year is How Much an Hour? ($33.65/hr Breakdown)',
-    metaTitle: '$70,000 a Year is How Much an Hour? ($33.65/hr Full Wage Breakdown) | TableView.dev',
+    metaTitle: '$70,000 a Year is How Much an Hour? | TableView',
     metaDescription:
       '$70,000 a year is $33.65 per hour based on 40 hours a week and 52 weeks a year. Inspect your exact bi-weekly ($2,692) and monthly pay with zero server uploads.'
   },
@@ -79,7 +79,7 @@ export const SALARY_LONG_TAIL_PAGES: SalaryLongTailPage[] = [
     biweekly: '2,884.62',
     monthly: '6,250.00',
     title: '$75,000 a Year is How Much an Hour? ($36.06/hr Breakdown)',
-    metaTitle: '$75,000 a Year is How Much an Hour? ($36.06/hr Full Wage Breakdown) | TableView.dev',
+    metaTitle: '$75,000 a Year is How Much an Hour? | TableView',
     metaDescription:
       '$75,000 a year equals $36.06 an hour for a 40-hour workweek. Analyze bi-weekly ($2,885), semi-monthly ($3,125), and overtime pay in client-side WebAssembly.'
   },
@@ -91,7 +91,7 @@ export const SALARY_LONG_TAIL_PAGES: SalaryLongTailPage[] = [
     biweekly: '3,076.92',
     monthly: '6,666.67',
     title: '$80,000 a Year is How Much an Hour? ($38.46/hr Breakdown)',
-    metaTitle: '$80,000 a Year is How Much an Hour? ($38.46/hr Full Wage Breakdown) | TableView.dev',
+    metaTitle: '$80,000 a Year is How Much an Hour? | TableView',
     metaDescription:
       '$80,000 a year translates to $38.46 per hour. Calculate bi-weekly checks ($3,077), overtime rate ($57.69/hr), and PTO value with 100% private modeling.'
   },
@@ -103,7 +103,7 @@ export const SALARY_LONG_TAIL_PAGES: SalaryLongTailPage[] = [
     biweekly: '3,461.54',
     monthly: '7,500.00',
     title: '$90,000 a Year is How Much an Hour? ($43.27/hr Breakdown)',
-    metaTitle: '$90,000 a Year is How Much an Hour? ($43.27/hr Full Wage Breakdown) | TableView.dev',
+    metaTitle: '$90,000 a Year is How Much an Hour? | TableView',
     metaDescription:
       '$90,000 a year is $43.27 an hour. Compare bi-weekly ($3,462), monthly ($7,500), and overtime hours with free Excel payroll schedule export.'
   },
@@ -115,7 +115,7 @@ export const SALARY_LONG_TAIL_PAGES: SalaryLongTailPage[] = [
     biweekly: '3,846.15',
     monthly: '8,333.33',
     title: '$100,000 a Year is How Much an Hour? ($48.08/hr Breakdown)',
-    metaTitle: '$100,000 a Year is How Much an Hour? ($48.08/hr Six-Figure Wage Breakdown) | TableView.dev',
+    metaTitle: '$100,000 a Year is How Much an Hour? | TableView',
     metaDescription:
       'A six-figure $100,000 salary equals $48.08 per hour for a 40-hour workweek. See bi-weekly checks ($3,846), monthly earnings ($8,333), and holiday PTO value.'
   },
@@ -127,7 +127,7 @@ export const SALARY_LONG_TAIL_PAGES: SalaryLongTailPage[] = [
     biweekly: '4,615.38',
     monthly: '10,000.00',
     title: '$120,000 a Year is How Much an Hour? ($57.69/hr Breakdown)',
-    metaTitle: '$120,000 a Year is How Much an Hour? ($57.69/hr Full Wage Breakdown) | TableView.dev',
+    metaTitle: '$120,000 a Year is How Much an Hour? | TableView',
     metaDescription:
       '$120,000 annual salary converts to $57.69 per hour, $4,615 bi-weekly, or $10,000 per month. Model bonus, PTO, and overtime in private client memory.'
   }
