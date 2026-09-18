@@ -19,6 +19,7 @@ import { NumericInput } from '../components/NumericInput';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { PmmsRateTicker } from '../components/PmmsRateTicker';
+import { LATEST_PMMS_RATES } from '../data/pmmsRates';
 import { AdSlot } from '../components/AdSlot';
 import {
   CalculatorPresetsBar,
@@ -473,11 +474,11 @@ export const LoanComparisonCalculator = () => {
                     <label className="block text-xs font-medium text-slate-700">Interest Rate (%)</label>
                     <button
                       type="button"
-                      onClick={() => setLoanA({ ...loanA, interestRate: 6.42 })}
+                      onClick={() => setLoanA({ ...loanA, interestRate: LATEST_PMMS_RATES.fixed30.rate })}
                       className="text-[10px] text-indigo-600 hover:text-indigo-800 font-semibold cursor-pointer underline"
                       title="Apply Freddie Mac PMMS 30Y Conforming Benchmark"
                     >
-                      PMMS 6.42%
+                      PMMS {LATEST_PMMS_RATES.fixed30.rate}%
                     </button>
                   </div>
                   <NumericInput
@@ -589,11 +590,11 @@ export const LoanComparisonCalculator = () => {
                     <label className="block text-xs font-medium text-slate-700">Interest Rate (%)</label>
                     <button
                       type="button"
-                      onClick={() => setLoanB({ ...loanB, interestRate: 5.68 })}
+                      onClick={() => setLoanB({ ...loanB, interestRate: LATEST_PMMS_RATES.fixed15.rate })}
                       className="text-[10px] text-emerald-600 hover:text-emerald-800 font-semibold cursor-pointer underline"
                       title="Apply Freddie Mac PMMS 15Y Conforming Benchmark"
                     >
-                      PMMS 5.68%
+                      PMMS {LATEST_PMMS_RATES.fixed15.rate}%
                     </button>
                   </div>
                   <NumericInput

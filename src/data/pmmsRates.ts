@@ -9,12 +9,15 @@ export interface PmmsRateItem {
   termYears: number;
   weekChange?: number;
   feesAndPoints?: number;
+  sourceType?: 'pmms' | 'mnd';
+  description?: string;
 }
 
 export interface PmmsDataset {
   asOfDate: string;
   source: string;
   sourceUrl: string;
+  mndLive30: PmmsRateItem;
   fixed30: PmmsRateItem;
   fixed15: PmmsRateItem;
   fha30: PmmsRateItem;
@@ -22,31 +25,44 @@ export interface PmmsDataset {
 }
 
 export const LATEST_PMMS_RATES: PmmsDataset = {
-  asOfDate: 'Weekly Benchmark (March 2026)',
-  source: 'Freddie Mac Primary Mortgage Market Survey® (PMMS)',
+  asOfDate: 'September 2026 Benchmark',
+  source: 'Freddie Mac PMMS® & Mortgage News Daily (MND)',
   sourceUrl: 'https://www.freddiemac.com/pmms',
-  fixed30: {
-    rate: 6.42,
-    label: '30-Year Fixed',
+  mndLive30: {
+    rate: 7.12,
+    label: 'Live Market 30Y',
     termYears: 30,
-    weekChange: -0.04,
-    feesAndPoints: 0.6
+    weekChange: 0.14,
+    sourceType: 'mnd',
+    description: 'Mortgage News Daily real-time lender rate sheets (broader credit profiles, unvarnished market price).'
+  },
+  fixed30: {
+    rate: 6.95,
+    label: '30-Year Fixed (PMMS)',
+    termYears: 30,
+    weekChange: 0.19,
+    feesAndPoints: 0.0,
+    sourceType: 'pmms',
+    description: 'Freddie Mac PMMS weekly survey (20% down, 740+ FICO prime borrowers).'
   },
   fixed15: {
-    rate: 5.68,
+    rate: 6.26,
     label: '15-Year Fixed',
     termYears: 15,
-    weekChange: -0.03,
-    feesAndPoints: 0.6
+    weekChange: 0.17,
+    feesAndPoints: 0.0,
+    sourceType: 'pmms'
   },
   fha30: {
-    rate: 6.15,
+    rate: 6.65,
     label: 'FHA 30-Year',
-    termYears: 30
+    termYears: 30,
+    sourceType: 'pmms'
   },
   va30: {
-    rate: 6.08,
+    rate: 6.58,
     label: 'VA 30-Year',
-    termYears: 30
+    termYears: 30,
+    sourceType: 'pmms'
   }
 };
