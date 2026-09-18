@@ -30,6 +30,7 @@ import {
 import { useAuth } from '../lib/useAuth';
 import { updatePageMeta } from '../lib/router';
 import { STATIC_PAGE_META } from '../data/routeMeta';
+import { SuiteSubNav } from '../components/SuiteSubNav';
 
 export function VideoCompressor() {
   const { consumeCredit } = useAuth();
@@ -239,6 +240,8 @@ export function VideoCompressor() {
             Shrink MP4, WebM, MOV, and MKV video files directly on your computer. Hit exact file sizes for Discord, email, and web sharing with zero watermarks.
           </p>
         </div>
+
+        <SuiteSubNav suite="media" />
 
         {/* Two-Column Workspace */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-white border border-slate-200/80 rounded-3xl p-4 sm:p-6 shadow-xl shadow-slate-200/40">

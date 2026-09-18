@@ -34,6 +34,7 @@ import {
 import { SuiteSubNav } from '../components/SuiteSubNav';
 import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
 import { ProBrandingModal } from '../components/ProBrandingModal';
+import { InfoTooltip } from '../components/InfoTooltip';
 
 const LOAN_PRESETS: CalculatorPreset<{ a: LoanParameters; b: LoanParameters }>[] = [
   {
@@ -531,7 +532,13 @@ export const LoanComparisonCalculator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Points (%)</label>
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <label className="block text-xs font-medium text-slate-700">Points (%)</label>
+                    <InfoTooltip
+                      title="Discount Points"
+                      content="1 point = 1% of loan amount paid at closing to lower the rate. Helpful if you stay in the home past the break-even date."
+                    />
+                  </div>
                   <NumericInput
                     value={loanA.originationPoints}
                     onChange={(val) => setLoanA({ ...loanA, originationPoints: val })}
@@ -540,7 +547,13 @@ export const LoanComparisonCalculator = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Upfront Fees ($)</label>
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <label className="block text-xs font-medium text-slate-700">Upfront Fees ($)</label>
+                    <InfoTooltip
+                      title="Closing Fees"
+                      content="Lender underwriting, appraisal, credit report, and title fees due at closing (excluding points)."
+                    />
+                  </div>
                   <CurrencyInput
                     value={loanA.upfrontFees}
                     onChange={(val) => setLoanA({ ...loanA, upfrontFees: val })}
@@ -647,7 +660,13 @@ export const LoanComparisonCalculator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Points (%)</label>
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <label className="block text-xs font-medium text-slate-700">Points (%)</label>
+                    <InfoTooltip
+                      title="Discount Points"
+                      content="1 point = 1% of loan amount paid at closing to lower the rate. Helpful if you stay in the home past the break-even date."
+                    />
+                  </div>
                   <NumericInput
                     value={loanB.originationPoints}
                     onChange={(val) => setLoanB({ ...loanB, originationPoints: val })}
@@ -656,7 +675,13 @@ export const LoanComparisonCalculator = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Upfront Fees ($)</label>
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <label className="block text-xs font-medium text-slate-700">Upfront Fees ($)</label>
+                    <InfoTooltip
+                      title="Closing Fees"
+                      content="Lender underwriting, appraisal, credit report, and title fees due at closing (excluding points)."
+                    />
+                  </div>
                   <CurrencyInput
                     value={loanB.upfrontFees}
                     onChange={(val) => setLoanB({ ...loanB, upfrontFees: val })}
@@ -742,7 +767,15 @@ export const LoanComparisonCalculator = () => {
               </tr>
               {comparison.breakEvenMonths && (
                 <tr className="bg-indigo-50/70 hover:bg-indigo-50 transition-colors">
-                  <td className="p-4 font-medium text-indigo-900">Points Break-Even Horizon</td>
+                  <td className="p-4 font-medium text-indigo-900">
+                    <div className="flex items-center gap-1">
+                      <span>Points Break-Even Horizon</span>
+                      <InfoTooltip
+                        title="Points Break-Even Horizon"
+                        content="The time it takes for monthly savings from a lower interest rate to recoup the extra upfront points paid at closing."
+                      />
+                    </div>
+                  </td>
                   <td colSpan={2} className="p-4 text-xs text-indigo-800">
                     Lower monthly payment recoups higher upfront closing fees in:
                   </td>
@@ -811,7 +844,13 @@ export const LoanComparisonCalculator = () => {
               </tr>
               <tr className="hover:bg-slate-50/80 transition-colors">
                 <td className="p-4 font-medium text-slate-900">
-                  <span>Total Interest Percentage (TIP)</span>
+                  <div className="flex items-center gap-1">
+                    <span>Total Interest Percentage (TIP)</span>
+                    <InfoTooltip
+                      title="CFPB Total Interest Percentage (TIP)"
+                      content="Mandated on Page 3 of the CFPB Loan Estimate. Shows total interest paid over the life of the loan as a percentage of the amount borrowed."
+                    />
+                  </div>
                   <span className="text-[10px] text-slate-500 block">CFPB federal benchmark: total interest as % of loan amount</span>
                 </td>
                 <td className="p-4 font-mono text-slate-800 font-semibold">{comparison.loanA.totalInterestPercentage}%</td>

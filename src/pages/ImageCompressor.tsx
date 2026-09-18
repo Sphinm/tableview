@@ -23,6 +23,7 @@ import {
 import { formatBytes } from '../lib/ffmpeg';
 import { updatePageMeta } from '../lib/router';
 import { STATIC_PAGE_META } from '../data/routeMeta';
+import { SuiteSubNav } from '../components/SuiteSubNav';
 
 export function ImageCompressor() {
   useEffect(() => {
@@ -210,6 +211,8 @@ export function ImageCompressor() {
             Batch compress JPG, PNG, and WebP images directly in your browser. Side-by-side visual comparison, target size mode, and 1-click ZIP export.
           </p>
         </div>
+
+        <SuiteSubNav suite="media" />
 
         {/* Two-Column Workspace */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 bg-white border border-slate-200/80 rounded-3xl p-4 sm:p-6 shadow-xl shadow-slate-200/40">

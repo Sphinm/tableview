@@ -7,12 +7,14 @@ import {
   PiggyBank,
   ChevronDown,
   Check,
-  Layers
+  Layers,
+  Video,
+  Database
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 import { getCanonicalPath } from '../lib/resolveRoute';
 
-export type SuiteType = 'mortgage' | 'commercial' | '1031' | 'finops' | 'personal';
+export type SuiteType = 'mortgage' | 'commercial' | '1031' | 'finops' | 'personal' | 'media' | 'data';
 
 interface SubToolItem {
   label: string;
@@ -72,6 +74,24 @@ const SUITE_CONFIG: Record<
     items: [
       { label: 'Salary to Hourly Wage', path: '/salary-to-hourly-calculator' },
       { label: 'Auto & Personal Loans', path: '/finance-calculator' }
+    ]
+  },
+  media: {
+    title: 'Private Media & Utility Suite',
+    icon: Video,
+    items: [
+      { label: 'Video Compressor', path: '/video-compressor', badge: 'Wasm' },
+      { label: 'Image Compressor', path: '/image-compressor', badge: 'WebP' }
+    ]
+  },
+  data: {
+    title: 'Client-Side Data Workbench',
+    icon: Database,
+    items: [
+      { label: 'Data Viewer', path: '/' },
+      { label: 'Data Converter', path: '/data-converter' },
+      { label: 'JSON Formatter', path: '/json-formatter' },
+      { label: 'SQL Formatter', path: '/sql-formatter' }
     ]
   }
 };

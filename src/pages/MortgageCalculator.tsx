@@ -49,6 +49,7 @@ import { CalculatorPresetsBar, PrintReportButton, PageHeader } from '../componen
 import { SuiteSubNav } from '../components/SuiteSubNav';
 import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
 import { ProBrandingModal } from '../components/ProBrandingModal';
+import { InfoTooltip } from '../components/InfoTooltip';
 
 // Sourced from the shared registry so the rendered page, the JSON-LD and the
 // prerendered HTML can never disagree. This page previously declared FAQPage
@@ -526,9 +527,15 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             {/* Down Payment */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="down-payment" className="text-xs font-semibold text-slate-700">
-                  Down Payment
-                </label>
+                <div className="flex items-center gap-1.5">
+                  <label htmlFor="down-payment" className="text-xs font-semibold text-slate-700">
+                    Down Payment
+                  </label>
+                  <InfoTooltip
+                    title="Down Payment & PMI Rule"
+                    content="Conventional loans typically require 20% down to waive Private Mortgage Insurance (PMI). Putting down less than 20% (e.g. 3% to 5%) is allowed, but monthly PMI will be added until your loan balance reaches 78-80% LTV."
+                  />
+                </div>
                 {/* $ or % Toggle */}
                 <div className="inline-flex rounded-lg border border-slate-300 bg-slate-100 p-0.5 text-xs font-semibold shadow-2xs">
                   <button
@@ -730,6 +737,10 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                     <label htmlFor="pmi-rate" className="font-semibold text-slate-700">
                       PMI Rate
                     </label>
+                    <InfoTooltip
+                      title="Private Mortgage Insurance (PMI)"
+                      content="Annual PMI rate typically ranges from 0.2% to 1.5% depending on down payment and FICO score. Under the federal Homeowners Protection Act, PMI automatically cancels once your balance reaches 78% of the original home purchase price."
+                    />
                     {summary.isPmiRequired ? (
                       <span className="text-[10px] text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200 font-normal whitespace-nowrap">
                         Active (&lt;20%)
@@ -755,7 +766,13 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                 {summary.isPmiRequired && (
                   <div className="pt-2 border-t border-slate-100 space-y-1.5">
                     <div className="flex items-center justify-between text-[11px]">
-                      <span className="font-semibold text-slate-700">FICO Credit Tier:</span>
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold text-slate-700">FICO Credit Tier:</span>
+                        <InfoTooltip
+                          title="FICO & Fannie Mae LLPA"
+                          content="Loan-Level Price Adjustments (LLPAs) are risk fees charged by Fannie Mae and Freddie Mac. Higher credit tiers receive lower monthly PMI premiums and lower interest rates."
+                        />
+                      </div>
                       <span className="text-slate-500 font-medium">{FICO_PROFILES[ficoTier].creditRating}</span>
                     </div>
                     <div className="grid grid-cols-5 gap-1">
@@ -1267,7 +1284,13 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                 {/* Front-End */}
                 <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-slate-700">Front-End DTI (Housing)</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-slate-700">Front-End DTI (Housing)</span>
+                      <InfoTooltip
+                        title="Front-End DTI (28% Rule)"
+                        content="The percentage of your monthly pre-tax income that goes strictly toward housing (Principal, Interest, Property Taxes, Home Insurance, HOA). Lenders typically look for 28% or lower."
+                      />
+                    </div>
                     <span className="font-mono font-bold text-slate-900 text-base">{dtiAnalysis.frontEndDti}%</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
@@ -1298,7 +1321,13 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                 {/* Back-End */}
                 <div className="p-4 rounded-xl border border-slate-200 bg-white space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-slate-700">Back-End DTI (Total Debt)</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-bold text-slate-700">Back-End DTI (Total Debt)</span>
+                      <InfoTooltip
+                        title="Back-End DTI (43% QM Ceiling)"
+                        content="The percentage of your monthly pre-tax income needed for all recurring debts combined (housing + auto loans + student loans + minimum credit card payments). Under CFPB Qualified Mortgage standards, 43% is the typical benchmark cap."
+                      />
+                    </div>
                     <span className="font-mono font-bold text-slate-900 text-base">{dtiAnalysis.backEndDti}%</span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-slate-100 overflow-hidden">
