@@ -6,6 +6,7 @@ export function AuthModal() {
   const { isAuthModalOpen, closeAuthModal, loginWithGoogle } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
   const googleButtonContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -13,6 +14,8 @@ export function AuthModal() {
     const clientId =
       import.meta.env.VITE_GOOGLE_CLIENT_ID ||
       '31608768589-eiqse3nup8fffuhf17utrvjnt5085gg1.apps.googleusercontent.com';
+
+    let isMounted = true;
 
     const renderGoogleBtn = () => {
       if (typeof window !== 'undefined' && (window as any).google?.accounts?.id && googleButtonContainerRef.current) {
@@ -23,31 +26,45 @@ export function AuthModal() {
               if (response.credential) {
                 setIsSubmitting(true);
                 setErrorMessage(null);
-                const res = await loginWithGoogle(response.credential);
-                setIsSubmitting(false);
-                if (res.success) {
-                  closeAuthModal();
-                } else {
-                  setErrorMessage(res.message || 'Google sign-in failed');
+                try {
+                  const res = await loginWithGoogle(response.credential);
+                  if (res.success) {
+                    closeAuthModal();
+                  } else {
+                    if (isMounted) {
+                      setErrorMessage(res.message || 'Google sign-in failed');
+                      setIsSubmitting(false);
+                    }
+                  }
+                } catch {
+                  if (isMounted) {
+                    setErrorMessage('Google sign-in encountered an error');
+                    setIsSubmitting(false);
+                  }
                 }
               }
             },
           });
 
-          // Render official Google button into container
-          (window as any).google.accounts.id.renderButton(googleButtonContainerRef.current, {
-            theme: 'outline',
-            size: 'large',
-            type: 'standard',
-            shape: 'rectangular',
-            text: 'continue_with',
-            logo_alignment: 'left',
-            width: 340,
-            // Force English button copy ("Continue with Google"). Without this,
-            // GIS falls back to the browser/account locale and renders a
-            // localized label for non-English visitors.
-            locale: 'en',
-          });
+          if (googleButtonContainerRef.current) {
+            // Render official Google button into container
+            (window as any).google.accounts.id.renderButton(googleButtonContainerRef.current, {
+              theme: 'outline',
+              size: 'large',
+              type: 'standard',
+              shape: 'rectangular',
+              text: 'continue_with',
+              logo_alignment: 'left',
+              width: 340,
+              // Force English button copy ("Continue with Google"). Without this,
+              // GIS falls back to the browser/account locale and renders a
+              // localized label for non-English visitors.
+              locale: 'en',
+            });
+            if (isMounted) {
+              setIsGoogleLoaded(true);
+            }
+          }
         } catch (err) {
           console.warn('Google Identity initialization deferred:', err);
         }
@@ -63,8 +80,25 @@ export function AuthModal() {
           renderGoogleBtn();
         }
       }, 150);
-      return () => clearInterval(interval);
+      return () => {
+        isMounted = false;
+        clearInterval(interval);
+        if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
+          try {
+            (window as any).google.accounts.id.cancel();
+          } catch {}
+        }
+      };
     }
+
+    return () => {
+      isMounted = false;
+      if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
+        try {
+          (window as any).google.accounts.id.cancel();
+        } catch {}
+      }
+    };
   }, [isAuthModalOpen, loginWithGoogle, closeAuthModal]);
 
   if (!isAuthModalOpen) return null;
@@ -117,8 +151,10 @@ export function AuthModal() {
                 <span className="inline-block w-6 h-6 border-2 border-indigo-600 border-t-transparent rounded-full animate-spin" />
                 <span className="text-xs font-semibold text-slate-600">Signing in with Google...</span>
               </div>
-            ) : (
-              <div ref={googleButtonContainerRef} className="w-full flex justify-center min-h-[44px]">
+            ) : null}
+
+            <div className={`w-full flex flex-col items-center ${isSubmitting ? 'hidden' : ''}`}>
+              {!isGoogleLoaded && (
                 <button
                   type="button"
                   onClick={handleFallbackClick}
@@ -144,8 +180,14 @@ export function AuthModal() {
                   </svg>
                   <span>Continue with Google</span>
                 </button>
-              </div>
-            )}
+              )}
+
+              {/* Empty mount container for Google Identity Services. React MUST NOT render children here. */}
+              <div
+                ref={googleButtonContainerRef}
+                className={`notranslate w-full flex justify-center min-h-[44px] ${!isGoogleLoaded ? 'hidden' : ''}`}
+              />
+            </div>
 
             {errorMessage && (
               <div className="mt-4 w-full p-3 text-xs text-rose-700 bg-rose-50 border border-rose-200 rounded-xl font-medium text-center">

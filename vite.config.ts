@@ -431,6 +431,11 @@ export default defineConfig({
     serviceWorkerVersionPlugin(),
     devAuthPlugin(),
   ],
+  server: {
+    headers: {
+      'Cross-Origin-Opener-Policy': 'same-origin-allow-popups',
+    },
+  },
   optimizeDeps: {
     exclude: ['@duckdb/duckdb-wasm']
   },
