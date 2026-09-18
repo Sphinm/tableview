@@ -429,7 +429,7 @@ export const LoanComparisonCalculator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Interest Rate (APR %)</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Interest Rate (%)</label>
                   <NumericInput
                     value={loanA.interestRate}
                     onChange={(val) => setLoanA({ ...loanA, interestRate: val })}
@@ -535,7 +535,7 @@ export const LoanComparisonCalculator = () => {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Interest Rate (APR %)</label>
+                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Interest Rate (%)</label>
                   <NumericInput
                     value={loanB.interestRate}
                     onChange={(val) => setLoanB({ ...loanB, interestRate: val })}

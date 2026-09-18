@@ -141,9 +141,48 @@ export function calculateMortgage(inputs: MortgageInputs): MortgageSummary {
   const monthlyHomeInsurance = Math.max(0, inputs.homeInsuranceYearly) / 12;
   const monthlyHoa = Math.max(0, inputs.monthlyHoa);
 
-  // PMI is typically required if down payment < 20% (LTV > 80%) for Conventional loans
-  const isPmiRequired = inputs.loanType === 'conventional' ? downPaymentPercent < 20 : false;
-  const monthlyPmi = isPmiRequired ? (loanAmount * (Math.max(0, inputs.pmiRate) / 100)) / 12 : 0;
+  // === Mortgage Insurance / Funding Fees by Loan Type ===
+  let isPmiRequired = false;
+  let monthlyMI = 0;
+  let upfrontFee = 0; // FHA UFMIP, VA Funding Fee, USDA Guarantee Fee
+
+  if (inputs.loanType === 'conventional') {
+    isPmiRequired = downPaymentPercent < 20;
+    monthlyMI = isPmiRequired ? (loanAmount * (Math.max(0, inputs.pmiRate) / 100)) / 12 : 0;
+  } else if (inputs.loanType === 'fha') {
+    // FHA UFMIP: 1.75% of base loan (typically financed into the loan)
+    upfrontFee = loanAmount * 0.0175;
+    // FHA Annual MIP: 0.55% for most borrowers (> 15yr term, LTV > 95%)
+    // MIP lasts the life of the loan if down payment < 10%, otherwise 11 years
+    const annualMipRate = 0.0055;
+    monthlyMI = ((loanAmount + upfrontFee) * annualMipRate) / 12;
+    isPmiRequired = true;
+  } else if (inputs.loanType === 'va') {
+    // VA Funding Fee: varies by down payment and usage
+    // First use: 0% down = 2.15%, 5-9.99% down = 1.5%, 10%+ down = 1.25%
+    // Subsequent use: 0% down = 3.3%, 5-9.99% down = 1.5%, 10%+ down = 1.25%
+    let fundingFeeRate: number;
+    if (downPaymentPercent >= 10) {
+      fundingFeeRate = 0.0125;
+    } else if (downPaymentPercent >= 5) {
+      fundingFeeRate = 0.015;
+    } else {
+      fundingFeeRate = 0.0215; // first use default
+    }
+    upfrontFee = loanAmount * fundingFeeRate;
+    // VA has NO monthly mortgage insurance
+    monthlyMI = 0;
+    isPmiRequired = false;
+  } else if (inputs.loanType === 'usda') {
+    // USDA Upfront Guarantee Fee: 1% of loan amount
+    upfrontFee = loanAmount * 0.01;
+    // USDA Annual Fee: 0.35% of remaining loan balance
+    const annualFeeRate = 0.0035;
+    monthlyMI = ((loanAmount + upfrontFee) * annualFeeRate) / 12;
+    isPmiRequired = true;
+  }
+
+  const monthlyPmi = monthlyMI;
 
   const totalMonthlyPayment =
     monthlyPrincipalAndInterest + monthlyPropertyTax + monthlyHomeInsurance + monthlyPmi + monthlyHoa;
@@ -240,9 +279,31 @@ export function generateAmortizationSchedule(
 
   // PMI threshold: 80% of original home value
   const pmiThreshold = homeValue * 0.8;
-  const initialPmiRequired = inputs.loanType === 'conventional' && (downPaymentAmount / (homeValue || 1)) < 0.2;
-  const monthlyPmiRate = (Math.max(0, inputs.pmiRate) / 100) / 12;
-  const initialPmiAmount = initialPmiRequired ? (homeValue - downPaymentAmount) * monthlyPmiRate : 0;
+  // Government loan MI for amortization schedule
+  const downPaymentPercent = homeValue > 0 ? (downPaymentAmount / homeValue) * 100 : 0;
+  let initialPmiRequired = false;
+  let initialPmiAmount = 0;
+  let fhaMipLifeOfLoan = false;
+  let fhaMipMonths = 0; // 0 = life of loan
+
+  if (inputs.loanType === 'conventional') {
+    initialPmiRequired = (downPaymentAmount / (homeValue || 1)) < 0.2;
+    const monthlyPmiRate = (Math.max(0, inputs.pmiRate) / 100) / 12;
+    initialPmiAmount = initialPmiRequired ? (homeValue - downPaymentAmount) * monthlyPmiRate : 0;
+  } else if (inputs.loanType === 'fha') {
+    initialPmiRequired = true;
+    const baseLoan = homeValue - downPaymentAmount;
+    const ufmip = baseLoan * 0.0175;
+    initialPmiAmount = ((baseLoan + ufmip) * 0.0055) / 12;
+    fhaMipLifeOfLoan = downPaymentPercent < 10;
+    fhaMipMonths = fhaMipLifeOfLoan ? 0 : 11 * 12; // 11 years if dp >= 10%
+  } else if (inputs.loanType === 'usda') {
+    initialPmiRequired = true;
+    const baseLoan = homeValue - downPaymentAmount;
+    const guaranteeFee = baseLoan * 0.01;
+    initialPmiAmount = ((baseLoan + guaranteeFee) * 0.0035) / 12;
+  }
+  // VA: no monthly MI, so initialPmiRequired stays false
 
   const schedule: AmortizationRow[] = [];
   let currentMonth = inputs.startMonth;
@@ -275,8 +336,23 @@ export function generateAmortizationSchedule(
 
     cumulativePrincipal += principalPayment;
 
-    // Dynamic PMI: cancels once balance is <= 80% of initial home value
-    const pmiPayment = (initialPmiRequired && startingBalance > pmiThreshold) ? initialPmiAmount : 0;
+    let pmiPayment = 0;
+    if (initialPmiRequired) {
+      if (inputs.loanType === 'conventional') {
+        // Conventional: drops at 80% LTV
+        pmiPayment = startingBalance > pmiThreshold ? initialPmiAmount : 0;
+      } else if (inputs.loanType === 'fha') {
+        // FHA: life of loan if dp < 10%, else 11 years
+        if (fhaMipLifeOfLoan) {
+          pmiPayment = initialPmiAmount;
+        } else {
+          pmiPayment = monthIndex <= fhaMipMonths ? initialPmiAmount : 0;
+        }
+      } else if (inputs.loanType === 'usda') {
+        // USDA: annual fee for life of loan
+        pmiPayment = initialPmiAmount;
+      }
+    }
     const totalPayment = principalPayment + interestPayment + monthlyTax + monthlyInsurance + pmiPayment + monthlyHoa;
 
     schedule.push({

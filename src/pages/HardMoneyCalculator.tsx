@@ -171,7 +171,7 @@ const hardMoneySchemas = [
         name: 'Why use TableView Hard Money Calculator instead of DealCheck or Rehab Financial?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Unlike DealCheck which caps free users to 15 property analyses and locks full PDF exports behind a monthly subscription, TableView.dev provides 100% free and unlimited deal evaluations, zero account sign-up, selectable Dutch vs as-incurred interest calculations, 70% rule MAO analysis, and instant Excel exports with complete client-side data privacy.'
+          text: 'Unlike DealCheck which caps free users to 15 property analyses and locks full PDF exports behind a monthly subscription, TableView.dev provides 100% free and unlimited deal evaluations, zero account sign-up, Dutch interest calculations on the full loan commitment, 70% rule MAO analysis, and instant Excel exports with complete client-side data privacy.'
         }
       },
       {
@@ -211,7 +211,7 @@ const hardMoneySchemas = [
         name: 'What is Dutch interest vs as-incurred interest in hard money lending?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'In "Dutch interest", the borrower pays monthly interest on the entire total approved loan amount (purchase loan plus undrawn rehab escrow) from day one. In "as-incurred interest", the borrower only pays interest on the drawn balance, saving thousands of dollars in carrying costs during early construction.'
+          text: 'In "Dutch interest", the borrower pays monthly interest on the entire total approved loan amount (purchase loan plus undrawn rehab escrow) from day one. In "as-incurred interest", the borrower only pays interest on the drawn balance, saving thousands of dollars in carrying costs during early construction. This calculator currently uses the Dutch interest method, which provides a conservative (higher) estimate of your carrying costs.'
         }
       },
       {

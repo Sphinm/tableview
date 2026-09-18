@@ -11,6 +11,11 @@ export interface LoanParameters {
   originationPoints: number; // e.g. 1.0 for 1%
   upfrontFees: number; // e.g. $1,500
   extraMonthlyPayment: number; // e.g. $100
+  // ARM (Adjustable Rate Mortgage) parameters
+  isArm?: boolean; // true if this is an ARM loan
+  armFixedMonths?: number; // e.g. 84 for a 7/1 ARM (7 years)
+  armAdjustedRate?: number; // expected rate after adjustment, e.g. 8.0%
+  armRateCap?: number; // max lifetime rate cap, e.g. 11.5%
 }
 
 export interface SingleLoanResult {
@@ -95,10 +100,31 @@ export function calculateSingleLoan(params: LoanParameters): SingleLoanResult {
   let currentYearInterest = 0;
   let currentYearPrincipal = 0;
 
+  // ARM support: track rate changes
+  const isArm = params.isArm ?? false;
+  const armFixedMonths = params.armFixedMonths ?? 84; // default 7 years
+  const armAdjustedRate = Math.min(params.armAdjustedRate ?? interestRate, params.armRateCap ?? 100);
+  let currentMonthlyRate = monthlyRate;
+  let currentPayment = actualMonthlyPayment;
+  let armAdjusted = false;
+
   while (balance > 0.01 && monthsCount < totalMonthsScheduled * 2) {
     monthsCount++;
-    const monthlyInterest = balance * monthlyRate;
-    let payment = actualMonthlyPayment;
+
+    // ARM rate adjustment: recalculate payment when fixed period ends
+    if (isArm && !armAdjusted && monthsCount > armFixedMonths && balance > 0.01) {
+      currentMonthlyRate = armAdjustedRate / 100 / 12;
+      const remainingMonths = totalMonthsScheduled - monthsCount + 1;
+      if (currentMonthlyRate > 0 && remainingMonths > 0) {
+        const factor = Math.pow(1 + currentMonthlyRate, remainingMonths);
+        const newScheduled = balance * ((currentMonthlyRate * factor) / (factor - 1));
+        currentPayment = newScheduled + Math.max(0, extraMonthlyPayment);
+      }
+      armAdjusted = true;
+    }
+
+    const monthlyInterest = balance * currentMonthlyRate;
+    let payment = currentPayment;
 
     if (payment > balance + monthlyInterest) {
       payment = balance + monthlyInterest;

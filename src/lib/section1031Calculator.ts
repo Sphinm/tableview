@@ -290,7 +290,7 @@ export function calculateSection1031(
   // ---- Tax ----
   const niitRate = inputs.applyNiit ? 3.8 : 0;
   const federalTax =
-    (recapturePortion * clampPercent(inputs.depreciationRecaptureRatePercent)) / 100 +
+    (recapturePortion * (clampPercent(inputs.depreciationRecaptureRatePercent) + niitRate)) / 100 +
     (capitalGainPortion * (clampPercent(inputs.federalLtcgRatePercent) + niitRate)) / 100;
   const stateTax = (recognizedGain * clampPercent(inputs.stateTaxRatePercent)) / 100;
   const totalTaxDue = federalTax + stateTax;
@@ -299,7 +299,7 @@ export function calculateSection1031(
   const outrightRecapture = Math.min(realizedGain, accumulatedDepreciation);
   const outrightCapital = Math.max(0, realizedGain - outrightRecapture);
   const taxIfSoldOutright =
-    (outrightRecapture * clampPercent(inputs.depreciationRecaptureRatePercent)) / 100 +
+    (outrightRecapture * (clampPercent(inputs.depreciationRecaptureRatePercent) + niitRate)) / 100 +
     (outrightCapital * (clampPercent(inputs.federalLtcgRatePercent) + niitRate)) / 100 +
     (realizedGain * clampPercent(inputs.stateTaxRatePercent)) / 100;
 

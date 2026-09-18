@@ -84,9 +84,18 @@ export function calculateDscr(inputs: DscrInputs): DscrResult {
   const totalMonths = Math.max(12, inputs.loanTermYears * 12);
   
   // P&I calculation
+  // IO period: use interestOnlyYears if provided, otherwise treat as full-term IO
+  const ioMonths = inputs.isInterestOnly
+    ? Math.min((inputs.interestOnlyYears ?? inputs.loanTermYears) * 12, totalMonths)
+    : 0;
+
   let monthlyPrincipalAndInterest = 0;
   if (loanAmount > 0) {
-    if (inputs.isInterestOnly) {
+    if (ioMonths >= totalMonths) {
+      // Full-term interest-only
+      monthlyPrincipalAndInterest = loanAmount * monthlyRate;
+    } else if (ioMonths > 0) {
+      // Partial IO: DSCR uses the IO payment during the IO period
       monthlyPrincipalAndInterest = loanAmount * monthlyRate;
     } else if (monthlyRate > 0) {
       monthlyPrincipalAndInterest =
@@ -108,7 +117,7 @@ export function calculateDscr(inputs: DscrInputs): DscrResult {
   const vacancyDeduction = grossMonthlyRent * (Math.max(0, inputs.vacancyRate) / 100);
   const effectiveMonthlyIncome = Math.max(0, grossMonthlyRent - vacancyDeduction);
   
-  const monthlyManagementFee = grossMonthlyRent * (Math.max(0, inputs.managementFeeRate) / 100);
+  const monthlyManagementFee = effectiveMonthlyIncome * (Math.max(0, inputs.managementFeeRate) / 100);
   const monthlyMaintenance = Math.max(0, inputs.annualMaintenanceReserve / 12);
   
   const monthlyTotalOperatingExpenses =
@@ -220,18 +229,14 @@ export function generateDscrAmortization(inputs: DscrInputs): DscrAmortizationRo
   const monthlyRate = interestRate / 100 / 12;
   const totalMonths = loanTermYears * 12;
   
-  let monthlyPayment = 0;
-  if (balance > 0) {
-    if (isInterestOnly) {
-      monthlyPayment = balance * monthlyRate;
-    } else if (monthlyRate > 0) {
-      monthlyPayment =
-        (balance * (monthlyRate * Math.pow(1 + monthlyRate, totalMonths))) /
-        (Math.pow(1 + monthlyRate, totalMonths) - 1);
-    } else {
-      monthlyPayment = balance / totalMonths;
-    }
-  }
+  // IO period calculation
+  const ioMonths = isInterestOnly
+    ? Math.min((inputs.interestOnlyYears ?? loanTermYears) * 12, totalMonths)
+    : 0;
+  
+  // Pre-compute amortizing payment (used after IO period ends)
+  let amortPayment = 0;
+  // We'll recalculate this when IO period ends based on remaining balance
   
   const schedule: DscrAmortizationRow[] = [];
   let accumulatedInterest = 0;
@@ -241,9 +246,31 @@ export function generateDscrAmortization(inputs: DscrInputs): DscrAmortizationRo
     if (balance <= 0) break;
     
     const interest = balance * monthlyRate;
-    let principal = isInterestOnly ? 0 : monthlyPayment - interest;
-    if (principal > balance) {
-      principal = balance;
+    let principal: number;
+    let payment: number;
+    
+    if (m <= ioMonths) {
+      // Interest-only period
+      principal = 0;
+      payment = interest;
+    } else {
+      // Amortizing period
+      if (m === ioMonths + 1 || (ioMonths === 0 && m === 1)) {
+        // (Re)calculate amortizing payment based on current balance and remaining months
+        const remainingMonths = totalMonths - m + 1;
+        if (monthlyRate > 0) {
+          amortPayment =
+            (balance * (monthlyRate * Math.pow(1 + monthlyRate, remainingMonths))) /
+            (Math.pow(1 + monthlyRate, remainingMonths) - 1);
+        } else {
+          amortPayment = balance / remainingMonths;
+        }
+      }
+      payment = amortPayment;
+      principal = payment - interest;
+      if (principal > balance) {
+        principal = balance;
+      }
     }
     
     balance -= principal;
@@ -253,7 +280,7 @@ export function generateDscrAmortization(inputs: DscrInputs): DscrAmortizationRo
     schedule.push({
       year: Math.ceil(m / 12),
       month: m,
-      payment: isInterestOnly ? interest : monthlyPayment,
+      payment: Math.round(payment * 100) / 100,
       principal: Math.round(principal * 100) / 100,
       interest: Math.round(interest * 100) / 100,
       balance: Math.round(balance * 100) / 100,
