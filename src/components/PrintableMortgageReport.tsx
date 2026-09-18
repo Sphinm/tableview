@@ -1,5 +1,13 @@
 import React from 'react';
-import { type MortgageSummary, type AnnualAmortizationRow, type AmortizationRow } from '../lib/mortgageCalculator';
+import {
+  type MortgageSummary,
+  type AnnualAmortizationRow,
+  type AmortizationRow,
+  type CashToCloseBreakdown,
+  type DtiAffordabilityResult,
+  type FicoScoreTier,
+  FICO_PROFILES
+} from '../lib/mortgageCalculator';
 
 interface PrintableMortgageReportProps {
   homeValue: number;
@@ -18,6 +26,9 @@ interface PrintableMortgageReportProps {
   monthlySchedule?: AmortizationRow[];
   scheduleView?: 'annual' | 'monthly';
   extraMonthlyPrincipal?: number;
+  cashToClose?: CashToCloseBreakdown;
+  dtiAnalysis?: DtiAffordabilityResult;
+  ficoTier?: FicoScoreTier;
 }
 
 export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = ({
@@ -37,6 +48,9 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
   monthlySchedule = [],
   scheduleView = 'annual',
   extraMonthlyPrincipal = 0,
+  cashToClose,
+  dtiAnalysis,
+  ficoTier = '760+',
 }) => {
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
@@ -153,10 +167,109 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
         </div>
       </div>
 
+      {/* Section 3: Cash to Close & Settlement Breakdown */}
+      {cashToClose && (
+        <div className="border-2 border-slate-300 rounded-lg p-4 bg-slate-50/50 mb-6 print-avoid-break">
+          <div className="flex justify-between items-center border-b-2 border-slate-300 pb-1.5 mb-2.5">
+            <h2 className="text-xs font-black uppercase tracking-wider text-slate-950">
+              3. Estimated Cash to Close (Settlement Day Funds)
+            </h2>
+            <span className="text-sm font-black text-emerald-800 font-mono">
+              Total Required: ${Math.round(cashToClose.totalCashToClose).toLocaleString()}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 text-xs">
+            <table className="w-full text-xs">
+              <tbody>
+                <tr className="border-b border-slate-200 py-1">
+                  <td className="py-1 text-slate-700 font-medium">Down Payment Equity:</td>
+                  <td className="py-1 font-bold text-right text-slate-900 font-mono">${Math.round(cashToClose.downPayment).toLocaleString()}</td>
+                </tr>
+                <tr className="border-b border-slate-200 py-1">
+                  <td className="py-1 text-slate-700 font-medium">Lender Origination & Processing:</td>
+                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">${Math.round(cashToClose.lenderFees).toLocaleString()}</td>
+                </tr>
+                <tr className="py-1">
+                  <td className="py-1 text-slate-700 font-medium">Title & Settlement Attorney Fees:</td>
+                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">${Math.round(cashToClose.titleAndEscrow).toLocaleString()}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <table className="w-full text-xs">
+              <tbody>
+                <tr className="border-b border-slate-200 py-1">
+                  <td className="py-1 text-slate-700 font-medium">Prepaids & Escrow Reserves (3-6 mo):</td>
+                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">${Math.round(cashToClose.prepaidsAndEscrow).toLocaleString()}</td>
+                </tr>
+                <tr className="border-b border-slate-200 py-1">
+                  <td className="py-1 text-slate-700 font-medium">Third-Party Appraisal & Inspections:</td>
+                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">${Math.round(cashToClose.thirdPartyServices).toLocaleString()}</td>
+                </tr>
+                <tr className="py-1">
+                  <td className="py-1 text-slate-700 font-medium">Government Recording & Transfer Taxes:</td>
+                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">${Math.round(cashToClose.governmentFees).toLocaleString()}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* Section 4: Underwriting & Debt-to-Income (DTI) Qualification Review */}
+      {dtiAnalysis && (
+        <div className="border-2 border-slate-300 rounded-lg p-4 bg-slate-50/50 mb-6 print-avoid-break">
+          <div className="flex justify-between items-center border-b-2 border-slate-300 pb-1.5 mb-2.5">
+            <h2 className="text-xs font-black uppercase tracking-wider text-slate-950">
+              4. Borrower Underwriting & Debt-to-Income (CFPB QM 28/43 Rule)
+            </h2>
+            <span className={`text-xs font-bold px-2 py-0.5 rounded border font-mono ${
+              dtiAnalysis.isQualifiedMortgage
+                ? 'bg-emerald-100 text-emerald-900 border-emerald-300'
+                : 'bg-rose-100 text-rose-900 border-rose-300'
+            }`}>
+              {dtiAnalysis.isQualifiedMortgage ? 'QUALIFIED MORTGAGE (QM) CONFORMING' : 'DTI EXCEEDS 43% QM CAP'}
+            </span>
+          </div>
+
+          <div className="grid grid-cols-4 gap-3 text-xs text-center">
+            <div className="p-2 bg-white rounded border border-slate-200">
+              <span className="text-[10px] text-slate-500 font-medium block">Gross Annual Income</span>
+              <span className="font-bold text-slate-900 font-mono">${Math.round(dtiAnalysis.monthlyGrossIncome * 12).toLocaleString()}</span>
+              <span className="text-[10px] text-slate-400 block">${Math.round(dtiAnalysis.monthlyGrossIncome).toLocaleString()}/mo</span>
+            </div>
+            <div className="p-2 bg-white rounded border border-slate-200">
+              <span className="text-[10px] text-slate-500 font-medium block">Front-End DTI (Housing)</span>
+              <span className={`font-bold font-mono text-sm ${dtiAnalysis.frontEndStatus === 'ideal' ? 'text-emerald-700' : 'text-slate-800'}`}>
+                {dtiAnalysis.frontEndDti}%
+              </span>
+              <span className="text-[10px] text-slate-400 block">Benchmark: ≤ 28%</span>
+            </div>
+            <div className="p-2 bg-white rounded border border-slate-200">
+              <span className="text-[10px] text-slate-500 font-medium block">Back-End DTI (Total Debt)</span>
+              <span className={`font-bold font-mono text-sm ${dtiAnalysis.backEndStatus === 'ideal' || dtiAnalysis.backEndStatus === 'acceptable' ? 'text-emerald-700' : 'text-rose-700'}`}>
+                {dtiAnalysis.backEndDti}%
+              </span>
+              <span className="text-[10px] text-slate-400 block">QM Conforming Cap: ≤ 43%</span>
+            </div>
+            <div className="p-2 bg-white rounded border border-slate-200">
+              <span className="text-[10px] text-slate-500 font-medium block">Credit Score Tier</span>
+              <span className="font-bold text-indigo-700 font-mono text-sm">
+                {ficoTier ? FICO_PROFILES[ficoTier]?.label || ficoTier : '760+'}
+              </span>
+              <span className="text-[10px] text-slate-400 block">
+                LLPA: +{ficoTier ? FICO_PROFILES[ficoTier]?.llpaRateAdjustment : 0}%
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Lifetime Cost & Key Milestone Summary */}
       <div className="border border-slate-300 rounded-lg p-4 bg-slate-50/30 mb-6 print-avoid-break">
         <h2 className="text-xs font-bold uppercase tracking-wider text-slate-700 border-b border-slate-200 pb-1.5 mb-2.5">
-          3. Lifetime Obligation & Key Payoff Milestones
+          5. Lifetime Obligation & Key Payoff Milestones
         </h2>
         <div className="grid grid-cols-4 gap-3 text-center">
           <div className="p-2 bg-white rounded border border-slate-200">
@@ -195,8 +308,8 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
         <h2 className="text-xs font-black uppercase tracking-wider text-slate-950 border-b-2 border-slate-900 pb-1.5 mb-2.5 flex justify-between items-center">
           <span>
             {isMonthly
-              ? `4. Complete Monthly Amortization Schedule (${monthlySchedule.length} Months)`
-              : `4. Complete Annual Amortization Schedule (${loanTermYears} Years)`}
+              ? `6. Complete Monthly Amortization Schedule (${monthlySchedule.length} Months)`
+              : `6. Complete Annual Amortization Schedule (${loanTermYears} Years)`}
           </span>
           <span className="text-[10px] font-semibold text-slate-600">
             {loanTermYears}Y Fixed · {loanType.toUpperCase()}

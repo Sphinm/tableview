@@ -37,7 +37,7 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
     badge: '100% In-Browser · Instant CSV Reader',
     title: 'Free Online CSV Viewer',
     shortTitle: 'CSV Viewer',
-    metaTitle: 'Free Online CSV Viewer: Fast, Private In-Browser Spreadsheet Reader',
+    metaTitle: 'Free Online CSV Viewer & Spreadsheet Reader | TableView',
     metaDescription: 'Open, inspect, search, filter, and sort large CSV and TSV files directly in your web browser. Zero server uploads with high-performance DuckDB-Wasm.',
     h1: 'Free Online CSV',
     h1Highlight: 'Viewer',
@@ -89,7 +89,7 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
     badge: 'No Microsoft Office Required · Client-Side',
     title: 'Free Online Excel Viewer (.xlsx / .xls)',
     shortTitle: 'Excel Viewer',
-    metaTitle: 'Free Online Excel Viewer (.xlsx): Open Spreadsheets Without Office',
+    metaTitle: 'Free Online Excel Viewer (.xlsx) | TableView',
     metaDescription: 'Open and view Microsoft Excel spreadsheets (.xlsx, .xls) online for free. Fast table rendering, sorting, and SQL queries with zero server file uploads.',
     h1: 'Free Online Excel',
     h1Highlight: 'Viewer (.xlsx)',
@@ -137,7 +137,7 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
     badge: 'DuckDB-Wasm · Instant Local Parser',
     title: 'Free Online Parquet Viewer',
     shortTitle: 'Parquet Viewer',
-    metaTitle: 'Free Online Parquet Viewer: Fast, In-Browser Apache Parquet Inspector',
+    metaTitle: 'Free Online Parquet Viewer & Inspector | TableView',
     metaDescription: 'Inspect and view Apache Parquet files online directly in your browser. 100% private in-browser DuckDB-Wasm engine with zero server file uploads.',
     h1: 'Online Apache Parquet',
     h1Highlight: 'Viewer',
@@ -152,33 +152,29 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
     defaultTab: 'grid',
     features: [
       {
+        icon: 'database',
+        title: 'DuckDB-Wasm Columnar Parsing',
+        description: 'Direct binary reader for snappy, gzip, zstd, and uncompressed Parquet data pages.'
+      },
+      {
+        icon: 'search',
+        title: 'Schema & Metadata Inspector',
+        description: 'Examine field types, nested structs, physical compression algorithms, and row group counts.'
+      },
+      {
         icon: 'shield',
-        title: '100% In-Browser Privacy',
-        description: 'Zero data leaves your machine. Your datasets are read and indexed strictly inside your local browser memory sandbox.'
-      },
-      {
-        icon: 'cpu',
-        title: 'Vectorized Wasm Query Engine',
-        description: 'Powered by DuckDB-Wasm. Column pruning and dictionary decoding deliver blazing-fast exploration on files with hundreds of thousands of rows.'
-      },
-      {
-        icon: 'table',
-        title: 'Full Column Schema & Profiling',
-        description: 'Instant visibility into column types, null percentages, distinct counts, and minimum/maximum values.'
+        title: 'Zero Cloud Storage Risk',
+        description: 'Data engineering datasets stay on your workstation. Absolutely zero network requests during analysis.'
       }
     ],
     faqs: [
       {
-        q: 'Do I need to install Python, Pandas, or PyArrow to view a Parquet file?',
-        a: 'No! TableView runs an embedded analytical database (DuckDB) compiled to WebAssembly inside your web browser. It reads and parses Parquet files completely client-side.'
+        q: 'How does TableView open Parquet files without a backend server?',
+        a: 'TableView compiles DuckDB and Apache Arrow directly into WebAssembly (Wasm). When you drop a .parquet file, your browser executes the C++ query engine natively inside your tab.'
       },
       {
-        q: 'What is the maximum Parquet file size supported?',
-        a: 'Because Parquet is a columnar format and DuckDB streams only the necessary column pages, TableView can comfortably open and query files up to hundreds of megabytes, limited only by your available device RAM.'
-      },
-      {
-        q: 'Does it support GeoParquet files?',
-        a: 'Yes, GeoParquet files with geometry columns and metadata are supported and can be queried using standard SQL.'
+        q: 'Can I inspect compression codecs and metadata?',
+        a: 'Yes! TableView displays the complete Parquet metadata header, including row group distribution, dictionary pages, and compression codecs (Snappy, ZSTD, GZIP, LZ4).'
       }
     ]
   },
@@ -186,46 +182,46 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
   'json-viewer': {
     slug: 'json-viewer',
     path: '/json-viewer',
-    badge: 'Structured & NDJSON Inspector',
-    title: 'Free Online JSON & NDJSON Viewer',
+    badge: 'Tabular & Tree Views · Client-Side',
+    title: 'Free Online JSON Viewer & Tabular Inspector',
     shortTitle: 'JSON Viewer',
-    metaTitle: 'Free Online JSON Viewer: Inspect JSON Arrays & NDJSON Online',
-    metaDescription: 'Inspect, format, search, and tabularize JSON files, JSON Lines (JSONL), and NDJSON in your browser with interactive tree view and DuckDB SQL.',
-    h1: 'Online JSON & NDJSON',
+    metaTitle: 'Free Online JSON & NDJSON Viewer | TableView',
+    metaDescription: 'Inspect, search, and flatten complex JSON documents and NDJSON lines into interactive tables in your browser. 100% private with DuckDB-Wasm.',
+    h1: 'Free Online JSON',
     h1Highlight: 'Viewer',
-    subtitle: 'Drop any .json, .jsonl, or .ndjson file to explore interactive collapsible JSON trees, preview tabular structures, and run SQL queries.',
+    subtitle: 'Drop JSON files or NDJSON streams to automatically flatten nested keys, search values, sort arrays, and run SQL without uploading data.',
     category: 'viewer',
     color: 'amber',
     iconType: 'json',
     acceptExtensions: '.json,.jsonl,.ndjson',
-    acceptLabel: 'Supports JSON (.json), JSON Lines (.jsonl), and NDJSON (.ndjson)',
+    acceptLabel: 'Supports standard JSON (.json), JSON Lines (.jsonl), and NDJSON (.ndjson)',
     primaryExport: 'any',
-    defaultTab: 'json',
+    defaultTab: 'grid',
     features: [
       {
         icon: 'table',
-        title: 'Interactive JSON Tree & Grid',
-        description: 'Switch between an expandable JSON tree view and an analytical relational table grid with a single click.'
+        title: 'Auto-Flatten Nested Objects',
+        description: 'Automatically unpacks nested JSON objects and arrays into clean, sortable tabular columns.'
       },
       {
         icon: 'zap',
-        title: 'Streaming NDJSON / JSONL Support',
-        description: 'Seamlessly reads server log files and streaming JSON Lines with automatic schema detection.'
+        title: 'NDJSON & JSON Lines Support',
+        description: 'Seamlessly reads line-delimited JSON logs and streaming event records.'
       },
       {
         icon: 'shield',
-        title: 'Strictly Local Sandbox',
-        description: 'Zero telemetry or server requests. Safe for proprietary production logs and confidential JSON dumps.'
+        title: 'Confidential API Payloads Safe',
+        description: 'Inspect production payload logs and API secrets with complete confidence. Nothing leaves your browser.'
       }
     ],
     faqs: [
       {
-        q: 'Does this tool support both standard JSON arrays and JSON Lines (.jsonl)?',
-        a: 'Yes! You can drop single JSON objects, JSON arrays, or newline-delimited JSON (NDJSON/JSONL) log files.'
+        q: 'Does it support nested JSON structures?',
+        a: 'Yes! DuckDB automatically infers schemas and provides dot-notation access to nested properties, flattening records into clean spreadsheet grids.'
       },
       {
-        q: 'Can I convert JSON to Excel or Parquet?',
-        a: 'Yes, DuckDB automatically flattens and types your JSON records so you can export to Excel (.xlsx) or Apache Parquet.'
+        q: 'Can I open large NDJSON / JSON Lines files?',
+        a: 'Yes, TableView streams and parses JSON Lines line-by-line in WebAssembly, making it fast and memory-efficient even on massive server logs.'
       }
     ]
   },
