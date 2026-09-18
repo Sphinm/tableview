@@ -36,6 +36,7 @@ import {
   PrintReportButton,
 } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
+import { InfoTooltip } from '../components/InfoTooltip';
 
 const HARD_MONEY_PRESETS: CalculatorPreset<HardMoneyInputs>[] = [
   {
@@ -499,9 +500,15 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                    After Repair Value (ARV)
-                  </label>
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      After Repair Value (ARV)
+                    </label>
+                    <InfoTooltip
+                      title="After Repair Value (ARV)"
+                      content="The anticipated resale value of the property once all construction, cosmetic updates, and repairs are completed."
+                    />
+                  </div>
                   <CurrencyInput
                     value={afterRepairValue}
                     onChange={(v) => setAfterRepairValue(Math.max(0, v))}
@@ -518,9 +525,15 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Purchase LTV (%)
-                  </label>
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      Purchase LTV (%)
+                    </label>
+                    <InfoTooltip
+                      title="Loan-to-Value on Purchase"
+                      content="The percentage of the purchase price funded by the lender. Borrowers cover the remaining percentage as down payment."
+                    />
+                  </div>
                   <NumericInput
                     value={ltvPercent}
                     onChange={(v) => setLtvPercent(Math.max(0, Math.min(100, v)))}
@@ -557,9 +570,15 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Origination Points
-                  </label>
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      Origination Points
+                    </label>
+                    <InfoTooltip
+                      title="Hard Money Points"
+                      content="Upfront fees charged by the private lender (typically 1 to 3 points, where 1 point = 1% of total loan amount)."
+                    />
+                  </div>
                   <NumericInput
                     value={originationPoints}
                     onChange={(v) => setOriginationPoints(Math.max(0, v))}

@@ -31,6 +31,7 @@ import { useAuth } from '../lib/useAuth';
 import { updatePageMeta } from '../lib/router';
 import { STATIC_PAGE_META } from '../data/routeMeta';
 import { SuiteSubNav } from '../components/SuiteSubNav';
+import { InfoTooltip } from '../components/InfoTooltip';
 
 export function VideoCompressor() {
   const { consumeCredit } = useAuth();
@@ -588,9 +589,15 @@ export function VideoCompressor() {
                   {/* CRF Quality Slider */}
                   <div>
                     <div className="flex items-center justify-between mb-1 text-xs">
-                      <label className="font-bold text-slate-700">
-                        CRF Quality: <strong className="text-indigo-600">{crf}</strong>
-                      </label>
+                      <div className="flex items-center gap-1">
+                        <label className="font-bold text-slate-700">
+                          CRF Quality: <strong className="text-indigo-600">{crf}</strong>
+                        </label>
+                        <InfoTooltip
+                          title="Constant Rate Factor (CRF)"
+                          content="Controls visual quality vs file size. Lower values (18-22) retain near-lossless detail; higher values (28-35) drastically reduce file size."
+                        />
+                      </div>
                       <span className="text-slate-400 text-[11px]">
                         {crf < 23 ? 'Ultra High Quality' : crf <= 28 ? 'Balanced' : 'High Compression'}
                       </span>
@@ -612,9 +619,15 @@ export function VideoCompressor() {
 
                   {/* Encoding Speed Preset */}
                   <div>
-                    <label className="block text-xs font-bold text-slate-700 mb-1.5">
-                      Encoding Speed Preset
-                    </label>
+                    <div className="flex items-center gap-1 mb-1.5">
+                      <label className="block text-xs font-bold text-slate-700">
+                        Encoding Speed Preset
+                      </label>
+                      <InfoTooltip
+                        title="Encoding Speed vs Compression"
+                        content="Controls CPU encoding effort. 'ultrafast' completes in seconds in your browser; 'veryfast' produces smaller file sizes at identical quality."
+                      />
+                    </div>
                     <div className="grid grid-cols-3 gap-1.5">
                       {(['veryfast', 'faster', 'ultrafast'] as const).map((preset) => (
                         <button

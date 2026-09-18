@@ -47,6 +47,7 @@ import { CalculatorPresetsBar, PrintReportButton, PageHeader } from '../componen
 import { SuiteSubNav } from '../components/SuiteSubNav';
 import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
 import { ProBrandingModal } from '../components/ProBrandingModal';
+import { InfoTooltip } from '../components/InfoTooltip';
 
 // Sourced from the shared registry: see the note in MortgageCalculator.tsx.
 const refinanceFaqs = getCalculatorFaqs('/refinance-calculator');
@@ -529,9 +530,15 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Current Interest Rate
-                </label>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700">
+                    Current Interest Rate
+                  </label>
+                  <InfoTooltip
+                    title="Current Mortgage Rate"
+                    content="Your existing loan's note rate. Compare against today's Freddie Mac PMMS benchmark to evaluate rate savings."
+                  />
+                </div>
                 <NumericInput
                   value={currentInterestRate}
                   onChange={setCurrentInterestRate}
@@ -544,9 +551,15 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <label className="block text-xs font-semibold text-slate-700">
-                    Months Already Paid
-                  </label>
+                  <div className="flex items-center gap-1.5">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      Months Already Paid
+                    </label>
+                    <InfoTooltip
+                      title="Amortization Seasoning"
+                      content="The number of monthly payments already completed. Affects your remaining principal balance and determines how much equity you have already built."
+                    />
+                  </div>
                   <button
                     type="button"
                     onClick={() => setShowOriginationDatePicker(!showOriginationDatePicker)}
@@ -695,9 +708,15 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Cash-Out Amount (Optional)
-                </label>
+                <div className="flex items-center gap-1.5 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700">
+                    Cash-Out Amount (Optional)
+                  </label>
+                  <InfoTooltip
+                    title="Cash-Out Refinance Limit (80% LTV)"
+                    content="Borrowing extra cash against your home equity. Fannie Mae & Freddie Mac cap conventional cash-out refinances at 80% Loan-to-Value to prevent default risk."
+                  />
+                </div>
                 <CurrencyInput
                   value={cashOutAmount}
                   onChange={setCashOutAmount}
@@ -777,9 +796,15 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Discount Points
-                </label>
+                <div className="flex items-center gap-1 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700">
+                    Discount Points
+                  </label>
+                  <InfoTooltip
+                    title="Discount Points"
+                    content="1 point = 1% of new loan amount. Points paid on a refinance must be amortized over the life of the loan for tax deductions."
+                  />
+                </div>
                 <NumericInput
                   value={discountPoints}
                   onChange={setDiscountPoints}
@@ -791,9 +816,15 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Origination Fee
-                </label>
+                <div className="flex items-center gap-1 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700">
+                    Origination Fee
+                  </label>
+                  <InfoTooltip
+                    title="Origination Fee"
+                    content="Lender underwriting and processing charge, typically 0.5% to 1.0% of the new loan amount."
+                  />
+                </div>
                 <NumericInput
                   value={originationPercent}
                   onChange={setOriginationPercent}
@@ -805,9 +836,15 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Other Closing Costs
-                </label>
+                <div className="flex items-center gap-1 mb-1">
+                  <label className="block text-xs font-semibold text-slate-700">
+                    Other Closing Costs
+                  </label>
+                  <InfoTooltip
+                    title="Third-Party Settlement Fees"
+                    content="Fixed closing expenses including title search, lender's title insurance, appraisal, escrow fee, recording fee, and credit check."
+                  />
+                </div>
                 <CurrencyInput
                   value={otherClosingCosts}
                   onChange={setOtherClosingCosts}

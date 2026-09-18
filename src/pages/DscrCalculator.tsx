@@ -38,6 +38,7 @@ import {
   PrintReportButton,
 } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
+import { InfoTooltip } from '../components/InfoTooltip';
 
 interface DscrPresetValues {
   propertyValue: number;
@@ -671,7 +672,13 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               {/* Interest-Only Option */}
               <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
                 <div>
-                  <span className="text-xs font-semibold text-slate-900 block">Interest-Only Loan</span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-semibold text-slate-900 block">Interest-Only Loan</span>
+                    <InfoTooltip
+                      title="Interest-Only Option"
+                      content="Reduces monthly debt payments during initial years (e.g. 5-10 yrs) by eliminating principal repayment, significantly increasing your DSCR ratio."
+                    />
+                  </div>
                   <span className="text-[11px] text-slate-500">Lower monthly payment to boost DSCR ratio</span>
                 </div>
                 <input
@@ -691,7 +698,13 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               {/* Monthly Gross Rent */}
               <div>
                 <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex justify-between">
-                  <span>Monthly Gross Rent Expected</span>
+                  <span className="inline-flex items-center gap-1">
+                    <span>Monthly Gross Rent Expected</span>
+                    <InfoTooltip
+                      title="Appraiser 1007 Rent Schedule"
+                      content="The market rent determined by an appraiser's Form 1007 (or existing lease agreement) used by DSCR underwriters."
+                    />
+                  </span>
                   <span className="text-emerald-700 font-mono font-bold">{currencyFmt(monthlyRent)}/mo</span>
                 </label>
                 <CurrencyInput
@@ -740,9 +753,15 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                    Vacancy (%)
-                  </label>
+                  <div className="flex items-center gap-1 mb-1.5">
+                    <label className="block text-xs font-semibold text-slate-700">
+                      Vacancy (%)
+                    </label>
+                    <InfoTooltip
+                      title="Vacancy & Credit Loss"
+                      content="Typical underwriting allowance of 5% to 8% to account for month-to-month tenant transitions."
+                    />
+                  </div>
                   <NumericInput
                     value={vacancyRate}
                     onChange={(v) => setVacancyRate(Math.max(0, v))}
@@ -772,9 +791,15 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
             <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                  <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold block">
-                    Debt-Service Coverage Ratio
-                  </span>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold block">
+                      Debt-Service Coverage Ratio (DSCR)
+                    </span>
+                    <InfoTooltip
+                      title="What is DSCR?"
+                      content="DSCR = Gross Rental Income ÷ Total Debt Service (PITIA). A DSCR of 1.25x means the property generates 25% more rental income than required to pay the mortgage, taxes, and insurance."
+                    />
+                  </div>
                   <div className="flex items-baseline gap-3 mt-1">
                     <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-indigo-600">
                       {result.grossDscr.toFixed(2)}x

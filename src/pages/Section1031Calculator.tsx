@@ -36,6 +36,7 @@ import { NumericInput } from '../components/NumericInput';
 import { getUrlParams } from '../lib/urlState';
 import { PageHeader, PrintReportButton } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
+import { InfoTooltip } from '../components/InfoTooltip';
 
 const PATH = '/section-1031-exchange-calculator';
 const faqs = getCalculatorFaqs(PATH);
@@ -113,11 +114,15 @@ interface FieldProps {
   suffix?: string;
   step?: number;
   hint?: string;
+  tooltip?: { title?: string; content: React.ReactNode };
 }
 
-const Field = ({ label, value, onChange, prefix, suffix, step = 1, hint }: FieldProps) => (
+const Field = ({ label, value, onChange, prefix, suffix, step = 1, hint, tooltip }: FieldProps) => (
   <label className="block">
-    <span className="block text-xs font-medium text-slate-700 mb-1.5">{label}</span>
+    <span className="block text-xs font-medium text-slate-700 mb-1.5 flex items-center gap-1">
+      <span>{label}</span>
+      {tooltip && <InfoTooltip title={tooltip.title} content={tooltip.content} />}
+    </span>
     {prefix === '$' ? (
       <CurrencyInput
         value={Number.isFinite(value) ? value : 0}
@@ -478,6 +483,10 @@ export const Section1031Calculator = () => {
                 suffix="%"
                 step={0.5}
                 hint="Commission, title, transfer tax"
+                tooltip={{
+                  title: "Exchange Closing Expenses",
+                  content: "Brokerage commissions, title fees, transfer taxes, and Qualified Intermediary (QI) costs that reduce net sales proceeds."
+                }}
               />
               <Field
                 label="Adjusted Basis"
@@ -486,6 +495,10 @@ export const Section1031Calculator = () => {
                 prefix="$"
                 step={1000}
                 hint="Purchase price + improvements − depreciation taken"
+                tooltip={{
+                  title: "Adjusted Basis",
+                  content: "Your original purchase price plus capital improvements minus cumulative depreciation deductions taken over the ownership period."
+                }}
               />
               <Field
                 label="Accumulated Depreciation"
@@ -494,6 +507,10 @@ export const Section1031Calculator = () => {
                 prefix="$"
                 step={1000}
                 hint="Drives §1250 recapture on any boot"
+                tooltip={{
+                  title: "Depreciation Recapture (§1250)",
+                  content: "IRS Section 1250 taxes prior depreciation deductions at a maximum 25% federal rate. Fully deferred if you trade across/up in value without receiving boot."
+                }}
               />
               <Field
                 label="Existing Mortgage Payoff"
@@ -501,6 +518,10 @@ export const Section1031Calculator = () => {
                 onChange={setExistingMortgagePayoff}
                 prefix="$"
                 step={1000}
+                tooltip={{
+                  title: "Mortgage / Debt Relief Boot",
+                  content: "Debt relief occurs if your new mortgage is smaller than your old payoff. You must bring new cash to the table to offset the difference, or it triggers taxable mortgage boot."
+                }}
               />
             </div>
           </section>
