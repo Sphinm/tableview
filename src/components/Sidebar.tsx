@@ -25,11 +25,13 @@ import {
   Braces,
   Code2,
   FileCode,
-  Cpu
+  Cpu,
+  Mail
 } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { navigateTo } from '../lib/router';
 import { openCookieSettings } from '../lib/consent';
+import { getBugReportMailto } from '../lib/feedback';
 import { getCanonicalPath, getRouteCategory } from '../lib/resolveRoute';
 
 interface SidebarProps {
@@ -606,6 +608,14 @@ export const Sidebar = ({
             </a>
             <span>·</span>
             <a
+              href={getBugReportMailto()}
+              className="hover:text-slate-600 hover:underline"
+              title="Send Feedback"
+            >
+              Feedback
+            </a>
+            <span>·</span>
+            <a
               href="/privacy"
               onClick={(e) => handleNav(e, '/privacy')}
               className="hover:text-slate-600 hover:underline"
@@ -622,7 +632,14 @@ export const Sidebar = ({
             </button>
           </div>
         ) : (
-          <div className="flex flex-col items-center">
+          <div className="flex flex-col items-center gap-1">
+            <a
+              href={getBugReportMailto()}
+              className="size-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors"
+              title="Send Feedback"
+            >
+              <Mail className="size-4" />
+            </a>
             <a
               href="/about"
               onClick={(e) => handleNav(e, '/about')}

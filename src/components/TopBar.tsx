@@ -313,14 +313,24 @@ export const TopBar = ({ currentPath, onOpenMobileMenu }: TopBarProps) => {
             )}
           </div>
         ) : (
-          <button
-            type="button"
-            onClick={openAuthModal}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs hover:shadow transition-all cursor-pointer"
-          >
-            <User className="size-3.5" />
-            <span>Sign In</span>
-          </button>
+          <div className="flex items-center gap-1.5 sm:gap-2">
+            <a
+              href={getBugReportMailto()}
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              title="Send Feedback"
+            >
+              <Mail className="size-3.5 text-slate-500" />
+              <span className="hidden sm:inline">Feedback</span>
+            </a>
+            <button
+              type="button"
+              onClick={openAuthModal}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-xs hover:shadow transition-all cursor-pointer"
+            >
+              <User className="size-3.5" />
+              <span>Sign In</span>
+            </button>
+          </div>
         )}
       </div>
     </header>
