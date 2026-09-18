@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Bookmark, X, Trash2, Check, ArrowRight, Layers, Plus, Calendar } from 'lucide-react';
+import { Bookmark, X, Trash2, Check, ArrowRight, Layers, Plus, Calendar, Lock } from 'lucide-react';
+import { useAuth } from '../lib/useAuth';
 
 /**
  * Read saved scenarios for a calculator. Corrupt or unavailable storage (private
@@ -38,6 +39,7 @@ interface SavedScenariosModalProps<T> {
     subline: string;
   };
   onLoadScenario: (data: T) => void;
+  onUpgradePro?: () => void;
 }
 
 export function SavedScenariosModal<T>({
@@ -47,20 +49,21 @@ export function SavedScenariosModal<T>({
   currentData,
   currentMetrics,
   onLoadScenario,
+  onUpgradePro,
 }: SavedScenariosModalProps<T>) {
+  const { user } = useAuth();
+  const isPro = user?.plan === 'pro';
+  const FREE_LIMIT = 3;
+
   const storageKey = `tableview_scenarios_${calculatorId}`;
   const [scenarios, setScenarios] = useState<SavedScenario<T>[]>([]);
   const [loadedKey, setLoadedKey] = useState<string | null>(null);
   const [newName, setNewName] = useState('');
   const [showSavedToast, setShowSavedToast] = useState(false);
+  const [limitWarning, setLimitWarning] = useState(false);
   const [selectedForCompare, setSelectedForCompare] = useState<string[]>([]);
 
-  // Load scenarios from localStorage.
-  //
-  // Adjusting state during render (rather than in an effect) is React's
-  // documented pattern for reacting to a prop change: it avoids the extra
-  // render pass an effect would cause, and keeps the read synchronous with the
-  // first render that actually displays the data.
+  // Load scenarios from localStorage
   if (isOpen && loadedKey !== storageKey) {
     setLoadedKey(storageKey);
     setScenarios(readScenarios<T>(storageKey));
@@ -68,8 +71,15 @@ export function SavedScenariosModal<T>({
 
   if (!isOpen) return null;
 
+  const isAtLimit = !isPro && scenarios.length >= FREE_LIMIT;
+
   const handleSaveCurrent = (e: React.FormEvent) => {
     e.preventDefault();
+    if (isAtLimit) {
+      setLimitWarning(true);
+      return;
+    }
+
     const title = newName.trim() || `Scenario ${scenarios.length + 1} (${new Date().toLocaleDateString()})`;
     const newScenario: SavedScenario<T> = {
       id: `sc_${Date.now()}`,
@@ -84,6 +94,7 @@ export function SavedScenariosModal<T>({
     localStorage.setItem(storageKey, JSON.stringify(updated));
     setNewName('');
     setShowSavedToast(true);
+    setLimitWarning(false);
     setTimeout(() => setShowSavedToast(false), 2000);
   };
 
@@ -125,7 +136,18 @@ export function SavedScenariosModal<T>({
               <Bookmark className="size-4" />
             </div>
             <div>
-              <h3 className="text-base font-bold text-slate-900">Saved Deal Scenarios</h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-base font-bold text-slate-900">Saved Deal Scenarios</h3>
+                <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold border ${
+                  isPro
+                    ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                    : scenarios.length >= FREE_LIMIT
+                    ? 'bg-amber-50 text-amber-800 border-amber-200'
+                    : 'bg-slate-100 text-slate-600 border-slate-200'
+                }`}>
+                  {scenarios.length} / {isPro ? '∞ Unlimited' : `${FREE_LIMIT} (Free)`}
+                </span>
+              </div>
               <p className="text-xs text-slate-600">Stored locally in your browser. Zero cloud tracking.</p>
             </div>
           </div>
@@ -136,6 +158,28 @@ export function SavedScenariosModal<T>({
             <X className="size-4" />
           </button>
         </div>
+
+        {/* Limit Warning Banner if at limit */}
+        {limitWarning && (
+          <div className="p-3 bg-amber-50 border-b border-amber-200 text-amber-900 text-xs flex items-center justify-between gap-3 animate-in fade-in">
+            <div className="flex items-center gap-2 font-medium">
+              <Lock className="size-4 text-amber-600 shrink-0" />
+              <span>Free tier is limited to 3 saved scenarios. Upgrade to Pro for unlimited client storage.</span>
+            </div>
+            {onUpgradePro && (
+              <button
+                type="button"
+                onClick={() => {
+                  onClose();
+                  onUpgradePro();
+                }}
+                className="px-2.5 py-1 rounded-lg bg-amber-600 hover:bg-amber-700 text-white font-bold text-[11px] shrink-0 cursor-pointer shadow-2xs"
+              >
+                Upgrade to Pro
+              </button>
+            )}
+          </div>
+        )}
 
         {/* Save Current Form */}
         <form onSubmit={handleSaveCurrent} className="p-4 bg-slate-50 border-b border-slate-200 flex items-center gap-3">

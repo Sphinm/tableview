@@ -13,7 +13,8 @@ import {
   Bookmark,
   Wallet,
   CheckCircle2,
-  Scale
+  Scale,
+  Building2
 } from 'lucide-react';
 import {
   type MortgageInputs,
@@ -46,6 +47,8 @@ import { PmmsRateTicker } from '../components/PmmsRateTicker';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CalculatorPresetsBar, PrintReportButton, PageHeader } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
+import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
+import { ProBrandingModal } from '../components/ProBrandingModal';
 
 // Sourced from the shared registry so the rendered page, the JSON-LD and the
 // prerendered HTML can never disagree. This page previously declared FAQPage
@@ -91,6 +94,8 @@ interface MortgageCalculatorProps {
 
 export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalculatorProps) => {
   const [showScenariosModal, setShowScenariosModal] = useState(false);
+  const [showDossierModal, setShowDossierModal] = useState(false);
+  const [showBrandingModal, setShowBrandingModal] = useState(false);
 
   useEffect(() => {
     updatePageMeta(
@@ -438,6 +443,24 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             >
               <Bookmark className="size-3.5 text-indigo-500" />
               <span>Saved Scenarios</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowDossierModal(true)}
+              className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold shadow-xs hover:shadow-amber-500/20 transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+              title="Download official CFPB QM pre-approval PDF & live formulas Excel spreadsheet"
+            >
+              <Sparkles className="size-3.5 text-amber-100" />
+              <span>Lender Dossier</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowBrandingModal(true)}
+              className="h-9 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 shadow-2xs transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+              title="Customize your personal or brokerage white-label branding on reports"
+            >
+              <Building2 className="size-3.5 text-slate-500" />
+              <span className="hidden sm:inline">Branding</span>
             </button>
             <PrintReportButton onPrint={handleExportPdf} label="Print / PDF" />
           </>
@@ -1786,6 +1809,29 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
         if (data.propertyTaxYearly !== undefined) setPropertyTaxYearly(data.propertyTaxYearly);
         if (data.homeInsuranceYearly !== undefined) setHomeInsuranceYearly(data.homeInsuranceYearly);
         if (data.monthlyHoa !== undefined) setMonthlyHoa(data.monthlyHoa);
+      }}
+      onUpgradePro={() => {
+        setShowScenariosModal(false);
+        setShowDossierModal(true);
+      }}
+    />
+
+    <LenderReadyDossierModal
+      isOpen={showDossierModal}
+      onClose={() => setShowDossierModal(false)}
+      dealTitle={`${loanTermYears}Y Fixed Mortgage · $${homeValue.toLocaleString()}`}
+      dealId={`mtg_${homeValue}_${Math.round(summary.loanAmount)}_${interestRate}_${loanTermYears}`}
+      onExportExcel={handleExportExcel}
+      onPrintOfficialPdf={handleExportPdf}
+      onOpenBrandingSettings={() => setShowBrandingModal(true)}
+    />
+
+    <ProBrandingModal
+      isOpen={showBrandingModal}
+      onClose={() => setShowBrandingModal(false)}
+      onUpgradeToPro={() => {
+        setShowBrandingModal(false);
+        setShowDossierModal(true);
       }}
     />
 

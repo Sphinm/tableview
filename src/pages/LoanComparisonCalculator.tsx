@@ -7,7 +7,9 @@ import {
   ChevronDown,
   Share2,
   Check,
-  ArrowRight
+  ArrowRight,
+  Sparkles,
+  Building2
 } from 'lucide-react';
 import {
   compareLoans,
@@ -30,6 +32,8 @@ import {
   PageHeader,
 } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
+import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
+import { ProBrandingModal } from '../components/ProBrandingModal';
 
 const LOAN_PRESETS: CalculatorPreset<{ a: LoanParameters; b: LoanParameters }>[] = [
   {
@@ -160,6 +164,8 @@ export const LoanComparisonCalculator = () => {
   const [mobileTab, setMobileTab] = useState<'both' | 'a' | 'b' | 'verdict'>('both');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [activePresetId, setActivePresetId] = useState<string | null>('30vs15');
+  const [showDossierModal, setShowDossierModal] = useState(false);
+  const [showBrandingModal, setShowBrandingModal] = useState(false);
 
   const handleSelectPreset = (preset: CalculatorPreset<{ a: LoanParameters; b: LoanParameters }>) => {
     setActivePresetId(preset.id);
@@ -267,6 +273,24 @@ export const LoanComparisonCalculator = () => {
         actions={
           <>
             <PrintReportButton />
+            <button
+              type="button"
+              onClick={() => setShowDossierModal(true)}
+              className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold shadow-xs hover:shadow-amber-500/20 transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+              title="Download official CFPB QM pre-approval PDF & live formulas Excel spreadsheet"
+            >
+              <Sparkles className="size-3.5 text-amber-100" />
+              <span>Lender Dossier</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowBrandingModal(true)}
+              className="h-9 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 shadow-2xs transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+              title="Customize your personal or brokerage white-label branding on reports"
+            >
+              <Building2 className="size-3.5 text-slate-500" />
+              <span className="hidden sm:inline">Branding</span>
+            </button>
             <button
               type="button"
               onClick={handleCopyLink}
@@ -851,6 +875,25 @@ export const LoanComparisonCalculator = () => {
         <MethodologyDisclosure type="loanComparison" />
         <AdSlot className="mt-8" />
       </div>
+
+      <LenderReadyDossierModal
+        isOpen={showDossierModal}
+        onClose={() => setShowDossierModal(false)}
+        dealTitle={`Loan Comparison: ${loanA.name} vs ${loanB.name}`}
+        dealId={`loancomp_${loanA.loanAmount}_${loanA.interestRate}_vs_${loanB.loanAmount}_${loanB.interestRate}`}
+        onExportExcel={handleExportExcel}
+        onPrintOfficialPdf={() => window.print()}
+        onOpenBrandingSettings={() => setShowBrandingModal(true)}
+      />
+
+      <ProBrandingModal
+        isOpen={showBrandingModal}
+        onClose={() => setShowBrandingModal(false)}
+        onUpgradeToPro={() => {
+          setShowBrandingModal(false);
+          setShowDossierModal(true);
+        }}
+      />
     </div>
   );
 };

@@ -17,7 +17,8 @@ import {
   Printer,
   Bookmark,
   PiggyBank,
-  HelpCircle
+  HelpCircle,
+  Building2
 } from 'lucide-react';
 import {
   type RefinanceInputs,
@@ -44,6 +45,8 @@ import { NumericInput } from '../components/NumericInput';
 import { MonthYearPicker } from '../components/MonthYearPicker';
 import { CalculatorPresetsBar, PrintReportButton, PageHeader } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
+import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
+import { ProBrandingModal } from '../components/ProBrandingModal';
 
 // Sourced from the shared registry: see the note in MortgageCalculator.tsx.
 const refinanceFaqs = getCalculatorFaqs('/refinance-calculator');
@@ -86,6 +89,8 @@ interface RefinanceCalculatorProps {
 
 export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalculatorProps) => {
   const [showScenariosModal, setShowScenariosModal] = useState(false);
+  const [showDossierModal, setShowDossierModal] = useState(false);
+  const [showBrandingModal, setShowBrandingModal] = useState(false);
 
   useEffect(() => {
     updatePageMeta(
@@ -423,6 +428,24 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             >
               <Bookmark className="size-3.5 text-indigo-500" />
               <span>Saved Scenarios</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowDossierModal(true)}
+              className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold shadow-xs hover:shadow-amber-500/20 transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+              title="Download official refinance evaluation PDF dossier & Excel model"
+            >
+              <Sparkles className="size-3.5 text-amber-100" />
+              <span>Lender Dossier</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setShowBrandingModal(true)}
+              className="h-9 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 shadow-2xs transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+              title="Customize your personal or brokerage white-label branding on reports"
+            >
+              <Building2 className="size-3.5 text-slate-500" />
+              <span className="hidden sm:inline">Branding</span>
             </button>
             <PrintReportButton onPrint={handleExportPdf} label="Print / PDF" />
           </>
@@ -1704,6 +1727,29 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
         if (data.otherClosingCosts !== undefined) setOtherClosingCosts(data.otherClosingCosts);
         if (data.cashOutAmount !== undefined) setCashOutAmount(data.cashOutAmount);
         if (data.rollCostsIntoLoan !== undefined) setRollCostsIntoLoan(data.rollCostsIntoLoan);
+      }}
+      onUpgradePro={() => {
+        setShowScenariosModal(false);
+        setShowDossierModal(true);
+      }}
+    />
+
+    <LenderReadyDossierModal
+      isOpen={showDossierModal}
+      onClose={() => setShowDossierModal(false)}
+      dealTitle={`Refinance Evaluation · $${Math.round(summary.newLoanAmount).toLocaleString()} (${newTermYears}Y @ ${newInterestRate}%)`}
+      dealId={`refi_${Math.round(summary.newLoanAmount)}_${newInterestRate}_${newTermYears}`}
+      onExportExcel={handleDownloadExcel}
+      onPrintOfficialPdf={handleExportPdf}
+      onOpenBrandingSettings={() => setShowBrandingModal(true)}
+    />
+
+    <ProBrandingModal
+      isOpen={showBrandingModal}
+      onClose={() => setShowBrandingModal(false)}
+      onUpgradeToPro={() => {
+        setShowBrandingModal(false);
+        setShowDossierModal(true);
       }}
     />
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import { type RefinanceInputs, type RefinanceSummary, type AnnualRefinanceRow, type RefinanceScheduleRow } from '../lib/refinanceCalculator';
+import { useAuth } from '../lib/useAuth';
 
 interface PrintableRefinanceReportProps {
   inputs: RefinanceInputs;
@@ -16,11 +17,15 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
   monthlySchedule = [],
   scheduleView = 'annual',
 }) => {
+  const { user } = useAuth();
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
+
+  const isWhiteLabel = Boolean(user?.plan === 'pro' && user?.branding?.enabled && (user?.branding?.companyName || user?.branding?.agentName));
+  const branding = user?.branding;
 
   const fmt = (n: number) => `$${Math.round(n).toLocaleString()}`;
   const isPositiveSavings = summary.monthlyPaymentSavings > 0;
@@ -29,29 +34,66 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
     <div className="hidden print:block font-sans text-slate-900 bg-white p-2">
       {/* Institutional Document Header */}
       <div className="border-b-2 border-slate-900 pb-4 mb-6">
-        <div className="flex justify-between items-start">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-black tracking-tight text-slate-950 uppercase">
-                TableView<span className="text-indigo-600">.dev</span>
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold border border-slate-300">
-                Official Analysis
-              </span>
+        {isWhiteLabel && branding ? (
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3">
+              <div className="size-12 rounded-lg bg-indigo-900 text-white font-black text-xl flex items-center justify-center border border-indigo-700 shrink-0">
+                {branding.companyName ? branding.companyName.charAt(0) : 'A'}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-black tracking-tight text-slate-950 uppercase">
+                    {branding.companyName || 'Apex Financial'}
+                  </span>
+                  {branding.nmlsNumber && (
+                    <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold border border-slate-300 font-mono">
+                      {branding.nmlsNumber}
+                    </span>
+                  )}
+                </div>
+                {branding.agentName && (
+                  <div className="text-sm font-bold text-indigo-950 mt-0.5">
+                    Prepared by: {branding.agentName}
+                  </div>
+                )}
+                <div className="text-xs text-slate-600 mt-0.5 flex items-center gap-2">
+                  {branding.phone && <span>📞 {branding.phone}</span>}
+                  {branding.phone && branding.email && <span>·</span>}
+                  {branding.email && <span>✉️ {branding.email}</span>}
+                </div>
+              </div>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1">
-              Mortgage Refinance & Break-Even Evaluation Report
-            </h1>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Side-by-Side Current vs. Proposed Financing Analysis · Generated 100% In-Browser
-            </p>
+            <div className="text-right text-xs text-slate-600 space-y-0.5">
+              <div><span className="font-semibold text-slate-800">Date:</span> {currentDate}</div>
+              <div><span className="font-semibold text-slate-800">Ref ID:</span> REFI-{Math.round(summary.newLoanAmount % 100000).toString().padStart(5, '0')}</div>
+              <div><span className="font-semibold text-slate-800">Purpose:</span> Client Refinance Review</div>
+            </div>
           </div>
-          <div className="text-right text-xs text-slate-600 space-y-0.5">
-            <div><span className="font-semibold text-slate-800">Date:</span> {currentDate}</div>
-            <div><span className="font-semibold text-slate-800">Ref ID:</span> REFI-{Math.round(summary.newLoanAmount % 100000).toString().padStart(5, '0')}</div>
-            <div><span className="font-semibold text-slate-800">Privacy:</span> Zero Cloud Upload</div>
+        ) : (
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-black tracking-tight text-slate-950 uppercase">
+                  TableView<span className="text-indigo-600">.dev</span>
+                </span>
+                <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold border border-slate-300">
+                  Official Analysis
+                </span>
+              </div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1">
+                Mortgage Refinance & Break-Even Evaluation Report
+              </h1>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Side-by-Side Current vs. Proposed Financing Analysis · Generated 100% In-Browser
+              </p>
+            </div>
+            <div className="text-right text-xs text-slate-600 space-y-0.5">
+              <div><span className="font-semibold text-slate-800">Date:</span> {currentDate}</div>
+              <div><span className="font-semibold text-slate-800">Ref ID:</span> REFI-{Math.round(summary.newLoanAmount % 100000).toString().padStart(5, '0')}</div>
+              <div><span className="font-semibold text-slate-800">Privacy:</span> Zero Cloud Upload</div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Side-by-Side Comparison Matrix */}
@@ -241,10 +283,16 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
       <div className="border-t border-slate-300 pt-3 text-[9px] text-slate-500 leading-relaxed print-avoid-break">
         <p className="font-semibold text-slate-700">REFINANCE ADVISORY & REGULATORY NOTE:</p>
         <p>
-          Calculations are simulated estimates based on user-entered parameters. Refinancing an existing mortgage may increase total finance charges over the life of the loan if the loan term is extended (the 30-year reset clock effect). This analysis does not include state transfer taxes, title insurance recording variations, or pre-payment penalty clauses of existing lienholders. Generated 100% locally in browser on TableView.dev.
+          {isWhiteLabel && branding?.customDisclaimer
+            ? branding.customDisclaimer
+            : 'Calculations are simulated estimates based on user-entered parameters. Refinancing an existing mortgage may increase total finance charges over the life of the loan if the loan term is extended (the 30-year reset clock effect). This analysis does not include state transfer taxes, title insurance recording variations, or pre-payment penalty clauses of existing lienholders. Generated 100% locally in browser on TableView.dev.'}
         </p>
         <div className="flex justify-between items-center mt-2 text-slate-400">
-          <span>Generated client-side via TableView.dev Mortgage Planning Engine</span>
+          <span>
+            {isWhiteLabel && branding?.companyName
+              ? `Prepared exclusively for client review by ${branding.companyName}`
+              : 'Generated client-side via TableView.dev Mortgage Planning Engine'}
+          </span>
           <span>Page 1 of Refinance Statement</span>
         </div>
       </div>

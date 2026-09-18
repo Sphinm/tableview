@@ -8,6 +8,7 @@ import {
   type FicoScoreTier,
   FICO_PROFILES
 } from '../lib/mortgageCalculator';
+import { useAuth } from '../lib/useAuth';
 
 interface PrintableMortgageReportProps {
   homeValue: number;
@@ -52,11 +53,15 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
   dtiAnalysis,
   ficoTier = '760+',
 }) => {
+  const { user } = useAuth();
   const currentDate = new Date().toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   });
+
+  const isWhiteLabel = Boolean(user?.plan === 'pro' && user?.branding?.enabled && (user?.branding?.companyName || user?.branding?.agentName));
+  const branding = user?.branding;
 
   const downPaymentPct = ((downPayment / homeValue) * 100).toFixed(1);
   const totalMonthly = summary.totalMonthlyPayment;
@@ -66,29 +71,66 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
     <div className="hidden print:block font-sans text-slate-900 bg-white p-2">
       {/* Institutional Document Header */}
       <div className="border-b-2 border-slate-900 pb-4 mb-6">
-        <div className="flex justify-between items-start">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xl font-black tracking-tight text-slate-950 uppercase">
-                TableView<span className="text-indigo-600">.dev</span>
-              </span>
-              <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold border border-slate-300">
-                Official Statement
-              </span>
+        {isWhiteLabel && branding ? (
+          <div className="flex justify-between items-start">
+            <div className="flex items-center gap-3">
+              <div className="size-12 rounded-lg bg-indigo-900 text-white font-black text-xl flex items-center justify-center border border-indigo-700 shrink-0">
+                {branding.companyName ? branding.companyName.charAt(0) : 'A'}
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-xl font-black tracking-tight text-slate-950 uppercase">
+                    {branding.companyName || 'Apex Realty Group'}
+                  </span>
+                  {branding.nmlsNumber && (
+                    <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold border border-slate-300 font-mono">
+                      {branding.nmlsNumber}
+                    </span>
+                  )}
+                </div>
+                {branding.agentName && (
+                  <div className="text-sm font-bold text-indigo-950 mt-0.5">
+                    Prepared by: {branding.agentName}
+                  </div>
+                )}
+                <div className="text-xs text-slate-600 mt-0.5 flex items-center gap-2">
+                  {branding.phone && <span>📞 {branding.phone}</span>}
+                  {branding.phone && branding.email && <span>·</span>}
+                  {branding.email && <span>✉️ {branding.email}</span>}
+                </div>
+              </div>
             </div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1">
-              Residential Mortgage Amortization & PITI Statement
-            </h1>
-            <p className="text-xs text-slate-600 mt-0.5">
-              Prepared for Financial Planning & Lender Loan Comparison · Generated 100% In-Browser
-            </p>
+            <div className="text-right text-xs text-slate-600 space-y-0.5">
+              <div><span className="font-semibold text-slate-800">Date:</span> {currentDate}</div>
+              <div><span className="font-semibold text-slate-800">Ref ID:</span> MTG-{(homeValue % 100000).toString().padStart(5, '0')}-{loanTermYears}Y</div>
+              <div><span className="font-semibold text-slate-800">Purpose:</span> Client Pre-Approval Review</div>
+            </div>
           </div>
-          <div className="text-right text-xs text-slate-600 space-y-0.5">
-            <div><span className="font-semibold text-slate-800">Date:</span> {currentDate}</div>
-            <div><span className="font-semibold text-slate-800">Ref ID:</span> MTG-{(homeValue % 100000).toString().padStart(5, '0')}-{loanTermYears}Y</div>
-            <div><span className="font-semibold text-slate-800">Privacy:</span> Zero Cloud Upload</div>
+        ) : (
+          <div className="flex justify-between items-start">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="text-xl font-black tracking-tight text-slate-950 uppercase">
+                  TableView<span className="text-indigo-600">.dev</span>
+                </span>
+                <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-semibold border border-slate-300">
+                  Official Statement
+                </span>
+              </div>
+              <h1 className="text-2xl font-bold tracking-tight text-slate-900 mt-1">
+                Residential Mortgage Amortization & PITI Statement
+              </h1>
+              <p className="text-xs text-slate-600 mt-0.5">
+                Prepared for Financial Planning & Lender Loan Comparison · Generated 100% In-Browser
+              </p>
+            </div>
+            <div className="text-right text-xs text-slate-600 space-y-0.5">
+              <div><span className="font-semibold text-slate-800">Date:</span> {currentDate}</div>
+              <div><span className="font-semibold text-slate-800">Ref ID:</span> MTG-{(homeValue % 100000).toString().padStart(5, '0')}-{loanTermYears}Y</div>
+              <div><span className="font-semibold text-slate-800">Privacy:</span> Zero Cloud Upload</div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Overview Grid: Loan Specs & Key Summary */}
@@ -383,10 +425,16 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
       <div className="border-t border-slate-300 pt-3 text-[9px] text-slate-500 leading-relaxed print-avoid-break">
         <p className="font-semibold text-slate-700">COMPLIANCE & TRUTH IN LENDING ACT (TILA) NOTICE:</p>
         <p>
-          This mortgage analysis is produced for informational and financial comparison purposes only and does not constitute a commitment to lend, credit offer, formal Loan Estimate (LE), or Closing Disclosure (CD) under CFPB regulations (TRID/RESPA). Actual interest rates, annual percentage rates (APR), closing fees, property tax assessments, and insurance premiums will vary based on creditworthiness, property appraisal, down payment verification, and specific lender guidelines.
+          {isWhiteLabel && branding?.customDisclaimer
+            ? branding.customDisclaimer
+            : 'This mortgage analysis is produced for informational and financial comparison purposes only and does not constitute a commitment to lend, credit offer, formal Loan Estimate (LE), or Closing Disclosure (CD) under CFPB regulations (TRID/RESPA). Actual interest rates, annual percentage rates (APR), closing fees, property tax assessments, and insurance premiums will vary based on creditworthiness, property appraisal, down payment verification, and specific lender guidelines.'}
         </p>
         <div className="flex justify-between items-center mt-2 text-slate-400">
-          <span>Generated client-side via TableView.dev Mortgage Planning Engine</span>
+          <span>
+            {isWhiteLabel && branding?.companyName
+              ? `Prepared exclusively for client evaluation by ${branding.companyName}`
+              : 'Generated client-side via TableView.dev Mortgage Planning Engine'}
+          </span>
           <span>Page 1 of Amortization Statement</span>
         </div>
       </div>

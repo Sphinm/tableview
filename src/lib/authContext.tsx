@@ -1,5 +1,5 @@
 import { useState, useEffect, type ReactNode } from 'react';
-import { AuthContext, type User } from './authTypes';
+import { AuthContext, type User, type BrandingProfile } from './authTypes';
 
 const TOKEN_STORAGE_KEY = 'tableview_auth_token';
 const MOCK_USER_KEY = 'tableview_mock_user';
@@ -194,6 +194,77 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return true;
   };
 
+  const updateBranding = (branding: Partial<BrandingProfile>) => {
+    setUser((prev) => {
+      const current: User = prev || {
+        id: 'user_' + Date.now(),
+        email: 'user@tableview.dev',
+        name: branding.agentName || 'Pro User',
+        plan: 'free',
+        credits: 30,
+      };
+      const updatedBranding: BrandingProfile = {
+        enabled: branding.enabled ?? current.branding?.enabled ?? true,
+        agentName: branding.agentName ?? current.branding?.agentName ?? '',
+        companyName: branding.companyName ?? current.branding?.companyName ?? '',
+        nmlsNumber: branding.nmlsNumber ?? current.branding?.nmlsNumber ?? '',
+        phone: branding.phone ?? current.branding?.phone ?? '',
+        email: branding.email ?? current.branding?.email ?? '',
+        website: branding.website ?? current.branding?.website ?? '',
+        customDisclaimer: branding.customDisclaimer ?? current.branding?.customDisclaimer ?? '',
+        avatarUrl: branding.avatarUrl ?? current.branding?.avatarUrl,
+        logoUrl: branding.logoUrl ?? current.branding?.logoUrl,
+      };
+      const updatedUser: User = {
+        ...current,
+        branding: updatedBranding,
+      };
+      localStorage.setItem(MOCK_USER_KEY, JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+  };
+
+  const purchaseSinglePass = async (dealId: string): Promise<boolean> => {
+    setUser((prev) => {
+      const current: User = prev || {
+        id: 'user_' + Date.now(),
+        email: 'buyer@tableview.dev',
+        name: 'Home Buyer',
+        plan: 'free',
+        credits: 30,
+      };
+      const existing = current.purchasedDossiers || [];
+      if (existing.includes(dealId)) return current;
+      const updatedUser: User = {
+        ...current,
+        purchasedDossiers: [...existing, dealId],
+      };
+      localStorage.setItem(MOCK_USER_KEY, JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+    return true;
+  };
+
+  const upgradePlan = async (newPlan: 'free' | 'basic' | 'pro'): Promise<boolean> => {
+    setUser((prev) => {
+      const current: User = prev || {
+        id: 'user_' + Date.now(),
+        email: 'pro@tableview.dev',
+        name: 'Pro Member',
+        plan: 'free',
+        credits: 30,
+      };
+      const updatedUser: User = {
+        ...current,
+        plan: newPlan,
+        credits: newPlan === 'pro' ? 5000 : newPlan === 'basic' ? 750 : 30,
+      };
+      localStorage.setItem(MOCK_USER_KEY, JSON.stringify(updatedUser));
+      return updatedUser;
+    });
+    return true;
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem(TOKEN_STORAGE_KEY);
@@ -268,6 +339,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loginWithGoogle,
         loginAsDemo,
         consumeCredit,
+        updateBranding,
+        purchaseSinglePass,
+        upgradePlan,
         logout,
       }}
     >
