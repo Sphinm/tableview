@@ -1,12 +1,8 @@
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { SuiteSwitcher } from '@tableview/ui';
-import { Sidebar } from './components/Sidebar';
-import { Header } from './components/Header';
+import { CompressorHeader } from './components/CompressorHeader';
 import { CookieBanner } from './components/CookieBanner';
 import { GlobalLoading } from './components/GlobalLoading';
-import { AuthProvider } from './lib/authContext';
-import { AuthModal } from './components/AuthModal';
-import { GoogleOneTap } from './components/GoogleOneTap';
 import { useRouter, updatePageMeta } from './lib/router';
 import { applyTheme } from './lib/theme';
 import { FileQuestion, ArrowLeft } from 'lucide-react';
@@ -27,23 +23,6 @@ const Disclaimer = lazy(() => import('./pages/Disclaimer').then(m => ({ default:
 export function App() {
   const { path, slug, pathname } = useRouter();
   const currentNavPath = pathname || path;
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('tableview_sidebar_collapsed') === 'true';
-    }
-    return false;
-  });
-  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-
-  const toggleSidebar = () => {
-    setSidebarCollapsed(prev => {
-      const next = !prev;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('tableview_sidebar_collapsed', String(next));
-      }
-      return next;
-    });
-  };
 
   useEffect(() => {
     applyTheme('light');
@@ -52,9 +31,15 @@ export function App() {
   useEffect(() => {
     if (path === '/' || path === '/video-compressor') {
       updatePageMeta(
-        'Free In-Browser Video Compressor — Zero Uploads | TableView',
-        'Compress MP4, WebM, and MOV video files directly in your browser with WebAssembly FFmpeg. 100% private and fast.',
+        'Free In-Browser Video Compressor — 100% Client-Side | TableView',
+        'Compress MP4, WebM, and MOV video files directly in your browser with WebAssembly FFmpeg. 100% private, zero uploads.',
         'https://compress.tableview.dev/'
+      );
+    } else if (path === '/image-compressor') {
+      updatePageMeta(
+        'Free In-Browser Image Compressor — WebP, PNG, JPEG | TableView',
+        'Lossy and lossless client-side image compression with real-time preview and custom quality controls. Zero server uploads.',
+        'https://compress.tableview.dev/image-compressor'
       );
     } else if (STATIC_PAGE_META[path]) {
       const meta = STATIC_PAGE_META[path];
@@ -118,7 +103,7 @@ export function App() {
         <div className="flex gap-3">
           <a
             href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-500 text-neutral-950 font-semibold text-sm hover:bg-purple-400 transition"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-600 text-white font-semibold text-sm hover:bg-purple-500 transition"
           >
             <ArrowLeft className="w-4 h-4" />
             Video Compressor
@@ -129,38 +114,30 @@ export function App() {
           >
             Financial Suite (Pro)
           </a>
+          <a
+            href="https://tools.tableview.dev"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-neutral-800 text-neutral-200 font-semibold text-sm hover:bg-neutral-700 transition border border-neutral-700"
+          >
+            Data Tools
+          </a>
         </div>
       </div>
     );
   };
 
   return (
-    <AuthProvider>
-      <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col selection:bg-purple-500/30 selection:text-purple-200">
-        <SuiteSwitcher currentSuite="compressor" />
-        <Header currentPath={currentNavPath} />
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col selection:bg-purple-500/30 selection:text-purple-200">
+      <SuiteSwitcher currentSuite="compressor" />
+      <CompressorHeader currentPath={currentNavPath} />
 
-        <div className="flex-1 flex overflow-hidden">
-          <Sidebar
-            currentPath={currentNavPath}
-            collapsed={sidebarCollapsed}
-            onToggleCollapse={toggleSidebar}
-            mobileOpen={mobileMenuOpen}
-            onCloseMobile={() => setMobileMenuOpen(false)}
-          />
+      <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <Suspense fallback={<GlobalLoading message="Initializing FFmpeg WebAssembly engine..." />}>
+          {renderContent()}
+        </Suspense>
+      </main>
 
-          <main className="flex-1 overflow-y-auto min-w-0">
-            <Suspense fallback={<GlobalLoading message="Initializing FFmpeg engine..." />}>
-              {renderContent()}
-            </Suspense>
-          </main>
-        </div>
-
-        <AuthModal />
-        <GoogleOneTap />
-        <CookieBanner />
-      </div>
-    </AuthProvider>
+      <CookieBanner />
+    </div>
   );
 }
 

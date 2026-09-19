@@ -86,8 +86,6 @@ describe('Calculator FAQ registry', () => {
       'pages/RefinanceCalculator.tsx',
       'pages/DscrCalculator.tsx',
       'pages/HardMoneyCalculator.tsx',
-      'pages/SnowflakeCalculator.tsx',
-      'pages/ParquetSavingsCalculator.tsx',
       'pages/Section1031Calculator.tsx',
     ];
 

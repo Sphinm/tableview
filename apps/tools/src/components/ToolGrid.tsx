@@ -54,7 +54,9 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  const toolsList = Object.values(TOOLS_CONFIG);
+  const toolsList = Object.values(TOOLS_CONFIG).filter(
+    (tool) => tool.category !== 'calculator' && tool.category !== 'media'
+  );
 
   // Filter tools based on category and search query
   const filteredTools = toolsList.filter((tool) => {
@@ -209,7 +211,7 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
   };
 
   const categories: { id: 'all' | ToolCategory; label: string; count: number }[] = [
-    { id: 'all', label: 'All Tools', count: toolsList.length },
+    { id: 'all', label: 'All Data Tools', count: toolsList.length },
     { id: 'viewer', label: 'Viewers', count: toolsList.filter((t) => t.category === 'viewer').length },
     { id: 'converter', label: 'Converters', count: toolsList.filter((t) => t.category === 'converter').length },
     {
@@ -218,20 +220,10 @@ export const ToolGrid = ({ onFileSelected, isLoading }: ToolGridProps) => {
       count: toolsList.filter((t) => t.category === 'sql' || t.category === 'analysis').length
     },
     {
-      id: 'media',
-      label: 'Video & Image',
-      count: toolsList.filter((t) => t.category === 'media').length
-    },
-    {
       id: 'developer',
-      label: 'Developer',
+      label: 'Developer & FinOps',
       count: toolsList.filter((t) => t.category === 'developer').length
     },
-    {
-      id: 'calculator',
-      label: 'Calculators',
-      count: toolsList.filter((t) => t.category === 'calculator').length
-    }
   ];
 
   return (

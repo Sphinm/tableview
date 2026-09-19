@@ -1,7 +1,7 @@
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { SuiteSwitcher } from '@tableview/ui';
-import { Sidebar } from './components/Sidebar';
-import { Header } from './components/Header';
+import { FinanceHeader } from './components/FinanceHeader';
+import { Footer } from './components/Footer';
 import { CookieBanner } from './components/CookieBanner';
 import { GlobalLoading } from './components/GlobalLoading';
 import { AuthProvider } from './lib/authContext';
@@ -9,9 +9,10 @@ import { AuthModal } from './components/AuthModal';
 import { GoogleOneTap } from './components/GoogleOneTap';
 import { useRouter, updatePageMeta } from './lib/router';
 import { applyTheme } from './lib/theme';
-import { AlertCircle, ArrowLeft, FileQuestion } from 'lucide-react';
+import { ArrowLeft, FileQuestion } from 'lucide-react';
 import { HOME_META, GUIDES_HUB_META, STATIC_PAGE_META } from './data/routeMeta';
 import { SALARY_LONG_TAIL_SLUG_MAP } from './data/salaryLongTail';
+import { getCrossSuiteUrl } from '@tableview/shared';
 
 // Lazy-loaded financial pages
 const FinanceCalculatorHub = lazy(() => import('./pages/FinanceCalculatorHub').then(m => ({ default: m.FinanceCalculatorHub })));
@@ -34,23 +35,6 @@ const Disclaimer = lazy(() => import('./pages/Disclaimer').then(m => ({ default:
 export function App() {
   const { path, slug, pathname } = useRouter();
   const currentNavPath = pathname || path;
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('tableview_sidebar_collapsed') === 'true';
-    }
-    return false;
-  });
-  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-
-  const toggleSidebar = () => {
-    setSidebarCollapsed(prev => {
-      const next = !prev;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('tableview_sidebar_collapsed', String(next));
-      }
-      return next;
-    });
-  };
 
   useEffect(() => {
     applyTheme('light');
@@ -69,13 +53,17 @@ export function App() {
   }, [path]);
 
   const renderContent = () => {
-    if (path === '/' || path === '/calculators') {
+    if (path === '/' || path === '/calculators' || path === '/finance-calculator') {
       return <FinanceCalculatorHub />;
     }
-    if (path === '/mortgage-calculator') {
+    if (
+      path === '/mortgage-calculator' ||
+      path === '/amortization-schedule-calculator' ||
+      path === '/mortgage-payoff-calculator'
+    ) {
       return <MortgageCalculator />;
     }
-    if (path === '/refinance-calculator') {
+    if (path === '/refinance-calculator' || path === '/cash-out-refinance-calculator') {
       return <RefinanceCalculator />;
     }
     if (path === '/dscr-loan-calculator') {
@@ -84,16 +72,24 @@ export function App() {
     if (path === '/hard-money-calculator') {
       return <HardMoneyCalculator />;
     }
-    if (path === '/section-1031-exchange-calculator') {
+    if (path === '/section-1031-exchange-calculator' || path === '/1031-exchange-timeline-calculator') {
       return <Section1031Calculator />;
     }
-    if (path === '/commercial-real-estate-loan-calculator') {
+    if (
+      path === '/commercial-loan-calculator' ||
+      path === '/commercial-real-estate-loan-calculator' ||
+      path === '/balloon-payment-calculator'
+    ) {
       return <CommercialLoanCalculator />;
     }
     if (path === '/loan-comparison-calculator') {
       return <LoanComparisonCalculator />;
     }
-    if (path === '/salary-calculator' || (slug && SALARY_LONG_TAIL_SLUG_MAP[slug])) {
+    if (
+      path === '/salary-calculator' ||
+      path === '/salary-to-hourly-calculator' ||
+      (slug && SALARY_LONG_TAIL_SLUG_MAP[slug])
+    ) {
       return <SalaryCalculator />;
     }
     if (path === '/guides') {
@@ -108,10 +104,10 @@ export function App() {
     if (path === '/contact') {
       return <Contact />;
     }
-    if (path === '/privacy-policy') {
+    if (path === '/privacy-policy' || path === '/privacy') {
       return <PrivacyPolicy />;
     }
-    if (path === '/terms-of-service') {
+    if (path === '/terms-of-service' || path === '/terms') {
       return <TermsOfService />;
     }
     if (path === '/disclaimer') {
@@ -121,26 +117,33 @@ export function App() {
     // Default fallback to Finance Hub
     return (
       <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
-        <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center mb-4">
-          <FileQuestion className="w-6 h-6 text-amber-400" />
+        <div className="size-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center mb-4 shadow-xs">
+          <FileQuestion className="size-7 text-amber-600" />
         </div>
-        <h2 className="text-xl font-bold text-neutral-100 mb-2">Page Not Found in Financial Suite</h2>
-        <p className="text-neutral-400 text-sm max-w-md mb-6">
-          The requested financial tool does not exist. Looking for Parquet or Data tools? Visit our dedicated data workbench.
+        <h2 className="text-xl font-bold text-slate-900 mb-2">Tool Not Found in Financial Suite</h2>
+        <p className="text-slate-600 text-sm max-w-md mb-6 leading-relaxed">
+          The requested financial tool is not available on tableview.dev. Looking for Parquet, SQL, or Video tools?
+          Visit our specialized standalone web suites.
         </p>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-3">
           <a
             href="/"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-500 text-neutral-950 font-semibold text-sm hover:bg-emerald-400 transition"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white font-semibold text-xs hover:bg-indigo-700 transition shadow-xs"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="size-3.5" />
             Financial Workbench
           </a>
           <a
-            href="https://tools.tableview.dev"
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-neutral-800 text-neutral-200 font-semibold text-sm hover:bg-neutral-700 transition border border-neutral-700"
+            href={getCrossSuiteUrl('/parquet-viewer', 'finance')}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-slate-800 font-semibold text-xs hover:bg-slate-50 transition border border-slate-300 shadow-2xs"
           >
-            Data Tools
+            Data Workbench
+          </a>
+          <a
+            href={getCrossSuiteUrl('/video-compressor', 'finance')}
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-slate-800 font-semibold text-xs hover:bg-slate-50 transition border border-slate-300 shadow-2xs"
+          >
+            Media Compressor
           </a>
         </div>
       </div>
@@ -149,26 +152,17 @@ export function App() {
 
   return (
     <AuthProvider>
-      <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col selection:bg-emerald-500/30 selection:text-emerald-200">
+      <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-indigo-500/20 selection:text-indigo-900">
         <SuiteSwitcher currentSuite="finance" />
-        <Header currentPath={currentNavPath} />
+        <FinanceHeader currentPath={currentNavPath} />
 
-        <div className="flex-1 flex overflow-hidden">
-          <Sidebar
-            currentPath={currentNavPath}
-            collapsed={sidebarCollapsed}
-            onToggleCollapse={toggleSidebar}
-            mobileOpen={mobileMenuOpen}
-            onCloseMobile={() => setMobileMenuOpen(false)}
-          />
+        <main className="flex-1 w-full min-w-0">
+          <Suspense fallback={<GlobalLoading message="Loading underwriting engine..." />}>
+            {renderContent()}
+          </Suspense>
+        </main>
 
-          <main className="flex-1 overflow-y-auto min-w-0">
-            <Suspense fallback={<GlobalLoading message="Loading underwriting engine..." />}>
-              {renderContent()}
-            </Suspense>
-          </main>
-        </div>
-
+        <Footer currentPath={currentNavPath} />
         <AuthModal />
         <GoogleOneTap />
         <CookieBanner />

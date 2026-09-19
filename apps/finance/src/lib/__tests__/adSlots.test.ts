@@ -98,8 +98,6 @@ describe('AdSlot placements', () => {
       'pages/RefinanceCalculator.tsx',
       'pages/DscrCalculator.tsx',
       'pages/HardMoneyCalculator.tsx',
-      'pages/SnowflakeCalculator.tsx',
-      'pages/ParquetSavingsCalculator.tsx',
     ];
     for (const calc of calculators) {
       const placed = usages.filter((u) => u.file === calc);

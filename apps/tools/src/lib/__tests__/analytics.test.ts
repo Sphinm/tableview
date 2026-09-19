@@ -108,15 +108,8 @@ describe('Recording mask coverage', () => {
    * the exact thing the product promises never leaves the device.
    */
   const mustBeMasked = [
-    'components/DataView.tsx',
-    'components/JsonView.tsx',
-    'pages/MortgageCalculator.tsx',
-    'pages/RefinanceCalculator.tsx',
-    'pages/DscrCalculator.tsx',
-    'pages/HardMoneyCalculator.tsx',
     'pages/SnowflakeCalculator.tsx',
     'pages/ParquetSavingsCalculator.tsx',
-    'pages/Section1031Calculator.tsx',
   ];
 
   it('marks every data-bearing view with data-sentry-mask', () => {

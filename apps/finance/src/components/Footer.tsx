@@ -2,6 +2,7 @@ import { navigateTo } from '../lib/router';
 import { getBugReportMailto } from '../lib/feedback';
 import { openCookieSettings } from '../lib/consent';
 import { isCalculatorRoute, isCompressionRoute } from '../lib/resolveRoute';
+import { getCrossSuiteUrl } from '@tableview/shared';
 import {
   Table,
   ShieldCheck,
@@ -29,7 +30,12 @@ export const Footer = ({ onTrySample: _onTrySample, currentPath }: FooterProps) 
 
   const handleNav = (e: React.MouseEvent<HTMLAnchorElement>, path: string) => {
     e.preventDefault();
-    navigateTo(path);
+    const targetUrl = getCrossSuiteUrl(path, 'finance');
+    if (targetUrl.startsWith('http')) {
+      window.location.href = targetUrl;
+    } else {
+      navigateTo(path);
+    }
   };
 
   const scrollToTop = () => {

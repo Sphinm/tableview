@@ -1,12 +1,8 @@
-import { useEffect, useState, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { SuiteSwitcher } from '@tableview/ui';
-import { Sidebar } from './components/Sidebar';
-import { Header } from './components/Header';
+import { ToolsHeader } from './components/ToolsHeader';
 import { CookieBanner } from './components/CookieBanner';
 import { GlobalLoading } from './components/GlobalLoading';
-import { AuthProvider } from './lib/authContext';
-import { AuthModal } from './components/AuthModal';
-import { GoogleOneTap } from './components/GoogleOneTap';
 import { useRouter, updatePageMeta } from './lib/router';
 import { applyTheme } from './lib/theme';
 import { FileQuestion, ArrowLeft } from 'lucide-react';
@@ -31,23 +27,6 @@ const Disclaimer = lazy(() => import('./pages/Disclaimer').then(m => ({ default:
 export function App() {
   const { path, slug, pathname } = useRouter();
   const currentNavPath = pathname || path;
-  const [sidebarCollapsed, setSidebarCollapsed] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
-      return localStorage.getItem('tableview_sidebar_collapsed') === 'true';
-    }
-    return false;
-  });
-  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
-
-  const toggleSidebar = () => {
-    setSidebarCollapsed(prev => {
-      const next = !prev;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('tableview_sidebar_collapsed', String(next));
-      }
-      return next;
-    });
-  };
 
   useEffect(() => {
     applyTheme('light');
@@ -63,8 +42,10 @@ export function App() {
   }, [path]);
 
   const renderContent = () => {
+    if (path === '/' || path === '/data-tools') {
+      return <DataToolsWorkbench onFileSelected={() => {}} isLoading={false} />;
+    }
     if (
-      path === '/' ||
       path === '/parquet-viewer' ||
       path === '/csv-viewer' ||
       path === '/parquet-to-excel' ||
@@ -75,9 +56,6 @@ export function App() {
       path.startsWith('/data-converter')
     ) {
       return <DataConverter />;
-    }
-    if (path === '/data-tools') {
-      return <DataToolsWorkbench />;
     }
     if (path === '/parquet-storage-calculator') {
       return <ParquetSavingsCalculator />;
@@ -123,7 +101,7 @@ export function App() {
         </div>
         <h2 className="text-xl font-bold text-neutral-100 mb-2">Tool Not Found in Data Suite</h2>
         <p className="text-neutral-400 text-sm max-w-md mb-6">
-          Looking for real estate loan calculators or video/image compressors?
+          Looking for real estate underwriting calculators or video/image compressors?
         </p>
         <div className="flex gap-3">
           <a
@@ -131,7 +109,7 @@ export function App() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500 text-neutral-950 font-semibold text-sm hover:bg-cyan-400 transition"
           >
             <ArrowLeft className="w-4 h-4" />
-            Parquet Viewer
+            Tools Directory
           </a>
           <a
             href="https://tableview.dev"
@@ -139,38 +117,30 @@ export function App() {
           >
             Financial Suite (Pro)
           </a>
+          <a
+            href="https://compress.tableview.dev"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-neutral-800 text-neutral-200 font-semibold text-sm hover:bg-neutral-700 transition border border-neutral-700"
+          >
+            Media Compressor
+          </a>
         </div>
       </div>
     );
   };
 
   return (
-    <AuthProvider>
-      <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
-        <SuiteSwitcher currentSuite="tools" />
-        <Header currentPath={currentNavPath} />
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex flex-col selection:bg-cyan-500/30 selection:text-cyan-200">
+      <SuiteSwitcher currentSuite="tools" />
+      <ToolsHeader currentPath={currentNavPath} />
 
-        <div className="flex-1 flex overflow-hidden">
-          <Sidebar
-            currentPath={currentNavPath}
-            collapsed={sidebarCollapsed}
-            onToggleCollapse={toggleSidebar}
-            mobileOpen={mobileMenuOpen}
-            onCloseMobile={() => setMobileMenuOpen(false)}
-          />
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <Suspense fallback={<GlobalLoading message="Loading data workbench..." />}>
+          {renderContent()}
+        </Suspense>
+      </main>
 
-          <main className="flex-1 overflow-y-auto min-w-0">
-            <Suspense fallback={<GlobalLoading message="Loading data workbench..." />}>
-              {renderContent()}
-            </Suspense>
-          </main>
-        </div>
-
-        <AuthModal />
-        <GoogleOneTap />
-        <CookieBanner />
-      </div>
-    </AuthProvider>
+      <CookieBanner />
+    </div>
   );
 }
 

@@ -14,6 +14,7 @@ import {
 import { navigateTo } from '../lib/router';
 import { getCanonicalPath } from '../lib/resolveRoute';
 import { preloadRoute, idlePreloadRoutes } from '../lib/routePreload';
+import { getCrossSuiteUrl } from '@tableview/shared';
 
 export type SuiteType = 'mortgage' | 'commercial' | '1031' | 'finops' | 'personal' | 'media' | 'data';
 
@@ -130,7 +131,12 @@ export const SuiteSubNav = ({ suite, currentPath, className = '' }: SuiteSubNavP
   }, [suiteData.items]);
 
   const handleNavigate = (path: string) => {
-    navigateTo(path);
+    const targetUrl = getCrossSuiteUrl(path, 'finance');
+    if (targetUrl.startsWith('http')) {
+      window.location.href = targetUrl;
+    } else {
+      navigateTo(path);
+    }
     setIsOpen(false);
   };
 
