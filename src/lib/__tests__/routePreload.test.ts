@@ -1,5 +1,11 @@
 import { describe, it, expect, beforeEach, afterEach, mock } from 'bun:test';
-import { preloadRoute, preloadRoutes, idlePreloadRoutes, initGlobalHoverPreloader } from '../routePreload';
+import {
+  preloadRoute,
+  preloadRoutes,
+  idlePreloadRoutes,
+  initGlobalHoverPreloader,
+  schedulePopularCalculatorsPreload,
+} from '../routePreload';
 
 describe('Route Preloading Engine', () => {
   const originalWindow = (globalThis as any).window;
@@ -64,5 +70,9 @@ describe('Route Preloading Engine', () => {
     expect(addEventListenerMock).toHaveBeenCalled();
     cleanup();
     expect(removeEventListenerMock).toHaveBeenCalled();
+  });
+
+  it('schedules popular calculators preload without throwing', () => {
+    expect(() => schedulePopularCalculatorsPreload(0)).not.toThrow();
   });
 });

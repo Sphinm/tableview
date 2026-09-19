@@ -5,7 +5,7 @@ import App from './App.tsx'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { scheduleSentryInit } from './lib/sentry'
 import { initConsent } from './lib/consent'
-import { initGlobalHoverPreloader } from './lib/routePreload'
+import { initGlobalHoverPreloader, schedulePopularCalculatorsPreload } from './lib/routePreload'
 
 // Polyfill BigInt.prototype.toJSON to prevent "Do not know how to serialize a BigInt" TypeError
 if (typeof (BigInt.prototype as any).toJSON !== 'function') {
@@ -21,6 +21,9 @@ initConsent();
 
 // Speculatively preload route chunks on mouse hover / focus for instant transitions
 initGlobalHoverPreloader();
+
+// Warm up popular core calculators in Cache Storage during idle time
+schedulePopularCalculatorsPreload();
 
 // Sentry is loaded lazily on idle to keep it off the critical path;
 // errors thrown before it loads are buffered and flushed.

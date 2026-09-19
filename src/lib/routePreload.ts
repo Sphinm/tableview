@@ -149,3 +149,21 @@ export function initGlobalHoverPreloader(): () => void {
     window.removeEventListener('focusin', onFocusIn);
   };
 }
+
+/**
+ * Automatically warms up high-priority popular calculators in local Cache Storage
+ * during browser idle time after initial page boot.
+ */
+export function schedulePopularCalculatorsPreload(delayMs = 2500): void {
+  if (typeof window === 'undefined') return;
+  setTimeout(() => {
+    idlePreloadRoutes([
+      '/mortgage-calculator',
+      '/refinance-calculator',
+      '/dscr-loan-calculator',
+      '/loan-comparison-calculator',
+      '/commercial-loan-calculator',
+      '/hard-money-calculator',
+    ]);
+  }, delayMs);
+}
