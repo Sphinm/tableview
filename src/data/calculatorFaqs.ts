@@ -119,6 +119,37 @@ export const CALCULATOR_FAQS: Record<string, CalcFaq[]> = {
     },
   ],
 
+  '/cap-rate-calculator': [
+    {
+      q: 'What is Capitalization Rate (Cap Rate) and how is it calculated?',
+      a: 'Capitalization Rate is the ratio of a property’s annual Net Operating Income (NOI) to its current market value or purchase price: Cap Rate = (Annual NOI / Purchase Price) * 100%. It measures the unleveraged rate of return an investor would earn if purchasing 100% all-cash, allowing apples-to-apples comparison across deals independent of financing terms.',
+    },
+    {
+      q: 'Why does Net Operating Income (NOI) strictly exclude mortgage debt service?',
+      a: 'In institutional commercial real estate (CRE) underwriting, NOI isolates the operational earning power of the real estate asset from the buyer’s financing choices. Including debt service in NOI would mean two investors buying identical properties at identical prices and rents would calculate different NOI numbers depending on their loan terms, which destroys comparability.',
+    },
+    {
+      q: 'What is the difference between Cap Rate and Cash-on-Cash Return?',
+      a: 'Cap Rate evaluates the property as an unleveraged asset (NOI divided by Purchase Price). Cash-on-Cash Return evaluates the leveraged performance of the investor’s actual out-of-pocket cash: CoC = (Annual Pre-Tax Cash Flow / Total Initial Cash Invested) * 100%, where cash invested includes Down Payment + Closing Costs + Upfront Rehab.',
+    },
+    {
+      q: 'What is a good Cap Rate for rental properties in the United States?',
+      a: 'Target Cap Rates vary by asset class and market tier. Tier 1 primary gateway cities (NYC, SF, LA) typically trade at lower cap rates (4.5% to 6.0%) due to stability and strong long-term appreciation. Secondary and tertiary cash-flow markets (e.g. Midwest, Southeast) often trade at 7.0% to 10.0%+ cap rates with higher immediate yields.',
+    },
+    {
+      q: 'What is the 1% Rule in real estate investing?',
+      a: 'The 1% Rule is a rapid screening heuristic stating that gross monthly rent should be at least 1.0% of the total purchase price (e.g., $2,500/month rent for a $250,000 property). Properties meeting or exceeding 1% generally produce positive net cash flow after operating expenses and conventional debt service.',
+    },
+    {
+      q: 'What is the difference between Maintenance Reserves and CapEx Reserves?',
+      a: 'Maintenance reserves cover routine repairs and turnover costs (leaking faucets, garbage disposals, touch-up paint, re-keying). Capital Expenditures (CapEx) are long-term reserves set aside for major structural replacements (roof replacement, new HVAC compressor, asphalt repaving, water heaters) that occur once every 10 to 30 years.',
+    },
+    {
+      q: 'Can I export my rental property underwriting analysis to Excel?',
+      a: 'Yes. TableView provides 1-click native Excel (.xlsx) export containing three dedicated worksheets: Deal Summary & Financing, Itemized Operating Expenses, and a full 10-Year Multi-Year Wealth Accumulation Schedule (including rent growth, equity paydown, and appreciation).',
+    },
+  ],
+
   '/dscr-loan-calculator': [
     {
       q: 'Why use TableView DSCR Calculator instead of BiggerPockets Pro?',

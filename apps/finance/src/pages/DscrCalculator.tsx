@@ -39,6 +39,7 @@ import {
 } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
 import { InfoTooltip } from '../components/InfoTooltip';
+import { AiUnderwritingCard } from '../components/AiUnderwritingCard';
 
 interface DscrPresetValues {
   propertyValue: number;
@@ -897,6 +898,15 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                 <span className="text-[10px] text-slate-400">at current rent</span>
               </div>
             </div>
+
+            {/* AI Underwriting Health Check (TypeSafe System 1) */}
+            <AiUnderwritingCard
+              dscr={result.grossDscr}
+              ltv={result.ltv}
+              monthlyRent={monthlyRent}
+              propertyValue={propertyValue}
+              loanAmount={result.loanAmount}
+            />
 
             {/* Visual Cash Flow Allocation Donut */}
             <CashFlowDonutChart

@@ -61,6 +61,12 @@ export const CALCULATOR_META: Record<string, PageMeta> = {
       'Free in-browser DSCR loan calculator and BiggerPockets Pro alternative without paywalls. Calculate debt service coverage ratio, maximum qualifying loan amount, cash flow, and amortization with Excel export.',
     canonical: '/dscr-loan-calculator',
   },
+  '/cap-rate-calculator': {
+    title: 'Rental Property Cash Flow & Cap Rate Calculator | TableView',
+    description:
+      'Underwrite residential & commercial rental properties with institutional precision. Model NOI, Cap Rate, Cash-on-Cash Return, 10-year wealth building, and 1% rule.',
+    canonical: '/cap-rate-calculator',
+  },
   '/hard-money-calculator': {
     title: 'Hard Money Loan Calculator: Fix & Flip ROI | TableView',
     description:

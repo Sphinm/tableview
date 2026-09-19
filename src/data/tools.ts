@@ -790,6 +790,54 @@ export const TOOLS_CONFIG: Record<string, ToolConfig> = {
   // ==========================================
   // CALCULATORS
   // ==========================================
+  'cap-rate-calculator': {
+    slug: 'cap-rate-calculator',
+    path: '/cap-rate-calculator',
+    badge: '100% In-Browser · Institutional CRE & SFH',
+    title: 'Rental Property Cash Flow & Cap Rate Calculator',
+    shortTitle: 'Cap Rate & Cash Flow',
+    metaTitle: 'Rental Property Cash Flow & Cap Rate Calculator | TableView',
+    metaDescription: 'Underwrite residential & commercial rental properties with institutional precision. Calculate pure NOI, Cap Rate, Cash-on-Cash Return, 10-year wealth projections, and 1% rule.',
+    h1: 'Rental Property Cash Flow & Cap Rate',
+    h1Highlight: 'Calculator',
+    subtitle: 'Underwrite residential and multifamily rental property acquisitions. Model pure Net Operating Income (NOI), Cap Rate, Cash-on-Cash Return, and 10-year equity accumulation.',
+    category: 'calculator',
+    tag: 'Flagship CRE',
+    color: 'indigo',
+    iconType: 'building',
+    acceptExtensions: 'Interactive Underwriting Model',
+    acceptLabel: 'No file upload needed · Instant interactive cash flow & cap rate model',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Institutional NOI Separation',
+        description: 'Strictly excludes mortgage debt service from NOI calculation in compliance with institutional commercial real estate underwriting standards.'
+      },
+      {
+        icon: 'zap',
+        title: 'Dual Yield Analysis',
+        description: 'Compare unleveraged property return (Cap Rate) side-by-side with leveraged equity yield (Cash-on-Cash Return).'
+      },
+      {
+        icon: 'shield',
+        title: '100% Client-Side Privacy',
+        description: 'All deal parameters and cash flow projections remain strictly inside your browser. Zero server uploads.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is a good Cap Rate for rental properties in the US?',
+        a: 'Cap rates generally range between 4.5% to 6.0% in primary high-appreciation gateway markets, and 7.0% to 10.0%+ in secondary cash-flow markets. Higher cap rates indicate stronger immediate rental yield relative to purchase price.'
+      },
+      {
+        q: 'What is the difference between Cap Rate and Cash-on-Cash Return?',
+        a: 'Cap Rate measures the unleveraged return of the property (NOI divided by Purchase Price). Cash-on-Cash Return measures the actual annual pre-tax cash flow dividend against out-of-pocket cash invested (Down Payment + Closing Costs + Rehab).'
+      }
+    ]
+  },
+
   'dscr-loan-calculator': {
     slug: 'dscr-loan-calculator',
     path: '/dscr-loan-calculator',

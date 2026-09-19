@@ -28,6 +28,7 @@ const Disclaimer = lazy(() => import('./pages/Disclaimer').then(m => ({ default:
 const MortgageCalculator = lazy(() => import('./pages/MortgageCalculator').then(m => ({ default: m.MortgageCalculator })));
 const RefinanceCalculator = lazy(() => import('./pages/RefinanceCalculator').then(m => ({ default: m.RefinanceCalculator })));
 const DscrCalculator = lazy(() => import('./pages/DscrCalculator').then(m => ({ default: m.DscrCalculator })));
+const CapRateCalculator = lazy(() => import('./pages/CapRateCalculator').then(m => ({ default: m.CapRateCalculator })));
 const HardMoneyCalculator = lazy(() => import('./pages/HardMoneyCalculator').then(m => ({ default: m.HardMoneyCalculator })));
 const SnowflakeCalculator = lazy(() => import('./pages/SnowflakeCalculator').then(m => ({ default: m.SnowflakeCalculator })));
 const ParquetSavingsCalculator = lazy(() => import('./pages/ParquetSavingsCalculator').then(m => ({ default: m.ParquetSavingsCalculator })));
@@ -379,6 +380,9 @@ export function App() {
 
       case '/dscr-loan-calculator':
         return <DscrCalculator />;
+
+      case '/cap-rate-calculator':
+        return <CapRateCalculator />;
 
       case '/hard-money-calculator':
         return <HardMoneyCalculator />;

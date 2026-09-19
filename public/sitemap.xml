@@ -25,6 +25,12 @@
     <priority>0.95</priority>
   </url>
   <url>
+    <loc>https://tableview.dev/cap-rate-calculator</loc>
+    <lastmod>2026-09-19</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.95</priority>
+  </url>
+  <url>
     <loc>https://tableview.dev/cash-out-refinance-calculator</loc>
     <lastmod>2026-09-19</lastmod>
     <changefreq>weekly</changefreq>

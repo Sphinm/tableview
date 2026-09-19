@@ -49,6 +49,7 @@ const SUITE_CONFIG: Record<
     title: 'Commercial & Investment Suite',
     icon: Building,
     items: [
+      { label: 'Cap Rate & Cash Flow', path: '/cap-rate-calculator', badge: 'Flagship' },
       { label: 'DSCR Loan Underwriting', path: '/dscr-loan-calculator', badge: 'Rental' },
       { label: 'Commercial Loan & Balloon', path: '/commercial-loan-calculator', badge: 'Commercial' },
       { label: 'Hard Money & Flip Deal', path: '/hard-money-calculator', badge: '70% Rule' }

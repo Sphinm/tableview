@@ -6,7 +6,7 @@ export const SUITE_ORIGINS: Record<SuiteType, string> = {
   compressor: 'https://compress.tableview.dev',
 };
 
-const _FINANCE_PATHS = new Set([
+export const FINANCE_PATHS = new Set([
   '/',
   '/calculators',
   '/finance-calculator',
@@ -16,6 +16,9 @@ const _FINANCE_PATHS = new Set([
   '/refinance-calculator',
   '/cash-out-refinance-calculator',
   '/dscr-loan-calculator',
+  '/cap-rate-calculator',
+  '/rental-property-calculator',
+  '/rental-cash-flow-calculator',
   '/hard-money-calculator',
   '/section-1031-exchange-calculator',
   '/1031-exchange-timeline-calculator',

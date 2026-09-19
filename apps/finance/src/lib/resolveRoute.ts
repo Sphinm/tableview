@@ -77,6 +77,11 @@ const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
   },
   { pattern: /^\/(?:tools\/)?(?:dscr-loan-calculator|dscr-calculator|dscr)$/, path: '/dscr-loan-calculator' },
   {
+    pattern:
+      /^\/(?:tools\/)?(?:cap-rate-calculator|rental-property-calculator|rental-cash-flow-calculator|cap-rate|rental-calculator|rental-property-cash-flow-calculator)$/,
+    path: '/cap-rate-calculator',
+  },
+  {
     pattern: /^\/(?:tools\/)?(?:hard-money-calculator|hard-money-loan-calculator|fix-and-flip-calculator|hard-money)$/,
     path: '/hard-money-calculator',
   },
@@ -265,6 +270,7 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/refinance-calculator',
   '/cash-out-refinance-calculator',
   '/dscr-loan-calculator',
+  '/cap-rate-calculator',
   '/hard-money-calculator',
   '/snowflake-cost-calculator',
   '/parquet-storage-calculator',
@@ -306,6 +312,7 @@ export const CALCULATOR_CANONICAL_PATHS: ReadonlySet<string> = new Set([
   '/refinance-calculator',
   '/cash-out-refinance-calculator',
   '/dscr-loan-calculator',
+  '/cap-rate-calculator',
   '/hard-money-calculator',
   '/snowflake-cost-calculator',
   '/parquet-storage-calculator',
@@ -439,6 +446,13 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
     ],
     '/cash-out-refinance-calculator': ['/cash-out-refinance'],
     '/dscr-loan-calculator': ['/dscr', '/dscr-calculator'],
+    '/cap-rate-calculator': [
+      '/rental-property-calculator',
+      '/rental-cash-flow-calculator',
+      '/cap-rate',
+      '/rental-calculator',
+      '/rental-property-cash-flow-calculator',
+    ],
     '/hard-money-calculator': ['/hard-money', '/fix-and-flip-calculator', '/hard-money-loan-calculator'],
     '/snowflake-cost-calculator': ['/snowflake-calculator', '/snowflake-warehouse-calculator'],
     '/parquet-storage-calculator': ['/parquet-savings-calculator', '/parquet-cost-calculator'],

@@ -23,6 +23,7 @@ import { AdSlot } from '../components/AdSlot';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
 import { SuiteSubNav } from '../components/SuiteSubNav';
+import { AiDealCopilot } from '../components/AiDealCopilot';
 import {
   calculateAutoLoan,
   calculatePersonalLoan,
@@ -202,6 +203,9 @@ export const FinanceCalculatorHub = () => {
 
       <SuiteSubNav suite="personal" />
 
+      {/* AI Deal Copilot & Intent Router */}
+      <AiDealCopilot />
+
       {/* Featured Flagship Real Estate, FinOps & Mortgage Calculators */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
@@ -214,6 +218,35 @@ export const FinanceCalculatorHub = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Cap Rate & Rental Property Cash Flow */}
+          <div className="rounded-2xl border border-slate-200 bg-white p-4.5 flex flex-col justify-between gap-3.5 shadow-xs hover:border-indigo-300 hover:shadow-sm transition-all">
+            <div className="flex items-start gap-3">
+              <div className="size-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                <Building className="size-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <h2 className="text-sm font-bold text-slate-900 truncate">Cap Rate & Cash Flow</h2>
+                  <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    Flagship CRE
+                  </span>
+                </div>
+                <p className="text-xs text-slate-600 mt-1 leading-snug">
+                  Model NOI, Cap Rate, Cash-on-Cash Return, and 10-year equity building projections.
+                </p>
+              </div>
+            </div>
+            <button
+              onMouseEnter={() => preloadRoute('/cap-rate-calculator')}
+              onFocus={() => preloadRoute('/cap-rate-calculator')}
+              onClick={() => navigateTo('/cap-rate-calculator')}
+              className="btn-primary w-full py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+            >
+              <span>Underwrite Rental Deal</span>
+              <ArrowRight className="size-3" />
+            </button>
+          </div>
+
           {/* DSCR Loan */}
           <div className="rounded-2xl border border-slate-200 bg-white p-4.5 flex flex-col justify-between gap-3.5 shadow-xs hover:border-indigo-300 hover:shadow-sm transition-all">
             <div className="flex items-start gap-3">

@@ -21,6 +21,7 @@ const APP_ROUTES = new Set([
   '/refinance-calculator',
   '/cash-out-refinance-calculator',
   '/dscr-loan-calculator',
+  '/cap-rate-calculator',
   '/hard-money-calculator',
   '/snowflake-cost-calculator',
   '/parquet-storage-calculator',

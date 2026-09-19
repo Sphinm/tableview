@@ -19,6 +19,7 @@ const FinanceCalculatorHub = lazy(() => import('./pages/FinanceCalculatorHub').t
 const MortgageCalculator = lazy(() => import('./pages/MortgageCalculator').then(m => ({ default: m.MortgageCalculator })));
 const RefinanceCalculator = lazy(() => import('./pages/RefinanceCalculator').then(m => ({ default: m.RefinanceCalculator })));
 const DscrCalculator = lazy(() => import('./pages/DscrCalculator').then(m => ({ default: m.DscrCalculator })));
+const CapRateCalculator = lazy(() => import('./pages/CapRateCalculator').then(m => ({ default: m.CapRateCalculator })));
 const HardMoneyCalculator = lazy(() => import('./pages/HardMoneyCalculator').then(m => ({ default: m.HardMoneyCalculator })));
 const Section1031Calculator = lazy(() => import('./pages/Section1031Calculator').then(m => ({ default: m.Section1031Calculator })));
 const CommercialLoanCalculator = lazy(() => import('./pages/CommercialLoanCalculator').then(m => ({ default: m.CommercialLoanCalculator })));
@@ -68,6 +69,13 @@ export function App() {
     }
     if (path === '/dscr-loan-calculator') {
       return <DscrCalculator />;
+    }
+    if (
+      path === '/cap-rate-calculator' ||
+      path === '/rental-property-calculator' ||
+      path === '/rental-cash-flow-calculator'
+    ) {
+      return <CapRateCalculator />;
     }
     if (path === '/hard-money-calculator') {
       return <HardMoneyCalculator />;

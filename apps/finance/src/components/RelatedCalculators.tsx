@@ -33,6 +33,15 @@ interface CalcItem {
 
 const ALL_CALCULATORS: CalcItem[] = [
   {
+    slug: 'cap-rate-calculator',
+    path: '/cap-rate-calculator',
+    title: 'Rental Property & Cap Rate',
+    description: 'Model NOI, Cap Rate, Cash-on-Cash Return, 10-year equity and 1% / 50% rules.',
+    badge: 'Cash Flow',
+    icon: Building,
+    category: 'real-estate'
+  },
+  {
     slug: 'loan-comparison-calculator',
     path: '/loan-comparison-calculator',
     title: 'Loan Comparison Calculator',

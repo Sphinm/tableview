@@ -15,6 +15,7 @@ const ROUTE_LOADERS: Record<string, ComponentLoader> = {
   '/refinance-calculator': () => import('../pages/RefinanceCalculator'),
   '/cash-out-refinance-calculator': () => import('../pages/RefinanceCalculator'),
   '/dscr-loan-calculator': () => import('../pages/DscrCalculator'),
+  '/cap-rate-calculator': () => import('../pages/CapRateCalculator'),
   '/hard-money-calculator': () => import('../pages/HardMoneyCalculator'),
   '/commercial-loan-calculator': () => import('../pages/CommercialLoanCalculator'),
   '/balloon-payment-calculator': () => import('../pages/CommercialLoanCalculator'),
