@@ -30,3 +30,7 @@ dist-ssr
 .dev.vars
 .dev.vars.*
 !.dev.vars.example
+
+# Agent skills
+.agents
+skills-lock.json
