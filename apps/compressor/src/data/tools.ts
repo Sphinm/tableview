@@ -1,0 +1,1833 @@
+export type ToolCategory = 'viewer' | 'converter' | 'sql' | 'analysis' | 'calculator' | 'media' | 'developer';
+
+export interface ToolConfig {
+  slug: string;
+  path: string;
+  badge: string;
+  title: string;
+  shortTitle?: string;
+  metaTitle: string;
+  metaDescription: string;
+  h1: string;
+  h1Highlight: string;
+  subtitle: string;
+  category: ToolCategory;
+  tag?: string;
+  color: 'emerald' | 'green' | 'indigo' | 'cyan' | 'amber' | 'purple';
+  iconType: 'csv' | 'excel' | 'parquet' | 'json' | 'sql' | 'schema' | 'calculator' | 'building' | 'hammer' | 'server' | 'savings' | 'home' | 'refinance' | 'video' | 'image' | 'file';
+  acceptExtensions: string;
+  acceptLabel: string;
+  primaryExport: 'excel' | 'csv' | 'parquet' | 'json' | 'schema' | 'any';
+  defaultTab?: 'grid' | 'schema' | 'sql' | 'json';
+  faqs: { q: string; a: string }[];
+  features: {
+    icon: 'cpu' | 'shield' | 'download' | 'zap' | 'table' | 'database' | 'search';
+    title: string;
+    description: string;
+  }[];
+}
+
+export const TOOLS_CONFIG: Record<string, ToolConfig> = {
+  // ==========================================
+  // VIEWERS
+  // ==========================================
+  'csv-viewer': {
+    slug: 'csv-viewer',
+    path: '/csv-viewer',
+    badge: '100% In-Browser · Instant CSV Reader',
+    title: 'Free Online CSV Viewer',
+    shortTitle: 'CSV Viewer',
+    metaTitle: 'Free Online CSV Viewer & Spreadsheet Reader | TableView',
+    metaDescription: 'Open, inspect, search, filter, and sort large CSV and TSV files directly in your web browser. Zero server uploads with high-performance DuckDB-Wasm.',
+    h1: 'Free Online CSV',
+    h1Highlight: 'Viewer',
+    subtitle: 'Drop any .csv or .tsv file to instantly preview millions of rows, sort columns, execute SQL queries, and search without installing Microsoft Excel or Python.',
+    category: 'viewer',
+    tag: 'Popular',
+    color: 'emerald',
+    iconType: 'csv',
+    acceptExtensions: '.csv,.tsv,.txt',
+    acceptLabel: 'Supports CSV (.csv), TSV (.tsv), and comma/tab-delimited text files',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'shield',
+        title: '100% Local Device Privacy',
+        description: 'Your CSV spreadsheets never leave your device. All parsing and indexing runs locally inside WebAssembly.'
+      },
+      {
+        icon: 'zap',
+        title: 'Instant Fast Search & Sorting',
+        description: 'Instant column filtering, ascending/descending sorting, and pagination on massive datasets.'
+      },
+      {
+        icon: 'table',
+        title: 'DuckDB SQL Analysis Built-In',
+        description: 'Filter rows, compute group-by aggregations, and join tables using standard analytical SQL.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Do I need Microsoft Excel installed to open CSV files?',
+        a: 'No! TableView runs completely in your web browser. You can open, view, search, and query any CSV or TSV file without Microsoft Excel, Office 365, or Python.'
+      },
+      {
+        q: 'What is the maximum CSV file size supported?',
+        a: 'Because DuckDB-Wasm streams and parses data directly into memory, TableView comfortably opens CSV files with hundreds of thousands of rows, limited only by your browser RAM.'
+      },
+      {
+        q: 'Can I export the CSV to Excel or Parquet?',
+        a: 'Yes! You can convert your CSV into native formatted Excel (.xlsx), compressed Apache Parquet (ZSTD), or JSON with a single click.'
+      }
+    ]
+  },
+
+  'excel-viewer': {
+    slug: 'excel-viewer',
+    path: '/excel-viewer',
+    badge: 'No Microsoft Office Required · Client-Side',
+    title: 'Free Online Excel Viewer (.xlsx / .xls)',
+    shortTitle: 'Excel Viewer',
+    metaTitle: 'Free Online Excel Viewer (.xlsx) | TableView',
+    metaDescription: 'Open and view Microsoft Excel spreadsheets (.xlsx, .xls) online for free. Fast table rendering, sorting, and SQL queries with zero server file uploads.',
+    h1: 'Free Online Excel',
+    h1Highlight: 'Viewer (.xlsx)',
+    subtitle: 'View, search, and analyze Microsoft Excel workbooks online in seconds without installing MS Office, Office 365, or signing up.',
+    category: 'viewer',
+    tag: 'Popular',
+    color: 'green',
+    iconType: 'excel',
+    acceptExtensions: '.xlsx,.xls',
+    acceptLabel: 'Supports Microsoft Excel (.xlsx) and Excel 97-2004 (.xls)',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'No Office License Required',
+        description: 'Open .xlsx and .xls workbooks on any Mac, Windows, Linux, or Chromebook without Microsoft Office.'
+      },
+      {
+        icon: 'shield',
+        title: 'Confidential Business Data Safe',
+        description: 'Your internal financial sheets and client lists stay on your machine. Zero bytes are uploaded to cloud servers.'
+      },
+      {
+        icon: 'zap',
+        title: 'Convert to CSV or Parquet',
+        description: 'Quickly export any Excel sheet to standard UTF-8 CSV or high-compression Apache Parquet.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Can I view Excel files without Microsoft Office?',
+        a: 'Yes! TableView parses Excel workbooks directly in your browser using client-side JavaScript, allowing you to preview rows, sort data, and run SQL queries without Microsoft Office.'
+      },
+      {
+        q: 'Does it support both .xlsx and .xls files?',
+        a: 'Yes, both modern XML Excel spreadsheets (.xlsx) and legacy binary Excel files (.xls) are supported.'
+      }
+    ]
+  },
+
+  'parquet-viewer': {
+    slug: 'parquet-viewer',
+    path: '/parquet-viewer',
+    badge: 'DuckDB-Wasm · Instant Local Parser',
+    title: 'Free Online Parquet Viewer',
+    shortTitle: 'Parquet Viewer',
+    metaTitle: 'Free Online Parquet Viewer & Inspector | TableView',
+    metaDescription: 'Inspect and view Apache Parquet files online directly in your browser. 100% private in-browser DuckDB-Wasm engine with zero server file uploads.',
+    h1: 'Online Apache Parquet',
+    h1Highlight: 'Viewer',
+    subtitle: 'Drop any .parquet or .geoparquet file to instantly preview table rows, inspect column schemas, and execute SQL queries without installing Python.',
+    category: 'viewer',
+    tag: 'Core',
+    color: 'indigo',
+    iconType: 'parquet',
+    acceptExtensions: '.parquet,.geoparquet',
+    acceptLabel: 'Supports Apache Parquet (.parquet) and GeoParquet (.geoparquet)',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'database',
+        title: 'DuckDB-Wasm Columnar Parsing',
+        description: 'Direct binary reader for snappy, gzip, zstd, and uncompressed Parquet data pages.'
+      },
+      {
+        icon: 'search',
+        title: 'Schema & Metadata Inspector',
+        description: 'Examine field types, nested structs, physical compression algorithms, and row group counts.'
+      },
+      {
+        icon: 'shield',
+        title: 'Zero Cloud Storage Risk',
+        description: 'Data engineering datasets stay on your workstation. Absolutely zero network requests during analysis.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How does TableView open Parquet files without a backend server?',
+        a: 'TableView compiles DuckDB and Apache Arrow directly into WebAssembly (Wasm). When you drop a .parquet file, your browser executes the C++ query engine natively inside your tab.'
+      },
+      {
+        q: 'Can I inspect compression codecs and metadata?',
+        a: 'Yes! TableView displays the complete Parquet metadata header, including row group distribution, dictionary pages, and compression codecs (Snappy, ZSTD, GZIP, LZ4).'
+      }
+    ]
+  },
+
+  'json-viewer': {
+    slug: 'json-viewer',
+    path: '/json-viewer',
+    badge: 'Tabular & Tree Views · Client-Side',
+    title: 'Free Online JSON Viewer & Tabular Inspector',
+    shortTitle: 'JSON Viewer',
+    metaTitle: 'Free Online JSON & NDJSON Viewer | TableView',
+    metaDescription: 'Inspect, search, and flatten complex JSON documents and NDJSON lines into interactive tables in your browser. 100% private with DuckDB-Wasm.',
+    h1: 'Free Online JSON',
+    h1Highlight: 'Viewer',
+    subtitle: 'Drop JSON files or NDJSON streams to automatically flatten nested keys, search values, sort arrays, and run SQL without uploading data.',
+    category: 'viewer',
+    color: 'amber',
+    iconType: 'json',
+    acceptExtensions: '.json,.jsonl,.ndjson',
+    acceptLabel: 'Supports standard JSON (.json), JSON Lines (.jsonl), and NDJSON (.ndjson)',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Auto-Flatten Nested Objects',
+        description: 'Automatically unpacks nested JSON objects and arrays into clean, sortable tabular columns.'
+      },
+      {
+        icon: 'zap',
+        title: 'NDJSON & JSON Lines Support',
+        description: 'Seamlessly reads line-delimited JSON logs and streaming event records.'
+      },
+      {
+        icon: 'shield',
+        title: 'Confidential API Payloads Safe',
+        description: 'Inspect production payload logs and API secrets with complete confidence. Nothing leaves your browser.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Does it support nested JSON structures?',
+        a: 'Yes! DuckDB automatically infers schemas and provides dot-notation access to nested properties, flattening records into clean spreadsheet grids.'
+      },
+      {
+        q: 'Can I open large NDJSON / JSON Lines files?',
+        a: 'Yes, TableView streams and parses JSON Lines line-by-line in WebAssembly, making it fast and memory-efficient even on massive server logs.'
+      }
+    ]
+  },
+
+  // ==========================================
+  // CONVERTERS
+  // ==========================================
+  'data-converter': {
+    slug: 'data-converter',
+    path: '/data-converter',
+    badge: '100% In-Browser · DuckDB Wasm · Zero Uploads',
+    title: 'Universal Data Converter (CSV, Excel, Parquet, JSON)',
+    shortTitle: 'Data Converter',
+    metaTitle: 'Convert CSV, Excel, Parquet & JSON Online | TableView',
+    metaDescription: 'Convert datasets between Apache Parquet, Microsoft Excel (.xlsx), CSV, and JSON 100% in your browser. Fast DuckDB-Wasm engine, zero server uploads.',
+    h1: 'Universal In-Browser',
+    h1Highlight: 'Data Converter',
+    subtitle: 'Transform datasets between Apache Parquet, Excel (.xlsx), CSV, and JSON with ZSTD compression and instant downloads in client-side WebAssembly.',
+    category: 'converter',
+    tag: 'Flagship',
+    color: 'indigo',
+    iconType: 'parquet',
+    acceptExtensions: '.parquet,.geoparquet,.csv,.tsv,.xlsx,.xls,.json,.ndjson,.jsonl',
+    acceptLabel: 'Drop CSV, Excel, Parquet, or JSON to convert formats',
+    primaryExport: 'parquet',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'zap',
+        title: 'All-in-One Format Conversion',
+        description: 'Effortlessly switch between CSV, Excel, Parquet, and JSON in one unified workspace.'
+      },
+      {
+        icon: 'shield',
+        title: '100% Client-Side Privacy',
+        description: 'All conversions run strictly in local browser memory. Sensitive datasets are never sent to external servers.'
+      },
+      {
+        icon: 'download',
+        title: 'High-Ratio ZSTD Compression',
+        description: 'Compress bulky text spreadsheets into high-speed columnar Parquet files up to 90% smaller.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Which formats can I convert between?',
+        a: 'You can convert between CSV, TSV, Microsoft Excel (.xlsx), Apache Parquet, and JSON / NDJSON in any combination.'
+      },
+      {
+        q: 'Do my files get uploaded to a cloud server?',
+        a: 'No. Conversions run entirely inside your browser tab using DuckDB-Wasm and SheetJS in local RAM.'
+      }
+    ]
+  },
+
+  'csv-to-excel': {
+    slug: 'csv-to-excel',
+    path: '/csv-to-excel',
+    badge: '1-Click Local .xlsx Generator',
+    title: 'Convert CSV to Excel (.xlsx)',
+    shortTitle: 'CSV to Excel',
+    metaTitle: 'Convert CSV to Excel (.xlsx) Online Free | TableView',
+    metaDescription: 'Convert CSV and TSV files to genuine Microsoft Excel (.xlsx) workbooks directly in your browser. Proper column formatting, zero file uploads, fast & free.',
+    h1: 'Convert CSV to',
+    h1Highlight: 'Excel (.xlsx)',
+    subtitle: 'Transform raw comma-separated values into beautifully formatted Microsoft Excel (.xlsx) spreadsheets with preserved data types and zero cloud uploads.',
+    category: 'converter',
+    tag: 'Popular',
+    color: 'emerald',
+    iconType: 'excel',
+    acceptExtensions: '.csv,.tsv,.txt',
+    acceptLabel: 'Drop CSV or TSV file to convert to Microsoft Excel (.xlsx)',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'download',
+        title: 'Native .xlsx Workbooks',
+        description: 'Generates genuine Microsoft Excel XML workbooks (.xlsx) compatible with Excel 2016+, Office 365, and Google Sheets.'
+      },
+      {
+        icon: 'zap',
+        title: 'Smart Type Detection',
+        description: 'Numbers, currency values, dates, and timestamps are detected and formatted with native Excel data types.'
+      },
+      {
+        icon: 'shield',
+        title: '100% Private Local Conversion',
+        description: 'Sensitive sales reports and user lists are converted strictly inside your browser memory.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How do I convert CSV to Excel without software?',
+        a: 'Simply drag your CSV file into the drop zone above, preview the table, and click "Export to Excel (.xlsx)". The .xlsx file is generated instantly in your browser.'
+      },
+      {
+        q: 'Does it handle special characters and UTF-8 encoding?',
+        a: 'Yes, full UTF-8 encoding is preserved so non-English text, symbols, and accented characters open properly in Excel without garbled text.'
+      }
+    ]
+  },
+
+  'parquet-to-excel': {
+    slug: 'parquet-to-excel',
+    path: '/parquet-to-excel',
+    badge: 'Client-Side .xlsx Generator',
+    title: 'Convert Parquet to Excel (.xlsx)',
+    shortTitle: 'Parquet to Excel',
+    metaTitle: 'Convert Parquet to Excel (.xlsx) Online Free | TableView',
+    metaDescription: 'Convert Apache Parquet files directly to native Microsoft Excel (.xlsx) workbooks in your browser. Instant client-side conversion with no file size limits.',
+    h1: 'Convert Parquet to',
+    h1Highlight: 'Excel (.xlsx)',
+    subtitle: 'Transform complex columnar Parquet datasets into clean, beautifully formatted Microsoft Excel spreadsheets with proper headers and data types.',
+    category: 'converter',
+    tag: 'Popular',
+    color: 'indigo',
+    iconType: 'excel',
+    acceptExtensions: '.parquet,.geoparquet',
+    acceptLabel: 'Drop .parquet to export directly to Microsoft Excel (.xlsx)',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'download',
+        title: 'Native .xlsx Workbook Output',
+        description: 'Generates genuine Microsoft Excel XML workbooks (.xlsx) that open smoothly in Excel 2016+, Office 365, Google Sheets, and LibreOffice.'
+      },
+      {
+        icon: 'shield',
+        title: 'Confidential Enterprise Data Safe',
+        description: 'Enterprise production dumps, financial ledgers, and customer logs never touch external cloud servers.'
+      },
+      {
+        icon: 'zap',
+        title: 'Smart Type Mapping',
+        description: 'Timestamps, floating-point currencies, booleans, and integers are mapped to their respective native Excel cell formats.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How do I convert Parquet to Excel online?',
+        a: 'Simply drag and drop your .parquet file onto the drop zone above, review the instant data preview, and click "Export to Excel (.xlsx)". The workbook will download immediately.'
+      },
+      {
+        q: 'Are nested structs or arrays supported in Excel?',
+        a: 'Nested JSON structures and arrays are serialized to readable formatted JSON strings within the Excel cells so no data is truncated.'
+      }
+    ]
+  },
+
+  'parquet-to-csv': {
+    slug: 'parquet-to-csv',
+    path: '/parquet-to-csv',
+    badge: 'High-Throughput In-Memory Stream',
+    title: 'Convert Parquet to CSV',
+    shortTitle: 'Parquet to CSV',
+    metaTitle: 'Convert Parquet to CSV Online Free | TableView',
+    metaDescription: 'Extract and export Apache Parquet files to Comma-Separated Values (.csv). Zero server uploads, instant streaming DuckDB-Wasm engine.',
+    h1: 'Convert Parquet to',
+    h1Highlight: 'CSV Online',
+    subtitle: 'Streamline data pipelines by converting Apache Parquet files into standard UTF-8 Comma-Separated Values (.csv) with custom delimiters and filters.',
+    category: 'converter',
+    tag: 'Fast',
+    color: 'indigo',
+    iconType: 'csv',
+    acceptExtensions: '.parquet,.geoparquet',
+    acceptLabel: 'Drop .parquet to export standard comma-delimited CSV',
+    primaryExport: 'csv',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'zap',
+        title: 'Ultra-Fast Streaming',
+        description: 'DuckDB leverages vectorized execution to unpack and serialize Parquet column pages directly into RFC 4180 compliant CSV.'
+      },
+      {
+        icon: 'shield',
+        title: 'Completely Offline & Air-Gapped',
+        description: 'Works even without an active internet connection after the page loads. Zero bandwidth consumed uploading files.'
+      },
+      {
+        icon: 'cpu',
+        title: 'SQL Filter Before Export',
+        description: 'Filter rows or prune unnecessary columns with SQL before exporting to save time and disk space.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Does this tool preserve UTF-8 encoding in CSV?',
+        a: 'Yes, generated CSV files are encoded in standard UTF-8 with automatic quote escaping for fields containing commas or line breaks.'
+      },
+      {
+        q: 'Can I filter data before downloading the CSV?',
+        a: 'Yes! Use the search bar or switch to the SQL Console tab to filter rows and export only the matching slice.'
+      }
+    ]
+  },
+
+  'csv-to-parquet': {
+    slug: 'csv-to-parquet',
+    path: '/csv-to-parquet',
+    badge: 'ZSTD & Snappy Columnar Compression',
+    title: 'Convert CSV to Parquet',
+    shortTitle: 'CSV to Parquet',
+    metaTitle: 'Convert CSV to Parquet Online (ZSTD) | TableView',
+    metaDescription: 'Convert CSV or TSV files to Apache Parquet (.parquet) directly in your browser with ZSTD or Snappy compression. 100% private local processing.',
+    h1: 'Convert CSV to',
+    h1Highlight: 'Apache Parquet',
+    subtitle: 'Shrink massive CSV/TSV spreadsheets by up to 90% into high-performance, query-optimized Apache Parquet files directly on your machine.',
+    category: 'converter',
+    tag: 'ZSTD',
+    color: 'emerald',
+    iconType: 'parquet',
+    acceptExtensions: '.csv,.tsv,.txt',
+    acceptLabel: 'Drop CSV or TSV files to compress into Apache Parquet (.parquet)',
+    primaryExport: 'parquet',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'download',
+        title: 'Up to 90% File Size Reduction',
+        description: 'Columnar layout with ZSTD or Snappy compression cuts storage footprints compared to bloated raw text CSVs.'
+      },
+      {
+        icon: 'cpu',
+        title: 'Automatic Schema Inference',
+        description: 'DuckDB intelligently detects column data types (integers, floats, dates, timestamps, boolean) during parsing.'
+      },
+      {
+        icon: 'shield',
+        title: 'Private & Secure',
+        description: 'Never upload proprietary business spreadsheets to third-party conversion servers. Everything runs in your browser.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Which compression codec should I choose?',
+        a: 'ZSTD (default) offers the best balance of high compression ratio and decompression speed. Snappy is recommended for legacy Hadoop/Hive systems.'
+      },
+      {
+        q: 'How does DuckDB detect column types in CSV?',
+        a: 'DuckDB inspects sample chunks of the CSV to automatically infer correct types rather than storing everything as plain text.'
+      }
+    ]
+  },
+
+  'excel-to-csv': {
+    slug: 'excel-to-csv',
+    path: '/excel-to-csv',
+    badge: 'Fast Local Conversion · UTF-8 Clean',
+    title: 'Convert Excel to CSV',
+    shortTitle: 'Excel to CSV',
+    metaTitle: 'Convert Excel (.xlsx) to CSV Online Free | TableView',
+    metaDescription: 'Convert Microsoft Excel (.xlsx and .xls) workbooks to clean, comma-separated UTF-8 CSV files in your browser. 100% free with zero file uploads.',
+    h1: 'Convert Excel to',
+    h1Highlight: 'CSV Online',
+    subtitle: 'Convert Microsoft Excel spreadsheets into standard RFC 4180 UTF-8 CSV files ready for databases, ETL pipelines, and Python analysis.',
+    category: 'converter',
+    tag: 'Fast',
+    color: 'green',
+    iconType: 'csv',
+    acceptExtensions: '.xlsx,.xls',
+    acceptLabel: 'Drop Microsoft Excel (.xlsx or .xls) file to convert to CSV',
+    primaryExport: 'csv',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'download',
+        title: 'Clean UTF-8 Formatting',
+        description: 'Exports RFC 4180 standard CSV with proper quotes and UTF-8 encoding without Excel character corruption.'
+      },
+      {
+        icon: 'shield',
+        title: 'Zero Cloud Storage',
+        description: 'Files are processed in memory and immediately discarded. Never stored or logged.'
+      },
+      {
+        icon: 'zap',
+        title: 'Works With All Excel Formats',
+        description: 'Supports modern .xlsx workbooks as well as legacy .xls spreadsheets.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How to convert Excel to CSV without opening Excel?',
+        a: 'Drop your Excel file onto TableView above and click "Export CSV". Your CSV will download immediately without needing Microsoft Office.'
+      },
+      {
+        q: 'Will commas in my cells break the CSV columns?',
+        a: 'No! Cells containing commas, quotes, or newlines are automatically quoted in compliance with RFC 4180 standards.'
+      }
+    ]
+  },
+
+  'excel-to-parquet': {
+    slug: 'excel-to-parquet',
+    path: '/excel-to-parquet',
+    badge: 'Modernize Spreadsheets to Parquet',
+    title: 'Convert Excel to Parquet',
+    shortTitle: 'Excel to Parquet',
+    metaTitle: 'Convert Excel (.xlsx) to Parquet Online | TableView',
+    metaDescription: 'Convert Microsoft Excel (.xlsx, .xls) files directly into optimized Apache Parquet format with ZSTD compression for Databricks, Snowflake & S3.',
+    h1: 'Convert Excel to',
+    h1Highlight: 'Apache Parquet',
+    subtitle: 'Transform Excel business spreadsheets into cloud-ready Apache Parquet columnar files for AWS Athena, Snowflake, Databricks, and BigQuery.',
+    category: 'converter',
+    color: 'green',
+    iconType: 'parquet',
+    acceptExtensions: '.xlsx,.xls',
+    acceptLabel: 'Drop Excel (.xlsx or .xls) file to convert to Apache Parquet',
+    primaryExport: 'parquet',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'cpu',
+        title: 'Cloud Data Warehouse Ready',
+        description: 'Generates standard Apache Parquet with metadata headers ready for S3, AWS Athena, Snowflake, and BigQuery.'
+      },
+      {
+        icon: 'download',
+        title: 'Huge Storage Savings',
+        description: 'Columnar compression reduces file size by up to 80% compared to bloated Excel XML files.'
+      },
+      {
+        icon: 'shield',
+        title: 'Completely Local Execution',
+        description: 'Financial models and confidential company spreadsheets remain 100% on your computer.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Why convert Excel to Parquet?',
+        a: 'Parquet is optimized for analytical queries (OLAP). Cloud query engines like AWS Athena and Snowflake query Parquet 10x to 50x faster than Excel or CSV.'
+      }
+    ]
+  },
+
+  'csv-to-json': {
+    slug: 'csv-to-json',
+    path: '/csv-to-json',
+    badge: 'Tabular to JSON Array / JSONL',
+    title: 'Convert CSV to JSON',
+    shortTitle: 'CSV to JSON',
+    metaTitle: 'Convert CSV to JSON Online Free | TableView',
+    metaDescription: 'Convert CSV and TSV tables into clean JSON objects, arrays, and JSON Lines format directly in your browser. 100% private local conversion.',
+    h1: 'Convert CSV to',
+    h1Highlight: 'JSON Online',
+    subtitle: 'Convert comma-separated tables into clean JSON array objects or newline-delimited JSON (NDJSON) format with type preservation.',
+    category: 'converter',
+    color: 'emerald',
+    iconType: 'json',
+    acceptExtensions: '.csv,.tsv,.txt',
+    acceptLabel: 'Drop CSV or TSV file to convert to JSON',
+    primaryExport: 'json',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'zap',
+        title: 'Structured JSON Output',
+        description: 'Outputs formatted JSON arrays where each CSV row becomes a typed JSON object keyed by column names.'
+      },
+      {
+        icon: 'table',
+        title: 'Automatic Number & Boolean Parsing',
+        description: 'Integers, floats, and booleans are parsed as native JSON types rather than strings.'
+      },
+      {
+        icon: 'shield',
+        title: 'Zero Server Uploads',
+        description: 'Fast, secure, and offline-capable conversion inside your browser.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Does it support nested JSON keys?',
+        a: 'If your CSV columns contain serialized JSON, TableView parses and preserves them in the exported JSON output.'
+      }
+    ]
+  },
+
+  'parquet-to-json': {
+    slug: 'parquet-to-json',
+    path: '/parquet-to-json',
+    badge: 'Columnar to JSON Converter',
+    title: 'Convert Parquet to JSON',
+    shortTitle: 'Parquet to JSON',
+    metaTitle: 'Convert Parquet to JSON Online Free | TableView',
+    metaDescription: 'Export Apache Parquet columnar files to formatted JSON arrays and JSON Lines (NDJSON) in your browser with zero server uploads.',
+    h1: 'Convert Parquet to',
+    h1Highlight: 'JSON Online',
+    subtitle: 'Extract binary columnar Parquet records into readable JSON arrays or streaming JSON Lines with full support for nested structs and maps.',
+    category: 'converter',
+    color: 'indigo',
+    iconType: 'json',
+    acceptExtensions: '.parquet,.geoparquet',
+    acceptLabel: 'Drop .parquet to export to JSON',
+    primaryExport: 'json',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Preserves Complex Nested Types',
+        description: 'Nested structs, lists, and maps in Parquet are seamlessly exported to native nested JSON objects and arrays.'
+      },
+      {
+        icon: 'zap',
+        title: 'Instant In-Browser Processing',
+        description: 'Converts Parquet records to JSON directly in memory without uploading files to third-party cloud servers.'
+      },
+      {
+        icon: 'shield',
+        title: '100% Private Sandbox',
+        description: 'Your data never leaves your browser sandbox.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Can I export filtered rows to JSON?',
+        a: 'Yes, you can run a SQL query or filter rows in the workbench and export only the matching dataset to JSON.'
+      }
+    ]
+  },
+
+  'json-to-parquet': {
+    slug: 'json-to-parquet',
+    path: '/json-to-parquet',
+    badge: 'Structured & NDJSON Ingestion',
+    title: 'Convert JSON to Parquet',
+    shortTitle: 'JSON to Parquet',
+    metaTitle: 'Convert JSON / JSONL to Parquet Online | TableView',
+    metaDescription: 'Convert JSON, NDJSON, and JSON Lines into Apache Parquet format locally with schema inference and ZSTD compression.',
+    h1: 'Convert JSON to',
+    h1Highlight: 'Apache Parquet',
+    subtitle: 'Convert JSON arrays, JSON Lines (.jsonl), and NDJSON documents into compact, highly-efficient Apache Parquet columnar files.',
+    category: 'converter',
+    color: 'amber',
+    iconType: 'parquet',
+    acceptExtensions: '.json,.jsonl,.ndjson',
+    acceptLabel: 'Drop JSON, JSONL, or NDJSON to convert to Apache Parquet',
+    primaryExport: 'parquet',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'cpu',
+        title: 'Supports JSON & JSON Lines',
+        description: 'Seamlessly processes standard JSON arrays as well as streaming newline-delimited JSON (NDJSON/JSONL) log dumps.'
+      },
+      {
+        icon: 'zap',
+        title: 'Schema Consolidation',
+        description: 'Consolidates flexible JSON structures into structured Arrow columns ready for Databricks, Snowflake, or AWS Athena.'
+      },
+      {
+        icon: 'shield',
+        title: '100% Client-Side Conversion',
+        description: 'No data telemetry or API calls. Confidential API responses and server logs remain strictly local.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Does it support NDJSON (newline-delimited JSON)?',
+        a: 'Yes! Both .json array files and .jsonl / .ndjson line-by-line dumps are fully supported.'
+      }
+    ]
+  },
+
+  // ==========================================
+  // SQL & ANALYTICS
+  // ==========================================
+  'sql-workbench': {
+    slug: 'sql-workbench',
+    path: '/sql-workbench',
+    badge: 'Vectorized DuckDB-Wasm Engine',
+    title: 'SQL on CSV, Parquet & Excel',
+    shortTitle: 'SQL Workbench',
+    metaTitle: 'SQL on CSV, Parquet & Excel (DuckDB) | TableView',
+    metaDescription: 'Run analytical SQL queries directly on CSV, Parquet, and Excel files in your browser. GROUP BY, window functions, and joins powered by DuckDB-Wasm.',
+    h1: 'In-Browser SQL',
+    h1Highlight: 'Workbench',
+    subtitle: 'Query local Parquet, CSV, Excel, and JSON datasets with high-performance DuckDB SQL. Filter rows, compute aggregations, and export query results without a database server.',
+    category: 'sql',
+    tag: 'Differentiated',
+    color: 'cyan',
+    iconType: 'sql',
+    acceptExtensions: '.parquet,.geoparquet,.csv,.tsv,.json,.jsonl,.ndjson,.xlsx,.xls',
+    acceptLabel: 'Supports Parquet, CSV, Excel (.xlsx/.xls), and JSON files',
+    primaryExport: 'any',
+    defaultTab: 'sql',
+    features: [
+      {
+        icon: 'cpu',
+        title: 'Full Analytical SQL Dialect',
+        description: 'Execute GROUP BY, HAVING, subqueries, CTEs (WITH clause), regex matches, and window functions on local files.'
+      },
+      {
+        icon: 'zap',
+        title: 'Vectorized SIMD Execution',
+        description: 'DuckDB-Wasm executes columnar queries directly on your CPU cores with near-native database speeds.'
+      },
+      {
+        icon: 'download',
+        title: 'Export Filtered Slices',
+        description: 'Export query results directly to formatted Microsoft Excel (.xlsx), clean CSV, or compressed Parquet.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What SQL dialect does this workbench support?',
+        a: 'It supports standard PostgreSQL-compatible analytical SQL via DuckDB, including window functions, CTEs, string regex, and date/time functions.'
+      },
+      {
+        q: 'Can I query multiple files or join tables?',
+        a: 'Yes! DuckDB can query and join any files loaded into the virtual WebAssembly filesystem.'
+      }
+    ]
+  },
+
+  'parquet-schema-inspector': {
+    slug: 'parquet-schema-inspector',
+    path: '/parquet-schema-inspector',
+    badge: 'Deep Column Profiling & DDL',
+    title: 'Parquet Schema & Metadata Inspector',
+    shortTitle: 'Schema Inspector',
+    metaTitle: 'Parquet Schema & Metadata Inspector | TableView',
+    metaDescription: 'Inspect Apache Parquet schemas, column types, null counts, row groups, and encoding statistics in your browser.',
+    h1: 'Parquet Schema &',
+    h1Highlight: 'Metadata Inspector',
+    subtitle: 'Inspect physical and logical column data types, null percentages, distinct value estimates, and summary statistics without running heavy desktop software.',
+    category: 'analysis',
+    color: 'purple',
+    iconType: 'schema',
+    acceptExtensions: '.parquet,.geoparquet',
+    acceptLabel: 'Drop .parquet to inspect full schema, column stats, and null rates',
+    primaryExport: 'schema',
+    defaultTab: 'schema',
+    features: [
+      {
+        icon: 'table',
+        title: 'Full Column Distribution Profiling',
+        description: 'Calculates min, max, avg, standard deviation, quartiles, and exact null rates for every single column.'
+      },
+      {
+        icon: 'cpu',
+        title: 'One-Click DDL Generation',
+        description: 'Generate copy-paste ready SQL CREATE TABLE statements and Python/Pandas schemas directly from your dataset.'
+      },
+      {
+        icon: 'shield',
+        title: 'Private & Instant',
+        description: 'Deep metadata extraction occurs directly inside your browser memory in milliseconds.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What schema details does this inspector reveal?',
+        a: 'It displays column names, physical/logical data types, null percentage, approx unique count, minimum/maximum values, and summary statistics.'
+      },
+      {
+        q: 'Can I export the schema definition?',
+        a: 'Yes, you can copy the generated SQL DDL (CREATE TABLE) statement or Python Polars/Pandas type definitions with a single click.'
+      }
+    ]
+  },
+
+  // ==========================================
+  // CALCULATORS
+  // ==========================================
+  'dscr-loan-calculator': {
+    slug: 'dscr-loan-calculator',
+    path: '/dscr-loan-calculator',
+    badge: '100% Client-Side · Rental Property Model',
+    title: 'DSCR Loan Calculator',
+    shortTitle: 'DSCR Loan',
+    metaTitle: 'DSCR Loan Calculator for Rental Properties | TableView',
+    metaDescription: 'Calculate Debt Service Coverage Ratio (DSCR), monthly PITIA, minimum qualifying rental income, and cash flow for residential & commercial non-QM loans.',
+    h1: 'DSCR Loan',
+    h1Highlight: 'Calculator',
+    subtitle: 'Institutional-grade DSCR rental property underwriting. Calculate monthly debt coverage, interest-only payments, and maximum loan amounts instantly in your browser.',
+    category: 'calculator',
+    tag: 'High ROI',
+    color: 'indigo',
+    iconType: 'building',
+    acceptExtensions: 'Interactive Loan Model',
+    acceptLabel: 'No file upload needed · Instant interactive financial underwriting',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Dual Underwriting Standards',
+        description: 'Supports residential 1–4 unit Fannie Mae style and commercial 5+ unit net operating income debt coverage formulas.'
+      },
+      {
+        icon: 'cpu',
+        title: 'Reverse Loan Amount Solver',
+        description: 'Solve for maximum loan principal allowable based on target debt service coverage ratio (1.00x, 1.20x, 1.25x).'
+      },
+      {
+        icon: 'shield',
+        title: '100% Private Deal Analysis',
+        description: 'Never transmits your property addresses, rents, or personal financials to lead brokers or lenders.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is a good DSCR ratio for investment real estate?',
+        a: 'Most non-QM lenders require a minimum DSCR of 1.20x to 1.25x. A ratio above 1.25x qualifies for prime interest rates and maximum leverage.'
+      },
+      {
+        q: 'Can I export the underwriting report to Excel?',
+        a: 'Yes, 1-click native Excel (.xlsx) export generates a full underwriting sheet with monthly PITIA and debt coverage summary.'
+      }
+    ]
+  },
+
+  'hard-money-calculator': {
+    slug: 'hard-money-calculator',
+    path: '/hard-money-calculator',
+    badge: '100% In-Browser · Fix & Flip Underwriting',
+    title: 'Hard Money & Fix-and-Flip Calculator',
+    shortTitle: 'Hard Money & Flip',
+    metaTitle: 'Hard Money Loan Calculator: Fix & Flip ROI | TableView',
+    metaDescription: 'Calculate hard money loan amounts, points, holding interest, 70% rule maximum allowable offer (MAO), and net flip ROI with zero registration.',
+    h1: 'Hard Money & Fix-and-Flip',
+    h1Highlight: 'Calculator',
+    subtitle: 'Evaluate fix-and-flip bridge loan costs, lender points, rehab holding expenses, 70% rule maximum allowable offer (MAO), and net deal ROI.',
+    category: 'calculator',
+    tag: '70% Rule',
+    color: 'amber',
+    iconType: 'hammer',
+    acceptExtensions: 'Interactive Deal Sheet',
+    acceptLabel: 'No file upload needed · Instant bridge loan and flip profitability model',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: '70% Rule & MAO Engine',
+        description: 'Computes maximum allowable purchase price based on ARV and estimated rehab costs to guarantee flip margin.'
+      },
+      {
+        icon: 'zap',
+        title: 'Interest & Points Simulator',
+        description: 'Models monthly interest-only holding costs, upfront points, and Dutch interest vs standard draw schedules.'
+      },
+      {
+        icon: 'shield',
+        title: 'Zero Lead Forms or Spam',
+        description: 'Run private fix-and-flip valuations without broker calls or paywalled property report limits.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is the 70% rule in house flipping?',
+        a: 'The 70% rule states an investor should pay no more than 70% of the After Repair Value (ARV) minus estimated repair costs.'
+      },
+      {
+        q: 'How are hard money loan points calculated?',
+        a: '1 point equals 1% of the total loan amount, paid upfront at closing as lender compensation for short-term risk.'
+      }
+    ]
+  },
+
+  'snowflake-cost-calculator': {
+    slug: 'snowflake-cost-calculator',
+    path: '/snowflake-cost-calculator',
+    badge: 'Cloud FinOps · Virtual Warehouse Modeler',
+    title: 'Snowflake Warehouse Cost Calculator',
+    shortTitle: 'Snowflake FinOps',
+    metaTitle: 'Snowflake Cost & Credit Calculator | TableView',
+    metaDescription: 'Estimate Snowflake compute credits, multi-cluster autoscaling costs, auto-suspend idle savings, and compressed cloud storage costs.',
+    h1: 'Snowflake Warehouse Cost',
+    h1Highlight: 'Calculator',
+    subtitle: 'Model Snowflake virtual warehouse compute credits, cluster autoscaling, auto-suspend FinOps savings, and compressed cloud storage economics.',
+    category: 'calculator',
+    tag: 'Cloud FinOps',
+    color: 'cyan',
+    iconType: 'server',
+    acceptExtensions: 'Interactive FinOps Model',
+    acceptLabel: 'No file upload needed · Instant warehouse sizing & credit cost estimator',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'cpu',
+        title: 'T-Shirt Sizing & Cluster Matrix',
+        description: 'Full credit consumption matrix from X-Small (1 credit/hr) up to 6X-Large (512 credits/hr).'
+      },
+      {
+        icon: 'zap',
+        title: 'Auto-Suspend FinOps Simulator',
+        description: 'Calculates exact dollar waste from idle warehouses and demonstrates savings from 60-second auto-suspend.'
+      },
+      {
+        icon: 'download',
+        title: 'Excel Budget Export',
+        description: 'Download executive cloud compute budget breakdowns directly into Microsoft Excel (.xlsx).'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How much does 1 Snowflake compute credit cost?',
+        a: 'Standard Edition is approximately $2.00/credit, Enterprise Edition is $3.00/credit, and Business Critical is $4.00/credit.'
+      },
+      {
+        q: 'How does auto-suspend reduce Snowflake bills?',
+        a: 'Setting auto-suspend to 1 minute prevents warehouses from billing credits while waiting for queries during idle periods.'
+      }
+    ]
+  },
+
+  'parquet-storage-calculator': {
+    slug: 'parquet-storage-calculator',
+    path: '/parquet-storage-calculator',
+    badge: 'Data Lake FinOps · Storage & Scan Savings',
+    title: 'Parquet Storage & Query Savings Calculator',
+    shortTitle: 'Cloud Storage Savings',
+    metaTitle: 'Parquet S3 & Athena Cloud Savings Calculator | TableView',
+    metaDescription: 'Calculate exact cloud storage byte reduction, AWS S3 monthly cost cuts, and Athena/BigQuery columnar projection scan savings when migrating from CSV/JSON to Parquet.',
+    h1: 'Parquet Cloud Storage &',
+    h1Highlight: 'Scan Savings',
+    subtitle: 'Calculate AWS S3 byte reduction, monthly storage savings, and Amazon Athena / Google BigQuery query scan cost cuts achieved by migrating to Apache Parquet.',
+    category: 'calculator',
+    tag: 'S3 & Athena',
+    color: 'emerald',
+    iconType: 'savings',
+    acceptExtensions: 'Interactive Lakehouse Model',
+    acceptLabel: 'No file upload needed · Instant cloud storage & query scan cost estimator',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'download',
+        title: '5x–10x Storage Compression Factor',
+        description: 'Calculates exact S3 standard storage dollar savings when moving away from bulky uncompressed CSV/JSON.'
+      },
+      {
+        icon: 'zap',
+        title: 'Athena & BigQuery Scan Cuts',
+        description: 'Models columnar projection pushdown where queries only scan 10%–20% of dataset bytes, reducing per-TB query bills.'
+      },
+      {
+        icon: 'shield',
+        title: '100% Private In-Browser Math',
+        description: 'Estimate enterprise petabyte storage migrations without uploading architecture details.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Why does Parquet save 80%+ on Athena and BigQuery?',
+        a: 'Because Parquet is columnar, analytical queries only scan columns in the SELECT and WHERE clauses instead of full row scans.'
+      },
+      {
+        q: 'How much does Snappy/ZSTD compress CSV data?',
+        a: 'Typical enterprise tabular data achieves 75% to 85% byte compression when converted from CSV to Parquet.'
+      }
+    ]
+  },
+
+  'section-1031-exchange-calculator': {
+    slug: 'section-1031-exchange-calculator',
+    path: '/section-1031-exchange-calculator',
+    badge: '100% In-Browser · IRC §1031 Exchange',
+    title: '1031 Exchange Calculator',
+    shortTitle: '1031 Exchange',
+    metaTitle: '1031 Exchange Calculator: Boot & Capital Gains | TableView',
+    metaDescription: 'Free in-browser 1031 exchange calculator. Compute realized gain, cash and mortgage boot, deferred gain, and the tax you actually owe: plus the 45-day identification and 180-day exchange deadlines.',
+    h1: '1031 Exchange',
+    h1Highlight: 'Calculator',
+    subtitle: 'Model a like-kind exchange end to end: realized gain, cash and mortgage boot, §1250 recapture, deferred tax, and the statutory deadlines that decide whether the exchange qualifies.',
+    category: 'calculator',
+    tag: 'New',
+    color: 'purple',
+    iconType: 'building',
+    acceptExtensions: 'Interactive Exchange Model',
+    acceptLabel: 'No file upload needed · Instant boot, deferred gain and deadline analysis',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Both Sides of the Boot Calculation',
+        description: 'Cash boot is measured against the cash actually required at closing, so new financing correctly increases it. Mortgage boot nets debt relief against cash you contribute beyond your proceeds.'
+      },
+      {
+        icon: 'zap',
+        title: '45-Day and 180-Day Deadlines Modelled Exactly',
+        description: 'Includes the rule most calculators miss: the exchange period ends on the earlier of day 180 or the due date of that year\'s tax return, so a December closing can lose months.'
+      },
+      {
+        icon: 'shield',
+        title: 'Private Deal Analysis',
+        description: 'Your basis, depreciation history and projected gain stay in your browser. No account, no upload, no server-side record of your holdings.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is boot in a 1031 exchange?',
+        a: 'Boot is any value taken out of the exchange rather than rolled into the replacement property. Cash boot is un-reinvested sale proceeds; mortgage boot is debt paid off on the relinquished property that you do not replace. You are taxed on the lesser of total boot or realized gain.'
+      },
+      {
+        q: 'Can the 45-day identification period be extended?',
+        a: 'No. The 45-day identification and 180-day exchange periods are set by statute and cannot be extended for any reason, including hardship. There is no grace period.'
+      },
+      {
+        q: 'Why might my 180-day deadline be shorter than 180 days?',
+        a: 'The exchange period ends on the earlier of 180 days after closing or the due date of your tax return for that year, including extensions. Closing in December without filing an extension can leave you well under 180 days.'
+      }
+    ]
+  },
+
+  'mortgage-calculator': {
+    slug: 'mortgage-calculator',
+    path: '/mortgage-calculator',
+    badge: '100% In-Browser · Real Estate Home Loan',
+    title: 'Mortgage Payment & Amortization Calculator',
+    shortTitle: 'Mortgage Calculator',
+    metaTitle: 'Mortgage Calculator: Payments & Amortization | TableView',
+    metaDescription: 'Calculate monthly mortgage payments with PMI, property taxes, home insurance, and HOA fees. Includes interactive amortization schedules and Excel export.',
+    h1: 'Mortgage Payment &',
+    h1Highlight: 'Amortization Calculator',
+    subtitle: 'Accurately model P&I monthly payments, dynamic PMI auto-cancellation, property taxes, extra monthly principal acceleration, and biweekly payoffs.',
+    category: 'calculator',
+    tag: 'Popular',
+    color: 'green',
+    iconType: 'home',
+    acceptExtensions: 'Interactive Loan Model',
+    acceptLabel: 'No file upload needed · Instant PITI payment & amortization schedule',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Full PITI & PMI Breakdown',
+        description: 'Includes Principal, Interest, dynamic property tax, home insurance, HOA dues, and automated 80% LTV PMI removal.'
+      },
+      {
+        icon: 'zap',
+        title: 'Extra Payment & Biweekly Payoff',
+        description: 'Simulate extra monthly principal and biweekly schedules to see exact interest dollars saved and years shaved off debt.'
+      },
+      {
+        icon: 'shield',
+        title: 'No-Lead-Form Bankrate Alternative',
+        description: 'No broker phone calls, no lead forms, and zero data tracking: your figures stay in your browser.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is PITI in a monthly mortgage payment?',
+        a: 'PITI stands for Principal, Interest, Taxes, and Insurance. HOA dues and PMI can also be added depending on loan terms.'
+      },
+      {
+        q: 'When does PMI cancel automatically?',
+        a: 'Under federal law, conventional lenders must cancel PMI once the loan principal reaches 78% of the original home value.'
+      }
+    ]
+  },
+
+  'refinance-calculator': {
+    slug: 'refinance-calculator',
+    path: '/refinance-calculator',
+    badge: '100% In-Browser · Refinance Break-Even Analysis',
+    title: 'Mortgage Refinance Break-Even Calculator',
+    shortTitle: 'Refinance Calculator',
+    metaTitle: 'Mortgage Refinance Break-Even Calculator | TableView',
+    metaDescription: 'Compare your current mortgage to a new refinanced loan. Calculate monthly payment savings, closing cost break-even timeline, and 30-year reset warnings.',
+    h1: 'Mortgage Refinance',
+    h1Highlight: 'Break-Even Calculator',
+    subtitle: 'Compare existing vs new mortgage terms, compute exact break-even timeline against closing costs, cash-out distributions, and lifetime interest changes.',
+    category: 'calculator',
+    tag: 'New',
+    color: 'purple',
+    iconType: 'refinance',
+    acceptExtensions: 'Interactive Refi Model',
+    acceptLabel: 'No file upload needed · Instant mortgage comparison & break-even timeline',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Exact Break-Even Timeline',
+        description: 'Calculates the exact month when cumulative monthly payment savings surpass total upfront closing costs.'
+      },
+      {
+        icon: 'shield',
+        title: '30-Year Reset Clock Warning',
+        description: 'Alerts you if refinancing into a new 30-year term increases lifetime interest despite lowering your monthly payment.'
+      },
+      {
+        icon: 'download',
+        title: 'Instant Excel Deal Sheet',
+        description: 'Export the complete monthly comparison schedule directly to Microsoft Excel with 1 click.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'When does refinancing a mortgage make financial sense?',
+        a: 'Refinancing usually makes sense if you can lower your interest rate by 0.75% to 1.00% and plan to stay in the home past the break-even point.'
+      },
+      {
+        q: 'What is the 30-year clock reset trap?',
+        a: 'If you have paid 7 years into a 30-year loan and refinance into a brand-new 30-year loan, you restart interest amortization and may pay thousands more overall.'
+      }
+    ]
+  },
+
+  'loan-comparison-calculator': {
+    slug: 'loan-comparison-calculator',
+    path: '/loan-comparison-calculator',
+    badge: '100% In-Browser · Side-by-Side Comparison',
+    title: 'Loan Comparison Calculator',
+    shortTitle: 'Loan Comparison',
+    metaTitle: 'Loan Comparison Calculator: Side-by-Side | TableView',
+    metaDescription: 'Compare two loans side-by-side. Calculate monthly payment differences, lifetime interest savings, break-even on discount points, and total costs with Excel export.',
+    h1: 'Side-by-Side Loan',
+    h1Highlight: 'Comparison Calculator',
+    subtitle: 'Compare interest rates, loan terms, origination fees, discount points, and early payoff schedules to find the cheapest borrowing option.',
+    category: 'calculator',
+    tag: 'Popular',
+    color: 'indigo',
+    iconType: 'calculator',
+    acceptExtensions: 'Interactive Loan Model',
+    acceptLabel: 'No file upload required · Side-by-side comparison & Excel export',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Side-by-Side Visual Modeling',
+        description: 'Compare two loans head-to-head on monthly payment, lifetime interest, upfront points, and payoff dates.'
+      },
+      {
+        icon: 'zap',
+        title: 'Discount Points Break-Even',
+        description: 'Computes exact months required to recoup upfront discount points and lender origination fees.'
+      },
+      {
+        icon: 'download',
+        title: 'Instant Excel Deal Sheet',
+        description: 'Download the full side-by-side comparison schedule directly into Excel with 1 click.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How do discount points affect my loan comparison?',
+        a: 'One mortgage point costs 1% of the loan amount and typically lowers your interest rate by 0.25%. To determine if paying points is worthwhile, divide the upfront cost of the points by the monthly payment savings. If you plan to keep the loan longer than the break-even period (typically 36 to 60 months), buying points saves money.'
+      },
+      {
+        q: 'Why can a 15-year loan save hundreds of thousands in interest?',
+        a: 'A 15-year loan features higher monthly principal and interest payments than a 30-year loan, but cuts the compounding timeline in half and usually carries a lower interest rate (0.5% to 1.0% lower). This combination drastically reduces total lifetime interest payments.'
+      },
+      {
+        q: 'How is the break-even point on loan upfront fees calculated?',
+        a: 'Break-even in months = (Total Upfront Closing Costs of Loan B - Total Upfront Costs of Loan A) / (Monthly Payment of Loan A - Monthly Payment of Loan B). It tells you how many months you must hold the loan before lower monthly payments compensate for higher upfront origination fees.'
+      },
+      {
+        q: 'What is the benefit of making extra monthly principal payments?',
+        a: 'Any extra dollar paid directly toward principal shortens the repayment schedule and eliminates the compound interest that would have accrued on that dollar across remaining years. Even an extra $100/month can shave 3 to 5 years off a 30-year term.'
+      }
+    ]
+  },
+
+  'commercial-loan-calculator': {
+    slug: 'commercial-loan-calculator',
+    path: '/commercial-loan-calculator',
+    badge: '100% In-Browser · Commercial Real Estate',
+    title: 'Commercial Real Estate Loan & Balloon Payment Calculator',
+    shortTitle: 'Commercial Loan',
+    metaTitle: 'Commercial Real Estate Loan Calculator | TableView',
+    metaDescription: 'Calculate commercial mortgage payments, balloon payment at maturity, interest-only options, and loan balance with instant Excel schedule export.',
+    h1: 'Commercial Loan &',
+    h1Highlight: 'Balloon Calculator',
+    subtitle: 'Model commercial property debt with 20/25/30-year amortization, 5/7/10-year balloon maturity terms, and interest-only periods.',
+    category: 'calculator',
+    tag: 'CRE Debt',
+    color: 'cyan',
+    iconType: 'building',
+    acceptExtensions: 'Interactive CRE Loan Model',
+    acceptLabel: 'No file upload required · Balloon maturity & refinance risk calculator',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Balloon Maturity Lump Sum',
+        description: 'Calculates the exact balloon balance due at year 5, 7, or 10 against a 25-30 year amortization schedule.'
+      },
+      {
+        icon: 'zap',
+        title: 'Interest-Only (IO) Structuring',
+        description: 'Simulate initial 12 to 36 month interest-only periods during property stabilization or lease-up.'
+      },
+      {
+        icon: 'shield',
+        title: 'Refinance Risk Assessment',
+        description: 'Assesses maturity refinance risk level based on loan paydown and remaining balloon debt.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is a balloon payment on a commercial real estate loan?',
+        a: 'A balloon payment is the remaining lump-sum principal balance due at the end of a commercial loan term (often 5, 7, or 10 years) when the amortization schedule is longer (typically 20, 25, or 30 years). The borrower must pay off, refinance, or sell the property before the balloon maturity date.'
+      },
+      {
+        q: 'Why do commercial mortgages have 20 or 25-year amortizations with 5 or 10-year terms?',
+        a: 'Commercial lenders avoid locking in long-term fixed interest rates for 30 years due to interest rate risk. Structuring loans with a 25-year amortization keeps monthly debt service manageable while a 5-to-10-year maturity allows the bank to re-evaluate underwriting and reset interest rates.'
+      },
+      {
+        q: 'What happens when a commercial balloon loan matures?',
+        a: 'Upon maturity, the borrower must satisfy the balloon payment by refinancing with the current lender or a new lender, paying cash from reserves, or selling the asset. Borrowers should begin the refinancing process 6 to 12 months prior to the balloon maturity date.'
+      },
+      {
+        q: 'What is an Interest-Only (IO) period in commercial financing?',
+        a: 'During an Interest-Only period (e.g. initial 1 to 3 years), the borrower only pays monthly interest and no principal. This maximizes cash flow during property renovations, tenant lease-up, or stabilization before standard amortization commences.'
+      }
+    ]
+  },
+
+  'salary-to-hourly-calculator': {
+    slug: 'salary-to-hourly-calculator',
+    path: '/salary-to-hourly-calculator',
+    badge: '100% In-Browser · Wage Conversion Matrix',
+    title: 'Salary to Hourly & Overtime Calculator',
+    shortTitle: 'Salary to Hourly',
+    metaTitle: 'Salary to Hourly Calculator & Paycheck Matrix | TableView',
+    metaDescription: 'Convert annual salary to hourly wage, daily, weekly, bi-weekly (26x), and monthly paycheck. Compute FLSA 1.5x overtime and PTO value with Excel export.',
+    h1: 'Salary to Hourly &',
+    h1Highlight: 'Overtime Calculator',
+    subtitle: 'Convert between annual salary and hourly wage across bi-weekly (26x), semi-monthly (24x), and monthly cycles. Model FLSA 1.5x overtime and PTO value.',
+    category: 'calculator',
+    tag: 'Payroll',
+    color: 'emerald',
+    iconType: 'calculator',
+    acceptExtensions: 'Interactive Wage Model',
+    acceptLabel: 'No file upload required · Convert salary to hourly, overtime & PTO',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Full Pay Frequency Matrix',
+        description: 'Instant conversion across Hourly, Daily (8h), Weekly (40h), Bi-Weekly (26x), Semi-Monthly (24x), and Monthly (12x).'
+      },
+      {
+        icon: 'zap',
+        title: 'FLSA Overtime Rates',
+        description: 'Calculates statutory 1.5x time-and-a-half and 2.0x double-time rates and annual overtime earnings.'
+      },
+      {
+        icon: 'shield',
+        title: 'Paid Time Off (PTO) Valuation',
+        description: 'Quantifies the monetary cash value of company-sponsored paid holidays, vacation, and sick leave.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is the standard formula to convert salary to hourly?',
+        a: 'Divide your total annual gross salary by the number of hours worked in a year. In a standard full-time role with 40 hours per week and 52 weeks per year (including paid holidays and vacation), there are 2,080 hours. For example, a $75,000 salary equals $75,000 / 2,080 = $36.06/hour.'
+      },
+      {
+        q: 'Why does this calculator not include federal and state income taxes?',
+        a: 'This calculator computes pure gross mathematical conversions. Net take-home pay depends on personal W-4 withholding allowances, pre-tax 401(k) and HSA contributions, health insurance deductions, and state tax brackets (which range from 0% in Florida/Texas/Washington to over 13% in California). Providing an inaccurate net tax estimate would be misleading for contract negotiation.'
+      },
+      {
+        q: 'How does paid time off (PTO) affect my effective hourly wage?',
+        a: 'If you receive 25 days of paid time off (10 holidays + 15 vacation days), you actually work 1,880 hours instead of 2,080. If you divide your annual salary by only the actual hours worked, your "effective working wage" is higher. However, for payroll calculations, your base hourly rate remains calculated over the 2,080 total paid hours.'
+      },
+      {
+        q: 'How is overtime calculated for salaried non-exempt employees?',
+        a: 'For salaried non-exempt employees, the regular hourly rate is determined by dividing the weekly salary by 40 hours. For every hour worked above 40 in that week, the employee receives an extra half-time (0.5x) or time-and-a-half (1.5x) depending on whether the salary was intended to cover all hours worked or standard 40 hours.'
+      }
+    ]
+  },
+
+  'ai-article-polisher': {
+    slug: 'ai-article-polisher',
+    path: '/ai-article-polisher',
+    badge: 'Gemini AI · Corpus-Grounded Rules',
+    title: 'AI Article Polisher: Remove AI Tone & Polish Prose',
+    shortTitle: 'AI Article Polisher',
+    metaTitle: 'AI Article Polisher: Remove AI Tone Online | TableView',
+    metaDescription: 'Remove AI tone and polish an article in one pass with Gemini AI. Rules grounded in a 2.83M-character corpus study, with a word-level diff of every edit.',
+    h1: 'AI Article',
+    h1Highlight: 'Polisher',
+    subtitle: 'Remove AI tone and copy-edit in a single pass, in English or Chinese. Compare the original and the result side by side with every edit highlighted word by word.',
+    category: 'developer',
+    tag: 'New',
+    color: 'indigo',
+    iconType: 'file',
+    acceptExtensions: '.txt,.md',
+    acceptLabel: 'Paste or type an article in English or Chinese · Markdown supported',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'cpu',
+        title: 'Grounded in a corpus, not folklore',
+        description: 'Rules come from a 2.83M-character controlled study: only validated features are applied, and disproven advice such as deleting similes or rhetorical questions is refused.',
+      },
+      {
+        icon: 'table',
+        title: 'Every edit shown word by word',
+        description: 'The result highlights additions in green and removals in red strikethrough, with a change list so each edit can be traced.',
+      },
+      {
+        icon: 'zap',
+        title: 'One pass, no configuration',
+        description: 'AI-tone removal and copy-editing happen together. No modes or language switching, and the output always stays in the language of your text.',
+      },
+    ],
+    faqs: [
+      {
+        q: 'Does the AI article polisher send my text to a server?',
+        a: 'Yes - this is the one TableView tool that does. Your article text is sent to Google Gemini for rewriting. Every other tool (file viewers, converters, SQL workbench, calculators) still runs 100% locally in your browser. Do not paste confidential material.'
+      },
+      {
+        q: 'What is "AI tone" and how is it measured?',
+        a: 'The rules come from a corpus study of 629 articles (2.83M characters) comparing 300 model-generated texts against 329 human-written texts across 26 candidate features. Eleven features showed real discrimination; the strongest was paragraph-initial commentary with no referring expression (4.4x). The study also disproved 15 popular beliefs - human writers actually use similes 2.4x more and rhetorical questions 17x more than models.'
+      },
+      {
+        q: 'Does it work for English as well as Chinese?',
+        a: 'Yes. The structural findings transfer across languages, so the English rule set covers em-dash density, "not X but Y" parallelism, colon-led lists, ordinal headings, dangling paragraph openers, and translationese. The output always stays in the input language - it never translates.'
+      },
+      {
+        q: 'Do I need a Gemini API key?',
+        a: 'The Cloudflare Worker can hold a server-side GEMINI_API_KEY. If it is not configured, open the settings panel and paste your own free Google AI Studio key, which is stored only in your browser local storage and never uploaded.'
+      },
+    ]
+  },
+
+  'json-formatter': {
+    slug: 'json-formatter',
+    path: '/json-formatter',
+    badge: '100% In-Browser · Private JSON Validator',
+    title: 'Free Online JSON Formatter & Validator',
+    shortTitle: 'JSON Formatter',
+    metaTitle: 'Online JSON Formatter & Validator | TableView',
+    metaDescription: 'Format, indent, validate, and minify JSON online. 100% private in-browser tool with line and column syntax error detection. Zero server uploads.',
+    h1: 'Free Online JSON',
+    h1Highlight: 'Formatter & Validator',
+    subtitle: 'Beautify, validate, fix, and minify JSON files directly in your web browser. 100% client-side privacy with precise syntax error pinpointer.',
+    category: 'converter',
+    tag: 'Popular',
+    color: 'amber',
+    iconType: 'json',
+    acceptExtensions: '.json,.jsonl,.txt',
+    acceptLabel: 'Drop or paste any JSON string or file · Zero server transmission',
+    primaryExport: 'json',
+    defaultTab: 'json',
+    features: [
+      {
+        icon: 'shield',
+        title: '100% Zero-Egress Privacy',
+        description: 'Your JSON payloads never leave your computer. Completely safe for API keys, tokens, and confidential customer records.'
+      },
+      {
+        icon: 'zap',
+        title: 'Line & Column Syntax Error Pinpointer',
+        description: 'Instantly identifies misplaced commas, unquoted keys, and mismatched braces with exact line and column numbers.'
+      },
+      {
+        icon: 'download',
+        title: 'Instant Minify & Beautify',
+        description: 'Toggle between clean 2-space / 4-space / tab indentation and ultra-compact single-line minified JSON.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Does this JSON formatter upload my data to any remote server?',
+        a: 'No! The JSON formatter operates 100% locally in your web browser using JavaScript and WebAssembly. Your data never leaves your computer, making it completely safe for API keys, confidential customer records, and production tokens.'
+      },
+      {
+        q: 'How does the in-browser JSON validator pinpoint syntax errors?',
+        a: 'The parser analyzes JSON character by character. When invalid tokens, unquoted keys, trailing commas, or unclosed braces are encountered, it identifies the exact line number, column offset, and unexpected character snippet.'
+      },
+      {
+        q: 'Can this tool format large JSON files with thousands of lines?',
+        a: 'Yes, modern browser V8 engines can format multi-megabyte JSON payloads in milliseconds. For files exceeding hundreds of megabytes, you can also use TableView\'s DuckDB SQL engine to query NDJSON/JSONL directly.'
+      },
+      {
+        q: 'What is the difference between JSON minification and beautification?',
+        a: 'Beautification adds standard 2-space or 4-space indentation and line breaks for human readability. Minification strips all unnecessary whitespace, comments, and newlines to compress file size for HTTP transmission and API payloads.'
+      }
+    ]
+  },
+
+  'sql-formatter': {
+    slug: 'sql-formatter',
+    path: '/sql-formatter',
+    badge: '100% In-Browser · Multi-Dialect SQL Formatter',
+    title: 'Free Online SQL Formatter & Beautifier',
+    shortTitle: 'SQL Formatter',
+    metaTitle: 'Online SQL Formatter & Beautifier | TableView',
+    metaDescription: 'Beautify, indent, format, and minify SQL queries online. Supports DuckDB, PostgreSQL, MySQL, SQLite, Snowflake, and BigQuery. 100% in-browser.',
+    h1: 'Free Online SQL',
+    h1Highlight: 'Formatter & Beautifier',
+    subtitle: 'Format, indent, beautify, and minify SQL queries across DuckDB, PostgreSQL, MySQL, SQLite, Snowflake, and BigQuery. 100% in-browser.',
+    category: 'sql',
+    tag: 'Dev Tool',
+    color: 'cyan',
+    iconType: 'sql',
+    acceptExtensions: '.sql,.txt',
+    acceptLabel: 'Paste or type SQL queries · Multi-dialect formatting with DuckDB execution',
+    primaryExport: 'any',
+    defaultTab: 'sql',
+    features: [
+      {
+        icon: 'table',
+        title: 'Multi-Dialect Formatting Engine',
+        description: 'Formatted by sql-formatter with support for DuckDB, PostgreSQL, MySQL, SQLite, Snowflake, BigQuery, and Redshift.'
+      },
+      {
+        icon: 'zap',
+        title: '1-Click DuckDB Execution',
+        description: 'Direct shortcut to run formatted queries against local CSV, Parquet, or Excel files in DuckDB-Wasm.'
+      },
+      {
+        icon: 'shield',
+        title: 'Confidential Query Privacy',
+        description: 'Zero database schema or proprietary query logic ever leaves your device. Runs 100% client-side.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Which SQL dialects are supported by this formatter?',
+        a: 'Our SQL formatter supports DuckDB, PostgreSQL, MySQL, SQLite, Snowflake, Amazon Redshift, Google BigQuery, MariaDB, Transact-SQL (T-SQL), Spark SQL, and standard ANSI SQL.'
+      },
+      {
+        q: 'Can I execute queries directly after formatting?',
+        a: 'Yes! You can click "Open in DuckDB SQL Workbench" to immediately execute the formatted SQL query against local CSV, Parquet, or Excel files in your browser with zero database installation.'
+      },
+      {
+        q: 'Is my SQL query or schema sent to external servers?',
+        a: 'No. Formatting is executed entirely on your client device inside browser JavaScript. Confidential database schemas, table names, and proprietary business logic remain 100% private.'
+      },
+      {
+        q: 'What does SQL Minify do?',
+        a: 'SQL Minify removes redundant whitespace, comments, and line breaks to compress queries into a single compact string. This is ideal for embedding queries into source code, application config files, or URL parameters.'
+      }
+    ]
+  },
+
+  'json-to-csv': {
+    slug: 'json-to-csv',
+    path: '/json-to-csv',
+    badge: '100% In-Browser · Instant JSON to CSV',
+    title: 'Free Online JSON to CSV Converter',
+    shortTitle: 'JSON to CSV',
+    metaTitle: 'Convert JSON to CSV Online Free & Private | TableView',
+    metaDescription: 'Convert JSON arrays, NDJSON, and nested objects to formatted CSV files directly in your web browser. 100% private, client-side DuckDB-Wasm with zero server uploads.',
+    h1: 'Free Online JSON to',
+    h1Highlight: 'CSV Converter',
+    subtitle: 'Drop any .json, .jsonl, or .ndjson file to convert JSON into clean, standard UTF-8 CSV spreadsheets in seconds with zero server file uploads.',
+    category: 'converter',
+    tag: 'Popular',
+    color: 'amber',
+    iconType: 'csv',
+    acceptExtensions: '.json,.jsonl,.ndjson,.txt',
+    acceptLabel: 'Drop JSON (.json), JSON Lines (.jsonl), or NDJSON to convert to CSV',
+    primaryExport: 'csv',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'download',
+        title: 'RFC 4180 Compliant CSV',
+        description: 'Properly escapes quotes, handles nested objects, and ensures clean UTF-8 comma-separated text.'
+      },
+      {
+        icon: 'shield',
+        title: 'Zero Cloud Storage or Egress',
+        description: 'All JSON parsing, flattening, and conversion runs locally in browser WebAssembly memory.'
+      },
+      {
+        icon: 'zap',
+        title: 'Streams Large JSON & NDJSON',
+        description: 'Powered by DuckDB read_json_auto for blazing-fast handling of large files.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How do I convert JSON to CSV without uploading to an external server?',
+        a: 'Drop your .json or .jsonl file onto TableView above and click "Export CSV". The file is parsed locally in your browser tab using WebAssembly and saved directly to your computer.'
+      },
+      {
+        q: 'Can this tool convert JSON Lines (NDJSON) to CSV?',
+        a: 'Yes! Both standard hierarchical JSON arrays and newline-delimited JSON Lines (NDJSON/JSONL) are automatically detected and converted into tabular CSV.'
+      },
+      {
+        q: 'What happens to nested JSON objects and arrays?',
+        a: 'DuckDB automatically flattens first-level scalar attributes and serializes nested objects and lists into structured text columns.'
+      }
+    ]
+  },
+
+  'json-to-excel': {
+    slug: 'json-to-excel',
+    path: '/json-to-excel',
+    badge: 'Client-Side · Formatted .xlsx Export',
+    title: 'Free Online JSON to Excel Converter (.xlsx)',
+    shortTitle: 'JSON to Excel',
+    metaTitle: 'Convert JSON to Excel (.xlsx) Online Free | TableView',
+    metaDescription: 'Convert JSON and NDJSON files into formatted Microsoft Excel (.xlsx) spreadsheets online. 100% private in-browser conversion with zero cloud uploads.',
+    h1: 'Free Online JSON to',
+    h1Highlight: 'Excel Converter (.xlsx)',
+    subtitle: 'Transform JSON arrays and nested data into multi-column Excel workbooks directly in your browser without uploading confidential data.',
+    category: 'converter',
+    tag: 'Popular',
+    color: 'green',
+    iconType: 'excel',
+    acceptExtensions: '.json,.jsonl,.ndjson,.txt',
+    acceptLabel: 'Drop JSON (.json) or JSON Lines (.jsonl) to convert to Excel (.xlsx)',
+    primaryExport: 'excel',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Formatted Microsoft Excel Output',
+        description: 'Generates genuine binary .xlsx workbooks with proper column headers and data type recognition.'
+      },
+      {
+        icon: 'shield',
+        title: 'Zero Cloud Uploads',
+        description: 'Your sensitive JSON feeds and API records never leave your local machine.'
+      },
+      {
+        icon: 'zap',
+        title: 'Fast Client-Side Generation',
+        description: 'Utilizes SheetJS and DuckDB-Wasm for high-performance in-memory spreadsheet construction.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Can I open the generated Excel file in Microsoft Excel or Google Sheets?',
+        a: 'Yes! The exported file is an industry-standard OpenXML spreadsheet (.xlsx) fully compatible with Microsoft Excel, Google Sheets, Apple Numbers, and LibreOffice Calc.'
+      },
+      {
+        q: 'Is there a limit on how many JSON rows can be exported to Excel?',
+        a: 'Microsoft Excel supports up to 1,048,576 rows per worksheet. TableView handles large JSON datasets up to Excel\'s native limits.'
+      },
+      {
+        q: 'Are dates and numbers formatted properly in the resulting spreadsheet?',
+        a: 'Yes, numeric values, timestamps, and ISO date strings are parsed and formatted as appropriate Excel column types.'
+      }
+    ]
+  },
+
+  'excel-to-json': {
+    slug: 'excel-to-json',
+    path: '/excel-to-json',
+    badge: 'Zero Server Upload · Fast Spreadsheet to JSON',
+    title: 'Free Online Excel to JSON Converter (.xlsx to JSON)',
+    shortTitle: 'Excel to JSON',
+    metaTitle: 'Convert Excel (.xlsx) to JSON Online Free | TableView',
+    metaDescription: 'Convert Microsoft Excel spreadsheets (.xlsx, .xls) to clean JSON array data online. Fast, secure in-browser parser with zero server file uploads.',
+    h1: 'Free Online Excel to',
+    h1Highlight: 'JSON Converter',
+    subtitle: 'Drop any Excel workbook (.xlsx or .xls) to convert rows into clean, structured JSON format with zero server uploads.',
+    category: 'converter',
+    tag: 'Dev Tool',
+    color: 'amber',
+    iconType: 'json',
+    acceptExtensions: '.xlsx,.xls',
+    acceptLabel: 'Drop Microsoft Excel (.xlsx or .xls) file to convert to JSON',
+    primaryExport: 'json',
+    defaultTab: 'json',
+    features: [
+      {
+        icon: 'download',
+        title: 'Clean JSON Array Export',
+        description: 'Transforms spreadsheet rows into an array of structured JSON objects with column headers as object keys.'
+      },
+      {
+        icon: 'shield',
+        title: 'Confidential Records Stay Private',
+        description: 'Internal financial sheets and user rosters are parsed locally without reaching third-party servers.'
+      },
+      {
+        icon: 'zap',
+        title: 'Multi-Sheet Workbook Support',
+        description: 'Inspect and convert any worksheet within multi-tab Excel workbooks.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'How does TableView convert Excel rows into JSON?',
+        a: 'TableView parses the workbook client-side using SheetJS and DuckDB, using the first row as object keys and subsequent rows as values in a clean JSON array.'
+      },
+      {
+        q: 'Does it support older .xls binary Excel files?',
+        a: 'Yes, both modern XML Excel spreadsheets (.xlsx) and legacy binary Excel files (.xls) are supported.'
+      },
+      {
+        q: 'Can I copy the JSON directly to my clipboard?',
+        a: 'Yes, you can preview the generated JSON in our built-in JSON inspector, format it with indentation, and copy it to your clipboard with one click.'
+      }
+    ]
+  },
+
+  'tsv-viewer': {
+    slug: 'tsv-viewer',
+    path: '/tsv-viewer',
+    badge: '100% In-Browser · Instant TSV Reader',
+    title: 'Free Online TSV Viewer & Query Console',
+    shortTitle: 'TSV Viewer',
+    metaTitle: 'Free Online TSV Viewer & Query Tool | TableView',
+    metaDescription: 'Open, search, filter, and execute SQL queries on tab-separated value (.tsv) files online. 100% private client-side DuckDB with zero server file uploads.',
+    h1: 'Free Online TSV',
+    h1Highlight: 'Viewer & Console',
+    subtitle: 'Open large tab-separated values (.tsv) files instantly in your browser. Inspect schemas, filter records, and export to Excel, CSV, or Parquet.',
+    category: 'viewer',
+    color: 'cyan',
+    iconType: 'csv',
+    acceptExtensions: '.tsv,.txt',
+    acceptLabel: 'Supports Tab-Separated Values (.tsv) and tab-delimited text files',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'Accurate Tab Delimiter Parsing',
+        description: 'Automatically detects tab delimiters (\\t) without delimiter confusion on text containing commas.'
+      },
+      {
+        icon: 'shield',
+        title: 'Zero Server Uploads',
+        description: 'Processes large genomics, bioinformatics, and TSV data feeds locally inside browser RAM.'
+      },
+      {
+        icon: 'zap',
+        title: 'DuckDB SQL Analysis Built-In',
+        description: 'Filter, aggregate, and query TSV files using full standard analytical SQL syntax.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is the difference between CSV and TSV files?',
+        a: 'CSV uses commas (,) as delimiters, whereas TSV uses tabs (\\t). TSV is especially popular in genomics, bioinformatics, and log processing because data fields frequently contain commas.'
+      },
+      {
+        q: 'Can I convert my TSV file to Excel or CSV?',
+        a: 'Yes! After dropping your TSV file, you can export it to formatted Microsoft Excel (.xlsx), standard CSV, or Apache Parquet with one click.'
+      },
+      {
+        q: 'How large of a TSV file can I open?',
+        a: 'Because parsing occurs client-side in WebAssembly, you can comfortably open TSV files with hundreds of thousands of rows depending on your device RAM.'
+      }
+    ]
+  },
+
+  'geoparquet-viewer': {
+    slug: 'geoparquet-viewer',
+    path: '/geoparquet-viewer',
+    badge: 'DuckDB-Wasm Spatial · GeoParquet Inspector',
+    title: 'Free Online GeoParquet Viewer & Schema Inspector',
+    shortTitle: 'GeoParquet Viewer',
+    metaTitle: 'Free Online GeoParquet Viewer & Inspector | TableView',
+    metaDescription: 'Inspect and view GeoParquet (.geoparquet) files directly in your web browser. Examine bounding box metadata, spatial column types, and run analytical SQL queries.',
+    h1: 'Online GeoParquet',
+    h1Highlight: 'Viewer & Schema Inspector',
+    subtitle: 'Preview geospatial Parquet datasets, inspect WKB/WKT geometry columns, examine bounding box metadata, and run spatial SQL queries in WebAssembly.',
+    category: 'viewer',
+    tag: 'GIS Tool',
+    color: 'indigo',
+    iconType: 'parquet',
+    acceptExtensions: '.parquet,.geoparquet',
+    acceptLabel: 'Supports GeoParquet (.geoparquet) and Apache Parquet (.parquet)',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'table',
+        title: 'GeoParquet Metadata Inspection',
+        description: 'Inspect file-level geospatial metadata, coordinate reference systems (CRS), and geometry encodings.'
+      },
+      {
+        icon: 'shield',
+        title: '100% In-Browser GIS Privacy',
+        description: 'Proprietary spatial boundaries, LiDAR scans, and GIS datasets remain strictly on your local computer.'
+      },
+      {
+        icon: 'zap',
+        title: 'DuckDB Spatial SQL Queries',
+        description: 'Filter spatial features by bounding box, compute row counts, and inspect geometry columns.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'What is GeoParquet?',
+        a: 'GeoParquet is an open geospatial vector data format built on Apache Parquet. It adds standardized metadata for geometry columns (points, lines, polygons) encoded in WKB (Well-Known Binary) format.'
+      },
+      {
+        q: 'Can TableView open both .geoparquet and standard .parquet files?',
+        a: 'Yes, TableView seamlessly parses both standard Apache Parquet files and GeoParquet files with spatial metadata.'
+      },
+      {
+        q: 'Can I export GeoParquet records to Excel or CSV?',
+        a: 'Yes, all tabular attributes and geometry representations can be exported to Excel, CSV, or JSON.'
+      }
+    ]
+  },
+
+  'video-compressor': {
+    slug: 'video-compressor',
+    path: '/video-compressor',
+    badge: 'WebAssembly FFmpeg · 100% In-Browser',
+    title: 'Free Online Video Compressor (No Watermark)',
+    shortTitle: 'Video Compressor',
+    metaTitle: 'Free Online Video Compressor (No Watermark) | TableView',
+    metaDescription: 'Compress MP4, MOV, WebM, and MKV video files directly inside your browser using WebAssembly FFmpeg. Reduce file sizes by up to 90% without server uploads or watermarks.',
+    h1: 'Free Online Video',
+    h1Highlight: 'Compressor (No Watermark)',
+    subtitle: 'Shrink large video files client-side using WebAssembly FFmpeg. No watermarks, no server file uploads, and custom target MB output.',
+    category: 'media',
+    tag: 'New',
+    color: 'purple',
+    iconType: 'video',
+    acceptExtensions: '.mp4,.mov,.webm,.mkv,.avi',
+    acceptLabel: 'Drop MP4, MOV, WebM, or MKV video files to compress',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'shield',
+        title: '100% Zero-Egress Privacy',
+        description: 'Video decoding and H.264 re-encoding execute locally via WebAssembly FFmpeg. Zero bytes uploaded.'
+      },
+      {
+        icon: 'download',
+        title: 'Zero Watermarks',
+        description: 'Clean video export with no watermark, branding logo, or artificial trial restrictions.'
+      },
+      {
+        icon: 'zap',
+        title: 'Exact Target MB Output',
+        description: 'Set custom output targets (e.g. 25MB for Discord, 16MB for WhatsApp) with automated bitrate tuning.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Does this video compressor upload my video to a server?',
+        a: 'No. The compression engine runs 100% locally in your browser using WebAssembly FFmpeg. Your video never leaves your machine.'
+      },
+      {
+        q: 'Will my video have a watermark added?',
+        a: 'No. Exported videos are completely clean with zero watermarks or logos.'
+      },
+      {
+        q: 'Can I compress a video specifically for Discord?',
+        a: 'Yes! You can specify an exact target size of 24.5 MB to easily fit under Discord\'s attachment limit.'
+      }
+    ]
+  },
+
+  'image-compressor': {
+    slug: 'image-compressor',
+    path: '/image-compressor',
+    badge: 'HTML5 Canvas · Batch & ZIP Export',
+    title: 'Free Online Image Compressor (Batch JPG, PNG, WebP)',
+    shortTitle: 'Image Compressor',
+    metaTitle: 'Batch Online Image Compressor: JPG, PNG, WebP | TableView',
+    metaDescription: 'Batch compress photos and graphics directly in your browser with 100% privacy. Interactive before/after split slider, custom quality adjustments, and 1-click ZIP export.',
+    h1: 'Free Online Batch',
+    h1Highlight: 'Image Compressor',
+    subtitle: 'Compress dozens of JPG, PNG, and WebP images simultaneously in browser memory. Compare visual quality with a split-screen curtain slider and download as ZIP.',
+    category: 'media',
+    tag: 'New',
+    color: 'purple',
+    iconType: 'image',
+    acceptExtensions: '.jpg,.jpeg,.png,.webp',
+    acceptLabel: 'Drop multiple JPG, PNG, or WebP images to batch compress',
+    primaryExport: 'any',
+    defaultTab: 'grid',
+    features: [
+      {
+        icon: 'zap',
+        title: 'Concurrent Batch Compression',
+        description: 'Process dozens of images simultaneously with real-time compression ratios and 1-click ZIP packaging.'
+      },
+      {
+        icon: 'shield',
+        title: '100% Local Canvas Sandbox',
+        description: 'No photos are uploaded to any external server. All scaling and re-encoding runs locally.'
+      },
+      {
+        icon: 'table',
+        title: 'Visual Split-Screen Curtain',
+        description: 'Scrub across before/after views to inspect sharpness and ensure zero visible degradation.'
+      }
+    ],
+    faqs: [
+      {
+        q: 'Can I compress multiple images at once?',
+        a: 'Yes! Drop any number of images and TableView will process them concurrently, allowing you to download each image individually or all together as a ZIP.'
+      },
+      {
+        q: 'Which format gives the best compression: WebP, JPEG, or PNG?',
+        a: 'WebP offers 25%–35% smaller file sizes than JPEG at equivalent quality while supporting transparency. PNG is best for logos with transparency, and JPEG for universal legacy compatibility.'
+      },
+      {
+        q: 'Can I resize the width and height in pixels?',
+        a: 'Yes, you can cap the maximum width/height to Full HD (1920px), HD (1280px), web standard (800px), or keep original dimensions.'
+      }
+    ]
+  }
+};
+
+

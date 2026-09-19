@@ -1,0 +1,245 @@
+import { ShieldCheck, BookOpen, Lock, Scale, Clock } from 'lucide-react';
+
+interface MethodologyDisclosureProps {
+  type?: 'mortgage' | 'dscr' | 'refinance' | 'hardmoney' | 'cloud' | 'section1031' | 'loanComparison' | 'commercial' | 'salary';
+}
+
+export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosureProps) => {
+  const getDetails = () => {
+    switch (type) {
+      case 'dscr':
+        return {
+          title: 'DSCR Underwriting & Calculation Standards',
+          standards: [
+            {
+              icon: Scale,
+              title: 'Standard Formula Alignment',
+              desc: 'Calculations strictly use DSCR = Gross Rental Income / Monthly PITIA, matching non-QM secondary market guidelines (Fannie Mae Form 1007 comp rent appraisal standards).'
+            },
+            {
+              icon: BookOpen,
+              title: 'Operating Expense Heuristics',
+              desc: 'Net cash flow simulations factor in standard 8% property management, 5% vacancy allowance, and 5% ongoing maintenance reserves.'
+            },
+            {
+              icon: Lock,
+              title: '100% Private In-Browser Sandbox',
+              desc: 'All deal numbers, rental yields, and financial simulations execute strictly in your local device memory. Zero client data is stored or monetized.'
+            }
+          ]
+        };
+
+      case 'refinance':
+        return {
+          title: 'Mortgage Refinance Break-Even Methodology',
+          standards: [
+            {
+              icon: Scale,
+              title: 'Amortization & Interest Recalibration',
+              desc: 'Computes monthly payment deltas using exact fixed-rate monthly compounding and accounts for front-loaded interest on remaining loan schedules.'
+            },
+            {
+              icon: BookOpen,
+              title: 'Closing Cost & Points Amortization',
+              desc: 'Break-even timeline calculates exact months to recoup closing fees and points (Net Closing Costs / Monthly Payment Savings).'
+            },
+            {
+              icon: Lock,
+              title: 'In-Browser Privacy Guarantee',
+              desc: 'No personal credit scores, home values, or mortgage balances are ever sent to remote servers or shared with loan brokers.'
+            }
+          ]
+        };
+
+      case 'hardmoney':
+        return {
+          title: 'Hard Money & 70% Rule Methodology',
+          standards: [
+            {
+              icon: Scale,
+              title: '70% Rule of Real Estate Investing',
+              desc: 'Calculates Maximum Allowable Offer (MAO) based on 70% of After-Repair Value (ARV) minus estimated renovation costs and carrying fees.'
+            },
+            {
+              icon: BookOpen,
+              title: 'Holding Cost & Points Underwriting',
+              desc: 'Accurately computes monthly interest-only debt service, lender origination points, title insurance, and property taxes across holding periods.'
+            },
+            {
+              icon: Lock,
+              title: '100% Private Real Estate Workbench',
+              desc: 'Run deal underwriting safely without exposing proprietary flip opportunities to external databases.'
+            }
+          ]
+        };
+
+      case 'section1031':
+        return {
+          title: 'IRC §1031 Exchange Methodology',
+          standards: [
+            {
+              icon: Scale,
+              title: 'Boot Computed on Both Sides',
+              desc: 'Cash boot is measured against the cash actually required at closing, so new financing on the replacement increases it. Mortgage boot is debt relief on the relinquished property, netted against cash contributed beyond your sale proceeds. Recognized gain is the lesser of total boot or realized gain.'
+            },
+            {
+              icon: Clock,
+              title: 'Statutory Deadlines Modelled Exactly',
+              desc: 'The 45-day identification and 180-day exchange periods run from the closing date. The exchange period ends on the earlier of day 180 or the due date of that year\'s return, including extensions: a rule that shortens many December closings well below 180 days.'
+            },
+            {
+              icon: BookOpen,
+              title: 'Identification Safe Harbours',
+              desc: 'Applies the three-property rule, the 200% rule, and the 95% rule to each identification, and reports which safe harbour the exchange relies on.'
+            },
+            {
+              icon: Lock,
+              title: '100% Private Deal Analysis',
+              desc: 'Your basis, depreciation history, and projected gains never leave your device. No account, no upload, no server-side record of your holdings.'
+            }
+          ]
+        };
+
+      case 'cloud':
+        return {
+          title: 'Cloud FinOps & Benchmark Standards',
+          standards: [
+            {
+              icon: Scale,
+              title: 'Public Cloud Provider Benchmarks',
+              desc: 'Pricing calibrated against published rates: AWS S3 Standard ($0.023/GB/mo), Athena queries ($5.00/TB scanned), and Snowflake Standard Edition ($2.00-$4.00/credit).'
+            },
+            {
+              icon: BookOpen,
+              title: 'Columnar Compression Heuristics',
+              desc: 'Calculates data compression ratios (5x - 10x) based on real-world Apache Parquet dictionary encoding, RLE, and Snappy/ZSTD benchmarks.'
+            },
+            {
+              icon: Lock,
+              title: 'Zero Telemetry & Egress Fees',
+              desc: 'Benchmark your cloud data architecture client-side without connecting your AWS or Snowflake IAM credentials.'
+            }
+          ]
+        };
+
+      case 'loanComparison':
+        return {
+          title: 'Side-by-Side Loan Comparison Methodology',
+          standards: [
+            {
+              icon: Scale,
+              title: 'Standard Fixed-Rate Amortization Math',
+              desc: 'Monthly principal and interest payments for each loan option are computed using standard banking formulas: M = P[r(1+r)^n]/[(1+r)^n - 1].'
+            },
+            {
+              icon: BookOpen,
+              title: 'Discount Points Break-Even Formula',
+              desc: 'Net break-even months = (Upfront Costs Loan B - Upfront Costs Loan A) / (Monthly Payment Loan A - Monthly Payment Loan B).'
+            },
+            {
+              icon: Lock,
+              title: 'In-Browser Privacy Guarantee',
+              desc: 'All loan figures, proposed interest rates, and financial terms are processed solely in local memory with zero remote transmission.'
+            }
+          ]
+        };
+
+      case 'commercial':
+        return {
+          title: 'Commercial Real Estate Loan Underwriting Standards',
+          standards: [
+            {
+              icon: Scale,
+              title: 'Balloon Principal Balance Computation',
+              desc: 'Monthly debt service is calculated over the full 20 to 30-year amortization schedule, and remaining principal is compounded to the balloon maturity date.'
+            },
+            {
+              icon: BookOpen,
+              title: 'Interest-Only (IO) Period Modeling',
+              desc: 'During IO periods, payments equal loan amount times monthly rate, preserving cash flow before principal amortization commences.'
+            },
+            {
+              icon: Lock,
+              title: '100% Private Deal Evaluation',
+              desc: 'Property values, commercial financing terms, and underwriting metrics never leave your device.'
+            }
+          ]
+        };
+
+      case 'salary':
+        return {
+          title: 'Gross Wage & FLSA Overtime Standards',
+          standards: [
+            {
+              icon: Scale,
+              title: '2,080 Standard Annual Working Hours',
+              desc: 'Hourly rates are converted using standard US Department of Labor benchmarks: 40 hours per week across 52 weeks per calendar year.'
+            },
+            {
+              icon: BookOpen,
+              title: 'FLSA Statutory Overtime Rules',
+              desc: 'Calculates non-exempt overtime at 1.5x time-and-a-half according to Fair Labor Standards Act federal regulations.'
+            },
+            {
+              icon: Lock,
+              title: 'In-Browser Privacy Guarantee',
+              desc: 'No compensation figures, hourly rates, or payroll terms are ever transmitted to any server or tracked.'
+            }
+          ]
+        };
+
+      case 'mortgage':
+      default:
+        return {
+          title: 'Calculation Methodology & Banking Standards',
+          standards: [
+            {
+              icon: Scale,
+              title: 'Standard Fixed-Rate Amortization Math',
+              desc: 'Adheres to standard US banking compounding equations: M = P[r(1+r)^n]/[(1+r)^n - 1], matching Fannie Mae & Freddie Mac conventional guidelines.'
+            },
+            {
+              icon: BookOpen,
+              title: 'Truth in Lending (Regulation Z) Disclosures',
+              desc: 'Transparently isolates Principal & Interest from Property Taxes, Homeowners Insurance, Private Mortgage Insurance (PMI), and HOA assessments.'
+            },
+            {
+              icon: Lock,
+              title: 'In-Browser Privacy Guarantee',
+              desc: 'No personal financial data, property values, or household income inputs are ever transmitted over the network.'
+            }
+          ]
+        };
+    }
+  };
+
+  const info = getDetails();
+
+  return (
+    <div className="p-6 rounded-2xl bg-white border border-slate-200 text-slate-700 shadow-2xs mt-12 mb-8">
+      <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
+        <ShieldCheck className="size-4 text-emerald-600" />
+        <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">
+          {info.title}
+        </h3>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-xs">
+        {info.standards.map((s, idx) => {
+          const Icon = s.icon;
+          return (
+            <div key={idx} className="space-y-1.5">
+              <div className="flex items-center gap-2 font-semibold text-slate-900">
+                <Icon className="size-3.5 text-indigo-600 shrink-0" />
+                <span>{s.title}</span>
+              </div>
+              <p className="text-slate-600 leading-relaxed text-[11px]">
+                {s.desc}
+              </p>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
