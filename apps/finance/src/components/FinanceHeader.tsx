@@ -6,22 +6,19 @@ import {
   Calculator,
   Scale,
   DollarSign,
-  Activity,
   Sparkles,
-  ShieldCheck,
   ChevronDown,
   Menu,
   X,
   ArrowRight,
   LogOut,
   BookOpen,
-  Landmark,
-  Hammer
+  Hammer,
+  ShieldCheck
 } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { useAuth } from '../lib/useAuth';
 import { navigateTo } from '../lib/router';
-import { LATEST_PMMS_RATES } from '../data/pmmsRates';
 import { getCrossSuiteUrl } from '@tableview/shared';
 
 interface FinanceHeaderProps {
@@ -35,7 +32,6 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
   const [residentialOpen, setResidentialOpen] = useState(false);
   const [commercialOpen, setCommercialOpen] = useState(false);
   const [taxOpen, setTaxOpen] = useState(false);
-  const [pmmsPopoverOpen, setPmmsPopoverOpen] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -48,7 +44,6 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
   const resRef = useRef<HTMLDivElement>(null);
   const commRef = useRef<HTMLDivElement>(null);
   const taxRef = useRef<HTMLDivElement>(null);
-  const pmmsRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -57,7 +52,6 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
       if (resRef.current && !resRef.current.contains(target)) setResidentialOpen(false);
       if (commRef.current && !commRef.current.contains(target)) setCommercialOpen(false);
       if (taxRef.current && !taxRef.current.contains(target)) setTaxOpen(false);
-      if (pmmsRef.current && !pmmsRef.current.contains(target)) setPmmsPopoverOpen(false);
       if (userMenuRef.current && !userMenuRef.current.contains(target)) setUserMenuOpen(false);
     };
 
@@ -66,7 +60,6 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
         setResidentialOpen(false);
         setCommercialOpen(false);
         setTaxOpen(false);
-        setPmmsPopoverOpen(false);
         setUserMenuOpen(false);
         setMobileMenuOpen(false);
       }
@@ -90,7 +83,6 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
     setResidentialOpen(false);
     setCommercialOpen(false);
     setTaxOpen(false);
-    setPmmsPopoverOpen(false);
     setUserMenuOpen(false);
     setMobileMenuOpen(false);
   };
@@ -105,6 +97,9 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
   ].includes(currentPath);
 
   const isCommercialActive = [
+    '/cap-rate-calculator',
+    '/rental-property-calculator',
+    '/rental-cash-flow-calculator',
     '/dscr-loan-calculator',
     '/hard-money-calculator',
     '/commercial-loan-calculator',
@@ -261,6 +256,27 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   </div>
                   <button
                     type="button"
+                    onClick={() => handleNav('/cap-rate-calculator')}
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
+                  >
+                    <div className="size-8 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200/60 flex items-center justify-center shrink-0 mt-0.5">
+                      <Building className="size-4" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-xs font-bold text-slate-900">Cap Rate & Rental Yield</span>
+                        <span className="text-[9px] font-semibold px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                          Flagship
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-slate-500 leading-snug">
+                        NOI, Cash-on-Cash Return, 1% rule & 10-year wealth projections
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
                     onClick={() => handleNav('/dscr-loan-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
@@ -356,9 +372,25 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                       <Scale className="size-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-900">§1031 Exchange Tax Shield</div>
+                      <div className="text-xs font-bold text-slate-900">Section 1031 Exchange</div>
                       <div className="text-[11px] text-slate-500 leading-snug">
-                        Capital gains deferral, recognized boot & 45/180-day timeline
+                        Capital gains deferral, boot liabilities & replacement value
+                      </div>
+                    </div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => handleNav('/1031-exchange-timeline-calculator')}
+                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
+                  >
+                    <div className="size-8 rounded-lg bg-blue-50 text-blue-700 border border-blue-200/60 flex items-center justify-center shrink-0 mt-0.5">
+                      <Scale className="size-4" />
+                    </div>
+                    <div>
+                      <div className="text-xs font-bold text-slate-900">1031 Timeline Calculator</div>
+                      <div className="text-[11px] text-slate-500 leading-snug">
+                        Strict 45-day identification & 180-day closing deadlines
                       </div>
                     </div>
                   </button>
@@ -368,32 +400,27 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                     onClick={() => handleNav('/salary-to-hourly-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
-                    <div className="size-8 rounded-lg bg-indigo-50 text-indigo-700 border border-indigo-200/60 flex items-center justify-center shrink-0 mt-0.5">
+                    <div className="size-8 rounded-lg bg-amber-50 text-amber-700 border border-amber-200/60 flex items-center justify-center shrink-0 mt-0.5">
                       <DollarSign className="size-4" />
                     </div>
                     <div>
-                      <div className="text-xs font-bold text-slate-900">Salary & Wage Converter</div>
+                      <div className="text-xs font-bold text-slate-900">Salary to Hourly Calculator</div>
                       <div className="text-[11px] text-slate-500 leading-snug">
-                        Annual compensation to hourly, overtime & billable rates
+                        Annual salary to hourly conversion, 26x payroll & overtime
                       </div>
                     </div>
                   </button>
 
-                  <button
-                    type="button"
-                    onClick={() => handleNav('/calculators')}
-                    className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer border-t border-slate-100 mt-1"
-                  >
-                    <div className="size-8 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center shrink-0 mt-0.5">
-                      <Calculator className="size-4" />
-                    </div>
-                    <div>
-                      <div className="text-xs font-bold text-slate-900">All Financial Calculators</div>
-                      <div className="text-[11px] text-slate-500 leading-snug">
-                        Auto loan, personal installment, compound interest & debt payoff
-                      </div>
-                    </div>
-                  </button>
+                  <div className="pt-2 border-t border-slate-100 mt-1">
+                    <button
+                      type="button"
+                      onClick={() => handleNav('/calculators')}
+                      className="w-full py-1.5 px-3 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 flex items-center justify-between transition-colors cursor-pointer"
+                    >
+                      <span>Browse All Calculators</span>
+                      <ArrowRight className="size-3.5" />
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
@@ -414,81 +441,8 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
           </nav>
         </div>
 
-        {/* Right: National Benchmark Pill, Privacy Badge & Auth */}
+        {/* Right: Auth Action */}
         <div className="flex items-center gap-2.5 sm:gap-3">
-          {/* Live Freddie Mac PMMS Benchmark Rate Ticker */}
-          <div className="relative hidden md:block" ref={pmmsRef}>
-            <button
-              type="button"
-              onClick={() => setPmmsPopoverOpen(!pmmsPopoverOpen)}
-              className="px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 hover:bg-slate-100 text-slate-800 flex items-center gap-2 text-xs font-mono transition-all cursor-pointer shadow-2xs"
-              title="Click to view US National Conforming & Live Benchmark Rates"
-            >
-              <div className="flex items-center gap-1 text-[11px] font-sans font-semibold text-slate-600">
-                <Landmark className="size-3 text-indigo-600" />
-                <span>30Y PMMS:</span>
-              </div>
-              <span className="font-extrabold text-indigo-700 font-mono">
-                {LATEST_PMMS_RATES.fixed30.rate}%
-              </span>
-              <span className="text-slate-300">|</span>
-              <div className="flex items-center gap-1 text-[11px] font-sans font-semibold text-slate-600">
-                <Activity className="size-3 text-amber-500" />
-                <span>Live:</span>
-              </div>
-              <span className="font-extrabold text-amber-700 font-mono">
-                {LATEST_PMMS_RATES.mndLive30.rate}%
-              </span>
-              <ChevronDown className="size-3 text-slate-400 ml-0.5" />
-            </button>
-
-            {pmmsPopoverOpen && (
-              <div className="absolute right-0 mt-2 w-72 bg-white border border-slate-200 rounded-2xl shadow-xl p-3.5 z-50 text-xs animate-in fade-in slide-in-from-top-2 duration-150">
-                <div className="flex items-center justify-between pb-2 border-b border-slate-100">
-                  <span className="font-bold text-slate-900 flex items-center gap-1.5">
-                    <Landmark className="size-4 text-indigo-600" />
-                    US National Benchmarks
-                  </span>
-                  <span className="text-[10px] text-slate-400">{LATEST_PMMS_RATES.asOfDate}</span>
-                </div>
-                <div className="py-2.5 space-y-2 font-mono text-[11px]">
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-600 font-sans">Freddie Mac 30-Yr:</span>
-                    <span className="font-bold text-indigo-700">{LATEST_PMMS_RATES.fixed30.rate}%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-600 font-sans">Freddie Mac 15-Yr:</span>
-                    <span className="font-bold text-indigo-700">{LATEST_PMMS_RATES.fixed15.rate}%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-600 font-sans">MND Real-Time Live:</span>
-                    <span className="font-bold text-amber-700">{LATEST_PMMS_RATES.mndLive30.rate}%</span>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-slate-600 font-sans">FHA 30-Yr Conforming:</span>
-                    <span className="font-bold text-slate-800">{LATEST_PMMS_RATES.fha30.rate}%</span>
-                  </div>
-                </div>
-                <div className="pt-2 border-t border-slate-100">
-                  <button
-                    type="button"
-                    onClick={() => handleNav('/mortgage-calculator')}
-                    className="w-full py-1.5 px-2.5 rounded-lg bg-indigo-50 text-indigo-700 hover:bg-indigo-100 font-bold text-[11px] flex items-center justify-center gap-1.5 transition-colors cursor-pointer"
-                  >
-                    <span>Apply to Mortgage Calculator</span>
-                    <ArrowRight className="size-3" />
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Privacy Sandbox Badge */}
-          <div className="hidden xl:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 border border-emerald-200 text-emerald-700">
-            <ShieldCheck className="size-3.5 text-emerald-600" />
-            <span>100% Client-Side Sandbox</span>
-          </div>
-
           {/* User Profile / Authentication */}
           {user ? (
             <div className="relative" ref={userMenuRef}>
@@ -563,22 +517,6 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
         <div className="lg:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-4 max-h-[85vh] overflow-y-auto shadow-lg animate-in fade-in slide-in-from-top-2 duration-150">
-          {/* Live Rates Card on Mobile */}
-          <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Landmark className="size-4 text-indigo-600" />
-              <div>
-                <div className="text-[11px] font-bold text-slate-900">National Benchmark (30Y)</div>
-                <div className="text-[10px] text-slate-500">Freddie Mac PMMS® Survey</div>
-              </div>
-            </div>
-            <div className="text-right">
-              <span className="text-sm font-extrabold text-indigo-700 font-mono">
-                {LATEST_PMMS_RATES.fixed30.rate}%
-              </span>
-            </div>
-          </div>
-
           {/* 1. Residential Accordion */}
           <div className="border border-slate-200 rounded-xl overflow-hidden">
             <button
@@ -637,6 +575,14 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
             </button>
             {mobileCommExpanded && (
               <div className="p-1 space-y-0.5 bg-white">
+                <button
+                  type="button"
+                  onClick={() => handleNav('/cap-rate-calculator')}
+                  className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-between"
+                >
+                  <span>Cap Rate & Cash Flow</span>
+                  <ArrowRight className="size-3 text-slate-400" />
+                </button>
                 <button
                   type="button"
                   onClick={() => handleNav('/dscr-loan-calculator')}

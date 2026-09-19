@@ -7,14 +7,11 @@ import {
   ShieldCheck,
   Zap,
   ArrowUp,
-  Sparkles,
-  Lock,
   Calculator,
   ArrowRight,
   Video,
   Activity,
 } from 'lucide-react';
-import { BrandLogo } from './BrandLogo';
 
 interface FooterProps {
   onTrySample?: () => void;
@@ -23,7 +20,6 @@ interface FooterProps {
 
 export const Footer = ({ onTrySample: _onTrySample, currentPath }: FooterProps) => {
   const activePath = currentPath ?? (typeof window !== 'undefined' ? window.location.pathname : '/');
-  const isHome = activePath === '/';
   const isCalculator = isCalculatorRoute(activePath);
   const isCompression = isCompressionRoute(activePath);
 
@@ -43,107 +39,7 @@ export const Footer = ({ onTrySample: _onTrySample, currentPath }: FooterProps) 
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Pre-Footer Action Banner: ONLY shown on homepage (subpages omit this module) */}
-        {isHome && (
-          <div className="relative rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 mb-12 shadow-sm overflow-hidden">
-            <div className="absolute top-0 right-0 -mt-10 -mr-10 size-64 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-1/4 -mb-10 size-48 bg-indigo-500/5 rounded-full blur-3xl pointer-events-none" />
-
-            <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-              <div className="space-y-2 max-w-xl">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 border border-emerald-200/60 text-emerald-700">
-                  <span className="size-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  <span>Zero Data Egress · Pure Client WebAssembly Sandbox</span>
-                </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-slate-900 tracking-tight">
-                  Ready to Inspect, Query & Model Your Data?
-                </h3>
-                <p className="text-xs sm:text-sm text-slate-800 leading-relaxed">
-                  Open CSV, Excel, Apache Parquet, or JSON files of hundreds of megabytes directly in browser memory. Zero cloud uploads, zero telemetry, instantaneous DuckDB SQL queries.
-                </p>
-              </div>
-
-              <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-                <a
-                  href="/data-tools"
-                  onClick={(e) => handleNav(e, '/data-tools')}
-                  className="w-full sm:w-auto px-5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white flex items-center justify-center gap-2 shadow-xs active:scale-[0.98] transition-all cursor-pointer whitespace-nowrap"
-                >
-                  <Sparkles className="size-4 text-amber-400" />
-                  <span>Open Data Workbench</span>
-                </a>
-
-                <a
-                  href="/finance-calculator"
-                  onClick={(e) => handleNav(e, '/finance-calculator')}
-                  className="w-full sm:w-auto px-4 py-2.5 rounded-xl text-xs sm:text-sm font-semibold bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-xs whitespace-nowrap"
-                >
-                  <Calculator className="size-4 text-indigo-600" />
-                  <span>Financial Calculators</span>
-                  <ArrowRight className="size-3.5 opacity-60" />
-                </a>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Brand & Mission Row: ONLY shown on homepage (subpages omit this module) */}
-        {isHome && (
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between pb-8 border-b border-slate-200 gap-6">
-            <div className="space-y-2.5">
-              <div className="flex items-center gap-3">
-                <BrandLogo size={36} className="shadow-xs shrink-0" />
-                <div className="flex items-center gap-2">
-                  <span className="font-bold text-slate-900 text-lg tracking-tight">TableView.dev</span>
-                  <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-emerald-50 border border-emerald-200 text-[11px] font-mono font-medium text-emerald-700">
-                    <span className="size-1.5 rounded-full bg-emerald-500" />
-                    In-Browser Engine
-                  </span>
-                </div>
-              </div>
-
-              <p className="text-xs text-slate-800 max-w-lg leading-relaxed">
-                100% private in-browser data workspace for CSV, Excel, Parquet, and JSON with SQL analytics, two-way format conversion, and free media & financial tools.
-              </p>
-
-              <div className="flex flex-wrap items-center gap-2 pt-1">
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-emerald-50 border border-emerald-200 text-emerald-700">
-                  <ShieldCheck className="size-3.5" />
-                  Client-Side Sandbox
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium bg-indigo-50 border border-indigo-200 text-indigo-700">
-                  <Zap className="size-3.5" />
-                  DuckDB-Wasm Engine
-                </span>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold bg-white border border-slate-300 text-slate-900 shadow-2xs">
-                  <Lock className="size-3.5 text-slate-700" />
-                  Zero Server Telemetry
-                </span>
-              </div>
-            </div>
-
-            <div className="w-full md:w-auto p-3.5 rounded-xl bg-white border border-slate-200 space-y-1.5 min-w-[220px] shadow-2xs">
-              <div className="flex items-center justify-between gap-4">
-                <span className="text-xs font-bold text-slate-900">Engine Health</span>
-                <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-700">
-                  <span className="size-2 rounded-full bg-emerald-500" />
-                  Operational
-                </span>
-              </div>
-              <div className="text-[11px] text-slate-700 font-medium flex items-center justify-between border-t border-slate-200 pt-1.5">
-                <span>Data egress:</span>
-                <span className="font-mono font-bold text-slate-900">0 B</span>
-              </div>
-              <div className="text-[11px] text-slate-700 font-medium flex items-center justify-between">
-                <span>Target:</span>
-                <span className="font-mono font-bold text-slate-900">Local Wasm</span>
-              </div>
-            </div>
-          </div>
-        )}
-
-
-        {/* 2. Context-Aware Navigation Columns */}
+        {/* Context-Aware Navigation Columns */}
         {isCompression ? (
           /* Compression Pages: Compact 3-Column Layout */
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 py-8 text-sm">

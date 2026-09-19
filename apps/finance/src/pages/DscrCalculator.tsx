@@ -271,7 +271,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
   // Form State initialized with URL query params
   const [propertyValue, setPropertyValue] = useState<number>(() => getNumQuery('price', 450000));
-  const [downPayment, setDownPayment] = useState<number>(() => getNumQuery('down', 20));
+  const [downPayment, setDownPayment] = useState<number>(() => getNumQuery('dp', getNumQuery('down', 25)));
   const [downPaymentType, setDownPaymentType] = useState<'percent' | 'money'>('percent');
   const [interestRate, setInterestRate] = useState<number>(() => getNumQuery('rate', 7.25));
   const [loanTermYears, setLoanTermYears] = useState<number>(() => getNumQuery('term', 30));
@@ -283,6 +283,45 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
     }
   });
   const [monthlyRent, setMonthlyRent] = useState<number>(() => getNumQuery('rent', 3800));
+
+  const [isPrefilledFromCopilot, setIsPrefilledFromCopilot] = useState<boolean>(() => {
+    try {
+      return new URLSearchParams(window.location.search).has('price');
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    const handleUrlSync = () => {
+      const search = window.location.search;
+      if (!search) return;
+      const params = new URLSearchParams(search);
+      const p = params.get('price');
+      if (p && !isNaN(Number(p)) && Number(p) > 0) {
+        setPropertyValue(Number(p));
+        setIsPrefilledFromCopilot(true);
+      }
+      const dp = params.get('dp') || params.get('down');
+      if (dp && !isNaN(Number(dp)) && Number(dp) > 0) {
+        setDownPayment(Number(dp));
+      }
+      const r = params.get('rate');
+      if (r && !isNaN(Number(r)) && Number(r) > 0) {
+        setInterestRate(Number(r));
+      }
+      const rent = params.get('rent');
+      if (rent && !isNaN(Number(rent)) && Number(rent) > 0) {
+        setMonthlyRent(Number(rent));
+      }
+      const term = params.get('term');
+      if (term && !isNaN(Number(term)) && Number(term) > 0) {
+        setLoanTermYears(Number(term));
+      }
+    };
+    window.addEventListener('popstate', handleUrlSync);
+    return () => window.removeEventListener('popstate', handleUrlSync);
+  }, []);
   const [annualPropertyTax, setAnnualPropertyTax] = useState<number>(() => getNumQuery('tax', 5400));
   const [annualInsurance, setAnnualInsurance] = useState<number>(() => getNumQuery('ins', 1600));
   const [monthlyHoa, setMonthlyHoa] = useState<number>(() => getNumQuery('hoa', 0));
@@ -562,6 +601,28 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
         />
 
         <SuiteSubNav suite="commercial" />
+
+        {/* AI Deal Copilot Pre-fill Notification Banner */}
+        {isPrefilledFromCopilot && (
+          <div className="mb-6 px-4 py-3 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs flex flex-wrap items-center justify-between gap-3 text-emerald-200 shadow-md">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-emerald-600/30 text-emerald-400 border border-emerald-400/30">
+                <Sparkles className="size-4" />
+              </div>
+              <div>
+                <span className="font-bold text-white tracking-tight block">
+                  Auto-Populated from Natural Language Scenario
+                </span>
+                <span className="text-emerald-300">
+                  Property Value: <strong className="text-white">${propertyValue.toLocaleString()}</strong> · Down Payment: <strong className="text-white">{downPayment}%</strong> · Gross Rent: <strong className="text-white">${monthlyRent.toLocaleString()}/mo</strong> · Rate: <strong className="text-white">{interestRate}%</strong>
+                </span>
+              </div>
+            </div>
+            <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">
+              Ready for Underwriting
+            </span>
+          </div>
+        )}
 
         {/* Main Calculator Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">

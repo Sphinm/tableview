@@ -3,20 +3,17 @@ import {
   Home,
   Building,
   Scale,
-  Zap,
   PiggyBank,
   ChevronDown,
   Check,
-  Layers,
-  Video,
-  Database
+  Layers
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 import { getCanonicalPath } from '../lib/resolveRoute';
 import { preloadRoute, idlePreloadRoutes } from '../lib/routePreload';
 import { getCrossSuiteUrl } from '@tableview/shared';
 
-export type SuiteType = 'mortgage' | 'commercial' | '1031' | 'finops' | 'personal' | 'media' | 'data';
+export type SuiteType = 'mortgage' | 'commercial' | '1031' | 'personal';
 
 interface SubToolItem {
   label: string;
@@ -63,38 +60,12 @@ const SUITE_CONFIG: Record<
       { label: '45/180-Day Deadlines', path: '/1031-exchange-timeline-calculator' }
     ]
   },
-  finops: {
-    title: 'Cloud Data FinOps Suite',
-    icon: Zap,
-    items: [
-      { label: 'Snowflake Warehouse Cost', path: '/snowflake-cost-calculator', badge: 'Credits' },
-      { label: 'Parquet Storage Savings', path: '/parquet-storage-calculator', badge: 'S3 / Athena' }
-    ]
-  },
   personal: {
     title: 'Personal Finance & Salary Suite',
     icon: PiggyBank,
     items: [
       { label: 'Salary to Hourly Wage', path: '/salary-to-hourly-calculator' },
       { label: 'Auto & Personal Loans', path: '/finance-calculator' }
-    ]
-  },
-  media: {
-    title: 'Private Media & Utility Suite',
-    icon: Video,
-    items: [
-      { label: 'Video Compressor', path: '/video-compressor', badge: 'Wasm' },
-      { label: 'Image Compressor', path: '/image-compressor', badge: 'WebP' }
-    ]
-  },
-  data: {
-    title: 'Client-Side Data Workbench',
-    icon: Database,
-    items: [
-      { label: 'Data Viewer', path: '/' },
-      { label: 'Data Converter', path: '/data-converter' },
-      { label: 'JSON Formatter', path: '/json-formatter' },
-      { label: 'SQL Formatter', path: '/sql-formatter' }
     ]
   }
 };

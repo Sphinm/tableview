@@ -116,8 +116,15 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
   };
 
   // Form State initialized with URL search params support
-  const [homeValue, setHomeValue] = useState<number>(() => getNumQuery('homeValue', 400000));
-  const [downPayment, setDownPayment] = useState<number>(() => getNumQuery('downPayment', 80000));
+  const [homeValue, setHomeValue] = useState<number>(() => getNumQuery('price', getNumQuery('homeValue', 400000)));
+  const [downPayment, setDownPayment] = useState<number>(() => {
+    const dpPct = getNumQuery('dp', 0);
+    const priceVal = getNumQuery('price', getNumQuery('homeValue', 400000));
+    if (dpPct > 0 && dpPct <= 100) {
+      return Math.round(priceVal * (dpPct / 100));
+    }
+    return getNumQuery('downPayment', 80000);
+  });
   const [downPaymentType, setDownPaymentType] = useState<'money' | 'percent'>('money');
   const [interestRate, setInterestRate] = useState<number>(() => getNumQuery('rate', 6.48));
   const [loanTermYears, setLoanTermYears] = useState<number>(() => getNumQuery('term', 30));
@@ -131,6 +138,43 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
   const [monthlyOtherDebts, setMonthlyOtherDebts] = useState<number>(600);
   const [homeInsuranceYearly, setHomeInsuranceYearly] = useState<number>(() => getNumQuery('insurance', 1500));
   const [monthlyHoa, setMonthlyHoa] = useState<number>(() => getNumQuery('hoa', 0));
+  const [isPrefilledFromCopilot, setIsPrefilledFromCopilot] = useState<boolean>(() => {
+    try {
+      const p = new URLSearchParams(window.location.search);
+      return p.has('price') || p.has('homeValue');
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    const handleUrlSync = () => {
+      const search = window.location.search;
+      if (!search) return;
+      const params = new URLSearchParams(search);
+      const p = params.get('price') || params.get('homeValue');
+      if (p && !isNaN(Number(p)) && Number(p) > 0) {
+        const val = Number(p);
+        setHomeValue(val);
+        setIsPrefilledFromCopilot(true);
+        const dp = params.get('dp');
+        if (dp && !isNaN(Number(dp)) && Number(dp) > 0 && Number(dp) <= 100) {
+          setDownPayment(Math.round(val * (Number(dp) / 100)));
+        }
+      }
+      const r = params.get('rate');
+      if (r && !isNaN(Number(r)) && Number(r) > 0) {
+        setInterestRate(Number(r));
+      }
+      const t = params.get('term');
+      if (t && !isNaN(Number(t)) && Number(t) > 0) {
+        setLoanTermYears(Number(t));
+      }
+    };
+    window.addEventListener('popstate', handleUrlSync);
+    return () => window.removeEventListener('popstate', handleUrlSync);
+  }, []);
+
   const [loanType, setLoanType] = useState<'conventional' | 'fha' | 'va' | 'usda'>('conventional');
   const buyOrRefi = 'buy' as const;
   
@@ -479,6 +523,28 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
       />
 
       <SuiteSubNav suite="mortgage" />
+
+      {/* AI Deal Copilot Pre-fill Notification Banner */}
+      {isPrefilledFromCopilot && (
+        <div className="mb-6 px-4 py-3 rounded-xl bg-indigo-950/80 border border-indigo-500/40 text-xs flex flex-wrap items-center justify-between gap-3 text-indigo-200 shadow-md">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded-lg bg-indigo-600/30 text-indigo-400 border border-indigo-400/30">
+              <Sparkles className="size-4" />
+            </div>
+            <div>
+              <span className="font-bold text-white tracking-tight block">
+                Auto-Populated from Natural Language Scenario
+              </span>
+              <span className="text-indigo-300">
+                Home Value: <strong className="text-white">${homeValue.toLocaleString()}</strong> · Down Payment: <strong className="text-white">${downPayment.toLocaleString()}</strong> · Rate: <strong className="text-white">{interestRate}%</strong> · Term: <strong className="text-white">{loanTermYears} Yrs</strong>
+              </span>
+            </div>
+          </div>
+          <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 font-semibold">
+            Ready for Underwriting
+          </span>
+        </div>
+      )}
 
       {/* Main 2-Column Calculator Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
