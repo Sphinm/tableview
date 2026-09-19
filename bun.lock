@@ -36,6 +36,101 @@
         "wrangler": "^4.132.0",
       },
     },
+    "apps/compressor": {
+      "name": "@tableview/compressor",
+      "version": "1.0.0",
+      "dependencies": {
+        "@ffmpeg/ffmpeg": "^0.12.15",
+        "@ffmpeg/util": "^0.12.2",
+        "@tableview/shared": "workspace:*",
+        "@tableview/ui": "workspace:*",
+        "clsx": "^2.1.1",
+        "lucide-react": "^1.41.0",
+        "react": "^19.2.8",
+        "react-dom": "^19.2.8",
+        "tailwind-merge": "^3.6.0",
+      },
+      "devDependencies": {
+        "@tailwindcss/vite": "^4.3.3",
+        "@types/node": "^24.13.3",
+        "@types/react": "^19.2.18",
+        "@types/react-dom": "^19.2.4",
+        "@vitejs/plugin-react": "^6.1.0",
+        "tailwindcss": "^4.3.3",
+        "typescript": "~6.0.2",
+        "vite": "^8.2.2",
+      },
+    },
+    "apps/finance": {
+      "name": "@tableview/finance",
+      "version": "1.0.0",
+      "dependencies": {
+        "@tableview/shared": "workspace:*",
+        "@tableview/ui": "workspace:*",
+        "clsx": "^2.1.1",
+        "lucide-react": "^1.41.0",
+        "react": "^19.2.8",
+        "react-dom": "^19.2.8",
+        "tailwind-merge": "^3.6.0",
+      },
+      "devDependencies": {
+        "@tailwindcss/vite": "^4.3.3",
+        "@types/node": "^24.13.3",
+        "@types/react": "^19.2.18",
+        "@types/react-dom": "^19.2.4",
+        "@vitejs/plugin-react": "^6.1.0",
+        "tailwindcss": "^4.3.3",
+        "typescript": "~6.0.2",
+        "vite": "^8.2.2",
+      },
+    },
+    "apps/tools": {
+      "name": "@tableview/tools",
+      "version": "1.0.0",
+      "dependencies": {
+        "@duckdb/duckdb-wasm": "^1.33.1-dev57.0",
+        "@tableview/shared": "workspace:*",
+        "@tableview/ui": "workspace:*",
+        "clsx": "^2.1.1",
+        "jszip": "^3.10.2",
+        "lucide-react": "^1.41.0",
+        "prismjs": "^1.30.0",
+        "react": "^19.2.8",
+        "react-dom": "^19.2.8",
+        "sql-formatter": "^15.8.2",
+        "tailwind-merge": "^3.6.0",
+        "xlsx": "^0.18.5",
+      },
+      "devDependencies": {
+        "@tailwindcss/vite": "^4.3.3",
+        "@types/jszip": "^3.4.1",
+        "@types/node": "^24.13.3",
+        "@types/prismjs": "^1.26.6",
+        "@types/react": "^19.2.18",
+        "@types/react-dom": "^19.2.4",
+        "@vitejs/plugin-react": "^6.1.0",
+        "tailwindcss": "^4.3.3",
+        "typescript": "~6.0.2",
+        "vite": "^8.2.2",
+      },
+    },
+    "packages/shared": {
+      "name": "@tableview/shared",
+      "version": "1.0.0",
+      "peerDependencies": {
+        "react": "^19.0.0",
+      },
+    },
+    "packages/ui": {
+      "name": "@tableview/ui",
+      "version": "1.0.0",
+      "peerDependencies": {
+        "clsx": "^2.1.1",
+        "lucide-react": "^1.41.0",
+        "react": "^19.0.0",
+        "react-dom": "^19.0.0",
+      },
+    },
   },
   "packages": {
     "@cloudflare/kv-asset-handler": ["@cloudflare/kv-asset-handler@0.5.0", "https://registry.npmmirror.com/@cloudflare/kv-asset-handler/-/kv-asset-handler-0.5.0.tgz", {}, "sha512-jxQYkj8dSIzc0cD6cMMNdOc1UVjqSqu8BZdor5s8cGjW2I8BjODt/kWPVdY+u9zj3ms75Q5qaZgnxUad83+eAg=="],
@@ -281,6 +376,16 @@
     "@speed-highlight/core": ["@speed-highlight/core@1.2.24", "https://registry.npmmirror.com/@speed-highlight/core/-/core-1.2.24.tgz", {}, "sha512-qeW2e1l78afw8VhRPfPQ1Gjj+KU5XFQ/OFV5ti6eTa9bruO7mJyZtA4vw0ofqmA3tKCkROE9xLk3VZoeRc98nw=="],
 
     "@swc/helpers": ["@swc/helpers@0.5.23", "https://registry.npmmirror.com/@swc/helpers/-/helpers-0.5.23.tgz", { "dependencies": { "tslib": "^2.8.0" } }, "sha512-5lSsMOTXURePglDfvuAQUqkGek9Hg2kksOYay2m0+XR++b2NWYL/4sWyuvVBIs8oKnJaxkdi9whaL/sqN13afw=="],
+
+    "@tableview/compressor": ["@tableview/compressor@workspace:apps/compressor"],
+
+    "@tableview/finance": ["@tableview/finance@workspace:apps/finance"],
+
+    "@tableview/shared": ["@tableview/shared@workspace:packages/shared"],
+
+    "@tableview/tools": ["@tableview/tools@workspace:apps/tools"],
+
+    "@tableview/ui": ["@tableview/ui@workspace:packages/ui"],
 
     "@tailwindcss/node": ["@tailwindcss/node@4.3.3", "https://registry.npmmirror.com/@tailwindcss/node/-/node-4.3.3.tgz", { "dependencies": { "@jridgewell/remapping": "^2.3.5", "enhanced-resolve": "^5.24.1", "jiti": "^2.7.0", "lightningcss": "1.32.0", "magic-string": "^0.30.21", "source-map-js": "^1.2.1", "tailwindcss": "4.3.3" } }, "sha512-/T8IKEsf9VTU6tLjgC7+sv2mOPtQxzE2jMw7u4Tt40Tx+QSZxpzh95/H6cMKoja9XuW7iMdLJYBB0o9G1CaAgg=="],
 
