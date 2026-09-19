@@ -71,6 +71,8 @@ export function AuthModal() {
       }
     };
 
+    const container = googleButtonContainerRef.current;
+
     if ((window as any).google?.accounts?.id) {
       renderGoogleBtn();
     } else {
@@ -83,6 +85,11 @@ export function AuthModal() {
       return () => {
         isMounted = false;
         clearInterval(interval);
+        if (container) {
+          try {
+            container.innerHTML = '';
+          } catch {}
+        }
         if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
           try {
             (window as any).google.accounts.id.cancel();
@@ -93,6 +100,11 @@ export function AuthModal() {
 
     return () => {
       isMounted = false;
+      if (container) {
+        try {
+          container.innerHTML = '';
+        } catch {}
+      }
       if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
         try {
           (window as any).google.accounts.id.cancel();

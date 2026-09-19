@@ -186,6 +186,12 @@ function loadSentry(): Promise<void> {
         'ResizeObserver loop completed with undelivered notifications',
         'Non-Error promise rejection captured',
         'adsbygoogle',
+        /Failed to fetch dynamically imported module/i,
+        /Importing a module script failed/i,
+        /error loading dynamically imported module/i,
+        /Loading chunk \d+ failed/i,
+        /Failed to execute 'removeChild' on 'Node'/i,
+        /This workbook contains no readable worksheets with data/i,
         /chrome-extension:\/\//,
         /moz-extension:\/\//,
       ],
@@ -273,11 +279,31 @@ export function stopReplay(): void {
   replayStarted = false;
 }
 
+const IGNORED_EARLY_PATTERNS = [
+  /Failed to fetch dynamically imported module/i,
+  /Importing a module script failed/i,
+  /error loading dynamically imported module/i,
+  /Loading chunk \d+ failed/i,
+  /Failed to execute 'removeChild' on 'Node'/i,
+  /This workbook contains no readable worksheets with data/i,
+  /ResizeObserver/i,
+  /chrome-extension:\/\//,
+  /moz-extension:\/\//,
+  /adsbygoogle/,
+];
+
+function shouldIgnoreError(err: unknown): boolean {
+  if (!err) return false;
+  const msg = typeof err === 'string' ? err : (err as any)?.message || String(err || '');
+  return IGNORED_EARLY_PATTERNS.some((pattern) => pattern.test(msg));
+}
+
 /**
  * Report an exception. Triggers the lazy SDK load on first use; if the SDK is
  * still loading the error is buffered and sent as soon as it is ready.
  */
 export function captureException(error: unknown, context?: Record<string, any>) {
+  if (shouldIgnoreError(error)) return;
   if (capture) {
     capture(error, context);
     return;
@@ -331,12 +357,15 @@ export function scheduleSentryInit() {
 }
 
 function onWindowError(event: ErrorEvent) {
+  const err = event.error ?? event.message;
+  if (shouldIgnoreError(err)) return;
   if (capture) return;
-  buffer.push({ error: event.error ?? event.message, context: { tags: { source: 'window.onerror' } } });
+  buffer.push({ error: err, context: { tags: { source: 'window.onerror' } } });
   void loadSentry();
 }
 
 function onUnhandledRejection(event: PromiseRejectionEvent) {
+  if (shouldIgnoreError(event.reason)) return;
   if (capture) return;
   buffer.push({ error: event.reason, context: { tags: { source: 'unhandledrejection' } } });
   void loadSentry();

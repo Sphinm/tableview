@@ -161,11 +161,18 @@ export function App() {
       });
     } catch (err: any) {
       console.error('Failed to load file:', err);
-      // Privacy: never send the user's file name — only coarse, non-identifying metadata.
-      captureException(err, {
-        tags: { action: 'load_file' },
-        extra: describeFile(file),
-      });
+      // Expected validation errors (e.g. empty sheet/workbook) are user-facing notices, not application crashes
+      const isValidationError =
+        typeof err?.message === 'string' &&
+        err.message.includes('This workbook contains no readable worksheets with data');
+
+      if (!isValidationError) {
+        // Privacy: never send the user's file name — only coarse, non-identifying metadata.
+        captureException(err, {
+          tags: { action: 'load_file' },
+          extra: describeFile(file),
+        });
+      }
 
       if (isEngineLoadError(err)) {
         analytics.engineLoadFailed(String(err?.message ?? 'unknown'));

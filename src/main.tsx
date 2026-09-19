@@ -22,6 +22,23 @@ initConsent();
 // errors thrown before it loads are buffered and flushed.
 scheduleSentryInit();
 
+// Auto-reload when Vite encounters a stale chunk hash after a new deployment
+if (typeof window !== 'undefined') {
+  window.addEventListener('vite:preloadError', (event) => {
+    event.preventDefault();
+    try {
+      const lastAttempt = Number(sessionStorage.getItem('tableview_chunk_reload_attempted') || '0');
+      const now = Date.now();
+      if (now - lastAttempt > 15000) {
+        sessionStorage.setItem('tableview_chunk_reload_attempted', String(now));
+        window.location.reload();
+      }
+    } catch {
+      window.location.reload();
+    }
+  });
+}
+
 // Register PWA service worker for offline app capability
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', () => {

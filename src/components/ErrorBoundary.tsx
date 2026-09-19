@@ -42,21 +42,26 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    captureException(error, {
-      tags: { action: 'render_error', staleChunk: String(isStaleChunkError(error)) },
-      contexts: { react: { componentStack: info.componentStack } },
-    });
+    const isStale = isStaleChunkError(error);
 
-    if (isStaleChunkError(error)) {
+    if (isStale) {
       try {
-        if (!sessionStorage.getItem(RELOAD_GUARD_KEY)) {
-          sessionStorage.setItem(RELOAD_GUARD_KEY, '1');
+        const lastAttempt = Number(sessionStorage.getItem(RELOAD_GUARD_KEY) || '0');
+        const now = Date.now();
+        if (now - lastAttempt > 15000) {
+          sessionStorage.setItem(RELOAD_GUARD_KEY, String(now));
           window.location.reload();
+          return;
         }
       } catch {
         // sessionStorage unavailable — fall through to the manual recovery UI.
       }
     }
+
+    captureException(error, {
+      tags: { action: 'render_error', staleChunk: String(isStale) },
+      contexts: { react: { componentStack: info.componentStack } },
+    });
   }
 
   handleReload = () => {
