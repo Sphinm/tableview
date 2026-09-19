@@ -17,6 +17,7 @@ import {
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
+import { InfoTooltip } from '../components/InfoTooltip';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { AdSlot } from '../components/AdSlot';
@@ -397,7 +398,13 @@ export const CommercialLoanCalculator = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1.5">Amortization (Years)</label>
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <label className="text-xs font-medium text-slate-700">Amortization (Years)</label>
+                <InfoTooltip
+                  title="Amortization Period"
+                  content="The schedule period used to calculate monthly principal & interest payments (typically 20–30 years for commercial real estate), keeping monthly debt service manageable."
+                />
+              </div>
               <select
                 value={inputs.amortizationYears}
                 onChange={(e) => setInputs({ ...inputs, amortizationYears: Number(e.target.value) })}
@@ -411,7 +418,13 @@ export const CommercialLoanCalculator = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1.5">Balloon Term (Due In)</label>
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <label className="text-xs font-medium text-slate-700">Balloon Term (Due In)</label>
+                <InfoTooltip
+                  title="Balloon Maturity Cliff"
+                  content="Commercial loans usually mature in 5, 7, or 10 years before full payoff. At maturity, the entire remaining principal must be repaid in full via cash sale or refinancing."
+                />
+              </div>
               <select
                 value={inputs.balloonTermYears}
                 onChange={(e) => setInputs({ ...inputs, balloonTermYears: Number(e.target.value) })}
@@ -428,7 +441,13 @@ export const CommercialLoanCalculator = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2 border-t border-slate-200">
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1.5">Interest-Only Period</label>
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <label className="text-xs font-medium text-slate-700">Interest-Only Period</label>
+                <InfoTooltip
+                  title="Interest-Only (I/O) Period"
+                  content="A predetermined intro period where payments cover interest only, with zero principal reduction. Maximizes initial cash flow during property lease-up or renovation."
+                />
+              </div>
               <select
                 value={inputs.interestOnlyMonths}
                 onChange={(e) => setInputs({ ...inputs, interestOnlyMonths: Number(e.target.value) })}
@@ -442,7 +461,13 @@ export const CommercialLoanCalculator = () => {
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1.5">Lender Points (%)</label>
+              <div className="flex items-center gap-1.5 mb-1.5">
+                <label className="text-xs font-medium text-slate-700">Lender Points (%)</label>
+                <InfoTooltip
+                  title="Commercial Origination Points"
+                  content="Upfront lender fees expressed as a percentage of the total loan amount (1 point = 1% of debt), paid at closing to secure underwriting and rate commitment."
+                />
+              </div>
               <NumericInput
                 value={inputs.originationPoints ?? 0}
                 onChange={(val) => setInputs({ ...inputs, originationPoints: val })}

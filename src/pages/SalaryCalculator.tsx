@@ -18,6 +18,7 @@ import {
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
+import { InfoTooltip } from '../components/InfoTooltip';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { AdSlot } from '../components/AdSlot';
@@ -471,8 +472,14 @@ export const SalaryCalculator = ({
 
               {/* Overtime Hours Per Week */}
               <div className="pt-2 border-t border-slate-100">
-                <div className="flex justify-between text-xs font-medium text-slate-700 mb-1.5">
-                  <span>Expected Overtime Hours / Week</span>
+                <div className="flex justify-between items-center text-xs font-medium text-slate-700 mb-1.5">
+                  <div className="flex items-center gap-1.5">
+                    <span>Expected Overtime Hours / Week</span>
+                    <InfoTooltip
+                      title="FLSA Overtime (1.5x Rate)"
+                      content="Under the Fair Labor Standards Act (FLSA), non-exempt employees must receive overtime pay for hours worked over 40 in a workweek at a rate of at least 1.5 times their regular rate of pay."
+                    />
+                  </div>
                   <span className="text-amber-800 font-semibold font-mono">{overtimeHours} hrs</span>
                 </div>
                 <input
@@ -491,8 +498,12 @@ export const SalaryCalculator = ({
 
               {/* Paid Time Off (PTO) */}
               <div className="pt-2 border-t border-slate-100 space-y-3">
-                <div className="text-xs font-medium text-slate-700">
-                  Paid Time Off (PTO Days)
+                <div className="flex items-center gap-1.5 text-xs font-medium text-slate-700">
+                  <span>Paid Time Off (PTO Days)</span>
+                  <InfoTooltip
+                    title="Paid Time Off (PTO) Value"
+                    content="Paid holidays, vacation, and sick leave represent paid non-working hours. Factoring PTO into your wage calculation shows your effective hourly compensation for actual time worked."
+                  />
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>

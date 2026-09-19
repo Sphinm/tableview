@@ -48,10 +48,10 @@ export const InfoTooltip: React.FC<InfoTooltipProps> = ({
 
   const Icon = iconType === 'info' ? Info : HelpCircle;
 
-  // Position classes
+  // Position classes with safe boundary alignment
   const sideClasses = {
-    top: 'bottom-full left-1/2 -translate-x-1/2 mb-2',
-    bottom: 'top-full left-1/2 -translate-x-1/2 mt-2',
+    top: 'bottom-full left-0 mb-2',
+    bottom: 'top-full left-0 mt-2',
     left: 'right-full top-1/2 -translate-y-1/2 mr-2',
     right: 'left-full top-1/2 -translate-y-1/2 ml-2',
   }[side];
@@ -70,24 +70,24 @@ export const InfoTooltip: React.FC<InfoTooltipProps> = ({
           e.stopPropagation();
           setIsOpen((prev) => !prev);
         }}
-        className="focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 rounded p-0.5 cursor-help"
+        className="inline-flex items-center justify-center size-4 rounded-full bg-slate-100 hover:bg-indigo-50 text-slate-500 hover:text-indigo-600 border border-slate-200/80 transition-all cursor-help focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
         aria-label={title || 'More information'}
         aria-expanded={isOpen}
       >
-        <Icon className={iconClassName} />
+        <Icon className={iconClassName || "size-2.5"} />
       </button>
 
       {isOpen && (
         <div
           role="tooltip"
-          className={`absolute z-50 w-64 p-3 text-xs leading-relaxed text-slate-700 bg-white border border-slate-200 rounded-xl shadow-xl shadow-slate-900/10 transition-all pointer-events-auto sm:pointer-events-none animate-in fade-in zoom-in-95 duration-100 ${sideClasses}`}
+          className={`absolute z-[100] w-64 max-w-[85vw] p-3 text-xs leading-relaxed text-slate-700 bg-white border border-slate-200 rounded-xl shadow-xl shadow-slate-900/10 transition-all pointer-events-auto animate-in fade-in zoom-in-95 duration-100 ${sideClasses}`}
         >
           {title && (
             <div className="font-semibold text-slate-900 mb-1 flex items-center gap-1.5 pb-1 border-b border-slate-100">
               <span>{title}</span>
             </div>
           )}
-          <div>{content}</div>
+          <div className="text-slate-600 leading-normal">{content}</div>
         </div>
       )}
     </span>

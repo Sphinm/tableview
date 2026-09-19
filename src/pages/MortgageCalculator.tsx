@@ -493,9 +493,15 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             {/* Home Value */}
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <label htmlFor="home-value" className="text-xs font-semibold text-slate-700">
-                  Home Purchase Price
-                </label>
+                <div className="flex items-center gap-1.5">
+                  <label htmlFor="home-value" className="text-xs font-semibold text-slate-700">
+                    Home Purchase Price
+                  </label>
+                  <InfoTooltip
+                    title="Home Purchase Price"
+                    content="The agreed contract price of the home. All down payment and loan calculations are based on this value."
+                  />
+                </div>
                 <div className="flex items-center gap-1.5 flex-wrap">
                   {homeValuePresets.map(preset => (
                     <button
@@ -601,9 +607,15 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             {/* Interest Rate & Term */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="interest-rate" className="text-xs font-semibold text-slate-700">
-                  Interest Rate (APR)
-                </label>
+                <div className="flex items-center gap-1.5">
+                  <label htmlFor="interest-rate" className="text-xs font-semibold text-slate-700">
+                    Interest Rate (APR)
+                  </label>
+                  <InfoTooltip
+                    title="Interest Rate vs APR"
+                    content="Interest rate is the basic annual cost of borrowing. The Annual Percentage Rate (APR) reflects the true yearly cost of the loan including lender fees, points, and closing expenses."
+                  />
+                </div>
                 <NumericInput
                   id="interest-rate"
                   value={interestRate}
@@ -614,9 +626,15 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="loan-term" className="text-xs font-semibold text-slate-700">
-                  Loan Term (Years)
-                </label>
+                <div className="flex items-center gap-1.5">
+                  <label htmlFor="loan-term" className="text-xs font-semibold text-slate-700">
+                    Loan Term (Years)
+                  </label>
+                  <InfoTooltip
+                    title="Loan Term"
+                    content="The length of time to repay the mortgage. 30-year terms offer lower monthly payments, while 15-year terms significantly cut total interest paid over the life of the loan."
+                  />
+                </div>
                 <NumericInput
                   id="loan-term"
                   value={loanTermYears}
@@ -674,9 +692,15 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
               {/* Property Tax */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="property-tax" className="text-xs font-semibold text-slate-700">
-                    Property Taxes
-                  </label>
+                  <div className="flex items-center gap-1.5">
+                    <label htmlFor="property-tax" className="text-xs font-semibold text-slate-700">
+                      Property Taxes
+                    </label>
+                    <InfoTooltip
+                      title="Real Estate Property Taxes"
+                      content="Local municipal or county taxes assessed on your home's taxable value, usually collected monthly via an escrow account to fund public schools and municipal infrastructure."
+                    />
+                  </div>
                   <span className="text-[11px] text-slate-500 font-mono">
                     {fmt(summary.monthlyPropertyTax)}/mo
                   </span>
@@ -714,9 +738,15 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
               {/* Home Insurance */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="home-insurance" className="text-xs font-semibold text-slate-700">
-                    Homeowners Ins
-                  </label>
+                  <div className="flex items-center gap-1.5">
+                    <label htmlFor="home-insurance" className="text-xs font-semibold text-slate-700">
+                      Homeowners Ins
+                    </label>
+                    <InfoTooltip
+                      title="Homeowners Hazard Insurance (HOI)"
+                      content="Covers property damage from fire, storm hazards, theft, and personal liability. Lenders require active hazard insurance coverage before funding any mortgage."
+                    />
+                  </div>
                   <span className="text-[11px] text-slate-500 font-mono">
                     {fmt(summary.monthlyHomeInsurance)}/mo
                   </span>
@@ -801,9 +831,15 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
               {/* Monthly HOA */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="monthly-hoa" className="text-xs font-semibold text-slate-700">
-                    Monthly HOA Dues
-                  </label>
+                  <div className="flex items-center gap-1.5">
+                    <label htmlFor="monthly-hoa" className="text-xs font-semibold text-slate-700">
+                      Monthly HOA Dues
+                    </label>
+                    <InfoTooltip
+                      title="Homeowners Association (HOA) Fees"
+                      content="Monthly fees assessed by HOA boards for shared amenities, roof/exterior insurance, community landscaping, and trash collection. Lenders include this fee in debt-to-income (DTI) underwriting."
+                    />
+                  </div>
                   <span className="text-[11px] text-slate-500 font-mono">
                     {fmt(summary.monthlyHoa)}/mo
                   </span>
@@ -820,9 +856,15 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
 
             {/* Loan Program Type */}
             <div className="space-y-1.5 pt-2">
-              <label htmlFor="loan-type" className="text-xs font-semibold text-slate-700">
-                Loan Program Type
-              </label>
+              <div className="flex items-center gap-1.5">
+                <label htmlFor="loan-type" className="text-xs font-semibold text-slate-700">
+                  Loan Program Type
+                </label>
+                <InfoTooltip
+                  title="Mortgage Loan Programs"
+                  content="Conventional loans conform to Fannie Mae / Freddie Mac standards. FHA allows low credit / 3.5% down. VA offers 0% down for veterans, and USDA offers 0% down in qualifying rural locations."
+                />
+              </div>
               <select
                 id="loan-type"
                 value={loanType}
