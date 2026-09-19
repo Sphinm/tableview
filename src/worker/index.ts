@@ -867,8 +867,17 @@ export default {
       }
 
       // 9. GET /api/ai/status (Check Gemini AI availability)
-      if (url.pathname === '/api/ai/status' && request.method === 'GET') {
+      if (url.pathname === '/api/ai/status' && (request.method === 'GET' || request.method === 'HEAD')) {
         const hasKey = Boolean(env.GEMINI_API_KEY?.trim());
+        if (request.method === 'HEAD') {
+          return new Response(null, {
+            status: 200,
+            headers: {
+              'Content-Type': 'application/json',
+              ...corsHeaders(origin),
+            },
+          });
+        }
         return jsonResponse(
           {
             available: hasKey,

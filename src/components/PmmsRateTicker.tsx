@@ -23,13 +23,13 @@ export const PmmsRateTicker: React.FC<PmmsRateTickerProps> = ({
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         {/* Title / Benchmark Source */}
-        <div className="flex items-center gap-1.5 text-slate-700 font-semibold min-w-0">
+        <div className="flex items-center gap-1.5 text-slate-700 font-semibold shrink-0">
           <span className="p-1 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200 shrink-0">
             <Landmark className="size-3.5" />
           </span>
-          <span className="truncate">US National Rate Benchmarks</span>
+          <span className="whitespace-nowrap text-slate-800 font-bold">US National Benchmarks</span>
           {!compact && (
-            <span className="hidden md:inline-block text-[10px] text-slate-400 font-normal">
+            <span className="text-[10px] text-slate-400 font-normal whitespace-nowrap">
               ({asOfDate})
             </span>
           )}

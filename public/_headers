@@ -22,6 +22,14 @@
   Content-Type: text/plain; charset=utf-8
   Cache-Control: public, max-age=3600
 
+/favicon.ico
+  Content-Type: image/x-icon
+  Cache-Control: public, max-age=604800
+
+/favicon.svg
+  Content-Type: image/svg+xml
+  Cache-Control: public, max-age=604800
+
 # HTML must always be revalidated so a deploy is picked up immediately.
 /*.html
   Cache-Control: public, max-age=0, must-revalidate

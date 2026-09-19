@@ -148,8 +148,8 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
   const MORTGAGE_PRESETS = [
     {
       id: '30-yr-conventional',
-      label: '30-Yr Fixed (20% Down)',
-      badge: 'Popular',
+      label: '30-Yr Fixed',
+      badge: '20% Down',
       apply: () => {
         setHomeValue(400000);
         setDownPayment(80000);
@@ -165,8 +165,8 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
     },
     {
       id: '15-yr-fast-equity',
-      label: '15-Yr Fixed (Fast Equity)',
-      badge: 'Save Interest',
+      label: '15-Yr Fixed',
+      badge: 'Fast Equity',
       apply: () => {
         setHomeValue(400000);
         setDownPayment(80000);
@@ -182,8 +182,8 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
     },
     {
       id: 'fha-starter',
-      label: 'FHA (3.5% Down)',
-      badge: 'Low Down',
+      label: 'FHA 30-Yr',
+      badge: '3.5% Down',
       apply: () => {
         setHomeValue(350000);
         setDownPayment(12250);
@@ -199,8 +199,8 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
     },
     {
       id: 'starter-condo',
-      label: 'Starter Condo w/ HOA',
-      badge: 'Condo',
+      label: 'Condo w/ HOA',
+      badge: 'Starter',
       apply: () => {
         setHomeValue(280000);
         setDownPayment(28000);
@@ -216,8 +216,8 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
     },
     {
       id: 'jumbo-luxury',
-      label: 'Jumbo High-Balance',
-      badge: 'Jumbo',
+      label: 'Jumbo Loan',
+      badge: 'High Balance',
       apply: () => {
         setHomeValue(950000);
         setDownPayment(190000);
@@ -491,18 +491,25 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             </h2>
 
             {/* Home Value */}
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1.5">
-                  <label htmlFor="home-value" className="text-xs font-semibold text-slate-700">
-                    Home Purchase Price
-                  </label>
-                  <InfoTooltip
-                    title="Home Purchase Price"
-                    content="The agreed contract price of the home. All down payment and loan calculations are based on this value."
-                  />
-                </div>
-                <div className="flex items-center gap-1.5 flex-wrap">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-1.5">
+                <label htmlFor="home-value" className="text-xs font-semibold text-slate-700">
+                  Home Purchase Price
+                </label>
+                <InfoTooltip
+                  title="Home Purchase Price"
+                  content="The agreed contract price of the home. All down payment and loan calculations are based on this value."
+                />
+              </div>
+              <CurrencyInput
+                id="home-value"
+                value={homeValue}
+                onChange={setHomeValue}
+                className="py-2.5"
+              />
+              <div className="flex items-center justify-between text-[11px] text-slate-500 pt-0.5">
+                <span>Quick Values:</span>
+                <div className="flex items-center gap-1 flex-wrap">
                   {homeValuePresets.map(preset => (
                     <button
                       key={preset}
@@ -515,19 +522,13 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                           setDownPayment(Math.round(preset * 0.2));
                         }
                       }}
-                      className="px-2.5 py-1 sm:py-0.5 rounded text-xs sm:text-[11px] font-mono bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors cursor-pointer"
+                      className="px-2 py-0.5 rounded bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 text-[10px] cursor-pointer transition-colors font-mono"
                     >
-                      ${preset / 1000}k
+                      ${preset >= 1000000 ? `${preset / 1000000}M` : `${preset / 1000}k`}
                     </button>
                   ))}
                 </div>
               </div>
-              <CurrencyInput
-                id="home-value"
-                value={homeValue}
-                onChange={setHomeValue}
-                className="py-2.5"
-              />
             </div>
 
             {/* Down Payment */}

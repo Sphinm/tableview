@@ -79,39 +79,39 @@ export const PageHeader = ({
         </nav>
       )}
 
-      {/* 2. Main Title Row & Actions Toolbar */}
-      <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
-        <div className="space-y-2 max-w-3xl">
-          {badge && (
+      {/* 2. Main Title & Description */}
+      <div className="space-y-2">
+        {badge && (
+          <div>
             <div className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold border shadow-2xs ${toneClass}`}>
               {badge.icon && <badge.icon className="size-3 shrink-0" />}
               <span>{badge.label}</span>
             </div>
-          )}
-
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight leading-snug [text-wrap:balance]">
-            {title}
-            {titleHighlight && <span className="text-indigo-600 ml-2">{titleHighlight}</span>}
-          </h1>
-
-          {description && (
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed [text-wrap:pretty]">
-              {description}
-            </p>
-          )}
-        </div>
-
-        {/* Action Toolbar */}
-        {actions && (
-          <div className="flex flex-wrap items-center gap-2 shrink-0 pt-0.5">
-            {actions}
           </div>
+        )}
+
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight leading-snug">
+          {title}
+          {titleHighlight && <span className="text-indigo-600 ml-2">{titleHighlight}</span>}
+        </h1>
+
+        {description && (
+          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-3xl">
+            {description}
+          </p>
         )}
       </div>
 
+      {/* Action Toolbar */}
+      {actions && (
+        <div className="flex flex-wrap items-center gap-2 pt-3">
+          {actions}
+        </div>
+      )}
+
       {/* 3. Presets & Scenarios Bar */}
       {presets && (
-        <div className="mt-5 pt-4 border-t border-slate-200/80">
+        <div className="mt-4">
           {presets}
         </div>
       )}
