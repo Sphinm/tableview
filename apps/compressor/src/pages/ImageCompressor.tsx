@@ -24,6 +24,7 @@ import { formatBytes } from '../lib/ffmpeg';
 import { updatePageMeta } from '../lib/router';
 import { STATIC_PAGE_META } from '../data/routeMeta';
 import { SuiteSubNav } from '../components/SuiteSubNav';
+import { analytics, trackEvent } from '../lib/analytics';
 
 export function ImageCompressor() {
   useEffect(() => {
@@ -57,6 +58,9 @@ export function ImageCompressor() {
   // Process incoming files
   const processFiles = async (files: FileList | File[]) => {
     setIsProcessing(true);
+    trackEvent('image_batch_dropped', { count: files.length });
+    const startTime = performance.now();
+
     const options: ImageCompressOptions = {
       quality: quality / 100,
       format,
@@ -78,6 +82,11 @@ export function ImageCompressor() {
 
     setItems((prev) => [...prev, ...newItems]);
     setIsProcessing(false);
+
+    trackEvent('image_batch_completed', {
+      count: newItems.length,
+      duration_ms: Math.round(performance.now() - startTime),
+    });
   };
 
   // Re-compress existing items when settings change
@@ -136,6 +145,7 @@ export function ImageCompressor() {
   // Download all as ZIP
   const handleDownloadAllZip = async () => {
     if (items.length === 0) return;
+    analytics.exportClicked({ format: 'zip', rowCount: items.length });
     const zipBlob = await createZipArchive(items);
     const url = URL.createObjectURL(zipBlob);
     const a = document.createElement('a');

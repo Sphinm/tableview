@@ -19,6 +19,7 @@ import { PageHeader } from '../components/calculator-kit/PageHeader';
 import { AdSlot } from '../components/AdSlot';
 import { updatePageMeta } from '../lib/router';
 import { DATA_CONVERTER_META } from '../data/routeMeta';
+import { analytics, fileExtension, sizeBucket } from '../lib/analytics';
 import {
   loadFileIntoDuckDB,
   generateSampleParquet,
@@ -160,6 +161,13 @@ export const DataConverter: React.FC = () => {
       setTotalRowCount(preview.totalRows);
       setConversionResult(null);
       setErrorMessage(null);
+
+      analytics.fileOpened({
+        extension: fileExtension(name),
+        sizeBucket: sizeBucket(size),
+        rowCount: preview.totalRows,
+        durationMs: 0
+      });
     } catch (err: any) {
       console.error('Failed to preview table:', err);
       setErrorMessage(`Failed to read data preview: ${err?.message || 'Unknown error'}`);
@@ -174,12 +182,18 @@ export const DataConverter: React.FC = () => {
     setErrorMessage(null);
     setConversionResult(null);
     setLoadingStatus(`Reading ${file.name} locally into in-browser DuckDB engine...`);
+    analytics.fileDropped({ name: file.name, size: file.size });
 
     try {
       const res = await loadFileIntoDuckDB(file);
       await processLoadedTable(res.tableName, res.fileType, file.name, file.size);
     } catch (err: any) {
       console.error('Failed to load file for conversion:', err);
+      analytics.fileOpenFailed({
+        extension: fileExtension(file.name),
+        sizeBucket: sizeBucket(file.size),
+        reason: (err?.message || 'Unknown error').slice(0, 80)
+      });
       setErrorMessage(`Could not parse file: ${err?.message || 'Unknown error'}. Please ensure the file is valid.`);
       setIsLoading(false);
       setLoadingStatus('');
@@ -229,6 +243,11 @@ export const DataConverter: React.FC = () => {
         convertedSize: exportStats.size,
         filename: exportStats.filename,
         durationMs
+      });
+
+      analytics.exportClicked({
+        format: targetFormat,
+        rowCount: totalRowCount || 100
       });
     } catch (err: any) {
       console.error('Conversion failed:', err);

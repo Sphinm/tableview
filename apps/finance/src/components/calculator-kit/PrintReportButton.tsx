@@ -1,4 +1,5 @@
 import { Printer } from 'lucide-react';
+import { analytics } from '../../lib/analytics';
 
 interface PrintReportButtonProps {
   label?: string;
@@ -14,6 +15,11 @@ export const PrintReportButton = ({
   onPrint,
 }: PrintReportButtonProps) => {
   const handlePrint = () => {
+    analytics.calculatorExport({
+      calculator: (typeof window !== 'undefined' ? window.location.pathname.replace(/^\//, '') : '') || 'mortgage',
+      format: 'print_pdf',
+    });
+
     if (onPrint) {
       onPrint();
       return;

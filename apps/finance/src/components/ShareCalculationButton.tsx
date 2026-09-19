@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Share2, Check } from 'lucide-react';
+import { trackEvent } from '../lib/analytics';
 
 interface ShareCalculationButtonProps {
   params: Record<string, string | number | boolean | undefined>;
@@ -16,6 +17,11 @@ export const ShareCalculationButton = ({
 
   const handleShare = () => {
     try {
+      trackEvent('calculator_shared', {
+        title,
+        param_count: Object.keys(params).length,
+      });
+
       const urlParams = new URLSearchParams();
       Object.entries(params).forEach(([key, val]) => {
         if (val !== undefined && val !== null && val !== '') {

@@ -49,6 +49,7 @@ import { JsonView } from './JsonView';
 import { CodeEditor } from './CodeEditor';
 import { type ToolConfig } from '../data/tools';
 import { buildSearchFilter } from '../lib/sqlUtils';
+import { analytics } from '../lib/analytics';
 
 
 export interface SheetOption {
@@ -385,8 +386,10 @@ export const DataView = ({
   const handleExecuteSql = useCallback(async () => {
     setIsLoading(true);
     setSqlError(null);
+    const start = performance.now();
     try {
       const res = await runCustomSql(customSql);
+      analytics.sqlQueryRun({ ok: true, durationMs: Math.round(performance.now() - start) });
       setColumns(res.columns);
       setRows(res.rows);
       setTotalRows(res.totalRows);
@@ -394,6 +397,7 @@ export const DataView = ({
       setActiveTab('grid');
     } catch (err: any) {
       console.error('SQL Execution failed:', err);
+      analytics.sqlQueryRun({ ok: false, durationMs: Math.round(performance.now() - start) });
       setSqlError(err.message || 'Invalid SQL query');
     } finally {
       setIsLoading(false);
@@ -451,6 +455,7 @@ export const DataView = ({
         await exportToParquet(tableName, fileType, parquetCodec);
         setShowParquetModal(false);
       }
+      analytics.exportClicked({ format: type, rowCount: totalRows });
     } catch (err: any) {
       alert(`Export failed: ${err.message}`);
     } finally {

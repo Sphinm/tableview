@@ -4,6 +4,9 @@ import './index.css';
 import App from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { initConsent } from './lib/consent';
+import { initTelemetry } from '@tableview/shared';
+
+initTelemetry({ app: 'tools' });
 
 // Polyfill BigInt.prototype.toJSON
 if (typeof (BigInt.prototype as any).toJSON !== 'function') {

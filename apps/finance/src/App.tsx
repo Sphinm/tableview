@@ -1,5 +1,4 @@
 import { useEffect, lazy, Suspense } from 'react';
-import { SuiteSwitcher } from '@tableview/ui';
 import { FinanceHeader } from './components/FinanceHeader';
 import { Footer } from './components/Footer';
 import { CookieBanner } from './components/CookieBanner';
@@ -158,12 +157,9 @@ export function App() {
     );
   };
 
-  const isHomePage = path === '/' || path === '/calculators' || path === '/finance-calculator';
-
   return (
     <AuthProvider>
       <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-indigo-500/20 selection:text-indigo-900">
-        {!isHomePage && <SuiteSwitcher currentSuite="finance" />}
         <FinanceHeader currentPath={currentNavPath} />
 
         <main className="flex-1 w-full min-w-0">

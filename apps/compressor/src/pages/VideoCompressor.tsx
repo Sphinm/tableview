@@ -32,6 +32,7 @@ import { updatePageMeta } from '../lib/router';
 import { STATIC_PAGE_META } from '../data/routeMeta';
 import { SuiteSubNav } from '../components/SuiteSubNav';
 import { InfoTooltip } from '../components/InfoTooltip';
+import { analytics, trackEvent } from '../lib/analytics';
 
 export function VideoCompressor() {
   const { consumeCredit } = useAuth();
@@ -80,6 +81,7 @@ export function VideoCompressor() {
 
     try {
       setStatusMessage('Analyzing video stream...');
+      analytics.fileDropped({ name, size: selectedFile.size });
       const meta = await getVideoMetadata(selectedFile, name);
       setMetadata(meta);
       setFile(selectedFile);
@@ -146,6 +148,12 @@ export function VideoCompressor() {
       muteAudio,
     };
 
+    const compressStart = performance.now();
+    trackEvent('video_compress_started', {
+      mode: activeTab,
+      resolution: resolution || 'auto',
+    });
+
     try {
       setStatusMessage('Compressing frames locally with WebAssembly...');
       const res = await compressVideo(file, metadata, options, (pct) => {
@@ -155,12 +163,20 @@ export function VideoCompressor() {
         else setStatusMessage('Step 3/3: Packaging MP4 container...');
       });
 
+      trackEvent('video_compress_completed', {
+        duration_ms: Math.round(performance.now() - compressStart),
+        savings_pct: res.savedPercentage,
+      });
+
       setResult(res);
       setCompareTab('compressed');
       consumeCredit(1);
     } catch (err: unknown) {
       console.error('Compression failed:', err);
       const msg = err instanceof Error ? err.message : 'Compression failed. Try choosing 720p or adjusting the settings.';
+      trackEvent('video_compress_failed', {
+        reason: msg.slice(0, 80),
+      });
       setErrorMessage(msg);
     } finally {
       setIsProcessing(false);
@@ -719,6 +735,7 @@ export function VideoCompressor() {
                 <a
                   href={result.url}
                   download={`compressed_${metadata?.name || 'video.mp4'}`}
+                  onClick={() => analytics.exportClicked({ format: 'mp4', rowCount: 1 })}
                   className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.99] flex items-center justify-center gap-2"
                 >
                   <Download className="size-4" />

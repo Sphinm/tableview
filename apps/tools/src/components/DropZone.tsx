@@ -1,6 +1,7 @@
 import { useState, useRef, type DragEvent, type ChangeEvent } from 'react';
 import { UploadCloud, FolderOpen, ShieldCheck } from 'lucide-react';
 import { type ToolConfig } from '../data/tools';
+import { analytics } from '../lib/analytics';
 
 interface DropZoneProps {
   onFileSelected: (file: File) => void;
@@ -34,13 +35,17 @@ export const DropZone = ({
     e.preventDefault();
     setIsDragOver(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-      onFileSelected(e.dataTransfer.files[0]);
+      const file = e.dataTransfer.files[0];
+      analytics.fileDropped({ name: file.name, size: file.size });
+      onFileSelected(file);
     }
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
-      onFileSelected(e.target.files[0]);
+      const file = e.target.files[0];
+      analytics.fileDropped({ name: file.name, size: file.size });
+      onFileSelected(file);
       e.target.value = '';
     }
   };
