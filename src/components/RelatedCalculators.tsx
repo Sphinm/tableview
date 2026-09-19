@@ -12,6 +12,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
+import { preloadRoute } from '../lib/routePreload';
 
 export type CalculatorCategory = 'real-estate' | 'cloud-finops' | 'consumer' | 'payroll';
 
@@ -154,6 +155,8 @@ export const RelatedCalculators = ({ currentSlug, category = 'real-estate' }: Re
         </div>
         <a
           href="/finance-calculator"
+          onMouseEnter={() => preloadRoute('/finance-calculator')}
+          onFocus={() => preloadRoute('/finance-calculator')}
           onClick={(e) => handleNav(e, '/finance-calculator')}
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
         >
@@ -169,6 +172,8 @@ export const RelatedCalculators = ({ currentSlug, category = 'real-estate' }: Re
             <a
               key={item.slug}
               href={item.path}
+              onMouseEnter={() => preloadRoute(item.path)}
+              onFocus={() => preloadRoute(item.path)}
               onClick={(e) => handleNav(e, item.path)}
               className="p-4 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all flex flex-col justify-between group shadow-2xs hover:shadow-xs"
             >

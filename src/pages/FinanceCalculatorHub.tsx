@@ -35,6 +35,7 @@ import {
 } from '../lib/financeCalculators';
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
+import { preloadRoute } from '../lib/routePreload';
 
 export const FinanceCalculatorHub = () => {
   useEffect(() => {
@@ -177,6 +178,8 @@ export const FinanceCalculatorHub = () => {
           </div>
 
           <button
+            onMouseEnter={() => preloadRoute('/mortgage-calculator')}
+            onFocus={() => preloadRoute('/mortgage-calculator')}
             onClick={() => navigateTo('/mortgage-calculator')}
             className="px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-white border border-slate-200 text-indigo-700 hover:bg-slate-50 flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs"
           >
@@ -230,6 +233,8 @@ export const FinanceCalculatorHub = () => {
               </div>
             </div>
             <button
+              onMouseEnter={() => preloadRoute('/dscr-loan-calculator')}
+              onFocus={() => preloadRoute('/dscr-loan-calculator')}
               onClick={() => navigateTo('/dscr-loan-calculator')}
               className="btn-primary w-full py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
             >
@@ -257,6 +262,8 @@ export const FinanceCalculatorHub = () => {
               </div>
             </div>
             <button
+              onMouseEnter={() => preloadRoute('/hard-money-calculator')}
+              onFocus={() => preloadRoute('/hard-money-calculator')}
               onClick={() => navigateTo('/hard-money-calculator')}
               className="w-full py-2 rounded-xl text-xs font-semibold bg-amber-600 hover:bg-amber-700 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all"
             >
@@ -284,6 +291,8 @@ export const FinanceCalculatorHub = () => {
               </div>
             </div>
             <button
+              onMouseEnter={() => preloadRoute('/snowflake-cost-calculator')}
+              onFocus={() => preloadRoute('/snowflake-cost-calculator')}
               onClick={() => navigateTo('/snowflake-cost-calculator')}
               className="w-full py-2 rounded-xl text-xs font-semibold bg-sky-600 hover:bg-sky-700 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all"
             >
@@ -311,6 +320,8 @@ export const FinanceCalculatorHub = () => {
               </div>
             </div>
             <button
+              onMouseEnter={() => preloadRoute('/parquet-storage-calculator')}
+              onFocus={() => preloadRoute('/parquet-storage-calculator')}
               onClick={() => navigateTo('/parquet-storage-calculator')}
               className="w-full py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all"
             >
@@ -338,6 +349,8 @@ export const FinanceCalculatorHub = () => {
               </div>
             </div>
             <button
+              onMouseEnter={() => preloadRoute('/mortgage-calculator')}
+              onFocus={() => preloadRoute('/mortgage-calculator')}
               onClick={() => navigateTo('/mortgage-calculator')}
               className="w-full py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 flex items-center justify-center gap-1.5 cursor-pointer transition-all border border-slate-200 shadow-2xs"
             >
@@ -365,6 +378,8 @@ export const FinanceCalculatorHub = () => {
               </div>
             </div>
             <button
+              onMouseEnter={() => preloadRoute('/refinance-calculator')}
+              onFocus={() => preloadRoute('/refinance-calculator')}
               onClick={() => navigateTo('/refinance-calculator')}
               className="w-full py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 flex items-center justify-center gap-1.5 cursor-pointer transition-all border border-slate-200 shadow-2xs"
             >
@@ -392,6 +407,8 @@ export const FinanceCalculatorHub = () => {
               </div>
             </div>
             <button
+              onMouseEnter={() => preloadRoute('/loan-comparison-calculator')}
+              onFocus={() => preloadRoute('/loan-comparison-calculator')}
               onClick={() => navigateTo('/loan-comparison-calculator')}
               className="btn-primary w-full py-2 rounded-xl text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
             >
@@ -419,6 +436,8 @@ export const FinanceCalculatorHub = () => {
               </div>
             </div>
             <button
+              onMouseEnter={() => preloadRoute('/commercial-loan-calculator')}
+              onFocus={() => preloadRoute('/commercial-loan-calculator')}
               onClick={() => navigateTo('/commercial-loan-calculator')}
               className="w-full py-2 rounded-xl text-xs font-semibold bg-cyan-600 hover:bg-cyan-700 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all font-semibold"
             >
@@ -446,6 +465,8 @@ export const FinanceCalculatorHub = () => {
               </div>
             </div>
             <button
+              onMouseEnter={() => preloadRoute('/salary-to-hourly-calculator')}
+              onFocus={() => preloadRoute('/salary-to-hourly-calculator')}
               onClick={() => navigateTo('/salary-to-hourly-calculator')}
               className="w-full py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center gap-1.5 cursor-pointer shadow-xs transition-all font-semibold"
             >

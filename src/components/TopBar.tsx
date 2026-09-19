@@ -14,6 +14,7 @@ import { useAuth } from '../lib/useAuth';
 import { getBugReportMailto } from '../lib/feedback';
 import { getCanonicalPath, getRouteCategory } from '../lib/resolveRoute';
 import { TOOLS_CONFIG } from '../data/tools';
+import { preloadRoute } from '../lib/routePreload';
 
 interface TopBarProps {
   currentPath: string;
@@ -192,6 +193,8 @@ export const TopBar = ({ currentPath, onOpenMobileMenu }: TopBarProps) => {
                 ) : (
                   <a
                     href={crumb.path}
+                    onMouseEnter={() => preloadRoute(crumb.path)}
+                    onFocus={() => preloadRoute(crumb.path)}
                     onClick={(e) => {
                       e.preventDefault();
                       navigateTo(crumb.path);

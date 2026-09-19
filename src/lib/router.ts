@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 import { resolveRoutePath, type RouteState } from './resolveRoute';
+import { preloadRoute } from './routePreload';
 
 export type { RouteState };
 
@@ -148,6 +149,7 @@ export function parseCurrentLocation(): RouteState {
 
 export function navigateTo(to: string) {
   const target = to.startsWith('/') ? to : `/${to}`;
+  preloadRoute(target);
   window.history.pushState({}, '', target);
   window.dispatchEvent(new PopStateEvent('popstate'));
 }
@@ -171,7 +173,9 @@ export function useRouter() {
     const handleLocationChange = () => {
       const currentPath = window.location.pathname;
       const newRoute = parseCurrentLocation();
-      setRoute(newRoute);
+      startTransition(() => {
+        setRoute(newRoute);
+      });
 
       if (currentPath !== lastPath) {
         lastPath = currentPath;

@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
 import { getCanonicalPath } from '../lib/resolveRoute';
+import { preloadRoute, idlePreloadRoutes } from '../lib/routePreload';
 
 export type SuiteType = 'mortgage' | 'commercial' | '1031' | 'finops' | 'personal' | 'media' | 'data';
 
@@ -122,6 +123,12 @@ export const SuiteSubNav = ({ suite, currentPath, className = '' }: SuiteSubNavP
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Preload sibling tabs in this suite during browser idle time so tab switching is instant
+  useEffect(() => {
+    const siblingPaths = suiteData.items.map((item) => item.path);
+    idlePreloadRoutes(siblingPaths);
+  }, [suiteData.items]);
+
   const handleNavigate = (path: string) => {
     navigateTo(path);
     setIsOpen(false);
@@ -157,6 +164,9 @@ export const SuiteSubNav = ({ suite, currentPath, className = '' }: SuiteSubNavP
                 <button
                   key={item.path}
                   type="button"
+                  onMouseEnter={() => preloadRoute(item.path)}
+                  onFocus={() => preloadRoute(item.path)}
+                  onTouchStart={() => preloadRoute(item.path)}
                   onClick={() => handleNavigate(item.path)}
                   className={`w-full flex items-center justify-between px-3 py-2 text-xs font-medium text-left cursor-pointer transition-colors ${
                     isActive
@@ -188,6 +198,9 @@ export const SuiteSubNav = ({ suite, currentPath, className = '' }: SuiteSubNavP
             <button
               key={item.path}
               type="button"
+              onMouseEnter={() => preloadRoute(item.path)}
+              onFocus={() => preloadRoute(item.path)}
+              onTouchStart={() => preloadRoute(item.path)}
               onClick={() => handleNavigate(item.path)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs transition-all cursor-pointer select-none ${
                 isActive

@@ -10,6 +10,7 @@ import {
   ArrowRight
 } from 'lucide-react';
 import { navigateTo } from '../lib/router';
+import { preloadRoute } from '../lib/routePreload';
 
 export const FinancialBentoGrid = () => {
   const realEstateTools = [
@@ -153,6 +154,8 @@ export const FinancialBentoGrid = () => {
           {realEstateTools.map((calc) => (
             <div
               key={calc.path}
+              onMouseEnter={() => preloadRoute(calc.path)}
+              onFocus={() => preloadRoute(calc.path)}
               onClick={() => navigateTo(calc.path)}
               className="group cursor-pointer rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 p-5 sm:p-6 flex flex-col justify-between shadow-2xs"
             >
@@ -222,6 +225,8 @@ export const FinancialBentoGrid = () => {
           {payrollAndFinOpsTools.map((calc) => (
             <div
               key={calc.path}
+              onMouseEnter={() => preloadRoute(calc.path)}
+              onFocus={() => preloadRoute(calc.path)}
               onClick={() => navigateTo(calc.path)}
               className="group cursor-pointer rounded-2xl bg-white border border-slate-200 hover:border-slate-300 hover:shadow-md transition-all duration-200 hover:-translate-y-0.5 p-5 sm:p-6 flex flex-col justify-between shadow-2xs"
             >

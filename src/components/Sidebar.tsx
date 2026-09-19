@@ -33,6 +33,7 @@ import { navigateTo } from '../lib/router';
 import { openCookieSettings } from '../lib/consent';
 import { getBugReportMailto } from '../lib/feedback';
 import { getCanonicalPath, getRouteCategory } from '../lib/resolveRoute';
+import { preloadRoute, idlePreloadRoutes } from '../lib/routePreload';
 
 interface SidebarProps {
   currentPath: string;
@@ -489,6 +490,8 @@ export const Sidebar = ({
               <a
                 key={cat.id}
                 href={cat.path}
+                onMouseEnter={() => preloadRoute(cat.path)}
+                onFocus={() => preloadRoute(cat.path)}
                 onClick={(e) => handleNav(e, cat.path)}
                 title={cat.title}
                 className={`size-9 mx-auto rounded-xl flex items-center justify-center transition-colors cursor-pointer ${
@@ -515,6 +518,13 @@ export const Sidebar = ({
                 {/* Clicking icon + title navigates to Level 1 hub page (shows all cards!) */}
                 <a
                   href={cat.path}
+                  onMouseEnter={() => {
+                    preloadRoute(cat.path);
+                    if (cat.children && cat.children.length > 0) {
+                      idlePreloadRoutes(cat.children.map((c) => c.path));
+                    }
+                  }}
+                  onFocus={() => preloadRoute(cat.path)}
                   onClick={(e) => handleLevel1Click(e, cat)}
                   className="flex-1 flex items-center gap-2.5 px-2.5 py-2 min-w-0 cursor-pointer"
                   title={`Open ${cat.title} overview`}
@@ -565,6 +575,8 @@ export const Sidebar = ({
                       <a
                         key={child.path}
                         href={child.path}
+                        onMouseEnter={() => preloadRoute(child.path)}
+                        onFocus={() => preloadRoute(child.path)}
                         onClick={(e) => handleNav(e, child.path)}
                         title={child.title}
                         className={`group flex items-center justify-between px-2 py-1.5 rounded-lg text-xs transition-all cursor-pointer ${
@@ -601,6 +613,8 @@ export const Sidebar = ({
           <div className="flex items-center justify-center gap-2 text-[11px] text-slate-400 px-1">
             <a
               href="/about"
+              onMouseEnter={() => preloadRoute('/about')}
+              onFocus={() => preloadRoute('/about')}
               onClick={(e) => handleNav(e, '/about')}
               className="hover:text-slate-600 hover:underline"
             >
@@ -617,6 +631,8 @@ export const Sidebar = ({
             <span>·</span>
             <a
               href="/privacy"
+              onMouseEnter={() => preloadRoute('/privacy')}
+              onFocus={() => preloadRoute('/privacy')}
               onClick={(e) => handleNav(e, '/privacy')}
               className="hover:text-slate-600 hover:underline"
             >
@@ -642,6 +658,8 @@ export const Sidebar = ({
             </a>
             <a
               href="/about"
+              onMouseEnter={() => preloadRoute('/about')}
+              onFocus={() => preloadRoute('/about')}
               onClick={(e) => handleNav(e, '/about')}
               className="size-8 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 flex items-center justify-center transition-colors"
               title="About & Privacy"

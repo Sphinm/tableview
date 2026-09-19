@@ -1,5 +1,6 @@
 import { ArrowRight, ShieldCheck, Zap, Video, Calculator, Database, Sparkles, Image as ImageIcon } from 'lucide-react';
 import { navigateTo } from '../lib/router';
+import { preloadRoute } from '../lib/routePreload';
 
 interface FinancialHeroProps {
   onExploreClick?: () => void;
@@ -44,6 +45,8 @@ export const FinancialHero = ({ onExploreClick }: FinancialHeroProps) => {
         <div className="flex flex-wrap items-center justify-center gap-3 mb-6">
           <button
             type="button"
+            onMouseEnter={() => preloadRoute('/video-compressor')}
+            onFocus={() => preloadRoute('/video-compressor')}
             onClick={() => navigateTo('/video-compressor')}
             className="px-6 py-3 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm hover:shadow active:scale-[0.99] transition-all cursor-pointer"
           >
@@ -54,6 +57,8 @@ export const FinancialHero = ({ onExploreClick }: FinancialHeroProps) => {
 
           <button
             type="button"
+            onMouseEnter={() => preloadRoute('/image-compressor')}
+            onFocus={() => preloadRoute('/image-compressor')}
             onClick={() => navigateTo('/image-compressor')}
             className="px-5 py-3 rounded-xl bg-white hover:bg-slate-50 text-slate-900 font-semibold text-sm flex items-center justify-center gap-2 border border-slate-200 shadow-xs active:scale-[0.99] transition-all cursor-pointer"
           >
@@ -73,6 +78,8 @@ export const FinancialHero = ({ onExploreClick }: FinancialHeroProps) => {
 
           <button
             type="button"
+            onMouseEnter={() => preloadRoute('/data-tools')}
+            onFocus={() => preloadRoute('/data-tools')}
             onClick={() => navigateTo('/data-tools')}
             className="px-5 py-3 rounded-xl bg-white hover:bg-slate-50 text-slate-900 font-semibold text-sm flex items-center justify-center gap-2 border border-slate-200 shadow-xs active:scale-[0.99] transition-all cursor-pointer"
           >
