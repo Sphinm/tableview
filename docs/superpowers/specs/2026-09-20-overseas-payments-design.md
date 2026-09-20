@@ -430,6 +430,108 @@ export async function openBillingPortal(): Promise<void>;
 
 ---
 
+### 6.9 Creem adapter 草图（P2 的具体落点）
+
+渠道已确定为 Creem，因此这里给出**第一个 adapter** 的形状。它是唯一需要写渠道相关代码的地方 —— 其余（权益、幂等、乱序、路由）都已交付且渠道无关。
+
+```ts
+// apps/finance/src/worker/adapters/creem.ts
+import type { PaymentProviderAdapter, NormalizedWebhookEvent } from '../billingWebhook';
+
+export const creemAdapter: PaymentProviderAdapter = {
+  id: 'creem',
+  // 官方签名头名称，取自 Creem webhook 文档（实施时以文档现值为准）
+  signatureHeader: 'creem-signature',
+
+  async verifySignature({ rawBody, headers, secret }) {
+    const provided = headers.get(this.signatureHeader);
+    if (!provided) return false;                 // 必须显式拒绝缺失
+    const key = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(secret),
+      { name: 'HMAC', hash: 'SHA-256' }, false, ['sign']
+    );
+    const mac = await crypto.subtle.sign('HMAC', key, new TextEncoder().encode(rawBody));
+    const expected = [...new Uint8Array(mac)]
+      .map((b) => b.toString(16).padStart(2, '0')).join('');
+    // 常量时间比较，避免逐字符泄露签名
+    return constantTimeEqual(expected, provided.trim().toLowerCase());
+  },
+
+  normalize({ rawBody }) {
+    const body = JSON.parse(rawBody) as {
+      id: string; eventType: string; created_at: number; object: any;
+    };
+    const occurredAt = Date.parse(body.created_at as any) || Date.now();
+
+    switch (body.eventType) {
+      case 'subscription.active':
+      case 'subscription.paid':
+      case 'subscription.canceled':
+      case 'subscription.past_due':
+      case 'subscription.trialing':
+        return {
+          providerEventId: body.id, type: 'subscription_upsert', occurredAt,
+          subscription: {
+            providerCustomerId: body.object.customer.id,
+            email: body.object.customer.email,
+            providerSubscriptionId: body.object.id,
+            providerPriceId: body.object.product ?? null,
+            status: body.eventType.split('.')[1],   // 原样存，归一化交给 entitlements.ts
+            currentPeriodEnd: Date.parse(body.object.current_period_end) || null,
+            cancelAtPeriodEnd: Boolean(body.object.cancel_at_period_end),
+          },
+        } as NormalizedWebhookEvent;
+
+      case 'checkout.completed': {
+        // 一次性购买：product 与自定义字段决定解锁哪个 deal
+        const meta = body.object.metadata ?? {};
+        if (meta.productKey !== 'deal_pass') return { providerEventId: body.id, type: 'ignore', occurredAt };
+        return {
+          providerEventId: body.id, type: 'purchase_upsert', occurredAt,
+          purchase: {
+            providerCustomerId: body.object.customer?.id ?? null,
+            email: body.object.customer?.email ?? null,
+            providerOrderId: body.object.order?.id ?? body.object.id,
+            productKey: 'deal_pass',
+            resourceId: meta.dealId ?? null,
+            amountMinor: Number(body.object.order?.amount ?? 0),
+            currency: (body.object.order?.currency ?? 'USD').toUpperCase(),
+          },
+        } as NormalizedWebhookEvent;
+      }
+
+      case 'refund.created':
+        return {
+          providerEventId: body.id, type: 'purchase_refund', occurredAt,
+          purchase: { providerOrderId: body.object.order?.id ?? body.object.id },
+        } as NormalizedWebhookEvent;
+
+      default:
+        // 已签名但与本集成无关 → 认领并忽略，避免渠道无限重试
+        return { providerEventId: body.id, type: 'ignore', occurredAt };
+    }
+  },
+};
+```
+
+**接入点**（`index.ts`，一处）：
+
+```ts
+if (url.pathname === '/api/billing/webhook/creem' && request.method === 'POST') {
+  return handleWebhookRequest(request, env, creemAdapter, { db: env.DB });
+}
+if (url.pathname === '/api/billing/checkout' && request.method === 'POST') {
+  // 需 JWT；priceId 由服务端商品表映射，绝不接受客户端传入
+  return handleCreateCheckout(request, env);
+}
+```
+
+> ⚠️ **实施时必须核对**：上表的**事件名**、**字段路径**与**签名算法/头部名**均为按 Creem 文档结构的**示意**，需以其**当前官方 webhook 文档与沙箱实际 payload** 为准。我未逐一核实这些字段名 —— 它们是 P2 的第一项工作，且应由**沙箱真实事件**驱动（§9 契约测试）。
+>
+> **注意**：`status` 我**原样存储** `eventType` 的后半段，而不是在这里映射 —— 归一化统一由 `entitlements.ts` 负责，这正是「渠道无关」的落点。
+
+---
+
 ## 7. 从现状迁移
 
 ### 7.1 必须先修的三处（与渠道无关）
@@ -571,8 +673,8 @@ export async function openBillingPortal(): Promise<void>;
 | **Webhook 单元** | 幂等、乱序、退款、失败可重试 —— 用内存 mock | ✅ 已具备（9 例） |
 | **Webhook 集成** | **加载真实 `0003_billing.sql` + 真实生产 SQL，在真实 SQLite 上跑** | ✅ 已具备（7 例）—— 这条用来防止「mock 以为 SQL 是这样」的假绿 |
 | **路由/安全** | 缺签名头、伪造签名、重复投递、未处理类型、处理失败、密钥缺失、以及**「验签失败时绝不解码」** | ✅ 已具备（13 例） |
-| **契约（待渠道定）** | 用渠道**沙箱**真实事件样本驱动；覆盖试用转正、退款事件形态 | ⏳ 待渠道确定 |
-| **E2E（待渠道定）** | 沙箱完成真实订阅 → `GET /api/entitlements` 变 pro → 取消 → 周期末收回 | ⏳ |
+| **契约** | 用 **Creem 沙箱**真实事件样本驱动；覆盖试用转正、退款事件形态 | ⏳ P2 时做 |
+| **E2E** | 沙箱完成真实订阅 → `GET /api/entitlements` 变 pro → 取消 → 周期末收回 | ⏳ P3 时做 |
 | **对账** | 定时用渠道 API 与 D1 比对，发现漏投递 | ⏳ |
 
 > **为什么要有「集成」这一层**：单元测试用的 mock 编码了作者**对 SQL 的信念**。若该信念有误（例如误判 `ON CONFLICT … WHERE` 的语义），单元测试会全绿而生产状态被写坏。集成测试用真实 SQLite 消除这个缺口。
