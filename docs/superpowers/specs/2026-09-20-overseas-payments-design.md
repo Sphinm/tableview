@@ -322,6 +322,63 @@ trialing ──▶ active ──(用户取消)──▶ active(cancel_at_period_
 
 ---
 
+### 6.8 客户端 / 服务端契约（TypeScript，可直接据此实施）
+
+**服务端**（`apps/finance/src/worker/`）：
+
+```ts
+// entitlements.ts —— 已交付 ✅
+export type EntitlementKey =
+  | 'unlimited_exports' | 'white_label_branding' | 'share_links'
+  | 'unlimited_scenarios' | 'pro_models';
+export interface EntitlementState {
+  plan: 'free' | 'pro';
+  keys: EntitlementKey[];
+  dealPasses: string[];
+  currentPeriodEnd?: number;
+  cancelAtPeriodEnd?: boolean;
+  source: 'subscription' | 'purchase' | 'none';
+}
+
+// billingRoute.ts —— 待实施（P2）
+// 注意：价格 id 的映射只存在于服务端，客户端只能传 productKey
+export async function handleCreateCheckout(req: Request, env: Env): Promise<Response>;
+export async function handleWebhook(req: Request, env: Env, provider: string): Promise<Response>;
+```
+
+**客户端**（替换现有的 `isPro = user?.plan === 'pro'`）：
+
+```ts
+// lib/useEntitlements.ts —— 待实施（P1/P4）
+export interface Entitlements {
+  plan: 'free' | 'pro';
+  keys: EntitlementKey[];
+  dealPasses: string[];
+  loading: boolean;
+}
+/** 唯一授权入口。组件不得再直接读 user.plan。 */
+export function useEntitlements(): Entitlements;
+export function hasEntitlement(e: Entitlements, key: EntitlementKey): boolean;
+export function hasDealPass(e: Entitlements, dealId: string): boolean;
+/** 跳转渠道结账；金额由服务端决定。 */
+export async function startCheckout(productKey: string, interval?: 'month' | 'year'): Promise<void>;
+/** 打开自助门户（取消/改卡/发票）。 */
+export async function openBillingPortal(): Promise<void>;
+```
+
+**迁移后的调用点改写**（共 5 处 `plan === 'pro'`）：
+
+| 文件 | 原判定 | 改为 |
+| :--- | :--- | :--- |
+| `PrintableMortgageReport.tsx:67` | `user?.plan === 'pro' && branding.enabled` | `hasEntitlement('white_label_branding')` |
+| `PrintableRefinanceReport.tsx:31` | 同上 | 同上 |
+| `SavedScenariosModal.tsx:56,75` | `isPro` / 免费上限 | `hasEntitlement('unlimited_scenarios')` |
+| `LenderReadyDossierModal.tsx:46,48` | `isPro \|\| purchasedDossiers.includes(dealId)` | `hasEntitlement('unlimited_exports') \|\| hasDealPass(dealId)` |
+| `ProBrandingModal.tsx:31` | `isPro` | `hasEntitlement('white_label_branding')` |
+| `FinanceHeader.tsx:470` | `user.plan === 'pro'` 徽标 | `hasEntitlement('pro_models')` 或 `plan === 'pro'`（仅展示） |
+
+---
+
 ## 7. 从现状迁移
 
 ### 7.1 必须先修的三处（与渠道无关）
@@ -349,6 +406,32 @@ trialing ──▶ active ──(用户取消)──▶ active(cancel_at_period_
 - 清除客户端 localStorage 键 `tableview_mock_user`（或忽略，让其自然过期）
 - `users` 表保留 `plan`/`credits` 列以兼容，但**授权改由 `billing_*` 派生**；可将 `users.plan` 降级为缓存字段或在后续迁移中废弃
 - `/api/credits/consume`：**要么接上，要么删除**（现为「看起来有计费」的假象）
+
+---
+
+### 7.4 逐文件改动清单（实施时按此勾选）
+
+**必须删除（自授权路径）**
+- [ ] `apps/finance/src/lib/authContext.tsx` — `upgradePlan` / `purchaseSinglePass` / `loginAsDemo` 的写入逻辑
+- [ ] `apps/finance/src/lib/authTypes.ts` — 对应接口声明
+- [ ] `LenderReadyDossierModal.tsx` — 「Secure checkout powered by Stripe」文案（线上 live）
+
+**必须新增**
+- [ ] `apps/finance/src/worker/entitlements.ts` ✅ 已交付
+- [ ] `apps/finance/src/worker/billingRoute.ts` — checkout / webhook / portal
+- [ ] `apps/finance/src/lib/useEntitlements.ts` — 客户端唯一授权入口
+- [ ] `apps/finance/src/worker/__tests__/billingWebhook.test.ts` — 验签 + 幂等 + 乱序
+- [ ] `apps/finance/migrations/0003_billing.sql` ✅ 已交付（本地已验证，**未上生产**）
+
+**必须修改**
+- [ ] `apps/finance/src/worker/index.ts` — 挂载 billing 路由；`Env` 增加渠道密钥与 webhook secret
+- [ ] `apps/finance/wrangler.jsonc` — 不提交密钥；用 `wrangler secret put`
+- [ ] `README` / 部署文档 — 记录 webhook URL 与密钥轮换步骤
+
+**待决策后再动**
+- [ ] `/api/credits/consume` 与 `consumeCredit` —— 接入或删除（§7.3）
+- [ ] 营销文案「100% free」（5 个文件）—— 取决于 §5.5 的 A/B 决策
+- [ ] `updateBranding` 服务端持久化（白标跨设备一致）
 
 ---
 
