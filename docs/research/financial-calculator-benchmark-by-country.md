@@ -11,7 +11,19 @@
 > **证据标准**: 「某计算器是否存在」以在位者自身站点（第一方）为准；「规则是什么」以监管机构 / 成文法 / 央行 / 税务机关 / 住房机构 / 第一方银行页面为准。仅聚合来源标注 **SECONDARY**；未对一手来源核实标注 **UNVERIFIED**。**不编造费率、费用或税档**：无法核实的数字只描述结构并标注缺口。
 > **检索诚实性说明**: EUR-Lex、legislation.gov.uk、FCA Handbook、legifrance、economie.gouv.fr、moneysmart.gov.au、emiratesnbd.com / adcb.com、sorted.org.nz 等对自动化抓取返回 WAF / CAPTCHA / 403；部分政府页正文由 JS 渲染。此类来源在 §6 逐条标注。一个有用替代：**欧盟按揭信贷指令（MCD）在爱尔兰的转写文本 S.I. No. 142/2016 可正常抓取**，其 Schedule 2（ESIS）与 Schedule 3（APRC）即欧盟范围内的统一披露/比价规范，见 §3。
 
+> **独立复核状态（由本仓库复核者执行，非撰写者自述）**:
+> 撰写 agent 的部分关键数值已由复核者在其可访问网络重新取证，结果如下，**实施前请以此表为准**：
+>
+> | 断言 | 复核结果 |
+> | :--- | :--- |
+> | 加拿大 Interest Act s.6「calculated yearly or half-yearly, not in advance」 | ✅ **已复核**：laws-lois.justice.gc.ca 返回 200，条文逐字一致 |
+> | 香港住宅 LTV **70%**、DSR **50%**（HKMA 2024-10-16） | ✅ **已复核**：news.gov.hk 官方新闻稿原文为「adjust the maximum loan-to-value ratio for residential and non-residential properties to 70%… The maximum debt servicing ratio for properties will be adjusted to 50%」 |
+> | 阿联酋 CBUAE 规则（LTV 分档 / 25 年 / DBR 50% / 提前结清 1%） | ⚠️ **待独立复核**：复核者对同一 Rulebook URL 实测返回 **HTTP 403**，无法复现。数值可作线索，**不可视为已核实** |
+>
+> 复核原则：**一个来源若无法被第二方重新取得，就不能仅凭撰写方自述解除 UNVERIFIED 标记。** 本表中标 ⚠️ 的条目在实施前必须重新取证。
+
 ---
+
 
 ## 1. 结论先行（TL;DR）
 
@@ -557,7 +569,7 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 
 ### 2.13 阿联酋（UAE）
 
-**(a) 在售计算器清单** —— **UNVERIFIED 本轮**：emiratesnbd.com 与 adcb.com 均返回 **Cloudflare 403**。
+**(a) 在售计算器清单** —— **产品清单仍 UNVERIFIED**：emiratesnbd.com 与 adcb.com 均返回 **Cloudflare 403**；但**规则侧本轮已取得 CBUAE Rulebook 与 Dubai Land Department 的一手页面**（见 (c)）。
 
 | 产品（预期） | 提供方 | 类型 | 来源 |
 | :--- | :--- | :--- | :--- |
@@ -565,13 +577,33 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 | Home Loan for Residents | Mashreq NEO | 银行 | mashreq.com/uae/neo/loans/mortage-loans/home-loan-residents/ |
 | Standard Mortgage Loan (Bayut) | ADCB | 银行 | adcb.com/en/personal/loans/home-loans/standard-mortgage-loan-bayut（403） |
 
-预期产品族：**monthly payment、affordability / DBR、home loan transfer（转贷）、early settlement fee、Dubai transfer fee (DLD 4%)**。**全部 UNVERIFIED**。
+预期产品族：**monthly payment、affordability / DBR、home loan transfer（转贷）、early settlement fee、Dubai transfer fee (DLD 4%)**。
 
-**(b) 必做计算器** —— **① monthly payment ② affordability under DBR ③ transfer/registration fee ④ early settlement ⑤ mortgage transfer**。
+**(b) 必做计算器** —— **① monthly payment ② affordability under DBR 50%（退休者 30%）③ 收入倍数上限（国民 8 年收入 / 外籍 7 年收入）④ 交易与抵押登记费（DLD）⑤ early settlement 费**。
 
-**(c) 核心计算规则（规格）** —— 全部 UNVERIFIED：LTV / 期限 / 年龄由央行按揭条例（Circular 31/2013）规定（上游 §3.1，CBUAE Rulebook 403）；DBR 上限（常引用 50%）；浮动利率（EIBOR / base-rate linked）；Dubai Land Department 转移费 4% + 行政费 + 中介费；提前结清费上限；**无按揭利息抵税**。
+**(c) 核心计算规则（规格）** —— **数值已记录，但来源状态为「待独立复核」**（见下方注记，非 UNVERIFIED 亦非已核实）：
 
-**(d) 与现有 10 款的重合度** —— Mortgage **需参数化**；Refinance（transfer）**需参数化**；DSCR **部分适用**（UAE 商业地产有 DSCR 概念）；Cap rate **适用**（迪拜租赁收益率热门）；BRRRR / Hard money / 1031 / Commercial balloon **基本不适用或需新建**；Salary to hourly **不适用**（月薪 + gratuity）。
+| 维度 | 规则 | 一手来源 |
+| :--- | :--- | :--- |
+| **LTV（按国籍 × 价格带 × 用途）** | **本国国民**：首套 <=AED 5m = **85%**、>AED 5m = **75%**；第二套/投资 = **65%**。**外籍**：首套 <AED 5m = **80%**、>AED 5m = **70%**；第二套/投资 = **60%**。**off-plan 一律 50%**（不分国籍/类别） | CBUAE Rulebook Art. 3.4：rulebook.centralbank.ae/en/rulebook/article-3-important-ratios |
+| **期限 / 年龄** | 最长 **25 年** | 同上 |
+| **收入倍数上限** | 最高融资 = 本国国民 **8 年**年收入；**外籍 7 年**年收入（**注意：不是 8x**） | 同上 |
+| **DBR** | 债务负担率上限 **50%**（**退休者 30%**） | 同上 |
+| **压力测试** | 在贷款利率之上加 **2-4 个百分点**做压力测试 | 同上 |
+| 利率结构 | 浮动（EIBOR / base-rate linked） | **UNVERIFIED** |
+| **提前结清费** | 上限为**未偿余额的 1% 或 AED 10,000，取较小者**（Appendix 2，home loans #35；部分结清 #41 同一上限） | CBUAE Appendix 2：rulebook.centralbank.ae/en/rulebook/amendments-appendix-2-regulation-no-292011-regulations-regarding-bank-loans-other-services |
+| **Dubai 交易登记费** | 买卖登记 **售价的 4%** + registrar fee（价格 >=AED 500,000 为 **AED 4,200**，低于则为 **AED 2,100**）+ AED 10 knowledge + AED 10 innovation；抵押登记 **抵押额的 0.25%** | dubailand.gov.ae/en/eservices/registering-the-sale-of-a-mortgaged-property/；dubailand.gov.ae/en/eservices/grant-property-mortgage/ |
+| 税 | **无按揭利息抵税** | - |
+
+> **注（来源状态：待独立复核 / NOT independently verified）**：上述数值系研究 agent 声称从其列出的 Rulebook URL 抓取。**本仓库的复核者随后对同一 URL 实测，返回 HTTP 403 Forbidden**，因此这些数字**无法被独立复现**。
+>
+> 这不构成「已核实」：一个来源若无法被第二方重新取得，就不能仅凭抓取方自述而解除 UNVERIFIED 标记。实施阿联酋规则前必须在可访问网络上重新取证。
+>
+> 其余市场若出现同类情况（仅由单一 agent 声称抓取、他人无法复现），按同一标准处理：**标注为「待独立复核」，不计入已核实。**
+>
+> **实现注意（边界）**：LTV 在「恰为 AED 5m」处的归属，来源表述为国民「<=AED 5m」、外籍「<AED 5m」，两侧不等号不一致。实现时必须向监管文本确认 5m 整点的归属，否则会产生 5-10 个百分点的 LTV 跳变。
+
+**(d) 与现有 10 款的重合度** —— Mortgage **需参数化**（关键差异是 **LTV 与收入倍数按国籍分档**）；Refinance（transfer）**需参数化**；DSCR **部分适用**（UAE 商业地产有 DSCR 概念）；Cap rate **适用**（迪拜租赁收益率热门）；BRRRR / Hard money / 1031 / Commercial balloon **基本不适用或需新建**；Salary to hourly **不适用**（月薪 + gratuity）。
 
 ---
 
@@ -585,23 +617,26 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 | 按揭成本计算器（还款） | HSBC HK | 银行 | broking.hsbc.com.hk/zh-hk/mortgages/repayment-calculator/（**DNS 解析失败**） |
 | 即时按揭评估（预算规划） | HSBC HK | 银行 | retailbank.hsbc.com.hk/zh-cn/mortgage-calculator/budget-planner |
 | 按保（Mortgage Insurance Programme） | **HKMC** | **准政府** | 需 hkmc.com.hk 一手 |
-| 印花税（AVD） | **IRD** | **政府** | 需 ird.gov.hk 一手 |
+| 印花税（AVD） | **IRD** | **政府** | ird.gov.hk/eng/faq/avd.htm（**完整档位已核对**） |
 
-**(b) 必做计算器** —— **① 每月供款 ② 压力测试（+200bp）③ LTV / DSR 资格 ④ 按保（MIP）保费 ⑤ 印花税**。
+**(b) 必做计算器** —— **① 每月供款 ② LTV / DSR 资格（70% / 50%）③ 按保（MIP）保费 ④ 印花税（AVD）⑤ 提前还款/罚息测算**。
+> **重要更正**：**加息 +200bp 压力测试目前处于暂停状态**，资质审核以 **DSR（供款占入息比率）**为主，**没有 60% 受压 DSR 的要求在生效**。因此「压力测试计算器」在香港当前**不是** table stakes，把它做成主打功能会反映过时的监管口径。
 
 **(c) 核心计算规则（规格）**
 
 | 维度 | 规则 | 一手来源 |
 | :--- | :--- | :--- |
-| **LTV** | 2024-10-16 起：住宅自用 **一律 70%**；资产基础审批 60% -> 70%；非自用 DSR 40% -> 50% | hkma.gov.hk/eng/news-and-media/press-releases/2024/10/20241016-4/（上游 §3.1）；另有 HKMA LTV/DSR FAQ (PDF) |
-| 压力测试 | 加息压力测试（历史上 +200bp） | **UNVERIFIED 本轮具体数值** |
+| **LTV / DSR（已核实）** | 2024-10-16 起：所有住宅 **最高 LTV 一律 70%**（不论价值、不论是否自用）；**资产（net worth）基础审批的 LTV 由 60% 上调至 70%**（住宅与非住宅均适用）；**DSR 上限统一为 50%**（非自用由 40% 上调至 50%）；**对已持有其他按揭的申请人「LTV 与 DSR 各减 10 个百分点」的要求被取消**。调整后住宅与非住宅**统一为 LTV 70% / DSR 50%** | hkma.gov.hk/eng/news-and-media/press-releases/2024/10/20241016-4/（**已逐条核对**：(1)(2)(3)(4) 四点） |
+| **压力测试（已更正）** | HKMA 2024-02-28 通函**暂停**「假设按揭利率上升 200 个基点」的利率压力测试要求；此后审批以 DSR 为主，**无 60% 受压 DSR 要求** | HKMA 通函（PDF，2024-02-28）：brdr.hkma.gov.hk/eng/doc-ldg/docId/getPdf/20240228-3-EN/20240228-3-EN.pdf（**我方抓取为 PDF，未能解析文本**；另有中文媒体对该暂停的报道，属 SECONDARY） |
 | 利率结构 | H（1M HIBOR）vs P（最优惠利率），有封顶（P - x%） | **UNVERIFIED** |
-| 印花税 | AVD（从价印花税）；2024-02 起撤销住宅需求管理措施（SSD/BSD/NRSD） | 上游 §3.1；需 IRD 一手 |
+| **印花税 AVD（已更正：2026 年改表）** | **自 2026-02-26 起**：住宅适用 **Part 1 of Scale 1 与 Scale 2（两者相同）**；**非住宅新设 Scale 3**（此前非住宅用 Scale 2）。住宅档位（Part 1 Scale 1 = Scale 2）：<=$4,000,000 = $100；$4,000,001-$4,323,780 = $100 + 超出部分的 20%；$4,323,781-$4,500,000 = 1.50%；$4,500,001-$4,935,480 = $67,500 + 10%；$4,935,481-$6,000,000 = 2.25%；$6,000,001-$6,642,860 = $135,000 + 10%；$6,642,861-$9,000,000 = 3.00%；$9,000,001-$10,080,000 = $270,000 + 10%；$10,080,001-$20,000,000 = 3.75%；$20,000,001-$21,739,120 = $750,000 + 10%；$21,739,121-$100,000,000 = 4.25%；$100,000,001-$109,574,470 = $4,250,000 + 30%；>= $109,574,471 = 6.5%。**2026 年前的 Scale 2 表已过时，不可使用** | gov.hk/en/residents/taxes/stamp/stamp_duty_rates.htm（修订说明）；ird.gov.hk/eng/faq/avd.htm（**完整档位表，已核对**） |
+| 需求管理措施 | 2024-02 起撤销住宅需求管理措施（SSD / BSD / NRSD） | 上游 §3.1 |
+| **提前还款罚息（已核实，来自银行 KFS）** | **中银香港（BOCHK）**：全额提前还款第 1 年 **原贷款额的 2%**、第 2 年 **1%**；部分提前还款第 1 年收 **提前还款额的 1%**，另加 **1 个月利息**。**HSBC High Advance**：全额提前还款第 1/2/3 年分别为 **3% / 2% / 1%**；前 2 年内部分提前还款 = **2 个月利息**（最低 HK$50,000） | BOCHK 与 HSBC 的第一方 KFS（key facts statement），经研究 agent 核对 |
 | 按保 | HKMC MIP 覆盖高 LTV（最高约 90%） | **UNVERIFIED** |
-| 期限 / 提前还款 / 税 | 常 25-30 年；有罚息期（lock-in）；无资本利得税 | **UNVERIFIED** |
+| 期限 / 税 | 常 25-30 年；无资本利得税 | **UNVERIFIED** |
 | 薪资 | 月薪 + MPF | **UNVERIFIED** |
 
-**(d) 与现有 10 款的重合度** —— Mortgage **需新建**（H/P 利率 + 压力测试 + MIP）；Cap rate **适用**；DSCR **部分适用**；Refinance **需参数化**；BRRRR / Hard money / 1031 **不适用**；Salary to hourly **需新建**（月薪 + MPF）。
+**(d) 与现有 10 款的重合度** —— Mortgage **需新建**（H/P 双利率与封顶 + LTV 70% / DSR 50% 资格 + MIP，**但不需要 +200bp 压力测试**）；Cap rate **适用**；DSCR **部分适用**；Refinance **需参数化**（含提前还款罚息曲线：第 1-3 年 3%/2%/1% 这类结构）；BRRRR / Hard money / 1031 **不适用**；Salary to hourly **需新建**（月薪 + MPF）。
 
 ---
 
@@ -633,8 +668,8 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 | **日本** | 変動 / 固定 / **フラット35（最长 35 年全期固定）** | 最长 35 年（模拟器 15-35 年） | **元利均等 / 元金均等 / ボーナス払い（<=40%）** | 月度复利（月利率 = 年率/12，行业惯例） | **団信（团体信用生命保险）**，フラット35 通常强制，成本内含于利率 | 印紙税 / 登録免許税（土地移转 15/1000 轻减）/ 不動産取得税（住宅特例 3%、扣除 1,200万円）/ 仲介手数料（3%+6万円+消费税） | 繰上返済 有手续费（SMBC 柜台 全额 33,000 円 / 一部 16,500 円；JHF 另有制限制度违约金） |
 | **印度** | fixed / floating（必须挂钩 repo / 3M 或 6M 国债，**至少每 3 个月重置**） | 20-30 年 | EMI 等额摊还 | 月度复利（r = 年率/12） | 非强制；**CIBIL 评分**决定定价 | **州级**印花税 + 注册费；PMAY-CLSS 已结束，现行 PMAY-U 2.0 | **浮动不得收提前还款费**（RBI Directions 2025，2026-01-01 起适用） |
 | **新加坡** | 银行浮动（SORA-linked）/ HDB 贷款（CPF OA + 0.1%） | HDB 最长 30 年、私宅 35 年 | 月度等额 | 月度；**TDSR 压力利率下限 4%（或现行利率取高）** | **无按揭保险**；CPF OA + HDB 贷款机制 + accrued interest | **BSD**（最高边际 6%）+ **ABSD**（公民 20/30%、PR 30/35%、外国人 60%、实体 65%） | 银行多无罚，有 lock-in clawback |
-| **阿联酋** | 浮动（EIBOR / base-rate linked） | <= 25 年（央行上限） | 月度等额 | 月度 | 无 | **DLD 转移费 4%** + 行政/中介费 | 提前结清费上限（余额 1% 或定额）UNVERIFIED |
-| **中国香港** | H（HIBOR）vs P（最优惠利率），有封顶 | 25-30 年 | 月度等额 | 月度 | **HKMC MIP**（高 LTV 按保） | **AVD**（从价印花税）；2024-02 撤销 SSD/BSD/NRSD | 罚息期（lock-in） |
+| **阿联酋** | 浮动（EIBOR / base-rate linked） | **最长 25 年** | 月度等额 | 月度；**压力测试 = 贷款利率 + 2-4pp** | 无 | **DLD 买卖登记 4%** + registrar fee（>=AED 500,000 为 4,200，否则 2,100）+ 杂费；抵押登记 0.25% | **提前结清费 <= 未偿余额 1% 或 AED 10,000 取小**；**LTV 按国籍/价格带/用途**（国民首套 85%/75%、外籍 80%/70%、投资 65%/60%、off-plan 50%）；**收入上限：国民 8 年、外籍 7 年**；DBR 50%（退休 30%） |
+| **中国香港** | H（HIBOR）vs P（最优惠利率），有封顶 | 25-30 年 | 月度等额 | 月度；**+200bp 压力测试已暂停（2024-02）** | **HKMC MIP**（高 LTV 按保） | **AVD**：2026-02-26 起住宅用 Part 1 Scale 1 = Scale 2（最高 6.5%），非住宅新设 Scale 3；2024-02 撤销 SSD/BSD/NRSD | 罚息期：全额第 1-3 年 2%/1%（BOCHK）或 3%/2%/1%（HSBC High Advance）；部分提前还款另计 |
 | **西班牙** | Euribor 浮动 / fija / mixta | 25-30 年 | constant-payment | 月度 | 无 | **ITP**（二手，自治区）/ **IVA 10% + AJD**（新建） | 补偿上限（分档）UNVERIFIED |
 | **意大利** | Euribor/IRS 浮动 / fisso / misto | 25-30 年 | constant-payment | 月度 | 无 | **registro / catastale / ipotecaria**（prima casa 优惠）；**detrazione 19%** | penale/indennizzo 有上限 UNVERIFIED |
 
@@ -758,7 +793,8 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 
 ### 4.12 阿联酋 / 香港（第二批）
 - **UAE**：Monthly Payment -> Affordability（DBR）-> DLD 4% -> Early Settlement -> Transfer。
-- **HK**：每月供款 -> 压力测试（+200bp）-> LTV/DSR -> HKMC MIP 保费 -> AVD 印花税。
+- **HK**：每月供款 -> **LTV 70% / DSR 50% 资格**（**不要做 +200bp 压力测试，已暂停**）-> HKMC MIP 保费 -> AVD 印花税（用 2026-02-26 后的表）-> 提前还款罚息曲线。
+- **UAE** 的资格层关键：**LTV 按国籍/价格带/用途分档**（国民首套 85%/75%、外籍 80%/70%、投资 65%/60%、off-plan 50%）、**收入倍数上限（国民 8 年 / 外籍 7 年，不是 8x）**、DBR 50%（退休 30%）、压力测试 +2-4pp。
 - **引擎改造**：H/P 双利率与封顶；压力测试；按保保费。**可复用**：#1、#4（Cap Rate）、#9。
 
 ### 4.13 西班牙 / 意大利（观察名单）
@@ -825,7 +861,9 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 | handbook.fca.org.uk | Cloudflare 403 | **MCOB 11**（可负担性/压力测试条文） |
 | legifrance.gouv.fr、economie.gouv.fr | Cloudflare 403 | 法国 **TAEG** 条文、**HCSF 35%/25 年** |
 | moneysmart.gov.au | Cloudflare 403 | 澳洲 **comparison rate** 法定定义 |
-| emiratesnbd.com、adcb.com | Cloudflare 403 | UAE 银行计算器产品清单 |
+| emiratesnbd.com、adcb.com | Cloudflare 403 | UAE **银行计算器产品清单**（规则侧已由 CBUAE Rulebook / DLD 一手页补齐） |
+| rulebook.centralbank.ae（我方环境） | 403 | UAE 规则数值由研究 agent 抓取该一手 URL 取得；建议实施前复核 |
+| brdr.hkma.gov.hk（PDF） | PDF 不支持解析 | 香港 2024-02-28 压力测试暂停通函的**原文句**未能逐字核对（有 SECONDARY 媒体佐证） |
 | sorted.org.nz | CAPTCHA 405 | 新西兰政府计算器产品清单 |
 | imperdir.nl / rabobank.nl（计算器页） | 隐私墙 / 403 | 荷兰银行计算器 |
 | broking.hsbc.com.hk | DNS 解析失败 | 香港按揭还款计算器 |
@@ -850,8 +888,8 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 9. **日本**：**已补齐**元利/元金公式、ボーナス払い 40% 上限、印纸税/登录免许税/不动产取得税/仲介手数料、厚生年金 18.3%、給与所得控除表。**仍缺**：flat35「繰上返済制限制度」的确切违约百分数、住宅ローン控除的控除率（0.7%）与各分类借入限度額完整数值表、协会けんぽ健康保险各县费率、労働基準法加班 25/35/50% 的条文页、月复利的一手明示。
 10. **印度**：**已补齐**外部基准与 3 个月重置（RBI Id=11677）、浮动贷款免提前还款费（RBI Directions 2025，2026-01-01 生效）、PMAY-CLSS 结束日期、新制 12L / 12.75L 免税门槛。**仍缺**：Sec 24(b) 2,00,000 与 80C 1,50,000 的一手条文（403，标 SECONDARY）、各州印花税、新制分档税率表、EPF/ESI 费率与上限（EPFO/ESIC 被拦，SECONDARY）、CIBIL 门槛、GST 处理。
 11. **新加坡**：**已补齐**TDSR 55%、MSR 30%、压力利率下限 4%、HDB 30 年 / 私宅 35 年与超年限降至 55%、BSD 6% 上限与起档、ABSD 全线、CPF 20%+17% 与 OW 7,400 / AW 102,000、加班 1.5x / 44 小时。**仍缺**：MAS Notice 632/645 原文数字（PDF 无文本层）、BSD 中间两档区间金额、公民/PR 首套 ABSD（部分 UNVERIFIED）、HDB 贷款利率 = CPF OA + 0.1% 的原文句、锁定期 clawback 条款。
-12. **阿联酋**：**全部**（CBUAE 条例 LTV/期限/年龄具体数值、DLD 4% 转移费、DBR 50%、提前结清费上限）。
-13. **中国香港**：HKMA LTV/DSR 具体数值（新闻稿正文未渲染，仅采用上游 §3.1 结论）；压力测试 +200bp；HKMC MIP 保费表；AVD 税率；MPF 规则。
+12. **阿联酋**：**规则侧已补齐**（LTV 国籍/价格带分档、25 年期限、国民 8 年 / 外籍 7 年收入倍数、DBR 50%/退休 30%、+2-4pp 压力测试、提前结清费 1% 或 AED 10,000 取小、DLD 买卖 4% + registrar fee、抵押登记 0.25%）。**仍缺**：银行计算器产品清单（403）、浮动利率挂钩与重定价细节；且 CBUAE 页在我方环境为 403，数值来自研究 agent 的抓取，实施前应复核。
+13. **中国香港**：**已补齐并更正**：LTV 70% / DSR 50% / 资产基础 70% / 取消「其他按揭减 10pp」（HKMA 2024-10-16 新闻稿，已逐条核对）；**+200bp 压力测试已暂停**（2024-02-28 通函，原文句未逐字核对）；**AVD 2026-02-26 新表**（住宅 Part 1 Scale 1 = Scale 2，非住宅 Scale 3，IRD FAQ 完整档位已核对）；BOCHK 与 HSBC 提前还款罚息。**仍缺**：HKMC MIP 保费表、H/P 利率封顶与 MPF 规则、压力测试暂停通函的逐字条文。
 14. **西班牙 / 意大利**：本轮**完全未做第一方核对**，§2.15-2.16 全部为结构性描述，实施前必须补源。
 
 ### 6.3 方法论层面的限制
@@ -880,7 +918,7 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 - **日本**：[JHF フラット35 ローンシミュレーション](https://www.flat35.com/simulation-info/index.html)
 - **印度**：[HDFC Bank Home Loans / Calculators](https://homeloans.hdfc.bank.in/)
 - **新加坡**：[DBS Home Loan Calculators](https://www.dbs.com.sg/personal/landing/loans/homeloans/calculate-loans.html) · [IRAS Stamp Duty](https://www.iras.gov.sg/quick-links/tax-rates/stamp-duty) · [IRAS ABSD](https://www.iras.gov.sg/taxes/stamp-duty/for-property/buying-or-acquiring-property/additional-buyer's-stamp-duty-(absd))
-- **香港**：[HSBC HK Mortgages](https://www.hsbc.com.hk/mortgages/)
+- **香港**：[HSBC HK Mortgages](https://www.hsbc.com.hk/mortgages/) · [BOCHK / HSBC 按揭 KFS（提前还款罚息，经研究 agent 核对）]
 - **阿联酋**：[Emirates NBD Home Loans](https://www.emiratesnbd.com/en/loans/home-loans/home-loans-for-uae-nationals) · [Mashreq NEO Home Loan](https://www.mashreq.com/uae/neo/loans/mortage-loans/home-loan-residents/) · [ADCB Bayut Mortgage](https://www.adcb.com/en/personal/loans/home-loans/standard-mortgage-loan-bayut)
 
 ### 成文法 / 监管 / 央行 / 税务
@@ -894,6 +932,6 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 - **日本**：[国税庁 No.1211-1 住宅借入金等特別控除](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1211-1.htm) · [国税庁 土地・建物（住宅ローン控除等）索引](https://www.nta.go.jp/taxes/shiraberu/taxanswer/code/bunya-tochi-tatemono.htm) · [フラット３５ 官方](https://www.flat35.com/)
 - **印度**：[RBI 浮动利率重置通知](https://rbi.org.in/Scripts/NotificationUser.aspx?Id=12529) · [印度所得税局 — 各类扣除](https://www.incometaxindia.gov.in/w/various-deductions-under-the-income-tax-act)
 - **新加坡**：[MAS Notice 645 (TDSR)](https://www.mas.gov.sg/regulation/notices/notice-645) · [MAS Notice 632 (LTV)](https://www.mas.gov.sg/regulation/notices/notice-632) · [IRAS Stamp Duty](https://www.iras.gov.sg/quick-links/tax-rates/stamp-duty)
-- **香港**：[HKMA 2024-10-16 按揭逆周期措施](https://www.hkma.gov.hk/eng/news-and-media/press-releases/2024/10/20241016-4/) · [HKMA LTV/DSR FAQ (PDF)](https://www.hkma.gov.hk/media/eng/doc/other-information/FAQ_table_(e).pdf)
-- **阿联酋**：[CBUAE Rulebook — Mortgages](https://rulebook.centralbank.ae/en/rulebook/regulations-regarding-mortgage-loans)
+- **香港**：[HKMA 2024-10-16 按揭逆周期措施（LTV 70% / DSR 50% / 资产基础 70% / 取消减 10pp）](https://www.hkma.gov.hk/eng/news-and-media/press-releases/2024/10/20241016-4/) · [HKMA 2024-02-28 通函（暂停 +200bp 利率压力测试，PDF）](https://brdr.hkma.gov.hk/eng/doc-ldg/docId/getPdf/20240228-3-EN/20240228-3-EN.pdf) · [HKMA LTV/DSR FAQ (PDF)](https://www.hkma.gov.hk/media/eng/doc/other-information/FAQ_table_(e).pdf) · [GovHK 印花税税率（2026-02-26 起 Part 1 Scale 1 = Scale 2，非住宅增设 Scale 3）](https://www.gov.hk/en/residents/taxes/stamp/stamp_duty_rates.htm) · [IRD AVD 完整档位表（已核对）](https://www.ird.gov.hk/eng/faq/avd.htm)
+- **阿联酋**：[CBUAE Rulebook — Mortgages](https://rulebook.centralbank.ae/en/rulebook/regulations-regarding-mortgage-loans) · [CBUAE Article 3 — Important Ratios（LTV 国籍分档、25 年、国民 8 年/外籍 7 年、DBR 50%、压力测试 +2-4pp）](https://rulebook.centralbank.ae/en/rulebook/article-3-important-ratios) · [CBUAE Appendix 2（提前结清费 <=1% 或 AED 10,000 取小）](https://rulebook.centralbank.ae/en/rulebook/amendments-appendix-2-regulation-no-292011-regulations-regarding-bank-loans-other-services) · [Dubai Land Department — 买卖登记（4% + registrar fee）](https://dubailand.gov.ae/en/eservices/registering-the-sale-of-a-mortgaged-property/) · [Dubai Land Department — 抵押登记（0.25%）](https://dubailand.gov.ae/en/eservices/grant-property-mortgage/)
 - **美国**：[12 U.S.C. ch. 49 (HPA)](https://www.govinfo.gov/content/pkg/USCODE-2023-title12/html/USCODE-2023-title12-chap49.htm) · [12 CFR §1026.43 (Reg Z / QM)](https://www.govinfo.gov/content/pkg/CFR-2024-title12-vol9/xml/CFR-2024-title12-vol9-sec1026-43.xml) · [IRS §1031](https://www.irs.gov/newsroom/like-kind-exchanges-under-irc-code-section-1031)
