@@ -8,7 +8,9 @@ export interface BugReportContext {
   errorMessage?: string;
 }
 
-const SUBJECT = '[TableView Underwriting] Calculation Issue / Feedback';
+// Stays in step with the body below, which is a general feedback note rather
+// than a calculation dispute. A mismatch here reads as a mis-filed message.
+const SUBJECT = '[TableView] Feedback';
 
 export function getBugReportTemplate(ctx?: BugReportContext): string {
   const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://tableview.dev';
