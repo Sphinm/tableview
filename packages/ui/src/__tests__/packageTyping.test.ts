@@ -71,3 +71,83 @@ describe('Workspace package typing', () => {
     expect(offenders).toEqual([]);
   });
 });
+
+function collectSource(dir: string, out: string[] = []): string[] {
+  if (!fs.existsSync(dir)) return out;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name === '__tests__' || entry.name === 'node_modules' || entry.name === 'dist') continue;
+      collectSource(full, out);
+    } else if (/\.(ts|tsx)$/.test(entry.name)) {
+      out.push(full);
+    }
+  }
+  return out;
+}
+
+const barePackageName = (spec: string): string => {
+  const parts = spec.split('/');
+  return spec.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
+};
+
+/**
+ * Every bare import must be declared by the workspace that uses it.
+ *
+ * Two dependencies were declared in the wrong app and only worked because a
+ * stale hoisted copy sat in the repo root: `xlsx` was declared by apps/tools
+ * but imported by nine files in apps/finance, and `jszip` was declared by
+ * apps/tools but imported by apps/compressor. A clean clone could resolve
+ * neither, so the production build failed with TS2307 — invisible locally,
+ * fatal on Cloudflare.
+ *
+ * This mirrors what a fresh `bun install` provides, so the failure surfaces in
+ * the test suite instead of during a deploy.
+ */
+describe('Workspace dependency declarations', () => {
+  const workspaces = [
+    'apps/finance',
+    'apps/tools',
+    'apps/compressor',
+    'packages/ui',
+    'packages/shared',
+  ];
+
+  it('declares every bare import used by each workspace', () => {
+    const offenders: string[] = [];
+
+    for (const ws of workspaces) {
+      const pkgPath = path.join(repoRoot, ws, 'package.json');
+      if (!fs.existsSync(pkgPath)) continue;
+
+      const pkg = JSON.parse(fs.readFileSync(pkgPath, 'utf8')) as Record<string, Record<string, string>>;
+      const declared = new Set([
+        ...Object.keys(pkg.dependencies ?? {}),
+        ...Object.keys(pkg.peerDependencies ?? {}),
+        ...Object.keys(pkg.devDependencies ?? {}),
+      ]);
+
+      const used = new Map<string, string>();
+      for (const file of collectSource(path.join(repoRoot, ws, 'src'))) {
+        const source = fs.readFileSync(file, 'utf8');
+        for (const match of source.matchAll(/(?:from\s+|import\s*\(|require\()\s*['"]([^'"]+)['"]/g)) {
+          const spec = match[1];
+          if (spec.startsWith('.') || spec.startsWith('/') || spec.startsWith('node:')) continue;
+          const name = barePackageName(spec);
+          // Workspace packages are linked by the package manager, not declared
+          // as third-party dependencies here.
+          if (name.startsWith('@tableview/')) continue;
+          // A template placeholder such as `${table}` inside a string literal.
+          if (name.includes('$') || name.includes('{')) continue;
+          if (!used.has(name)) used.set(name, path.relative(repoRoot, file));
+        }
+      }
+
+      for (const [name, firstUse] of used) {
+        if (!declared.has(name)) offenders.push(`${ws}: imports '${name}' (first at ${firstUse}) but does not declare it`);
+      }
+    }
+
+    expect(offenders).toEqual([]);
+  });
+});

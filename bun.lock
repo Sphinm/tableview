@@ -20,6 +20,7 @@
         "@tableview/shared": "workspace:*",
         "@tableview/ui": "workspace:*",
         "clsx": "^2.1.1",
+        "jszip": "^3.10.2",
         "lucide-react": "^1.41.0",
         "react": "^19.2.8",
         "react-dom": "^19.2.8",
@@ -50,6 +51,7 @@
         "react": "^19.2.8",
         "react-dom": "^19.2.8",
         "tailwind-merge": "^3.6.0",
+        "xlsx": "^0.18.5",
       },
       "devDependencies": {
         "@cloudflare/workers-types": "^5.20260915.1",
