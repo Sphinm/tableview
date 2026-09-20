@@ -5,6 +5,22 @@
 	"observability": {
 		"enabled": true
 	},
+	/*
+	 * Bind the production hostname to this Worker.
+	 *
+	 * The other two apps serve fine without an explicit route because their
+	 * custom domains were attached in the dashboard at some point. This one
+	 * never was, so the Worker deployed successfully but had no DNS record:
+	 * compress.tableview.dev did not resolve on 1.1.1.1, 8.8.8.8 or 9.9.9.9
+	 * while the code was live. Declaring the domain here makes the binding part
+	 * of the repository, so a fresh setup cannot silently miss it again.
+	 */
+	"routes": [
+		{
+			"pattern": "compress.tableview.dev",
+			"custom_domain": true
+		}
+	],
 	"assets": {
 		"directory": "./dist",
 		"not_found_handling": "single-page-application"
