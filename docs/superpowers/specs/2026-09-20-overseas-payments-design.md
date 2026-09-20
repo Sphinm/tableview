@@ -789,5 +789,23 @@ if (url.pathname === '/api/billing/checkout' && request.method === 'POST') {
 | `apps/finance/src/worker/billingWebhookRoute.ts` | ✅ HTTP 入口：**先验签、后处理**；含 `constantTimeEqual`；响应码语义化 |
 | `apps/finance/migrations/0003_billing.sql` | ✅ 4 表 + 幂等账本 + **`last_event_at` 乱序守卫**；**本地已验证，未应用到线上** |
 | 测试 | ✅ **44 例**：权益 15 + webhook 单元 9 + **真实 SQLite 集成 7** + 路由安全 13 |
-| `docs/research/digital-sales-tax-and-consumer-law.md` | ✅ 已交付（66 个一手来源；税门槛/消费者法/PCI/GDPR） |
-| `docs/research/overseas-payment-provider-options.md` | ⚠️ **未交付**（agent 两次空转）。其最重要的部分已由 §3.4 的「15 分钟开户实验」替代；**精确费率仍待官方页核实** |
+| `docs/research/digital-sales-tax-and-consumer-law.md` | ✅ 已交付（66 个一手来源；税门槛/消费者法/PCI/GDPR），并附**我的独立复核台账**（欧盟门槛已用欧委会 PDF 原文验证） |
+| `docs/research/overseas-payment-provider-options.md` | ⚠️ **未交付** —— 负责该任务的 agent **失败**。但其**关键发现（Creem 支持中国大陆）已由我亲自核实并写入 §3.4**，因此选型不被阻塞；仅 **Paddle 的资格与费率**仍待你按 §3.4 实验确认 |
+
+### 13.1 与任务目标的对照
+
+| 目标要求 | 覆盖位置 |
+| :--- | :--- |
+| 完整方案 | 全文 13 节，793 行 |
+| 能否收款 / 资格 | §3（✅ 已解决：Creem） |
+| 选哪家、为什么 | §4（含 ✅/⏳/❓ 标注的对比表） |
+| 卖什么、怎么定价 | §5（含**含税价展示**合规要求） |
+| 技术怎么做 | §6（权威边界、权益、数据模型、webhook、API、客户端、状态机、TS 契约、**Creem adapter 草图**） |
+| 怎么从现状迁移 | §7（**逐文件清单** + 7 步顺序 + 回滚） |
+| 合规要什么 | §8（分国税率门槛、MoR 边界、消费者法、PCI/SCA/GDPR、**上线前检查清单**） |
+| 怎么测、何时能上 | §9（含**上线闸门**） |
+| 多少钱 | §10（**用已核实费率算得**，含 $9.99 提现损耗 78% 的警示） |
+| 分几步做 | §11（P0–P6，含验收标准） |
+| 还有什么风险 | §12 |
+
+**仍待用户决策的两项（设计已给出两条路，不阻塞 P0/P1/P2）**：① 商户形态（个人 / 中国公司 / 境外实体）；② 商业模式（纯免费 vs Freemium，见 §5.5）。
