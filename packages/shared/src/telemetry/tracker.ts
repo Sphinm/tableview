@@ -215,17 +215,42 @@ export class TelemetrySDK {
       // 3. 原生 AES-GCM 加密 (使用内置混淆 Key 动态还原)
       const encrypted = await encryptLogPayload(compressed, this.customSecret);
 
-      const blob = new Blob([encrypted as any], { type: 'application/octet-stream' });
+      // Deliberately untyped. The body is opaque encrypted bytes, and a
+      // non-safelisted Content-Type would force a CORS preflight. The beacon
+      // path below runs on every pagehide/visibilitychange, and a beacon cannot
+      // perform a preflight, so the browser would silently drop exactly the
+      // session-end events that carry dwell time. Leaving the type empty keeps
+      // the request "simple" for both fetch and sendBeacon.
+      const blob = new Blob([encrypted as any]);
 
       if (isEmergency && typeof navigator !== 'undefined' && navigator.sendBeacon) {
-        navigator.sendBeacon(this.endpoint, blob);
+        // Best-effort during unload. A false return means the browser queue
+        // refused it, so fall through to the restore path below.
+        if (!navigator.sendBeacon(this.endpoint, blob)) {
+          throw new Error('sendBeacon refused the telemetry batch');
+        }
       } else {
-        await fetch(this.endpoint, {
+        const response = await fetch(this.endpoint, {
           method: 'POST',
           body: blob,
           keepalive: true,
-          headers: { 'Content-Type': 'application/octet-stream' },
         });
+
+        // A 4xx means the payload itself is unacceptable — malformed, or over
+        // the size/event cap on the server. Retrying identical bytes could never
+        // succeed, so the batch is dropped on purpose instead of restored:
+        // otherwise one bad batch would wedge the buffer and evict every new
+        // event behind it.
+        if (!response.ok && response.status >= 400 && response.status < 500) {
+          return;
+        }
+
+        // 5xx and anything else is transient, so let the catch below restore the
+        // batch for a later retry. Previously a non-ok response was treated as
+        // success and the whole batch was discarded silently.
+        if (!response.ok) {
+          throw new Error(`Telemetry endpoint returned ${response.status}`);
+        }
       }
     } catch {
       // 失败还原未发送成功的事件

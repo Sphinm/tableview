@@ -59,3 +59,90 @@ describe('TelemetrySDK', () => {
     tracker.destroy();
   });
 });
+
+describe('TelemetrySDK delivery failures', () => {
+  const originalFetch = globalThis.fetch;
+
+  const stubFetch = (status: number) => {
+    let calls = 0;
+    globalThis.fetch = (async () => {
+      calls++;
+      return new Response('x', { status });
+    }) as unknown as typeof fetch;
+    return () => calls;
+  };
+
+  const makeSdk = () =>
+    new TelemetrySDK({ app: 'finance', endpoint: 'https://example.com/api/track' });
+
+  it('keeps the batch for retry when the endpoint returns 5xx', async () => {
+    const calls = stubFetch(503);
+    const sdk = makeSdk();
+    sdk.track('a', 'export_clicked');
+
+    await sdk.flush();
+    await sdk.flush();
+
+    // The first attempt failed server-side, so the event must still be pending
+    // and the second flush must genuinely retry it rather than find nothing.
+    expect(calls()).toBe(2);
+    globalThis.fetch = originalFetch;
+    sdk.destroy();
+  });
+
+  it('drops the batch on a 4xx instead of retrying an unacceptable payload forever', async () => {
+    const calls = stubFetch(400);
+    const sdk = makeSdk();
+    sdk.track('a', 'export_clicked');
+
+    await sdk.flush();
+    await sdk.flush();
+
+    expect(calls()).toBe(1);
+    globalThis.fetch = originalFetch;
+    sdk.destroy();
+  });
+
+  it('keeps the batch when the request never reaches the server', async () => {
+    let calls = 0;
+    globalThis.fetch = (async () => {
+      calls++;
+      throw new TypeError('Failed to fetch');
+    }) as unknown as typeof fetch;
+
+    const sdk = makeSdk();
+    sdk.track('a', 'export_clicked');
+    await sdk.flush();
+    await sdk.flush();
+
+    expect(calls).toBe(2);
+    globalThis.fetch = originalFetch;
+    sdk.destroy();
+  });
+});
+describe('TelemetrySDK emergency beacon', () => {
+  const originalSendBeacon = (navigator as any).sendBeacon;
+
+  it('uses a CORS-safelisted blob so a cross-origin beacon is not blocked', async () => {
+    // sendBeacon fires on every tab switch and page close. A beacon cannot
+    // perform a CORS preflight, so a non-safelisted Content-Type makes the
+    // browser drop it — silently losing exactly the session-end events that
+    // carry dwell time. The payload is opaque bytes to the server, so the type
+    // carries no meaning and can safely be safelisted.
+    let captured: Blob | null = null;
+    (navigator as any).sendBeacon = (_url: string, data: Blob) => {
+      captured = data;
+      return true;
+    };
+
+    const sdk = new TelemetrySDK({ app: 'finance', endpoint: 'https://track.tableview.dev/api/track' });
+    sdk.track('a', 'export_clicked');
+    await sdk.flush(true);
+
+    expect(captured).not.toBeNull();
+    // '' and 'text/plain' are the only types that avoid a preflight here.
+    expect(['', 'text/plain']).toContain((captured as unknown as Blob).type);
+    (navigator as any).sendBeacon = originalSendBeacon;
+    sdk.destroy();
+  });
+});

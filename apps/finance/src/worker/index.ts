@@ -5,10 +5,17 @@
  *
  * Implements JWT authentication, Email Magic Link, Google OAuth,
  * and Cloudflare D1 database operations for user accounts and credit quotas.
+ *
+ * Also the ingestion point for client telemetry (POST /api/track), which is
+ * routed here from both tableview.dev and track.tableview.dev.
  */
+
+import { handleTelemetryTrack } from './telemetryTrack';
 
 export interface Env {
   DB?: D1Database;
+  /** Dedicated D1 database for behaviour telemetry (tableview_logs). */
+  tableview_logs?: D1Database;
   JWT_SECRET?: string;
   RESEND_API_KEY?: string;
   APP_URL?: string;
@@ -333,6 +340,19 @@ export default {
 
 
     try {
+      // 0. POST /api/track — client behaviour telemetry (encrypted gzip batch).
+      //    Handled before auth routes because it is unauthenticated by design.
+      //    tools.tableview.dev and compress.tableview.dev post here cross-origin,
+      //    so the response — not just the preflight — must carry CORS headers or
+      //    the browser discards it and the SDK retries forever.
+      if (url.pathname === '/api/track' && request.method === 'POST') {
+        const telemetry = await handleTelemetryTrack(request, env);
+        return new Response(telemetry.body, {
+          status: telemetry.status,
+          headers: { ...Object.fromEntries(telemetry.headers), ...corsHeaders(origin) },
+        });
+      }
+
       // 1. POST /api/auth/send-magic-link
       if (url.pathname === '/api/auth/send-magic-link' && request.method === 'POST') {
         const body = (await request.json()) as { email?: string };
