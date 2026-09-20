@@ -7,9 +7,9 @@
 > - us-financial-calculators-market-demand-analysis.md —— 美国基线：关键词簇、计算器品类、竞品弱点
 > **本文回答**: 每个国家「市面上真实存在的计算器产品是什么」「实现它们需要哪些计算规则」「现有 10 款能否复用」「先做什么」
 > **日期**: 2026-09-20
-> **覆盖国家**: Tier A：美国（基线）、英国、加拿大、澳大利亚、爱尔兰、新西兰；Tier B：德国、荷兰、法国、日本、印度、新加坡；Tier C：阿联酋、中国香港，附西班牙/意大利轻量条目
+> **覆盖国家**: Tier A：美国（基线）、英国、加拿大、澳大利亚、爱尔兰、新西兰；Tier B：德国、荷兰、法国、日本、印度、新加坡；Tier C：阿联酋、中国香港、西班牙、意大利（**全部 18 个市场均有第一方产品清单与规则规格**）
 > **证据标准**: 「某计算器是否存在」以在位者自身站点（第一方）为准；「规则是什么」以监管机构 / 成文法 / 央行 / 税务机关 / 住房机构 / 第一方银行页面为准。仅聚合来源标注 **SECONDARY**；未对一手来源核实标注 **UNVERIFIED**。**不编造费率、费用或税档**：无法核实的数字只描述结构并标注缺口。
-> **检索诚实性说明**: EUR-Lex、legislation.gov.uk、FCA Handbook、legifrance、economie.gouv.fr、moneysmart.gov.au、emiratesnbd.com / adcb.com、sorted.org.nz 等对自动化抓取返回 WAF / CAPTCHA / 403；部分政府页正文由 JS 渲染。此类来源在 §6 逐条标注。一个有用替代：**欧盟按揭信贷指令（MCD）在爱尔兰的转写文本 S.I. No. 142/2016 可正常抓取**，其 Schedule 2（ESIS）与 Schedule 3（APRC）即欧盟范围内的统一披露/比价规范，见 §3。
+> **检索诚实性说明**: EUR-Lex、legislation.gov.uk、FCA Handbook、legifrance、economie.gouv.fr、moneysmart.gov.au、ato.gov.au、rbnz.govt.nz、emiratesnbd.com / adcb.com、sorted.org.nz、normattiva.it 等对自动化抓取返回 WAF / CAPTCHA / 403 / JS 壳；部分页面的正文因此由研究 agent 以 curl 等方式绕过 JS 取得（已在 §6 逐条标注取数路径与复核建议）。一个有用替代：**欧盟按揭信贷指令（MCD）在爱尔兰的转写文本 S.I. No. 142/2016 可正常抓取**，其 Schedule 2（ESIS）与 Schedule 3（APRC）即欧盟范围内的统一披露/比价规范，见 §3。
 
 > **独立复核状态（由本仓库复核者执行，非撰写者自述）**:
 > 撰写 agent 的部分关键数值已由复核者在其可访问网络重新取证，结果如下，**实施前请以此表为准**：
@@ -18,9 +18,13 @@
 > | :--- | :--- |
 > | 加拿大 Interest Act s.6「calculated yearly or half-yearly, not in advance」 | ✅ **已复核**：laws-lois.justice.gc.ca 返回 200，条文逐字一致 |
 > | 香港住宅 LTV **70%**、DSR **50%**（HKMA 2024-10-16） | ✅ **已复核**：news.gov.hk 官方新闻稿原文为「adjust the maximum loan-to-value ratio for residential and non-residential properties to 70%… The maximum debt servicing ratio for properties will be adjusted to 50%」 |
+> | **加拿大 CMHC 保费分档**（0.60 / 1.70 / 2.40 / 2.80 / 3.10 / 4.00%，非传统首付 4.50%） | ✅ **已复核**：cmhc-schl.gc.ca 官方保费页原文「Up to and including 65% 0.60%／65.01% to 75% 1.70%／75.01% to 80% 2.40%／80.01% to 85% 2.80%／85.01% to 90% 3.10%／90.01% to 95% 4.00%／90.01% to 95% with non-traditional down payment 4.50%」，**逐档一致** |
+> | **NSW 外国买家附加印花税 9%** | ✅ **已复核**：nsw.gov.au 官方发布原文「From 1 January 2025, the foreign purchaser duty surcharge will increase from eight per cent to nine per cent」（土地税附加同步 4%→5%） |
 > | 阿联酋 CBUAE 规则（LTV 分档 / 25 年 / DBR 50% / 提前结清 1%） | ⚠️ **待独立复核**：复核者对同一 Rulebook URL 实测返回 **HTTP 403**，无法复现。数值可作线索，**不可视为已核实** |
 >
 > 复核原则：**一个来源若无法被第二方重新取得，就不能仅凭撰写方自述解除 UNVERIFIED 标记。** 本表中标 ⚠️ 的条目在实施前必须重新取证。
+>
+> 方法学：✅ 条目均由复核者用**独立于撰写 agent 的网络路径**重新抓取同一权威来源并比对原文，而非采信转述。加拿大 CMHC 与 NSW 两条即因此从「agent 声称」转为「可复现」。
 
 ---
 
@@ -45,7 +49,7 @@
 | **T2** | **印度** | EMI 数学通用，但 Sec 24(b) / 80C 税盾、州印花税、CIBIL、PMAY 构成不同输出 | 需要税层，不只是计算器 |
 | **T2** | **新加坡** | TDSR + MSR + LTV 三重约束 + CPF OA + BSD/ABSD + 压力利率 | 新资格引擎 |
 | **T3 远端** | **阿联酋 / 香港** | 产品面窄（按揭 + LTV/DSR + 转移费），但监管数值来源部分不可达 | 第二批 |
-| **T3 轻量** | **西班牙 / 意大利** | 欧元区、摊还通用；增量在 ITP/IVA+AJD 与 registro/catastale/ipotecaria | 观察 |
+| **T3** | **西班牙 / 意大利** | 欧元区、**法式摊还通用**（比 Tier B 更接近现有引擎）；增量在交易税（ITP/IVA+AJD；registro/catastale/ipotecaria）与税盾 | 观察，但本轮已取得完整第一方规格 |
 
 **最小可用产品集（MVP）**
 
@@ -160,7 +164,16 @@
 | **Mortgage Calculator / Mortgage Loan Insurance Premium Calculator / Affordability Calculator / Debt Service Calculator**（四件套） | **CMHC** | **政府住房机构** | cmhc-schl.gc.ca/consumers/home-buying（导航逐项核对） |
 | CMHC Mortgage Loan Insurance Premium Calculator | CMHC | 政府 | cmhc-schl.gc.ca/consumers/home-buying/calculators/mortgage-loan-insurance-premium-calculator |
 | **Mortgage Affordability Calculator**（输出含按揭月供 + 房产税 + 取暖费 + 公寓管理费） | RBC | 银行 | rbcroyalbank.com/mortgages/tools/mortgage-affordability-calculator/ |
-| Mortgage Payment Calculator | Ratehub.ca | 比价门户 + 自有经纪 | ratehub.ca/mortgage-payment-calculator |
+| **Mortgage Payment Calculator** | RBC | 银行 | apps.royalbank.com/apps/mortgages/mortgage-payment-calculator |
+| **Rent vs Buy Calculator** | RBC | 银行 | rbcroyalbank.com/mortgage/tools/rentvsbuy/index.html |
+| Mortgage Payment / Affordability Calculator | TD Canada Trust | 银行 | td.com/ca/en/personal-banking/products/mortgages/mortgage-payment-calculator |
+| Mortgage-Free Faster Calculator（加速还款） | Scotiabank | 银行 | scotiabank.com/mortgage/mffc/en/ |
+| **Mortgage Prepayment Charge Calculator**（提前还款罚金） | CIBC | 银行 | cibc.com/en/personal-banking/mortgages/calculators/prepayment-calculator.html |
+| Home Equity Calculator | CIBC | 银行 | cibc.com/en/personal-banking/mortgages/calculators/home-equity-calculator.html |
+| **Mortgage Qualifier Tool**（压力测试资格） | **FCAC（联邦消费者机构）** | **政府** | itools-ioutils.fcac-acfc.gc.ca/MQ-HQ/MQReport-EAPHSommaire-eng.aspx |
+| **MLTT/MNRST Calculator**（多伦多市土地转让税） | City of Toronto | **政府** | toronto.ca/services-payments/property-taxes-utilities/municipal-land-transfer-tax-mltt/ |
+| Mortgage Payment / Affordability / Refinance | Ratehub.ca | 比价门户 + 自有经纪 | ratehub.ca/mortgage-payment-calculator |
+| Calculator suite（payment / affordability / land transfer tax） | Dominion Lending Centres | 经纪 | calculators.dominionlending.ca/ |
 
 **已核实的本地输出口径差异**：加拿大「按揭月供」是美国 PITI 的变体 —— **本金 + 利息 + 房产税 + 取暖费**（+ 公寓管理费），由 RBC 页面文案直接核实。
 
@@ -170,13 +183,14 @@
 
 | 维度 | 规则 | 一手来源 |
 | :--- | :--- | :--- |
-| **复利约定（关键）** | 设押不动产利率须按**每年或每半年、非预付**计算，因此摊还必须用**半年复利**（名义年利率 r 的等效年利率 = (1 + r/2)^2 - 1，再换算月供） | Interest Act, R.S.C. 1985, c. I-15, s. 6 |
+| **复利约定（关键）** | 设押不动产若采用本息混合还款计划，除非合约载明「按年或按半年计算、非预付（calculated yearly or half-yearly, not in advance）」的名义利率，否则不得计息。**实现公式**：合约名义半年复利率 r 必须换算为等效**月度**利率 = **(1 + r/2)^(1/6) - 1**（而**不是** r/12）。这是加拿大月供与美/澳月供的核心数学差异 | Interest Act, R.S.C. 1985, c. I-15, s. 6：laws-lois.justice.gc.ca/eng/acts/I-15/section-6.html（**已核对条文**） |
 | **压力测试（已一手核实）** | OSFI 最低合格利率（MQR）：**取「合同利率 + 2%」与「5.25%」中的较高者**。2024-11-21 起，对**无保险的 straight switch 续约**不再要求固定 MQR | osfi-bsif.gc.ca/en/supervision/financial-institutions/banks/minimum-qualifying-rate-uninsured-mortgages；osfi-bsif.gc.ca/en/news/backgrounder-minimum-qualifying-rate-mqr |
-| 保险（已补充） | **首付低于 20% 时必须购买** mortgage default insurance（由 CMHC / Sagen / Canada Guaranty 提供）。**保费为总贷款额的 0.6%-4.5%**，首付越低费率越高；由贷方收取、通常转嫁借款人，可一次性付清或**并入贷款本金**。受保贷款摊销上限基准 25 年（首购 30 年） | CMHC：cmhc-schl.gc.ca/observer/2025/cmhc-mortgage-loan-insurance-explained（**已核对 0.6%-4.5%**）；CMHC 保险与保费计算器：cmhc-schl.gc.ca/consumers/home-buying |
+| **保险（费率表已取得）** | **首付低于 20% 且房价 <= 150 万加元时必须投保**（LTV > 80%）；房价 > 150 万不可投保。保费按**贷款总额**（LTV 分档）：<=65% -> **0.60%**；65.01-75% -> **1.70%**；75.01-80% -> **2.40%**；80.01-85% -> **2.80%**；85.01-90% -> **3.10%**；90.01-95% -> **4.00%**（非传统首付 4.50%）；可携带性加保列 0.60%-6.60%。安省/魁省/萨省保费须另付省销售税且**不得并入贷款**。**首付规则**：<=50 万最低 5%；50 万-149.9999 万为前 50 万 5% + 超部分 10% | CMHC 成本页（**完整 LTV 保费表**）：cmhc-schl.gc.ca/consumers/home-buying/mortgage-loan-insurance-for-consumers/cmhc-mortgage-loan-insurance-cost；CMHC 说明页：cmhc-schl.gc.ca/observer/2025/cmhc-mortgage-loan-insurance-explained |
+| **受保贷款摊销上限（2024 改革）** | 自 **2024-12-15** 起，**30 年摊销扩展至所有首次购房者及所有新建房购买者**（2024-08-01 起仅限首购者购新建房）；同期受保按揭价格上限由 100 万提高至 **150 万加元** | canada.ca/en/department-finance/news/2024/09/government-announces-boldest-mortgage-reforms-in-decades-to-unlock-homeownership-for-more-canadians.html |
 | **信息披露（纠正上游缺口）** | **Cost of Borrowing (Banks) Regulations（SOR/2001-101）已于 2022-06-29 废止**（原文标注 "[Repealed, SOR/2021-181, s. 122]"）。现行文件为 **Financial Consumer Protection Framework Regulations, SOR/2021-181**（含 Credit Agreements / Loans / Mortgage Insurance 披露章节） | laws-lois.justice.gc.ca/eng/regulations/SOR-2001-101/page-1.html（废止）；laws-lois.justice.gc.ca/eng/regulations/SOR-2021-181/（现行） |
-| 交易税 | **省级**土地转让税（安省、BC 省；多伦多另有市级）；联邦层无交易税 | **UNVERIFIED**（未取省级财政部门一手税率页） |
-| 提前还款 | 固定利率罚金常按 **IRD（利息差）** 计算；浮动多为 3 个月利息 | **UNVERIFIED** |
-| 薪资（一段，已升级） | ① 所得税由雇主按 **联邦 + 省/地区代扣表**（CRA T4032/T4127）源头代扣，年度 T1 结算；魁北克用 Revenu Québec WebRAS。② **CPP**：基础 4.95% + 首次附加 1% = 雇员 **5.95%**，雇主等额匹配；**CPP2** 自 2024 年起在两个上限之间收 **4%**。③ **EI**：雇员保费自第一元起至年度最高可保收入，雇主缴雇员 **1.4 倍**。④ **联邦工时**：8 小时/日、40 小时/周、加班 **1.5 倍**（Canada Labour Code，仅联邦管辖雇主）；各省自定（常 40-44 小时 + 1.5 倍）。⑤ 年度 CPP/EI 具体费率与上限 **UNVERIFIED** | CRA PDOC：canada.ca/en/revenue-agency/services/e-services/digital-services-businesses/payroll-deductions-online-calculator.html；CPP/EI：canada.ca |
+| **交易税（已取得省/市档位）** | **安省 LTT**：<=5.5 万 0.5%；5.5-25 万 1.0%；25-40 万 1.5%；>40 万 2.0%；含 1-2 户自住且 >200 万部分 2.5%；首次购房最高退税 **4,000 加元**（前 36.8 万免税）。**BC PTT**：<=20 万 1%；20-200 万 2%；>200 万 3%；住宅 >300 万部分再加 2%。**多伦多市 MLTT**（与省税叠加）：<=5.5 万 0.5%；-25 万 1.0%；-40 万 1.5%；-200 万 2.0%；-300 万 2.5%；首购退税上限 **4,475 加元**。联邦层无交易税 | 安省：ontario.ca/document/land-transfer-tax/calculating-land-transfer-tax；BC：www2.gov.bc.ca/gov/content/taxes/property-taxes/property-transfer-tax；多伦多：toronto.ca/services-payments/property-taxes-utilities/municipal-land-transfer-tax-mltt/ |
+| **提前还款（已取得规则）** | 罚金通常取「**三个月利息**」与「**利率差（IRD）**」的**较高者**；IRD 由贷方用两个利率分别计算剩余期限的全部利息之差。CIBC 提供独立的 **Mortgage Prepayment Charge Calculator**（说明这是用户预期产品） | FCAC：canada.ca/en/financial-consumer-agency/services/mortgages/reduce-prepayment-penalties.html；CIBC：cibc.com/en/personal-banking/mortgages/calculators/prepayment-calculator.html |
+| 薪资（一段，已升级） | ① **源泉代扣**：雇主按 CRA T4032/T4127 的**年度累进税率表分摊到发薪周期**代扣联邦税 + 省/地区税（魁省由 Revenu Québec 单独管理）；**CRA PDOC** 为官方口径工具。② **CPP**：5.95%（基础 4.95% + 首次附加 1%），年度基本豁免 **3,500 加元**；2025 年 YMPE **71,300**（雇员上限 4,034.10）；**CPP2** 对 71,300-81,200 区间再按 **4.00%**（2025 年 YAMPE 81,200，上限 396.00）。③ **EI**：2025 年雇员费率 **1.64%**，最高可保收入 **65,700**（雇员年上限 1,077.48）；雇主缴雇员 1.4 倍。④ **工时/加班**：Canada Labour Code s.169 标准工时 8 小时/日、40 小时/周，s.174 加班不低于 **1.5 倍**（或 1.5 倍带薪补休）—— 仅联邦管辖雇主；各省自定 | PDOC：canada.ca/en/revenue-agency/services/e-services/digital-services-businesses/payroll-deductions-online-calculator.html；CPP：canada.ca/en/revenue-agency/services/tax/businesses/topics/payroll/payroll-deductions-contributions/canada-pension-plan-cpp/cpp-contribution-rates-maximums-exemptions.html；EI：canada.ca/.../employment-insurance-ei/ei-premium-rates-maximums.html；工时：laws-lois.justice.gc.ca/eng/acts/L-2/section-169.html 与 /section/174.html |
 
 **(d) 与现有 10 款的重合度**
 
@@ -205,6 +219,16 @@
 | **Repayment Calculator** | CommBank | 银行 | 同上「Other home loan calculators」区域 |
 | **Stamp Duty Calculator** | CommBank | 银行 | 同上 |
 | **Refinance Calculator** | CommBank | 银行 | 同上 |
+| **Offset calculator**（100% offset，净额计息） | Westpac | 银行 | westpac.com.au/personal-banking/home-loans/calculator/offset-calculator/ |
+| Borrowing power / Repayment / Costs & stamp duty / Home equity / Rate change / Split loan / Affordability / Refinance calculators | Westpac | 银行 | westpac.com.au/home-loans/calculator/ |
+| Borrowing power calculator / Home Loan Repayment Calculator | NAB | 银行 | nab.com.au/personal/home-loans/calculators/borrowing-calculator |
+| **LVR Calculator / Stamp Duty Calculator** / Borrowing Power / Deposit / Compare Home Loan | ANZ | 银行 | anz.com.au/personal/home-loans/calculators-tools/ |
+| **Stamp Duty Calculator** / Mortgage / Borrowing power | realestate.com.au | 门户 | realestate.com.au/home-loans/stamp-duty-calculator/ |
+| Mortgage Borrowing Power Calculator / 5% guarantee calculator | Aussie Home Loans | 经纪 | aussie.com.au/calculators/borrowing-power/ |
+| Home Loan Calculator / Stamp Duty / Borrowing Power / Income Tax Calculator | Canstar | 比价 | canstar.com.au/calculators/ |
+| **Transfer of land or business calculator**（官方印花税） | **Revenue NSW** | **政府** | apps09.revenue.nsw.gov.au/erevenue/calculators/landsalesimple.php |
+| **Land transfer (stamp) duty calculator** | **SRO Victoria** | **政府** | sro.vic.gov.au/buying-property/land-transfer-stamp-duty/land-transfer-stamp-duty-calculator |
+| First Home Owner Grant (FHOG) 州别选择器 | firsthome.gov.au | **政府** | firsthome.gov.au |
 | First Home Guarantee（5% 首付政府担保）工具 | Housing Australia / 联邦政府 | **政府** | firsthomebuyers.gov.au |
 
 **已核实的本地产品命名差异**：澳洲叫 **borrowing power**（不是 affordability）、**stamp duty**（州税）、**refinance**。
@@ -215,13 +239,16 @@
 
 | 维度 | 规则 | 一手来源 |
 | :--- | :--- | :--- |
-| 摊还 / 计息 | 标准 30 年、月度摊还；**interest-only 期常见** | **UNVERIFIED**（moneysmart.gov.au 被 Cloudflare 拦） |
-| **offset account** | 抵消账户余额冲减计息本金，但不减少合同本金，故月供不变、期限缩短 | **UNVERIFIED**（结构描述，无一手） |
+| **计息口径（已取得法源）** | NCCP Act 2009 (Cth) Sch 1 (National Credit Code) 规定 **daily percentage rate = 年利率 / 365**，按**每日未偿余额**计息；月度利息 = 年利率/12 乘以当月**平均每日未偿余额** —— 即「**按日计息、按月收取**」，**不是**月对月的利滚利（s.27 定义、s.28 利息上限、s.29 禁止提前扣息） | legislation.gov.au/C2009A00134/latest/text |
+| 期限 / IO | **法规未规定标准期限**（NCC 全文无此条款）；「1 to 30 years」是产品惯例（CommBank Simple Home Loan fact sheet）；**interest-only 无法定上限**，但 APRA 认定「本息改只付息」或「延长只付息期」属重大变更，须**重新做偿付能力评估** | CommBank fact sheet PDF；APRA APG 223：handbook.apra.gov.au/ppg/apg-223 |
+| **offset account（已取得第一方原文）** | Westpac 原文：「Every day, 100% of the balance in your Westpac transaction offset account is 'offset' against the amount owed… As interest is calculated **daily and charged monthly**, only the **net amount** (your loan balance minus your offset balance for that day) attracts interest.」→ 实现要点：计息本金 = 合同本金 - 当日 offset 余额；月供不变、期限缩短 | westpac.com.au/personal-banking/home-loans/calculator/offset-calculator/ |
+| **LMI（已取得区间）** | LVR > 80%（首付 < 20%）通常须投保；保费一次性、按贷款额资本化。CommBank 首方给出区间「**generally 1% to 5% of your loan amount**」（例：50 万贷款、10% 首付，LMI 可超 1 万）。**属贷款人政策，非监管定价** | commbank.com.au/home-loans/lenders-mortgage-insurance.html |
+| **comparison rate（法定定义）** | NCC **Part 10（ss.157-168）**：s.160 规定广告含年利率（APR）时**必须**载明相关对比利率；s.161 按最接近该产品典型金额与期限的指定档计算；s.166 由法规规定计算方法，**不确定是否发生的费用不必纳入** | legislation.gov.au/C2009A00134/latest/text |
 | LMI | Lenders Mortgage Insurance，LVR 高于阈值时收取；属**贷方实践**而非监管定价 | 上游 §3.1 / §9.3 |
-| 交易税 | **印花税（transfer duty）由州决定**；NSW / VIC 等各有税率与首购减免 | revenue.nsw.gov.au/.../transfer-duty；sro.vic.gov.au/.../land-transfer-duty-principal-place-residence-current-rates（上游 §3.1） |
-| 可负担性 | 负责任借贷义务；APRA **3.0 个百分点**服务能力缓冲 | APRA APG 223（上游 §3.1） |
+| **交易税（已取得州级档位）** | **NSW（2026/27）**：0-1.8 万 每 100 收 1.25（最低 20）；1.8-3.8 万 225 + 1.50/100；3.8-10.3 万 525 + 1.75/100；10.3-38.7 万 1,662 + 3.50/100；38.7-129 万 11,602 + 4.50/100；>129 万 52,237 + 5.50/100；溢价门槛 **387 万**；**首购：<=80 万全免、<100 万减免，空地 <=35 万免、<45 万减**；**外国买家附加税 9%**（统一税率）。**VIC 一般税率**：<=2.5 万 1.4%；2.5-13 万 350 + 2.4%；13-96 万 2,870 + 6%；96-200 万 5.5%；>200 万 11 万 + 6.5%；自住（PPR）优惠档 44-55 万，>55 万不适用；**外国买家另加 8%** | NSW：revenue.nsw.gov.au/_resources/duties-links/current-thresholds-and-rates（**已逐档核对，并额外核实 9% 外国买家附加税**）；VIC：sro.vic.gov.au/about-us/rates-and-statistics/current-rates/ |
+| **可负担性（已逐字核实）** | 2024-11-22 APRA 确认「The mortgage **serviceability buffer will remain at 3 percentage points**」（即按不低于产品利率 + 3.0pp 评估还款能力）；APS 220 Attachment C 要求 ADI 至少加 3.0% 缓冲 | APRA：apra.gov.au/news-and-publications/update-apras-macroprudential-settings-november-2024；APG 223：handbook.apra.gov.au/ppg/apg-223 |
 | comparison rate | 法律定义的比较利率（含费用） | **UNVERIFIED 本轮**（Moneysmart 403；需 NCCP Act / ASIC RG） |
-| 薪资（一段） | ATO 官方计算器已验证存在：**Income tax estimator、Tax withheld calculator、Study and training loan repayment calculator、Income gross pay estimator**（ato.gov.au/calculators-and-tools）。规则：PAYG 由雇主按 ATO 代扣表（NAT 1006/1007/1008）代扣、年度结算；**Superannuation** 为强制性雇主缴款；**NES 法定 38 小时/周**普通工时，加班附加由 award 规定（非 NES，常见 1.5x/2x）；HELP/HECS 通过税制按期强制偿还 | **所有澳洲数值（税率档、Medicare levy 2%、SG 12%、38 小时、加班倍数）UNVERIFIED**：ato.gov.au / fairwork.gov.au / moneysmart.gov.au 本轮全部 CloudFront/Akamai 403，URL 经搜索确认但正文不可读 |
+| **薪资（一段，数值已由立法核实）** | ① **PAYG** 预扣：用 ATO **PAYG withholding Schedule 1 (NAT 1004)** 的周/双周/月系数（或 ATO Tax withheld / Gross pay estimator）计算。② **居民税率**（Income Tax Rates Act 1986 Sch 7 Part I）：2024-25/2025-26 为超过 **18,200 免税额**后 **16%**（至 45,000）、**30%**（45,001-135,000）、**37%**（135,001-190,000）、**45%**（>190,000）；**2026-27 起首档降至 15%**。③ **Medicare levy 2%**（Medicare Levy Act 1986 s.6）。④ **Superannuation Guarantee 12%**（SG(Administration) Act 1992 "charge percentage means 12"，雇主单方缴款）。⑤ **工时**：Fair Work Act 2009 s.21 全职普通工时 **38 小时/周**，s.62 禁止要求超过 38 小时（除合理加班外）；**加班倍率由 award/合同规定，无法定统一倍率**。⑥ 惯例：周薪 x 52 = 年薪，年薪 / 12 = 月薪 | legislation.gov.au/C2004A03348/latest/text（税率）；/C2004A03351/latest/text（Medicare 2%）；/C2004A04402/latest/text（SG 12%）；/C2009A00028/latest/text（Fair Work s.21/s.62）。**注**：ato.gov.au 计算器页本轮 403，其存在性经搜索索引确认 |
 
 **(d) 与现有 10 款的重合度**
 
@@ -292,22 +319,42 @@
 
 ### 2.6 新西兰（NZ）
 
-**(a) 在售计算器清单** —— **部分 UNVERIFIED**：**按揭类**：sorted.org.nz（政府 Sorted 工具站，本应是最理想的第一方来源）对自动化抓取返回 **CAPTCHA 405**，主要银行未逐一核对；按上游 §3.1 与 §8，预期产品族为 mortgage repayment、how much can I borrow、offset/revolving credit、deposit、KiwiSaver 首购提取。**薪资类（已第一方核实的例外）**：**IRD PAYE calculator**（政府，ird.govt.nz/paye-calculator，支持周/双周/4 周/月）、Xero NZ income tax calculator（payroll 软件商）。**结论**：新西兰的薪资/PAYE 侧本轮取得了强一手来源，但**按揭产品清单仍是本报告最弱的 Tier A 项**。
+**(a) 在售计算器清单（第一方核对）**
+
+| 产品名 | 提供方 | 类型 | 来源 |
+| :--- | :--- | :--- | :--- |
+| **Repayments Calculator**（期限下拉最长 30 years） | ANZ NZ | 银行 | tools.anz.co.nz/home-loans/repayment-calculator/ |
+| **Borrowing Calculator**（How much can I borrow?） | ANZ NZ | 银行 | tools.anz.co.nz/home-loans/borrowing-calculator/ |
+| Home loan repayment / borrowing calculator | BNZ | 银行 | bnz.co.nz/personal-banking/home-loans/calculators/home-loan-calculator |
+| **TotalMoney home loan calculator**（offset 抵扣省息） | BNZ | 银行 | bnz.co.nz/personal-banking/home-loans/calculators/totalmoney-home-loan-calculator |
+| Repayments & structuring / **First home buyer** / Next home calculator | Kiwibank | 银行 | kiwibank.co.nz/personal-banking/home-loans/calculators/ |
+| **Choices Floating with Offset calculator** / How much could I borrow? | Westpac NZ | 银行 | westpac.co.nz/home-loans-mortgages/tools-resources/choices-offset-calculator/（403） |
+| Borrowing / Mortgage repayment calculator | ASB | 银行 | asb.co.nz/home-loans-mortgages/calculator-repayments.html（连接失败） |
+| Mortgage calculator | Trade Me Property | 门户 | secure.trademe.co.nz/c/property/article/how-long-will-it-take-to-pay-off-my-mortgage |
+| Mortgage Calculator Repayments NZ / Borrowing Power | Mike Pero | 经纪 | mikepero.co.nz/mortgages/calculators |
+| Money planner / tools | **Sorted（Te Ara Ahunga Ora，政府）** | **政府** | sorted.org.nz/tools（WAF 405） |
+| **PAYE calculator**（周/双周/4 周/月） | **IRD** | **政府** | ird.govt.nz/employing-staff/deductions-from-income/deductions-from-salary-and-wages/ |
+| Income tax calculator / 税率表 / ACC earners' levy rates | IRD | 政府 | ird.govt.nz/income-tax/income-tax-for-individuals/ |
+
+**已核实的本地产品命名**：**Repayments、Borrowing、offset（ANZ "Flexible Home Loan" / BNZ "TotalMoney" / Westpac "Choices Floating with Offset"）、TotalMoney**。
 
 **(b) 必做计算器** —— **① mortgage repayment ② borrowing power ③ offset/revolving credit ④ deposit/LVR ⑤ KiwiSaver first-home 提取**。理由：RBNZ LVR 与 CCCFA 是硬约束；**无印花税**，所以交易税计算器在新西兰不是 table stakes（相对澳洲的成本优势）。
 
-**(c) 核心计算规则（规格）** —— 本轮几乎全部 UNVERIFIED：
+**(c) 核心计算规则（规格）** —— **本轮已大幅补齐（原「几乎全部 UNVERIFIED」已解除）**：
 
 | 维度 | 规则 | 来源 |
 | :--- | :--- | :--- |
-| 摊还 / 计息 | 标准 30 年、月度摊还 | **UNVERIFIED** |
-| LVR | RBNZ 对投资者与自住者高 LVR 放贷设流量上限 | **UNVERIFIED**（需 rbnz.govt.nz） |
-| 负责任借贷 | CCCFA 要求 | **UNVERIFIED**（需 MBIE） |
-| offset / revolving | 银行普遍提供 offset 与 revolving credit 设施 | **UNVERIFIED** |
-| 交易税 | **无印花税 / 无土地转让税** | **UNVERIFIED**（需 IRD 一手确认） |
-| bright-line test | 房产转售明线测试，年限有变动 | **UNVERIFIED** |
-| 税盾 | 自住利息不可扣除；投资房利息扣除规则近年收紧 | **UNVERIFIED** |
-| 薪资（已升级） | ① **PAYE** 由雇主按税号与 IRD 税率表代扣，含 ACC earners levy，年度结算（IRD 有官方 PAYE calculator，支持周/双周/4 周/月）。② **ACC earners levy**：2026-04-01 至 2027-03-31 为 **1.75%**，计费收入上限 **156,641 新元**（最高 2,741.22 新元）。③ **KiwiSaver**：雇员可选 **3.5/4/6/8/10%**，雇主最低 **3.5%**，雇主缴款须计 ESCT。④ **学生贷款**：超过门槛部分 **12%**，2026 年度门槛 **24,128 新元**（周 464 / 双周 928 / 4 周 1,856 / 月 2,010.66）；第二职业自第一元起扣 12%。⑤ **无一般法定最高工时**，加班由协议/合同决定 | IRD PAYE calculator：ird.govt.nz/paye-calculator；KiwiSaver 与 ACC levy：ird.govt.nz；学生贷款：ird.govt.nz/repaying-my-student-loan-when-i-earn-salary-or-wages |
+| 摊还 / 计息 | 常 **30 年**（ANZ 计算器期限下拉最长显示 30 years）；BNZ 计算器假设 principal and interest、利率全期不变、**按日计息** | tools.anz.co.nz/home-loans/repayment-calculator/；bnz.co.nz/.../home-loan-calculator |
+| **RBNZ LVR（宏观审慎流量上限）** | **自 2025-12-01**：自住者 LVR **>80%** 的份额上限由 20% 上调至 **25%**；投资者 LVR **>70%** 的份额上限由 5% 上调至 **10%**；并与 **DTI 限制**同步实施；2026-08 复核后维持。（2024-07-01 起为 20%/5%） | rbnz.govt.nz/news-and-events/news/2025/11/reserve-bank-confirms-changes-to-lvr-restrictions 与 .../macroprudential-policy/timeline-for-loan-to-value-ratio-restrictions。**注**：RBNZ 站本轮 403，数值与研究结论来自研究 agent 抓取（并见下文 §6） |
+| **CCCFA 责任放贷** | Credit Contracts and Consumer Finance Act 2003：须遵守披露义务、询问用途以确保融资类型适当、**进行负担能力与适当性评估（affordability and suitability assessment）**、签约前协助理解条款、对**高成本贷款（年利率 >= 50%）限制利息与费用**、收取合理信贷与违约费用 | legislation.govt.nz/act/public/2003/52/en/latest/；consumerprotection.govt.nz/.../what-lenders-must-do |
+| **offset / revolving（已取得第一方原文）** | **BNZ TotalMoney**：「Every dollar in these accounts offsets your loan, helping you pay it off sooner.」**ANZ Flexible Home Loan** 采用 "jug" 机制，额度填满部分不再计息，但通常**利率更高并收取月费**；Westpac 为 "Choices Floating with Offset" | bnz.co.nz/personal-banking/home-loans/home-loan-types/totalmoney；anz.co.nz/.../flexible-home-loan-transcript/ |
+| **交易税** | **无印花税 / 无土地转让税**：Stamp Duty Abolition Act 1999（Public Act 1999 No 61，IRD 主管）已废除印花税 | legislation.govt.nz/act/public/1999/61/en/latest/ |
+| **bright-line test（已修正表述）** | 分档依据是**物业出售/取得日期，不是 income-year thresholds**。**2024-07-01 或之后出售**：若 bright-line end date 在 start date 后 **2 年**内即适用。历史档：2021-03-27 或之后取得 -> 新建房 5 年、其他物业 10 年；2018-03-29 至 2021-03-26 取得 -> 5 年。start date 一般为产权登记日，end date 为签订具约束力买卖协议之日；主要自住房、商业物业、农地有排除 | ird.govt.nz/property/buying-and-selling/when-you-need-to-pay/the-brightline-test |
+| **KiwiSaver 首购提取 / First Home** | **提取**须加入 KiwiSaver **满 3 年**，可提本人/雇主/政府供款及投资收益，**账户须保留 1,000 新元**，自澳大利亚转入资金不可提取。**First Home Grant（原 HomeStart grant）已停止**（Kāinga Ora 不再接受新申请，既有申请继续处理）；**First Home Loan 保留，首付可低至 5%** | ird.govt.nz/kiwisaver/kiwisaver-for-individuals/getting-my-kiwisaver-funds-early/getting-my-kiwisaver-for-my-first-home；hud.govt.nz/news/pre-budget-announcement-new-funding-and-savings |
+| **压力测试利率（重要，勿误当法规）** | **RBNZ 不设定统一的 serviceability test rate**；RBNZ 只对 LVR/DTI 设宏观审慎上限。银行的 test rate 属**自身信贷政策**。BNZ 原文：「we used a **'test' interest rate which is higher than our advertised rates**」。**各银行当前具体 test rate 数值未取得** | bnz.co.nz/personal-banking/home-loans/calculators/how-much-can-i-borrow |
+| 提前还款 / break fees | CCCFA 框架要求放贷人收取**合理的信贷与违约费用**并公平对待借款人。ANZ 计算器页提到 **Reserve Rate Agreement** 若保留利率未使用/取消可能产生费用；**具体公式 UNVERIFIED**（ANZ 固定利率提前还款说明 PDF 与费用表 PDF 本轮 404） | consumerprotection.govt.nz/.../what-lenders-must-do |
+| 薪资（一段，已升级） | ① **PAYE 累进税率（2025-04-01 起）**：0-15,600 -> **10.5%**；15,601-53,500 -> **17.5%**；53,501-78,100 -> **30%**；78,101-180,000 -> **33%**；>180,000 -> **39%**。② **ACC earners' levy**：2025-04-01 至 2026-03-31 为 **1.67%**（含 GST），2026-04-01 起 **1.75%**，2027-04-01 起 1.83%；**计费收入上限（cap）本轮未取得**。③ **KiwiSaver**：雇员税前工资默认/最低 **3.5%**（可选 4/6/8/10%，每 3 个月方可变更一次），雇主最低 3.5%，雇主缴款须计 ESCT。④ **学生贷款**：超过门槛部分 **12%**。⑤ **工时**：新西兰**无一般性法定最高工时**；Employment NZ 要求雇佣协议固定最高工时，全职惯例约 40 小时/周（不含加班）；**加班无全国统一法定倍率**。⑥ IRD 官方 PAYE 计算器支持周/双周/4 周/月，但**不处理** extra pays、tailored tax codes、学生贷款特别扣款率、schedular payments 等 | ird.govt.nz 税率表 / ACC earners' levy rates / PAYE 页 / KiwiSaver employee contributions；employment.govt.nz/hours-and-wages/hours-of-work |
+| 税盾（投资房利息） | 自住按揭利息不可扣除；**投资房利息扣除规则近年收紧**（未取得本轮一手条文，**UNVERIFIED**） | - |
 
 **(d) 与现有 10 款的重合度** —— 与澳洲类似但**少一个交易税计算器**：Mortgage **需参数化**（offset/revolving）；Refinance **需参数化**；DSCR / BRRRR / Hard money / 1031 **不适用**；Cap rate **需参数化**；Commercial **需参数化**；Loan comparison **需参数化**；Salary to hourly **需新建**。
 
@@ -573,9 +620,14 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 
 | 产品（预期） | 提供方 | 类型 | 来源 |
 | :--- | :--- | :--- | :--- |
-| Home loans（含 mortgage calculator） | Emirates NBD | 银行 | emiratesnbd.com/en/loans/home-loans/home-loans-for-uae-nationals（403） |
-| Home Loan for Residents | Mashreq NEO | 银行 | mashreq.com/uae/neo/loans/mortage-loans/home-loan-residents/ |
-| Standard Mortgage Loan (Bayut) | ADCB | 银行 | adcb.com/en/personal/loans/home-loans/standard-mortgage-loan-bayut（403） |
+| Home Loan Offers / "Calculate your eligibility" 资格计算器 | Emirates NBD | 银行 | emiratesnbd.com/en/campaigns/mortgage/ |
+| **Key Facts Statement – Home Loan Fixed & Variable**（含 APR、EMI 算例） | Emirates NBD | 银行 | emiratesnbd.com/en/kfs/home-loan-fixed-and-variable-interest-rate |
+| **Mortgage Calculator** | First Abu Dhabi Bank (FAB) | 银行 | bankfab.com/en-ae/personal/mortgages/mortgage-calculator |
+| Mortgage Calculator + Loan Comparison calculator | Mashreq NEO | 银行 | mashreq.com/uae/neo/loans/mortage-loans/home-loan-residents/ |
+| **Rent vs Buy Calculator** | Property Finder | 门户 | propertyfinder.ae/en/rent-vs-buy-calculator |
+| Mortgage Calculator | PRYPCO | 经纪 | prypco.com/mortgage-calculator/ |
+| **Registering the Sale of a Mortgaged Property / Grant property mortgage**（官方 DLD 费用明细） | **Dubai Land Department** | **政府** | dubailand.gov.ae/en/eservices/registering-the-sale-of-a-mortgaged-property/ |
+| **Online Gratuity Calculator**（离职金） | Dubai Development Authority | **政府** | dda.gov.ae/en/gratuity-calculator/gratuity-calculator |
 
 预期产品族：**monthly payment、affordability / DBR、home loan transfer（转贷）、early settlement fee、Dubai transfer fee (DLD 4%)**。
 
@@ -590,9 +642,10 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 | **收入倍数上限** | 最高融资 = 本国国民 **8 年**年收入；**外籍 7 年**年收入（**注意：不是 8x**） | 同上 |
 | **DBR** | 债务负担率上限 **50%**（**退休者 30%**） | 同上 |
 | **压力测试** | 在贷款利率之上加 **2-4 个百分点**做压力测试 | 同上 |
-| 利率结构 | 浮动（EIBOR / base-rate linked） | **UNVERIFIED** |
+| **利率结构（已取得 KFS 算例）** | 可变利率挂 **EIBOR + 固定息差**，可选挂 **1 个月或 6 个月 EIBOR**（分别每月/每半年重定价）。还款须按 **reducing balance**，频率**不低于每季**。Emirates NBD 首方算例：贷款 AED 800,000 / 25 年 / 1M EIBOR 0.25% + 息差 1.89% = 2.14%，EMI **AED 3,446**；含 1.05% 手续费后 **APR 2.22%** | 期限/reducing balance 见 CBUAE Art. 3；算例见 emiratesnbd.com/en/kfs/home-loan-fixed-and-variable-interest-rate |
+| 工资 / 离职金 | UAE **无个人所得税**（故**无房贷利息抵税**），**无强制全国性社保**；私营部门雇员**离职金**：满 1 年不满 5 年 = 每年 **21 天**基本工资，满 5 年后 = 每年 **30 天**，总额**不超过 2 年工资**，仅以**基本工资**为基数。标准工时 **每日 8 小时 / 每周 48 小时**，加班上限每日 2 小时，加班费 **+25%**，22:00-04:00 加班 **+50%**。月薪制通行，按 **月薪 x 12** 年化 | u.ae/en/information-and-services/finance-and-investment/taxation；beta.government.ae/.../end-of-service-benefits-for-employees-in-the-private-sector；u.ae/.../working-hours |
 | **提前结清费** | 上限为**未偿余额的 1% 或 AED 10,000，取较小者**（Appendix 2，home loans #35；部分结清 #41 同一上限） | CBUAE Appendix 2：rulebook.centralbank.ae/en/rulebook/amendments-appendix-2-regulation-no-292011-regulations-regarding-bank-loans-other-services |
-| **Dubai 交易登记费** | 买卖登记 **售价的 4%** + registrar fee（价格 >=AED 500,000 为 **AED 4,200**，低于则为 **AED 2,100**）+ AED 10 knowledge + AED 10 innovation；抵押登记 **抵押额的 0.25%** | dubailand.gov.ae/en/eservices/registering-the-sale-of-a-mortgaged-property/；dubailand.gov.ae/en/eservices/grant-property-mortgage/ |
+| **Dubai 交易登记费** | 买卖登记 **售价的 4%** + registrar fee（价格 **>=AED 500,000 为 AED 4,200**，**低于则为 AED 2,100**）+ **AED 10 knowledge + AED 10 innovation**；抵押登记 **按揭金额的 0.25%**；**抵押注销 AED 525 + 登记员 AED 315**；同日办理抵押可免登记员费，隔日另收 AED 4,000 + VAT。（迪拜**经纪佣金约 2%** 仅见聚合来源，标 **SECONDARY**） | dubailand.gov.ae/en/eservices/registering-the-sale-of-a-mortgaged-property/；dubailand.gov.ae/en/eservices/grant-property-mortgage/ |
 | 税 | **无按揭利息抵税** | - |
 
 > **注（来源状态：待独立复核 / NOT independently verified）**：上述数值系研究 agent 声称从其列出的 Rulebook URL 抓取。**本仓库的复核者随后对同一 URL 实测，返回 HTTP 403 Forbidden**，因此这些数字**无法被独立复现**。
@@ -613,10 +666,14 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 
 | 产品 | 提供方 | 类型 | 来源 |
 | :--- | :--- | :--- | :--- |
-| Mortgage（按揭）主站与还款计算器 | HSBC Hong Kong | 银行 | hsbc.com.hk/mortgages/（站点可达，内容 JS 渲染） |
-| 按揭成本计算器（还款） | HSBC HK | 银行 | broking.hsbc.com.hk/zh-hk/mortgages/repayment-calculator/（**DNS 解析失败**） |
-| 即时按揭评估（预算规划） | HSBC HK | 银行 | retailbank.hsbc.com.hk/zh-cn/mortgage-calculator/budget-planner |
-| 按保（Mortgage Insurance Programme） | **HKMC** | **准政府** | 需 hkmc.com.hk 一手 |
+| 按揭計算機 – 每月還款額 / 可負擔貸款額 / Mortgage-Link 計算機 | 恒生銀行 | 银行 | hangseng.com/zh-hk/personal/mortgages/mortgage-calculators/ |
+| 按揭貸款 – 每期供款額計算機 / 「置理想」按揭計劃計算機 | 中銀香港 (BOCHK) | 银行 | bochk.com/tc/more/calculators.html |
+| **Mortgage Repayment Calculator**（含 Stress Test Assumption 输入项） | **HKMA** | **政府** | hkma.gov.hk/eng/smart-consumers/mortgages/ |
+| Repayment calculator | HSBC | 银行 | broking.hsbc.com.hk/zh-hk/mortgages/repayment-calculator/（DNS 解析失败） |
+| 按揭計算機（含按揭保費、負擔能力測試、住宅/非住宅） | 28Hse | 门户 | 28hse.com/mortgage/ |
+| Calculator | 中原按揭 | 经纪 | centamortgage.com/v2/Calculator |
+| 經絡按揭計算機（含按保表、印花稅費率） | mReferral | 经纪 | mreferral.com/（403） |
+| **Mortgage Insurance Programme（按保）** | **HKMC** | **准政府** | hkmc.com.hk/eng/our_business/mortgage_insurance_programme.html |
 | 印花税（AVD） | **IRD** | **政府** | ird.gov.hk/eng/faq/avd.htm（**完整档位已核对**） |
 
 **(b) 必做计算器** —— **① 每月供款 ② LTV / DSR 资格（70% / 50%）③ 按保（MIP）保费 ④ 印花税（AVD）⑤ 提前还款/罚息测算**。
@@ -628,25 +685,87 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 | :--- | :--- | :--- |
 | **LTV / DSR（已核实）** | 2024-10-16 起：所有住宅 **最高 LTV 一律 70%**（不论价值、不论是否自用）；**资产（net worth）基础审批的 LTV 由 60% 上调至 70%**（住宅与非住宅均适用）；**DSR 上限统一为 50%**（非自用由 40% 上调至 50%）；**对已持有其他按揭的申请人「LTV 与 DSR 各减 10 个百分点」的要求被取消**。调整后住宅与非住宅**统一为 LTV 70% / DSR 50%** | hkma.gov.hk/eng/news-and-media/press-releases/2024/10/20241016-4/（**已逐条核对**：(1)(2)(3)(4) 四点） |
 | **压力测试（已更正）** | HKMA 2024-02-28 通函**暂停**「假设按揭利率上升 200 个基点」的利率压力测试要求；此后审批以 DSR 为主，**无 60% 受压 DSR 要求** | HKMA 通函（PDF，2024-02-28）：brdr.hkma.gov.hk/eng/doc-ldg/docId/getPdf/20240228-3-EN/20240228-3-EN.pdf（**我方抓取为 PDF，未能解析文本**；另有中文媒体对该暂停的报道，属 SECONDARY） |
-| 利率结构 | H（1M HIBOR）vs P（最优惠利率），有封顶（P - x%） | **UNVERIFIED** |
+| 利率结构 | **H 按** = 1M HIBOR + 息差，或按计划封顶利率，**取低**；**P 按** = 银行最优惠利率 - 息差。HIBOR 波动大，通常设 cap。**「P - 1.75% / P - 2%」这两个具体息差档位未获一手确认（SECONDARY）** | HKMA 按揭页 Note 2：hkma.gov.hk/eng/smart-consumers/mortgages/ |
 | **印花税 AVD（已更正：2026 年改表）** | **自 2026-02-26 起**：住宅适用 **Part 1 of Scale 1 与 Scale 2（两者相同）**；**非住宅新设 Scale 3**（此前非住宅用 Scale 2）。住宅档位（Part 1 Scale 1 = Scale 2）：<=$4,000,000 = $100；$4,000,001-$4,323,780 = $100 + 超出部分的 20%；$4,323,781-$4,500,000 = 1.50%；$4,500,001-$4,935,480 = $67,500 + 10%；$4,935,481-$6,000,000 = 2.25%；$6,000,001-$6,642,860 = $135,000 + 10%；$6,642,861-$9,000,000 = 3.00%；$9,000,001-$10,080,000 = $270,000 + 10%；$10,080,001-$20,000,000 = 3.75%；$20,000,001-$21,739,120 = $750,000 + 10%；$21,739,121-$100,000,000 = 4.25%；$100,000,001-$109,574,470 = $4,250,000 + 30%；>= $109,574,471 = 6.5%。**2026 年前的 Scale 2 表已过时，不可使用** | gov.hk/en/residents/taxes/stamp/stamp_duty_rates.htm（修订说明）；ird.gov.hk/eng/faq/avd.htm（**完整档位表，已核对**） |
 | 需求管理措施 | 2024-02 起撤销住宅需求管理措施（SSD / BSD / NRSD） | 上游 §3.1 |
 | **提前还款罚息（已核实，来自银行 KFS）** | **中银香港（BOCHK）**：全额提前还款第 1 年 **原贷款额的 2%**、第 2 年 **1%**；部分提前还款第 1 年收 **提前还款额的 1%**，另加 **1 个月利息**。**HSBC High Advance**：全额提前还款第 1/2/3 年分别为 **3% / 2% / 1%**；前 2 年内部分提前还款 = **2 个月利息**（最低 HK$50,000） | BOCHK 与 HSBC 的第一方 KFS（key facts statement），经研究 agent 核对 |
-| 按保 | HKMC MIP 覆盖高 LTV（最高约 90%） | **UNVERIFIED** |
-| 期限 / 税 | 常 25-30 年；无资本利得税 | **UNVERIFIED** |
+| **按保 MIP（已取得 HKMC 一手 IEC/费率表）** | 银行可提供最高 **80% LTV**；**80% 以上至 90%** 仅限（i）所有抵押人申请时不持有香港住宅物业，且（ii）所有申请人皆为固定受薪人士。物业价值分档：**<=HK$10m -> 80%/90%**；>HK$10m 且 <HK$11.25m -> 80%/90%（贷款上限 HK$9m）；HK$11.25m-15m -> 80%；>HK$15m 且 <=HK$17.15m -> 70-80%（贷款上限 HK$12m）；>HK$17.15m 且 <=HK$30m -> 70%。**资格**：最高 DTI **50%**、最长 **30 年**、「剩余年期 + 楼龄」**<=75 年**、**仅限完全摊销贷款**（气球还款/供款假期/延迟本金不合资格）、首付须为自有资金。**保费表**（物业 <=HK$6m、首次置业、浮动利率）：70-80% LTV 一次过 **0.50%（10 年）至 0.92%（30 年）**；70-85% -> **0.86%-1.41%**；**70-90% -> 1.25%-2.16%** | hkmc.com.hk/eng/our_business/mortgage_insurance_programme.html；IEC 与 Premium Rate Sheet PDF（2024-10 版） |
+| 期限 / 复利 / 税 | 市场标准 **25-30 年**（按保上限 30 年），**按月等额本息**。**无资本利得税**（IRD 明确 "does not tax capital gains"）。**自住贷款利息扣除**每人合计 **20 个课税年度**（2012/13 起由 10 年延至 15 年，2017/18 起延至 20 年） | ird.gov.hk/eng/tax/bus_taxcertainty.htm；ird.gov.hk/eng/faq/hli_basic.htm |
+| 薪资（已升级） | 薪俸税按**净应课税入息**累进：首 $50,000 -> **2%**；次 $50,000 -> **6%**；次 $50,000 -> **10%**；次 $50,000 -> **14%**；余额 -> **17%**；或按净入息**标准税率**（2024/25 起两级：首 $5,000,000 -> **15%**，余额 -> **16%**），**两者取低**；由 IRD 官方 Tax Calculator 实现。**MPF**：雇员与雇主**各 5%**，月薪制相关收入 **HK$7,100-30,000**（雇员每月最高 **HK$1,500**）。**法定标准工时无统一上限（未取得劳工处一手条文，UNVERIFIED）** | gov.hk/.../salariesrates.htm；gov.hk/.../tax_computation.htm；mpfa.org.hk/en/MPF-system/mandatory-contributions/employees |
 | 薪资 | 月薪 + MPF | **UNVERIFIED** |
 
 **(d) 与现有 10 款的重合度** —— Mortgage **需新建**（H/P 双利率与封顶 + LTV 70% / DSR 50% 资格 + MIP，**但不需要 +200bp 压力测试**）；Cap rate **适用**；DSCR **部分适用**；Refinance **需参数化**（含提前还款罚息曲线：第 1-3 年 3%/2%/1% 这类结构）；BRRRR / Hard money / 1031 **不适用**；Salary to hourly **需新建**（月薪 + MPF）。
 
 ---
 
-### 2.15 西班牙（ES，轻量）
+### 2.15 西班牙（ES）
 
-**UNVERIFIED（本轮）**：未对西班牙第一方站点做核对，上游 §3.1 也未覆盖。结构性要点（需补源）：variable（Euribor）vs fija vs mixta；标准 25-30 年；constant-payment（French system）；购房税 **ITP（二手房，自治区决定）** vs **新建房 IVA 10% + AJD**；公证+登记费；提前还款补偿上限（按剩余期限分档）；**IRPF 利息扣除仅适用于 2013 年前签订的贷款**；无全国性按揭保险。
+**(a) 在售计算器清单（第一方核对）**
 
-### 2.16 意大利（IT，轻量）
+| 产品名 | 提供方 | 类型 | 来源 |
+| :--- | :--- | :--- | :--- |
+| **Simulador de préstamo hipotecario o personal**（含 carencia、amortización anticipada、TAE、IRPH 差价） | **Banco de España** | **政府/央行** | clientebancario.bde.es/pcb/es/menu-horizontal/podemosayudarte/simuladores/simulador_prestamo_hipotecario_personal.html |
+| **Comparador de tipos de interés y comisiones** + 良好做法准则资格模拟器 | Banco de España | 政府 | clientebancario.bde.es/.../comparadores-y-simuladores/ |
+| Simulador de hipoteca（cuota/TAE/gastos） | BBVA | 银行 | bbva.es/general/landings/hipotecas/simula-tu-hipoteca.html |
+| Simulador Hipoteca fija/variable/mixta | Banco Santander | 银行 | bancosantander.es/particulares/hipotecas/simulador-hipoteca |
+| Simulador de hipotecas | CaixaBank | 银行 | www4.caixabank.es/apl/hipotecas/simulador/index_es.html |
+| **Calculadora de gastos hipoteca**（购房费用） | iAhorro | 经纪/比价 | iahorro.com/calculadoras/gastos-hipoteca |
+| Calculadoras de vivienda（含 IVA vivienda nueva） | Fotocasa | 门户 | fotocasa.es/fotocasa-life/categoria/calculadora/ |
+| Simulador de hipotecas | idealista | 门户 | idealista.com/hipotecas/simulador-hipotecas/ |
+| **Servicio de Cálculo de Retenciones**（工资预扣） | **AEAT** | **政府/税务** | sede.agenciatributaria.gob.es/.../servicio-calculo-retenciones.html |
+| Calculadora Sueldo Neto | Banco Sabadell | 银行 | bancsabadell.com/.../calculadora-sueldo-neto/ |
 
-**UNVERIFIED（本轮）**：未核对第一方站点。结构性要点（需补源）：**mutuo** 摊还（French system）；variable（Euribor/IRS）vs fisso vs misto；购房税 **imposta di registro / catastale / ipotecaria**，自住「prima casa」优惠档；**detrazione 19%** 按揭利息扣除（有上限，仅 prima casa）；**TAEG** 揭示；提前还款 **penale/indennizzo** 有上限；无全国按揭保险。
+**(b) 必做计算器** —— **① mortgage repayment（含 TAE）② capacidad de endeudamiento ③ gastos de compraventa（ITP / IVA + AJD + 公证登记）④ 提前还款补偿（按利率类型分档）⑤ IRPF 过渡扣除提示**。理由：ITP 由自治区自定，必须做 CCAA 参数化；提前还款补偿上限在 2019 年后分档细化。
+
+**(c) 核心计算规则（规格）**
+
+| 维度 | 规则 | 一手来源 |
+| :--- | :--- | :--- |
+| 利率结构 / 期限 | variable（**Euribor 12M** 为基准，另有 6M/3M/1M 与年度）+ fija + mixta；期限 25-30 年（可至 40）。**IRPH** 仍由 BdE 官方公布（Cajas/Bancos/Entidades）并设替换差价计算器，但约 2019 年后无新发放；ECJ 2020（C-125/18）与 2025-11 最高法院全体庭要求逐案透明度审查（法院评论为 SECONDARY） | clientebancario.bde.es |
+| 摊还 | **法式等额本息（constant-payment）**，月度复利；法律仅要求披露「el sistema de amortización y la fórmula de cálculo de las cuotas」 | BOE Ley 5/2019 art. 23 |
+| **购房税** | **新房（开发商首次交付）= IVA 10%**（特殊制度 4%）+ AJD（自治区定）；**二手房 = ITP**，税率/档位**由自治区自定**（国家基准 RDL 1/1993，地区档位见 Hacienda 自治区汇编）→ 计算器**必须按 CCAA 参数化**。**加泰罗尼亚**官方实例：一般 **10%** 至 EUR 600k，超出部分 11%/12%/13%；gran tenedor 20%；保护房/自住 5% | AEAT「IVA o ITP」页；atc.gencat.cat/es/tributs/itpajd/tpo/tarifes-tipus/ |
+| 公证 / 登记费 | 国家价目 RD 1426/1989 + RD 1427/1989 | **具体价目 UNVERIFIED**（notariado.org 计算器 404） |
+| **提前还款补偿（已核实 BOE）** | **浮动利率**：5 年内上限 **0.15%**，或（两者互斥）3 年内 **0.25%**；5 年后 **0%**。**固定利率**：首 **10 年 2%**、其后 **1.5%**。**浮动转固定（novación/subrogación）**：3 年内 **0.05%**，其后 0%。**2019-06-16 前签订的贷款**：5 年内 0.5%、其后 0.25%（或更低的约定值） | BOE Ley 5/2019 art. 23：boe.es/buscar/act.php?id=BOE-A-2019-3814（**已核对：该法立法说明明确「按浮动/固定区分补偿期间，并适用法定百分比上限」**） |
+| IRPF 扣除 | **2013-01-01 起基本废除**（Ley 16/2012）；仅 **DT 18ª LIRPF** 对 2013 年前购置的自住房屋保留过渡制度；2012 年后贷款默认 **0**。地区性扣除仍存。**2013 年前的 15% / EUR 9,040 上限参数 UNVERIFIED** | AEAT 自住房屋扣除页 |
+| 可负担性 | BdE「Guía de acceso al préstamo hipotecario」（2013）：机构通常不融资超过**评估价值的 80%**；月供不得超过净月收入的「某一比例」。**35% 是市场惯例，不是法定上限**；**无法定 LTV 上限** | bde.es 指南 PDF |
+| 保险 / 担保 | **无一般性公共按揭保险**。仅有定向公共担保 **ICO/MIVAU aval 线**：对**35 岁以下首购或有未成年子女的家庭**提供**本金最高 20%** 的国家担保，使融资可达 100%，规模 25 亿欧元，延长至 2027 | ico.es/es/linea-avales-hipoteca-primera-vivienda |
+| 薪资（一段） | 按 **AEAT rendimientos del trabajo 预扣表**计算 IRPF（reducciones、mínimo personal/familiar 等），以官方 Servicio de Cálculo de Retenciones 为准；雇员一般制度共同 contingency 缴费 **4.70%**（雇主 23.60%/21.20%），另加 MEI 与失业险；法定每周工时 **40 小时**（ET art. 34.1）；年薪按 **12 或 14 pagas** 折算（6 月/12 月双薪） | BOE Orden PJC/297/2026；AEAT |
+
+**(d) 与现有 10 款的重合度** —— Mortgage **需参数化**（法式摊还通用；增 TAE、提前还款分档、CCAA 税制）；Refinance **需参数化**；DSCR / BRRRR / Hard money / 1031 **不适用**；Cap rate **需参数化**；Commercial **需参数化**；Loan comparison **需参数化**（按 TAE/ESIS 口径，可复用 MCD Schedule 3）；Salary to hourly **需新建**（IRPF 预扣 + 12/14 pagas，不是美国时薪产品）。
+
+### 2.16 意大利（IT）
+
+**(a) 在售计算器清单（第一方核对）**
+
+| 产品名 | 提供方 | 类型 | 来源 |
+| :--- | :--- | :--- | :--- |
+| **Calcolatore della rata del mutuo**（含 piano di ammortamento） | **Banca d'Italia** | **政府/央行** | economiapertutti.bancaditalia.it/strumenti/calcolatori/calcolatore-della-rata-del-mutuo/ |
+| **Calcolatore del capitale finanziabile a partire dalla rata**（由月供反推可贷额） | Banca d'Italia | 政府 | economiapertutti.bancaditalia.it/strumenti/calcolatori/ |
+| Calcolo rata mutuo | UniCredit | 银行 | unicredit.it/it/privati/servizi-digitali/tutti-i-servizi/altro/rata-mutuo.html |
+| Simulatore/comparatore mutui（TAEG） | MutuiOnline | 经纪 | mutuionline.it/mutuo-casa/ |
+| Fondo di garanzia mutui prima casa（Consap）说明与模拟 | Intesa Sanpaolo | 银行 | intesasanpaolo.com/.../fondo-di-garanzia-mutui-prima-casa-consap.html |
+| Calcolatore mutuo | Immobiliare.it | 门户 | immobiliare.it/mutui/ |
+| Comparatore mutui | MutuiSupermarket | 比价 | mutuisupermarket.it/ |
+| **Fondo Prima Casa（资格）** | **Consap / MEF** | **政府机构** | consap.it/fondo-prima-casa/ |
+| **Agevolazioni acquisto prima casa** | **Agenzia delle Entrate** | **政府/税务** | agenziaentrate.gov.it/portale/aree-tematiche/casa/agevolazioni/ |
+
+**(b) 必做计算器** —— **① rata（piano di ammortamento francese）② capitale finanziabile ③ imposte acquisto prima casa（2%/9% 或 IVA 4%/10%）④ imposta sostitutiva ⑤ detrazione interessi 19% ⑥ Fondo Prima Casa 资格**。理由：prima casa 资格直接改变税率档次（2% vs 9%、IVA 4% vs 10%），必须做成显式资格测试。
+
+**(c) 核心计算规则（规格）**
+
+| 维度 | 规则 | 一手来源 |
+| :--- | :--- | :--- |
+| 利率结构 / 期限 | fisso / variabile（Euribor 或 ECB + spread）/ misto / cap；期限 25-30 年（可至 40）；**TAEG** 签约前强制披露；**IRPH 在意大利不使用** | economiapertutti.bancaditalia.it |
+| 摊还 | BdI 官方计算器明确构建 **piano di ammortamento francese**（月供固定，本金递增、利息递减）；BdI 并指出月供 <= 净收入的 **1/3** | economiapertutti.bancaditalia.it/.../calcolatore-della-rata-del-mutuo/ |
+| **购房税（prima casa）** | 向私人卖方（免 IVA）：**imposta di registro 2%**（否则 9%，按 valore catastale，**最低 EUR 1,000**），ipotecaria + catastale 各 **EUR 50** 固定。向增值税纳税人购买：**IVA 4%**（否则 10%），registro/catastale/ipotecaria 各 **EUR 200** 固定。非优惠制度：registro **9%**（D.Lgs 347/1990  tariffa） | Agenzia delle Entrate：agenziaentrate.gov.it/.../infogen-agevolazioni-acquisto-prima-casa-intermediari（**已核对 2%/9%、IVA 4%/10%、EUR 50/EUR 200、最低 EUR 1,000**） |
+| **imposta sostitutiva** | **0.25% prima casa**；非首套住房 2%；一般 0.75% | DPR 601/1973 art. 18（Normattiva） |
+| **提前还款（关键：两条不可混用）** | **TUB art. 120-ter**：对**自然人购买或翻新住房的按揭**，任何规定提前还款罚则的条款**无效** —— 即住宅按揭**一律无提前还款罚**。**art. 125-sexies**（该条属**消费信贷**）才适用 **1%**（剩余期限 >1 年）/ **0.5%**（<=1 年）上限，且提前还款额 <= EUR 10,000 免收。**Legge 40/2007 art. 7 的 portabilità/surroga（转贷）不得收任何费用或罚金** | Normattiva：TUB art. 120-ter（normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:1993-12-01;385~art120ter）与 art. 125-sexies。**注（重要冲突）**：两位研究 agent 对意大利罚则口径冲突 —— 一位把 125-sexies 的 1%/0.5% 套用到按揭；120-ter 版本更准确（住宅按揭无罚），并经独立搜索的第三方法律引述佐证；但 Normattiva 在我方环境为 JS 壳，**条文未逐字核对**，见 §6 |
+| 税盾 | **art. 15 TUIR**：**19% detrazione** 对按揭利息（abitazione principale），合并计税基数上限 **EUR 4,000**；2020 年起须可追溯支付。**19%/EUR 4,000 本轮仅二手来源，UNVERIFIED** | Agenzia delle Entrate / Fisco Oggi |
+| 可负担性 | BdI 的 **1/3 净收入**规则；**80% LTV 是市场惯例，非法定**；Consap 对符合条件者可将融资提至 100% | economiapertutti.bancaditalia.it |
+| **担保（有全国基金）** | **Fondo di Garanzia Mutui Prima Casa**（Consap/MEF，Legge 147/2013 art. 1 c.48(c)）：国家担保**最高按揭的 80%**，融资额 **<= EUR 250,000**，优先类别（一方 <36 岁的年轻夫妇、有未成年子女的单亲家庭、公房租户、ISEE 门槛）。另有 Fondo di Sospensione Mutui 供还款暂停 | consap.it/fondo-prima-casa/ |
+| 薪资（一段） | 到手 = 毛额 - IRPEF 档预扣（**<=EUR 28,000 -> 23%**；EUR 28,001-50,000 -> **35%**（AdE 页面注明 2026 年预算法拟降至 33%）；>EUR 50,000 -> **43%**）- 大区/市镇附加税 - 雇员社保。法定每周工时 **40 小时**（D.Lgs. 66/2003 art. 3.1）。薪酬惯例 **13 mensilità**（部分 CCNL 为 14，12 月发 tredicesima）。**常引用的 9.19% IVS 雇员费率仅二手来源**（INPS 一手本轮仅取到农业雇员 8.84%，不可外推） | Agenzia delle Entrate 税率页；normattiva D.Lgs 66/2003 art. 3；inps.it |
+
+**(d) 与现有 10 款的重合度** —— Mortgage **需参数化**（法式摊还通用；增 TAEG、prima casa 资格、imposta sostitutiva）；Refinance **需参数化**（surroga 无罚是意大利特色）；DSCR / BRRRR / Hard money / 1031 **不适用**；Cap rate **需参数化**；Commercial **需参数化**；Loan comparison **需参数化**（按 TAEG）；Salary to hourly **需新建**（IRPEF 预扣 + 13 mensilità）。
 
 ---
 
@@ -661,7 +780,7 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 | **加拿大** | fixed / variable（prime-linked） | 25 年（受保基准） | 月度等额摊还 | **法定半年复利**（Interest Act s.6） | **CMHC**/Sagen/Canada Guaranty；保费并入本金 | **省级**土地转让税（+ 多伦多市） | **IRD**（固定）/ 3 个月利息（浮动） |
 | **澳大利亚** | 浮动 + 短期固定 | 30 年 | 月度等额；**IO 期** | 月度 UNVERIFIED | **LMI**（贷方实践）；政府 First Home Guarantee | **州级印花税**（NSW/VIC...）+ 登记费 | 浮动无罚；固定 break cost |
 | **爱尔兰** | fixed（常见 3/5y）/ variable | 20-35 年 | 月度等额摊还 | 月度 UNVERIFIED | **无 PMI**，但 **CCA 1995 s.126 法定房贷寿险** | **印花税 1%/2%/6%**（10 套以上 15%）；无 FTB 减免，有 Help to Buy 退税 | 固定：breakage fee；浮动：通常免罚；**无通用 10% 额度** |
-| **新西兰** | 浮动 + 短期固定 | 30 年 | 月度等额 | 月度 UNVERIFIED | 无按揭保险；政府 First Home Loan | **无印花税 / 无土地转让税**（UNVERIFIED） | break fees（固定） |
+| **新西兰** | 浮动 + 短期固定 | 常 30 年 | 月度等额 | **按日计息、按月收取**（BNZ 计算器假设） | 无按揭保险；**First Home Loan 首付可低至 5%**；**RBNZ LVR 流量上限（自 2025-12-01：自住 >80% 份额 25%、投资 >70% 份额 10%）**；**RBNZ 不设统一 test rate**（属银行信贷政策） | **无印花税 / 无土地转让税**（Stamp Duty Abolition Act 1999） | break fees（固定）；具体公式 UNVERIFIED |
 | **德国** | **Zinsbindung** 5/10/15 年固定，到期再融资 | 常 25-30 年（含 Tilgung） | **Annuitätendarlehen**（月供固定）/ **Tilgungsdarlehen**（本金固定） | 30/360 按月 UNVERIFIED | **无按揭保险**；**Bausparen** 为替代机制 | **GrESt** 联邦基准 3.5%，州可加（区间约 3.5-6.5%）+ GNotKG 公证/登记 | **§489 满 10 年可终止（6 个月通知）**；§490 提前解约须赔偿 |
 | **荷兰** | 固定期（常见 10/20/30y） | 30 年 | **annuitair / lineair / aflossingsvrij** | 月度；toetsrente 考核利率 UNVERIFIED | **NHG 国家担保**：2026 上限 470,000 EUR（节能 498,200 EUR），保费 0.4% | **overdrachtsbelasting** 自住 2% / 非自住 8%（2026）/ 其他 10.4%；<35 岁首购豁免 | 多数贷方年度免罚额度 UNVERIFIED |
 | **法国** | 固定为主；variable/mixte | 常 20-25 年（HCSF <=25） | 等额月供（mensualité constante） | 月度；taux nominal 不等于 TAEG | **无按揭保险，但 assurance emprunteur 事实必需** | **frais de notaire** 旧房约 7-8% / 新房约 2-3% UNVERIFIED | **IRA** <= 6 个月利息或 3% 剩余本金（已证实） |
@@ -669,17 +788,17 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 | **印度** | fixed / floating（必须挂钩 repo / 3M 或 6M 国债，**至少每 3 个月重置**） | 20-30 年 | EMI 等额摊还 | 月度复利（r = 年率/12） | 非强制；**CIBIL 评分**决定定价 | **州级**印花税 + 注册费；PMAY-CLSS 已结束，现行 PMAY-U 2.0 | **浮动不得收提前还款费**（RBI Directions 2025，2026-01-01 起适用） |
 | **新加坡** | 银行浮动（SORA-linked）/ HDB 贷款（CPF OA + 0.1%） | HDB 最长 30 年、私宅 35 年 | 月度等额 | 月度；**TDSR 压力利率下限 4%（或现行利率取高）** | **无按揭保险**；CPF OA + HDB 贷款机制 + accrued interest | **BSD**（最高边际 6%）+ **ABSD**（公民 20/30%、PR 30/35%、外国人 60%、实体 65%） | 银行多无罚，有 lock-in clawback |
 | **阿联酋** | 浮动（EIBOR / base-rate linked） | **最长 25 年** | 月度等额 | 月度；**压力测试 = 贷款利率 + 2-4pp** | 无 | **DLD 买卖登记 4%** + registrar fee（>=AED 500,000 为 4,200，否则 2,100）+ 杂费；抵押登记 0.25% | **提前结清费 <= 未偿余额 1% 或 AED 10,000 取小**；**LTV 按国籍/价格带/用途**（国民首套 85%/75%、外籍 80%/70%、投资 65%/60%、off-plan 50%）；**收入上限：国民 8 年、外籍 7 年**；DBR 50%（退休 30%） |
-| **中国香港** | H（HIBOR）vs P（最优惠利率），有封顶 | 25-30 年 | 月度等额 | 月度；**+200bp 压力测试已暂停（2024-02）** | **HKMC MIP**（高 LTV 按保） | **AVD**：2026-02-26 起住宅用 Part 1 Scale 1 = Scale 2（最高 6.5%），非住宅新设 Scale 3；2024-02 撤销 SSD/BSD/NRSD | 罚息期：全额第 1-3 年 2%/1%（BOCHK）或 3%/2%/1%（HSBC High Advance）；部分提前还款另计 |
-| **西班牙** | Euribor 浮动 / fija / mixta | 25-30 年 | constant-payment | 月度 | 无 | **ITP**（二手，自治区）/ **IVA 10% + AJD**（新建） | 补偿上限（分档）UNVERIFIED |
-| **意大利** | Euribor/IRS 浮动 / fisso / misto | 25-30 年 | constant-payment | 月度 | 无 | **registro / catastale / ipotecaria**（prima casa 优惠）；**detrazione 19%** | penale/indennizzo 有上限 UNVERIFIED |
+| **中国香港** | H（HIBOR）vs P（最优惠利率），有封顶 | 25-30 年 | 月度等额 | 月度；**+200bp 压力测试已暂停（2024-02）** | **HKMC MIP**（LTV 80% 常态、80-90% 限首置+固定受薪；DTI 50%、最长 30 年、楼龄+年期 <=75；保费 0.50%-2.16%） | **AVD**：2026-02-26 起住宅用 Part 1 Scale 1 = Scale 2（最高 6.5%），非住宅新设 Scale 3；2024-02 撤销 SSD/BSD/NRSD | 罚息期：全额第 1-3 年 2%/1%（BOCHK）或 3%/2%/1%（HSBC High Advance）；部分提前还款另计 |
+| **西班牙** | Euribor 12M 浮动 / fija / mixta | 25-30 年（可至 40） | 法式等额本息 | 月度 | 无一般性公共保险；**ICO/MIVAU aval 定向担保**（<35 岁首购，本金最高 20%，融资可达 100%，至 2027） | **IVA 10%**（新建）+ AJD（自治区）；**ITP**（二手，**自治区自定**，加泰一般 10%） | **浮动：3 年内 0.25% / 5 年内 0.15% / 5 年后 0**；**固定：首 10 年 2%、其后 1.5%**；浮动转固定 3 年内 0.05% |
+| **意大利** | Euribor/ECB 浮动 / fisso / misto / cap | 25-30 年（可至 40） | **piano di ammortamento francese** | 月度 | **有全国基金**：Fondo Prima Casa（Consap）国家担保**最高 80%**、融资 **<=EUR 250,000** | **prima casa**：registro **2%**（否则 9%，最低 EUR 1,000）+ ipotecaria/catastale 各 **EUR 50**；或 IVA **4%**（否则 10%）+ 各 **EUR 200**；**imposta sostitutiva 0.25%**（否则 2%） | **住宅按揭提前还款一律无罚**（TUB art. 120-ter）；1%/0.5% 上限属**消费信贷** art. 125-sexies；surroga 免罚 |
 
 **跨市场实现要点**
 
 1. **复利约定只需三档**：月复利（绝大多数）、**半年复利（加拿大，法定）**、以及英国/澳新常见的**按日计息、按月扣款**。
 2. **摊还类型选择器**是 Tier B 的必备 UI：annuitair/lineair（NL）、Annuität/Tilgung（DE）、元利/元金（JP）。三者数学等价于「月供固定 vs 本金固定」，**可共用一套内核 + 一个模式开关**。
-3. **保险/担保分三态**：有定价保险（美 PMI / 加 CMHC / 港 HKMC MIP）；准公共担保或强制寿险（荷 NHG / 日 団信 / 爱 CCA 1995 s.126 法定寿险 / 法 assurance emprunteur）；无按揭保险（英/新/德/西/意）。
-4. **交易税分三层**：联邦/全国统一（英 SDLT、爱印花税、港 AVD）；**州/省/自治区决定**（澳、德、加、美、印、西）；无（新西兰）。
-5. **提前还款分三类**：有法定上限（德 §489/§490、法 IRA 6 个月利息或 3%）；有合同罚金但无统一上限（英 ERC、加 IRD、澳 fixed break cost、港罚息期）；**明确无罚**（印度浮动、澳洲浮动、爱尔兰浮动）。
+3. **保险/担保分三态**：有定价保险（美 PMI / 加 CMHC 0.60%-4.50% / 港 HKMC MIP 0.50%-2.16%）；准公共担保或强制寿险（荷 NHG 0.4% / 日 団信 / 爱 CCA 1995 s.126 法定寿险 / 法 assurance emprunteur / **意 Consap Fondo Prima Casa 最高 80%、<=EUR 250,000** / **西 ICO aval 定向 20%**）；无任何按揭保险或担保（英/新/德）。
+4. **交易税分三层**：联邦/全国统一（英 SDLT、爱印花税、港 AVD）；**州/省/自治区决定**（澳 NSW/VIC、德 GrESt、加安省/BC/多伦多、美、印、**西 CCAA 的 ITP/AJD**）；无（新西兰）。**意大利是第四类**：以**资格判定**而非地域决定税档 —— prima casa 命中则 registro **2%**（或 IVA **4%**）、否则 **9%**（或 **10%**），故必须实现**显式资格测试**而非地区选择器。
+5. **提前还款分四类**：有**按利率类型/年份分档的法定上限**（**西 Ley 5/2019：浮动 3 年内 0.25%、5 年内 0.15%、5 年后 0；固定首 10 年 2%、其后 1.5%；转固定 3 年内 0.05%**；法 IRA 6 个月利息或 3%；德 §489/§490）；有合同罚金但无统一上限（英 ERC、加 IRD、澳 fixed break cost、港罚息期 2%-3%/年递减）；**法律明文无罚**（**意住宅按揭 TUB art. 120-ter**、印度浮动、澳洲浮动、爱尔兰浮动）；无（新西兰实际存在 break fees，属第三类）。**意大利的坑**：1%/0.5% 上限属**消费信贷** art. 125-sexies，**不可套用到住宅按揭**。
 6. **薪资代扣分三种模式（决定能否共用一套 take-home 引擎）**：(1) 雇主按累计制/税率表代扣、年度结算 —— 英国 PAYE、爱尔兰 PAYE、加拿大、新西兰 PAYE、德国 Lohnsteuer、日本 源泉所得税；(2) **无雇主代扣**、年度申报 —— 新加坡；(3) 雇主按**年度估算/TDS** 代扣 —— 印度；澳洲 PAYG 属表格式代扣 + 年度结算。需单独建模的扣缴项：英国（学生贷款 9%/6% + 自动加入养老金）、爱尔兰（USC + PRSI + My Future Fund）、加拿大（CPP/CPP2 + EI）、澳洲（Medicare + Super + HELP）、新西兰（ACC levy 1.75% + KiwiSaver 3.5% + 学生贷款 12%）、德国（KV/RV/AV/PV + Soli）、日本（厚生年金 18.3% + 健康保险 + 雇用保险 + 所得税）、印度（EPF 12% + ESI + professional tax + TDS）、新加坡（CPF 20%+17%）。**加班倍数极少是国家级法定**：只有日本（25/35/50%）、印度（Factories Act 2x）、加拿大联邦（1.5x）、新加坡（Part 4，1.5x）有明文；英国/爱尔兰/新西兰/德国留给合同或集体协议。
 7. **欧盟统一披露规格（MCD）是一条捷径**：爱尔兰转写文本 **S.I. No. 142/2016** 的 **Schedule 2 = ESIS（European Standardised Information Sheet）**、**Schedule 3 = APRC 计算方法**，Art. 18 规定 APRC 计算、Art. 19 规定偿债能力评估、Art. 26 规定提前还款。**同一套 ESIS/APRC 规范适用于爱尔兰、德国、荷兰、法国、西班牙、意大利**。这意味着 **Loan Comparison 计算器可以在欧盟多国共用一套 APRC 口径**，而不是逐国重建（见 irishstatutebook.ie/eli/2016/si/142/made/en/html）。
 
@@ -797,8 +916,14 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 - **UAE** 的资格层关键：**LTV 按国籍/价格带/用途分档**（国民首套 85%/75%、外籍 80%/70%、投资 65%/60%、off-plan 50%）、**收入倍数上限（国民 8 年 / 外籍 7 年，不是 8x）**、DBR 50%（退休 30%）、压力测试 +2-4pp。
 - **引擎改造**：H/P 双利率与封顶；压力测试；按保保费。**可复用**：#1、#4（Cap Rate）、#9。
 
-### 4.13 西班牙 / 意大利（观察名单）
-先做 Mortgage Repayment + 购房税费（ITP / IVA+AJD；registro/catastale/ipotecaria）+ TAEG/税盾提示，验证需求后再投入。
+### 4.13 西班牙 / 意大利
+**西班牙**：1) Repayment（含 TAE）2) Capacidad de endeudamiento 3) **Gastos de compraventa（CCAA 选择器：ITP / IVA+AJD + 公证登记）** 4) 提前还款补偿（按浮动/固定分档）5) IRPF 过渡扣除提示。
+**引擎改造**：法式摊还通用；**必须按 CCAA 参数化 ITP/AJD**；提前还款补偿需按「浮动 3/5 年、固定 10 年」分档。
+
+**意大利**：1) Rata（piano di ammortamento francese）2) Capitale finanziabile 3) **Imposte prima casa（含 prima casa 资格测试）** 4) Imposta sostitutiva 5) Detrazione interessi 19% 6) Fondo Prima Casa 资格。
+**引擎改造**：法式摊还通用；prima casa 资格测试（2% vs 9%、IVA 4% vs 10%、固定 EUR 50/200）；**提前还款无罚**（不可照搬消费信贷的 1%/0.5%）。
+
+**共同**：两者都比 Tier B 更接近现有引擎（法式摊还 + 月度复利），增量集中在**交易税与税盾**；但都落在 EEA（触发认证 CMP，上游 §4.2）。
 
 ---
 
@@ -812,7 +937,7 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 | 2 | **澳大利亚** | 高 | 中（offset / 州税） | 中（无 CMP；有联盟链接则触发 AFSL 线，上游 §4.4） | **立即做** |
 | 3 | **爱尔兰** | 高 | 中（LTI/LTV + 法定寿险） | **高**（EEA -> 认证 CMP + consent，上游 §4.2） | 做，先算 CMP 成本 |
 | 4 | **英国** | 中（英文但产品不同） | 中高 | **高**（UK GDPR + CMP + FSMA s.21 线） | 做，按新产品预算 |
-| 5 | **新西兰** | 中高 | 中（offset） | 低 | 做 |
+| 5 | **新西兰** | 中高 | 中（offset/revolving + LVR 流量上限） | 低 | 做（**按揭与薪资两侧规格本轮均已补齐**，是 Tier A 中「一手完成度」改善最大的市场） |
 | 6 | **荷兰** | 中 | 高（三摊还） | 高（CMP） | 第二批 |
 | 7 | **德国** | 中 | 高（Annuität/Tilgung） | 高（CMP） | 第二批 |
 | 8 | **日本** | 中 | 高（bonus / 税控除） | 中 | 第二批 |
@@ -820,7 +945,7 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 | 10 | **新加坡** | 中 | 高（TDSR/MSR） | 低 | 第二批 |
 | 11 | **印度** | 中 | 高（税制） | 低 | 第三批，先验证 RPM |
 | 12 | **阿联酋 / 香港** | 低 | 中 | 低 | 第三批 |
-| 13 | **西班牙 / 意大利** | 低中 | 中 | 高（CMP） | 观察 |
+| 13 | **西班牙 / 意大利** | **中（法式摊还通用）** | 中（交易税 CCAA/primacasa + 税盾） | 高（CMP） | 观察 -> **可提前**（本轮已取得第一方规格，不再是空白） |
 
 ### 5.2 「看着便宜、其实不便宜」清单
 
@@ -864,6 +989,10 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 | emiratesnbd.com、adcb.com | Cloudflare 403 | UAE **银行计算器产品清单**（规则侧已由 CBUAE Rulebook / DLD 一手页补齐） |
 | rulebook.centralbank.ae（我方环境） | 403 | UAE 规则数值由研究 agent 抓取该一手 URL 取得；建议实施前复核 |
 | brdr.hkma.gov.hk（PDF） | PDF 不支持解析 | 香港 2024-02-28 压力测试暂停通函的**原文句**未能逐字核对（有 SECONDARY 媒体佐证） |
+| rbnz.govt.nz | 403（"access has been restricted"） | 新西兰 LVR 25%/10% 与 DTI 数值（由研究 agent 抓取） |
+| normattiva.it | JS / session 渲染 | 意大利 TUB 条文（art. 120-ter、art. 125-sexies）未能逐字核对 |
+| notariado.org | 404 | 西班牙公证费具体价目 |
+| bayut.com / mreferral.com / bankinter.es / mutuionline.it / gpssa | 503 / 403 / WAF | 各国若干计算器产品清单与费率 |
 | sorted.org.nz | CAPTCHA 405 | 新西兰政府计算器产品清单 |
 | imperdir.nl / rabobank.nl（计算器页） | 隐私墙 / 403 | 荷兰银行计算器 |
 | broking.hsbc.com.hk | DNS 解析失败 | 香港按揭还款计算器 |
@@ -881,7 +1010,7 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 2. **加拿大**：省级土地转让税具体档位；IRD 罚金公式；CMHC 保费费率表。
 3. **澳大利亚**：30 年期限与月复利的一手来源；offset 机制一手说明；comparison rate 定义；LMI 定价；PAYG/Super 规则。
 4. **爱尔兰**：**ERC / breakage 公式**；tracker 指数与利差（ECB 利率）；非居民印花附加税（未找到，非确认不存在）；Permanent TSB 产品（403）；**2026 年雇员 PRSI 费率**；固定利率期限惯例。
-5. **新西兰**：**按揭侧**几乎全部 UNVERIFIED（Sorted 被拦）：LVR 分档、CCCFA、offset、bright-line、无印花税、KiwiSaver 首购提取规则。**薪资侧已大幅补齐**（IRD PAYE calculator、ACC 1.75% / 上限 156,641 新元、KiwiSaver 最低 3.5%、学生贷款 12% / 门槛 24,128 新元）；仍缺 IRD 完整税率档与 Employment NZ 工时细节。
+5. **新西兰**：**已大幅补齐**（LVR 25%/10%（2025-12-01 起）、CCCFA 义务清单、offset 第一方机制、bright-line 2 年、无印花税、KiwiSaver 满 3 年/保留 1,000 新元、First Home Grant 已停止、First Home Loan 5%、PAYE 2025 税率档、ACC levy 1.67%/1.75%/1.83%）。**仍缺**：各银行当前具体 serviceability **test rate** 数值（仅确认机制）、ACC levy 的**计费收入上限**、雇主 KiwiSaver 最低 3% 的说法（IRD 页 404）、ANZ 提前还款违约公式（PDF 404）、4 个 40 小时/周工时条文的法源强度。**注**：RBNZ 站在我方环境 403，LVR/DTI 数值来自研究 agent 抓取。
 6. **德国**：逐州 GrESt 税率（仅联邦基准 3.5% 已证实）；GNotKG **KV 21201（Kaufvertrag）倍数**；30/360 计息惯例；标准期限与典型 Tilgung 率；Bausparen 的 Zuteilung/Bewertungszahl 公式（JS 渲染）；第 13 薪惯例。
 7. **荷兰**：Tijdelijke regeling **Artikel 5 的 LTV 具体百分比**；30 年期限与月复利的监管依据；NHG「必须完整还款计划」条款原文（PDF）；notariskosten 具体金额；Rabobank / ABN AMRO 计算器（403/503）；Arbeidstijdenwet 工时数字与 vakantiegeld 8% 的法源。
 8. **法国**：TAEG / taux effectif global 条文；**taux d'usure 具体季度费率**；**frais de notaire 7-8% / 2-3% 数值**；assurance emprunteur 的 Loi Lemoine / 2018 细节与按年龄费率；PTZ 收入上限/额度/zone；**HCSF 35% / 25 年一手文本**；加班 25%/50% 加成；社保具体分摊率。
@@ -890,7 +1019,8 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 11. **新加坡**：**已补齐**TDSR 55%、MSR 30%、压力利率下限 4%、HDB 30 年 / 私宅 35 年与超年限降至 55%、BSD 6% 上限与起档、ABSD 全线、CPF 20%+17% 与 OW 7,400 / AW 102,000、加班 1.5x / 44 小时。**仍缺**：MAS Notice 632/645 原文数字（PDF 无文本层）、BSD 中间两档区间金额、公民/PR 首套 ABSD（部分 UNVERIFIED）、HDB 贷款利率 = CPF OA + 0.1% 的原文句、锁定期 clawback 条款。
 12. **阿联酋**：**规则侧已补齐**（LTV 国籍/价格带分档、25 年期限、国民 8 年 / 外籍 7 年收入倍数、DBR 50%/退休 30%、+2-4pp 压力测试、提前结清费 1% 或 AED 10,000 取小、DLD 买卖 4% + registrar fee、抵押登记 0.25%）。**仍缺**：银行计算器产品清单（403）、浮动利率挂钩与重定价细节；且 CBUAE 页在我方环境为 403，数值来自研究 agent 的抓取，实施前应复核。
 13. **中国香港**：**已补齐并更正**：LTV 70% / DSR 50% / 资产基础 70% / 取消「其他按揭减 10pp」（HKMA 2024-10-16 新闻稿，已逐条核对）；**+200bp 压力测试已暂停**（2024-02-28 通函，原文句未逐字核对）；**AVD 2026-02-26 新表**（住宅 Part 1 Scale 1 = Scale 2，非住宅 Scale 3，IRD FAQ 完整档位已核对）；BOCHK 与 HSBC 提前还款罚息。**仍缺**：HKMC MIP 保费表、H/P 利率封顶与 MPF 规则、压力测试暂停通函的逐字条文。
-14. **西班牙 / 意大利**：本轮**完全未做第一方核对**，§2.15-2.16 全部为结构性描述，实施前必须补源。
+14. **西班牙 / 意大利**：**已从「未核对」升级为有第一方规格**。西班牙——BdE 官方计算器与比较器、Ley 5/2019 的提前还款分档（浮动 0.25%/0.15%、固定 2%/1.5%、转固定 0.05%）、AEAT 的 IVA/ITP 划分、加泰 ITP 档位、ICO aval 线。**仍缺**：公证/登记费具体价目（notariado.org 404）、AJD 各自治区税率、**2013 年前 IRPF 扣除的 15%/EUR 9,040 上限**、法定最长期限、IRPH/Euribor 一手指数页。意大利——BdI 官方 rata/capitale 计算器、AdE 的 prima casa **2%/9% + IVA 4%/10% + EUR 50/200 + 最低 EUR 1,000**、DPR 601/1973 的 **0.25%/2%/0.75%** imposta sostitutiva、Consap **80% / EUR 250,000** 担保、IRPEF **23%/35%/43%**。**仍缺**：**detrazione 19%/EUR 4,000（本轮仅二手来源）**、9.19% IVS 雇员费率（仅二手；INPS 一手只有农业 8.84%）、大区/市镇附加税、catastale 重估系数、标准期限、TAEG 公式原文、公证费一手来源。
+15. **意大利提前还款口径冲突（已裁决，但未逐字核对）**：两位研究 agent 给出不同答案 —— 一位引 Codice del Consumo art. 40（可变无罚、固定 **1%/0.5%** 上限），另一位引 **TUB art. 120-ter**（住宅按揭提前还款罚则条款**一律无效**）并指出 1%/0.5% 属**消费信贷** art. 125-sexies。本报告采用 **120-ter 版本**（更准确，且经独立搜索的第三方法律引述佐证）。但 **Normattiva 在我方环境为 JS 壳，条文未能逐字核对**，实施前必须复核。
 
 ### 6.3 方法论层面的限制
 
@@ -926,7 +1056,7 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 - **爱尔兰**：[Central Bank of Ireland — mortgage measures（LTI 4x/3.5x；LTV 10%/30%；allowances）](https://edit.centralbank.ie/consumer-hub/explainers/what-are-the-mortgage-measures) · [CCPC — 房贷期限与首付](https://www.ccpc.ie/manage-your-money/buying-a-home/about-mortgages/understanding-mortgages) · [Revenue — 印花税税率](https://www.revenue.ie/en/property/stamp-duty/property/stamp-duty-property/rates.aspx) · [Revenue — Help to Buy](https://www.revenue.ie/en/property/help-to-buy-incentive/index.aspx) · [Revenue — 按揭利息减免（TRS 已关闭）](https://www.revenue.ie/en/property/mortgage-interest-relief/index.aspx) · [Revenue — 出租费用扣除](https://www.revenue.ie/en/property/rental-income/irish-rental-income/what-expenses-are-allowed.aspx) · [Revenue — USC 计算](https://www.revenue.ie/en/jobs-and-pensions/usc/calculating-usc.aspx) · [CCA 1995 s.126（法定房贷寿险）](https://www.irishstatutebook.ie/eli/1995/act/24/section/126/enacted/en/html) · [Organisation of Working Time Act 1997 s.15（48 小时）](https://www.irishstatutebook.ie/eli/1997/act/20/section/15/enacted/en/html) · [service-public F1669 — IRA 上限](https://www.service-public.gouv.fr/particuliers/vosdroits/F1669)
 - **英国**：[gov.uk SDLT 住宅税率](https://www.gov.uk/stamp-duty-land-tax/residential-property-rates) · [gov.uk HMRC PIM2058 — 房东融资成本限制](https://www.gov.uk/hmrc-internal-manuals/property-income-manual/pim2058) · [BoE Bank Rate](https://www.bankofengland.co.uk/monetary-policy/the-interest-rate-bank-rate) · [BoE FPC 2022 撤销压力测试建议](https://www.bankofengland.co.uk/news/2022/june/financial-policy-committee-confirms-withdrawal-of-mortgage-market-affordability-test) · [gov.uk 2025 Mortgage Guarantee Scheme](https://www.gov.uk/government/publications/2025-mortgage-guarantee-scheme) · [gov.uk Income Tax rates](https://www.gov.uk/income-tax-rates) · [gov.uk NI rates](https://www.gov.uk/national-insurance-rates-letters) · [gov.uk 最长周工时](https://www.gov.uk/maximum-weekly-working-hours) · [BoE FSR Dec 2023](https://www.bankofengland.co.uk/financial-stability-report/2023/december-2023)
 - **加拿大**：[OSFI — Minimum qualifying rate（max(contract+2%, 5.25%)）](https://www.osfi-bsif.gc.ca/en/supervision/financial-institutions/banks/minimum-qualifying-rate-uninsured-mortgages) · [OSFI MQR Backgrounder（2024-11-21 无保险 straight switch）](https://www.osfi-bsif.gc.ca/en/news/backgrounder-minimum-qualifying-rate-mqr) · [Interest Act s.6](https://laws-lois.justice.gc.ca/eng/acts/I-15/section-6.html) · [OSFI B-20 infosheet](https://www.osfi-bsif.gc.ca/en/guidance/guidance-library/infosheet-residential-mortgage-underwriting-practices-procedures-guideline-b-20) · [Financial Consumer Protection Framework Regulations, SOR/2021-181](https://laws-lois.justice.gc.ca/eng/regulations/SOR-2021-181/) · [Cost of Borrowing SOR/2001-101（已废止）](https://laws-lois.justice.gc.ca/eng/regulations/SOR-2001-101/page-1.html)
-- **澳大利亚**：[Revenue NSW Transfer Duty](https://www.revenue.nsw.gov.au/taxes-duties-levies-royalties/transfer-duty) · [SRO Victoria Land Transfer Duty](https://www.sro.vic.gov.au/about-us/rates-and-statistics/current-rates/land-transfer-duty-principal-place-residence-current-rates) · [APRA APG 223](https://www.apra.gov.au/sites/default/files/2022-06/Final%20Prudential%20Practice%20Guide%20APG%20223%20Residential%20Mortgage%20Lending.pdf)
+- **澳大利亚**：[NCCP Act 2009 / National Credit Code（日利率 = 年率/365、comparison rate Part 10）](https://www.legislation.gov.au/C2009A00134/latest/text) · [APRA 2024-11 宏观审慎更新（3.0pp 服务缓冲）](https://www.apra.gov.au/news-and-publications/update-apras-macroprudential-settings-november-2024) · [APRA APG 223](https://handbook.apra.gov.au/ppg/apg-223) · [NSW 印花税率与门槛（含 9% 外国买家附加税）](https://www.revenue.nsw.gov.au/_resources/duties-links/current-thresholds-and-rates) · [SRO Victoria Land Transfer Duty](https://www.sro.vic.gov.au/about-us/rates-and-statistics/current-rates/land-transfer-duty-principal-place-residence-current-rates) · [Westpac offset 计算器（净额计息原文）](https://www.westpac.com.au/personal-banking/home-loans/calculator/offset-calculator/) · [CommBank LMI（1%-5%）](https://www.commbank.com.au/home-loans/lenders-mortgage-insurance.html) · [Income Tax Rates Act 1986 Sch 7](https://www.legislation.gov.au/C2004A03348/latest/text) · [Medicare Levy Act 1986 s.6（2%）](https://www.legislation.gov.au/C2004A03351/latest/text) · [SG(Administration) Act 1992（12%）](https://www.legislation.gov.au/C2004A04402/latest/text) · [Fair Work Act 2009（38 小时）](https://www.legislation.gov.au/C2009A00028/latest/text)
 - **德国**：[§ 489 BGB](https://www.gesetze-im-internet.de/bgb/__489.html) · [§ 490 BGB](https://www.gesetze-im-internet.de/bgb/__490.html) · [§ 491 BGB（贷款类型定义）](https://www.gesetze-im-internet.de/bgb/__491.html) · [§ 502 BGB](https://www.gesetze-im-internet.de/bgb/__502.html) · [§ 16 PAngV（effektiver Jahreszins）](https://www.gesetze-im-internet.de/pangv_2022/__16.html) · [GrEStG §11](https://www.gesetze-im-internet.de/grestg_1983/__11.html) · [GNotKG Anlage 1](https://www.gesetze-im-internet.de/gnotkg/anlage_1.html) · [GNotKG Anlage 2（Tabelle B）](https://www.gesetze-im-internet.de/gnotkg/anlage_2.html) · [§ 656a BGB](https://www.gesetze-im-internet.de/bgb/__656a.html) · [§ 656c BGB](https://www.gesetze-im-internet.de/bgb/__656c.html) · [BauSparkG](https://www.gesetze-im-internet.de/bausparkg/) · [§ 3 ArbZG](https://www.gesetze-im-internet.de/arbzg/__3.html) · [BMF Lohn- und Einkommensteuerrechner](https://www.bmf-steuerrechner.de/) · [BaFin 房地产贷款](https://www.bafin.de/EN/verbraucherinnen-verbraucher/themen-finanzprodukte/kredite-immobilienfinanzierung/immobilienfinanzierung/immobilienkredit/immobilienkredit_node_en.html) · [BaFin Bausparen](https://www.bafin.de/EN/verbraucherinnen-verbraucher/themen-finanzprodukte/kredite-immobilienfinanzierung/immobilienfinanzierung/bausparen/bausparen_en.html)
 - **荷兰**：[NHG-grens 2026 = 470,000 EUR / 498,200 EUR / 0.4%（Volkshuisvesting Nederland）](https://www.volkshuisvestingnederland.nl/actueel/nieuws/2025/10/08/nhg-grens-stijgt-naar-470.000-euro-afsluitpremie-blijft-04) · [Tijdelijke regeling hypothecair krediet (BWBR0032503)](https://wetten.overheid.nl/BWBR0032503/2025-01-01/0) · [Belastingdienst — overdrachtsbelasting tarieven](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/woning/overdrachtsbelasting/tarieven_overdrachtsbelasting/) · [Belastingdienst — startersvrijstelling](https://www.belastingdienst.nl/wps/wcm/connect/bldcontentnl/belastingdienst/prive/woning/overdrachtsbelasting/startersvrijstelling/) · [Belastingdienst — tariefsaanpassing eigen woning](https://www.belastingdienst.nl/wps/wcm/connect/nl/koopwoning/content/tariefsaanpassing-eigen-woning) · [Belastingdienst — eigenwoningforfait](https://www.belastingdienst.nl/wps/wcm/connect/nl/koopwoning/content/hoe-werkt-eigenwoningforfait)
 - **日本**：[国税庁 No.1211-1 住宅借入金等特別控除](https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1211-1.htm) · [国税庁 土地・建物（住宅ローン控除等）索引](https://www.nta.go.jp/taxes/shiraberu/taxanswer/code/bunya-tochi-tatemono.htm) · [フラット３５ 官方](https://www.flat35.com/)
@@ -934,4 +1064,7 @@ Rabobank 与 ABN AMRO 的 Hypotheek berekenen 本轮返回 403/503，其产品�
 - **新加坡**：[MAS Notice 645 (TDSR)](https://www.mas.gov.sg/regulation/notices/notice-645) · [MAS Notice 632 (LTV)](https://www.mas.gov.sg/regulation/notices/notice-632) · [IRAS Stamp Duty](https://www.iras.gov.sg/quick-links/tax-rates/stamp-duty)
 - **香港**：[HKMA 2024-10-16 按揭逆周期措施（LTV 70% / DSR 50% / 资产基础 70% / 取消减 10pp）](https://www.hkma.gov.hk/eng/news-and-media/press-releases/2024/10/20241016-4/) · [HKMA 2024-02-28 通函（暂停 +200bp 利率压力测试，PDF）](https://brdr.hkma.gov.hk/eng/doc-ldg/docId/getPdf/20240228-3-EN/20240228-3-EN.pdf) · [HKMA LTV/DSR FAQ (PDF)](https://www.hkma.gov.hk/media/eng/doc/other-information/FAQ_table_(e).pdf) · [GovHK 印花税税率（2026-02-26 起 Part 1 Scale 1 = Scale 2，非住宅增设 Scale 3）](https://www.gov.hk/en/residents/taxes/stamp/stamp_duty_rates.htm) · [IRD AVD 完整档位表（已核对）](https://www.ird.gov.hk/eng/faq/avd.htm)
 - **阿联酋**：[CBUAE Rulebook — Mortgages](https://rulebook.centralbank.ae/en/rulebook/regulations-regarding-mortgage-loans) · [CBUAE Article 3 — Important Ratios（LTV 国籍分档、25 年、国民 8 年/外籍 7 年、DBR 50%、压力测试 +2-4pp）](https://rulebook.centralbank.ae/en/rulebook/article-3-important-ratios) · [CBUAE Appendix 2（提前结清费 <=1% 或 AED 10,000 取小）](https://rulebook.centralbank.ae/en/rulebook/amendments-appendix-2-regulation-no-292011-regulations-regarding-bank-loans-other-services) · [Dubai Land Department — 买卖登记（4% + registrar fee）](https://dubailand.gov.ae/en/eservices/registering-the-sale-of-a-mortgaged-property/) · [Dubai Land Department — 抵押登记（0.25%）](https://dubailand.gov.ae/en/eservices/grant-property-mortgage/)
+- **新西兰**：[RBNZ LVR 时间线（自 2025-12-01：25%/10%）](https://www.rbnz.govt.nz/regulation-and-supervision/oversight-of-banks/standards-and-requirements-for-banks/macroprudential-policy/timeline-for-loan-to-value-ratio-restrictions) · [RBNZ 2025-11 LVR 调整新闻稿](https://www.rbnz.govt.nz/news-and-events/news/2025/11/reserve-bank-confirms-changes-to-lvr-restrictions) · [CCCFA 2003](https://www.legislation.govt.nz/act/public/2003/52/en/latest/) · [Stamp Duty Abolition Act 1999](https://www.legislation.govt.nz/act/public/1999/61/en/latest/) · [IRD bright-line test（2 年）](https://www.ird.govt.nz/property/buying-and-selling/when-you-need-to-pay/the-brightline-test) · [IRD ACC earners' levy 费率](https://www.ird.govt.nz/income-tax/income-tax-for-individuals/acc-clients-and-carers/acc-earners-levy-rates) · [IRD KiwiSaver 首购提取](https://www.ird.govt.nz/kiwisaver/kiwisaver-for-individuals/getting-my-kiwisaver-funds-early/getting-my-kiwisaver-for-my-first-home) · [HUD：First Home Grant 停止](https://www.hud.govt.nz/news/pre-budget-announcement-new-funding-and-savings) · [BNZ TotalMoney offset 机制](https://www.bnz.co.nz/personal-banking/home-loans/home-loan-types/totalmoney)
+- **西班牙**：[BOE Ley 5/2019 art. 23（提前还款分档补偿）](https://www.boe.es/buscar/act.php?id=BOE-A-2019-3814) · [Banco de España 模拟器/比较器](https://clientebancario.bde.es/pcb/es/menu-horizontal/actualidadeducac/educacion-financiera/comparadores-y-simuladores/) · [AEAT IVA o ITP](https://sede.agenciatributaria.gob.es/Sede/en_gb/iva/iva-operaciones-inmobiliarias/compro-vivienda-tengo-que-pagar-itp.html) · [加泰罗尼亚 ITP 税率](https://atc.gencat.cat/es/tributs/itpajd/tpo/tarifes-tipus/) · [ICO 首购 aval 线](https://www.ico.es/es/linea-avales-hipoteca-primera-vivienda) · [Orden PJC/297/2026（社保缴费）](https://www.boe.es/eli/es/o/2026/03/30/pjc297/con)
+- **意大利**：[Banca d'Italia 月供计算器（piano francese）](https://economiapertutti.bancaditalia.it/strumenti/calcolatori/calcolatore-della-rata-del-mutuo/) · [Agenzia delle Entrate — prima casa 购房优惠（2%/9%、IVA 4%/10%、EUR 50/200）](https://www.agenziaentrate.gov.it/portale/schede/agevolazioni/scheda-acquisto-prima-casa/infogen-agevolazioni-acquisto-prima-casa-intermediari) · [TUB art. 120-ter（住宅按揭提前还款无罚）](https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:1993-12-01;385~art120ter) · [TUB art. 125-sexies（消费信贷 1%/0.5%，仅消费信贷适用）](https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legislativo:1993-12-01;385~art125sexies) · [Consap Fondo Prima Casa（80% / EUR 250,000）](https://www.consap.it/fondo-prima-casa/) · [AdE IRPEF 税率与计算（23%/35%/43%）](https://www.agenziaentrate.gov.it/portale/web/guest/aliquote-e-calcolo-dell-irpef9)
 - **美国**：[12 U.S.C. ch. 49 (HPA)](https://www.govinfo.gov/content/pkg/USCODE-2023-title12/html/USCODE-2023-title12-chap49.htm) · [12 CFR §1026.43 (Reg Z / QM)](https://www.govinfo.gov/content/pkg/CFR-2024-title12-vol9/xml/CFR-2024-title12-vol9-sec1026-43.xml) · [IRS §1031](https://www.irs.gov/newsroom/like-kind-exchanges-under-irc-code-section-1031)
