@@ -14,22 +14,21 @@ export function getBugReportTemplate(ctx?: BugReportContext): string {
   const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://tableview.dev';
   const userAgent = typeof navigator !== 'undefined' ? navigator.userAgent : 'Unknown';
 
-  return `Hi TableView Underwriting Team,
+  return `Hi Team,
 
-[Discrepancy / Bug Summary]
-Please describe the calculation discrepancy or issue you encountered:
+[Issue / Feedback Summary]
+Please describe the issue, calculation discrepancy, or improvement you have in mind:
 
 
 [Steps to Reproduce]
 1. Open calculator: ${ctx?.calculatorName || '[e.g. DSCR / Cap Rate / Mortgage]'}
 2. Enter values: ${ctx?.inputsSummary || '[e.g. Property Value: $500,000, Down: 20%, Rate: 7.25%]'}
-3. Observed result: 
+3. Observed result: ${ctx?.errorMessage || ''}
 4. Expected result: 
 
-[Calculation Context]
+[Context]
 - Calculator: ${ctx?.calculatorName || '[e.g. DSCR Loan Calculator]'}
 - Scenario Description: 
-- Discrepancy Details: ${ctx?.errorMessage || '[Describe difference vs lender quote or expected bank output]'}
 
 ---
 Diagnostic Info:
