@@ -1,10 +1,14 @@
-export const FEEDBACK_EMAIL = 'feedback@tableview.dev';
+import { FEEDBACK_EMAIL, buildGmailUrl, buildMailto } from '@tableview/shared';
+
+export { FEEDBACK_EMAIL };
 
 export interface BugReportContext {
   calculatorName?: string;
   inputsSummary?: string;
   errorMessage?: string;
 }
+
+const SUBJECT = '[TableView Underwriting] Calculation Issue / Feedback';
 
 export function getBugReportTemplate(ctx?: BugReportContext): string {
   const currentUrl = typeof window !== 'undefined' ? window.location.href : 'https://tableview.dev';
@@ -35,15 +39,11 @@ Diagnostic Info:
 }
 
 export function getBugReportMailto(ctx?: BugReportContext): string {
-  const subject = encodeURIComponent('[TableView Underwriting] Calculation Issue / Feedback');
-  const body = encodeURIComponent(getBugReportTemplate(ctx));
-  return `mailto:${FEEDBACK_EMAIL}?subject=${subject}&body=${body}`;
+  return buildMailto(FEEDBACK_EMAIL, SUBJECT, getBugReportTemplate(ctx));
 }
 
 export function getBugReportGmailUrl(ctx?: BugReportContext): string {
-  const subject = encodeURIComponent('[TableView Underwriting] Calculation Issue / Feedback');
-  const body = encodeURIComponent(getBugReportTemplate(ctx));
-  return `https://mail.google.com/mail/?view=cm&fs=1&to=${FEEDBACK_EMAIL}&su=${subject}&body=${body}`;
+  return buildGmailUrl(FEEDBACK_EMAIL, SUBJECT, getBugReportTemplate(ctx));
 }
 
 export function openBugReportEmail(ctx?: BugReportContext) {
