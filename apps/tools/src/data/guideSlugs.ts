@@ -7,6 +7,9 @@
  * Only the slugs live here; the article bodies stay in guides.ts, which is
  * loaded solely by the (lazy) guide routes.
  *
+ * Scope: the data/FinOps guides owned by tools.tableview.dev only. The nine
+ * finance/underwriting guides live in apps/finance.
+ *
  * A unit test asserts this list stays in sync with guidesData.
  */
 export const GUIDE_SLUGS: readonly string[] = [
@@ -16,16 +19,7 @@ export const GUIDE_SLUGS: readonly string[] = [
   'inspect-parquet-metadata-and-schema',
   'parquet-vs-csv-vs-json-benchmark',
   'troubleshooting-corrupted-parquet-files',
-  'dscr-loans-complete-investor-guide',
-  'mortgage-refinance-break-even-guide',
   'cloud-data-lake-storage-economics',
-  'commercial-real-estate-loan-types',
-  'section-1031-exchange-rules-timeline',
-  'how-to-calculate-dscr',
-  'loan-amortization-math-explained',
-  'flsa-overtime-rules-and-exemptions',
-  'hard-money-loans-for-fix-and-flip',
-  'commercial-balloon-mortgages-risks',
   'duckdb-wasm-memory-and-performance',
   'apache-parquet-encodings-deep-dive',
   'cloud-finops-snowflake-storage-optimization',

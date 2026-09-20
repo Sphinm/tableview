@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach } from 'bun:test';
 import { parseCurrentLocation } from '../router';
 
-describe('Router Routing & Aliases Engine', () => {
+describe('Router Routing & Aliases Engine (media suite)', () => {
   const originalWindow = (globalThis as any).window;
 
   beforeEach(() => {
@@ -33,55 +33,37 @@ describe('Router Routing & Aliases Engine', () => {
     (globalThis as any).window.history.replaceState({}, '', path);
   };
 
-  it('routes root / to workbench', () => {
+  it('routes root / to the home compressor', () => {
     setPath('/');
-    const route = parseCurrentLocation();
-    expect(route.path).toBe('/');
+    expect(parseCurrentLocation().path).toBe('/');
   });
 
-  it('routes standard file tools to /tools/:toolSlug', () => {
-    setPath('/csv-viewer');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'csv-viewer' });
+  it('routes media tools to their canonical paths', () => {
+    setPath('/video-compressor');
+    expect(parseCurrentLocation().path).toBe('/video-compressor');
 
-    setPath('/parquet-to-excel');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'parquet-to-excel' });
+    setPath('/compress-mp4');
+    expect(parseCurrentLocation().path).toBe('/compress-mp4');
 
-    setPath('/sql-workbench');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'sql-workbench' });
+    setPath('/image-compressor');
+    expect(parseCurrentLocation().path).toBe('/image-compressor');
+
+    setPath('/media-tools');
+    expect(parseCurrentLocation().path).toBe('/media-tools');
   });
 
-  it('routes dedicated calculators directly to their interactive pages', () => {
-    setPath('/dscr-loan-calculator');
-    expect(parseCurrentLocation().path).toBe('/dscr-loan-calculator');
+  it('resolves media aliases properly', () => {
+    setPath('/compress-video');
+    expect(parseCurrentLocation().path).toBe('/video-compressor');
 
-    setPath('/mortgage-calculator');
-    expect(parseCurrentLocation().path).toBe('/mortgage-calculator');
+    setPath('/mp4-compressor');
+    expect(parseCurrentLocation().path).toBe('/compress-mp4');
 
-    setPath('/refinance-calculator');
-    expect(parseCurrentLocation().path).toBe('/refinance-calculator');
+    setPath('/compress-image');
+    expect(parseCurrentLocation().path).toBe('/image-compressor');
 
-    setPath('/hard-money-calculator');
-    expect(parseCurrentLocation().path).toBe('/hard-money-calculator');
-
-    setPath('/snowflake-cost-calculator');
-    expect(parseCurrentLocation().path).toBe('/snowflake-cost-calculator');
-
-    setPath('/parquet-storage-calculator');
-    expect(parseCurrentLocation().path).toBe('/parquet-storage-calculator');
-
-    setPath('/finance-calculator');
-    expect(parseCurrentLocation().path).toBe('/finance-calculator');
-  });
-
-  it('resolves tool aliases properly', () => {
-    setPath('/open-csv');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'csv-viewer' });
-
-    setPath('/sql-runner');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'sql-workbench' });
-
-    setPath('/jsonl-viewer');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'json-viewer' });
+    setPath('/png-compress');
+    expect(parseCurrentLocation().path).toBe('/compress-png');
   });
 
   it('resolves informational pages and aliases', () => {
@@ -96,16 +78,5 @@ describe('Router Routing & Aliases Engine', () => {
 
     setPath('/terms-of-service');
     expect(parseCurrentLocation().path).toBe('/terms');
-  });
-
-  it('resolves guides hub and guide articles', () => {
-    setPath('/guides');
-    expect(parseCurrentLocation().path).toBe('/guides');
-
-    setPath('/guide');
-    expect(parseCurrentLocation().path).toBe('/guides');
-
-    setPath('/guides/what-is-apache-parquet');
-    expect(parseCurrentLocation()).toEqual({ path: '/guides/:slug', slug: 'what-is-apache-parquet' });
   });
 });

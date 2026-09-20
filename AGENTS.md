@@ -16,9 +16,9 @@ The repository is organized as a **Bun Monorepo** containing three independent a
 bun install
 
 # Run local development servers
-bun run dev:finance     # port 5173
-bun run dev:tools       # port 5174
-bun run dev:compressor  # port 5175
+bun run dev:finance     # port 8123
+bun run dev:tools       # port 8124
+bun run dev:compressor  # port 8125
 
 # Build all applications
 bun run build:all

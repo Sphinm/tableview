@@ -441,7 +441,7 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                     <Sparkles className="size-3.5 text-amber-500" />
                     Auto-Suspend Optimization
                   </label>
-                  <span className="text-xs font-mono text-emerald-600 font-bold">
+                  <span className="text-xs font-mono text-emerald-700 font-bold">
                     {autoSuspendEfficiency}% Savings
                   </span>
                 </div>
@@ -484,7 +484,7 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                     {currencyFmt(result.totalAnnualCost)}
                   </span>
                   <span className="text-[11px] text-slate-500">
-                    {result.creditsPerYear.toLocaleString()} Credits / year
+                    {result.creditsPerYear.toLocaleString('en-US')} Credits / year
                   </span>
                 </div>
               </div>
@@ -569,7 +569,7 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                   <span className="text-slate-600">
                     Cloud Services Layer (Free pool up to 10% compute)
                   </span>
-                  <span className="text-emerald-600 font-bold">$0.00 (Covered)</span>
+                  <span className="text-emerald-700 font-bold">$0.00 (Covered)</span>
                 </div>
                 <div className="flex justify-between items-center pt-2 text-sm font-bold">
                   <span className="text-cyan-700">Total Monthly Cost</span>
@@ -590,7 +590,7 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
 
               <button
                 onClick={handleCopyLink}
-                className="px-4 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-xs font-semibold text-white cursor-pointer transition-colors shadow-xs"
+                className="px-4 py-2 rounded-xl bg-cyan-700 hover:bg-cyan-600 text-xs font-semibold text-white cursor-pointer transition-colors shadow-xs"
               >
                 {copiedLink ? 'Link Copied!' : 'Share Estimate'}
               </button>
@@ -778,20 +778,20 @@ export const SnowflakeCalculator = ({ onTrySample: _onTrySample }: SnowflakeCalc
                   <tr className="hover:bg-slate-50/80">
                     <td className="p-3.5 font-semibold text-slate-800">Multi-Cluster Warehouses (Auto-Scale)</td>
                     <td className="p-3.5 text-rose-600">Not Available</td>
-                    <td className="p-3.5 text-emerald-600 font-semibold">Included (Max concurrency)</td>
-                    <td className="p-3.5 text-emerald-600 font-semibold">Included</td>
+                    <td className="p-3.5 text-emerald-700 font-semibold">Included (Max concurrency)</td>
+                    <td className="p-3.5 text-emerald-700 font-semibold">Included</td>
                   </tr>
                   <tr className="hover:bg-slate-50/80">
                     <td className="p-3.5 font-semibold text-slate-800">Time Travel Retention Window</td>
                     <td className="p-3.5 text-slate-600">1 Day Maximum</td>
-                    <td className="p-3.5 text-emerald-600 font-semibold">Up to 90 Days</td>
-                    <td className="p-3.5 text-emerald-600 font-semibold">Up to 90 Days</td>
+                    <td className="p-3.5 text-emerald-700 font-semibold">Up to 90 Days</td>
+                    <td className="p-3.5 text-emerald-700 font-semibold">Up to 90 Days</td>
                   </tr>
                   <tr className="hover:bg-slate-50/80">
                     <td className="p-3.5 font-semibold text-slate-800">Search Optimization Service</td>
                     <td className="p-3.5 text-rose-600">Not Available</td>
-                    <td className="p-3.5 text-emerald-600 font-semibold">Included</td>
-                    <td className="p-3.5 text-emerald-600 font-semibold">Included</td>
+                    <td className="p-3.5 text-emerald-700 font-semibold">Included</td>
+                    <td className="p-3.5 text-emerald-700 font-semibold">Included</td>
                   </tr>
                   <tr className="hover:bg-slate-50/80">
                     <td className="p-3.5 font-semibold text-slate-800">Security & Compliance Enclaves</td>

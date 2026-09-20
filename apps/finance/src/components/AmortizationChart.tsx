@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { AmortizationChartPoint } from '../lib/mortgageCalculator';
+import { chartTrendAriaLabel, formatUsd } from '@tableview/shared';
 
 interface AmortizationChartProps {
   data: AmortizationChartPoint[];
@@ -100,6 +101,28 @@ export const AmortizationChart: React.FC<AmortizationChartProps> = ({
       {/* Interactive Visual Amortization Chart Canvas */}
       <div className="relative w-full overflow-hidden">
         <svg
+          /*
+           * Complex image. A multi-hundred-point time series cannot be read out
+           * in full, so the endpoints summarise the trajectory.
+           */
+          role="img"
+          aria-label={chartTrendAriaLabel(title, [
+            {
+              name: 'Ending balance',
+              from: formatUsd(data[0].endingBalance),
+              to: formatUsd(data[data.length - 1].endingBalance),
+            },
+            {
+              name: 'Interest paid to date',
+              from: formatUsd(data[0].totalInterestToDate),
+              to: formatUsd(data[data.length - 1].totalInterestToDate),
+            },
+            {
+              name: 'Principal paid to date',
+              from: formatUsd(data[0].totalPrincipalToDate),
+              to: formatUsd(data[data.length - 1].totalPrincipalToDate),
+            },
+          ])}
           viewBox={`0 0 ${width} ${height}`}
           style={{ touchAction: 'pan-y' }}
           className="w-full h-auto select-none cursor-crosshair"

@@ -48,13 +48,13 @@ export const GuidesHub = () => {
       <div className="mb-10 text-center sm:text-left">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-300 text-slate-900 mb-4 shadow-2xs">
           <BookOpen className="size-3.5 text-indigo-600" />
-          <span>Technical & Financial Knowledge Hub</span>
+          <span>Institutional Real Estate & Underwriting Guides</span>
         </div>
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight mb-4">
-          Engineering & Financial Analysis Guides
+          Real Estate & Lending Underwriting Guides
         </h1>
         <p className="text-sm sm:text-base text-slate-800 max-w-2xl leading-relaxed">
-          Comprehensive, in-depth guides on Apache Parquet file internals, DuckDB WebAssembly analytics, cloud data warehouse FinOps, and real estate mortgage underwriting formulas.
+          In-depth, practitioner-written guides on DSCR loan underwriting, mortgage amortization formulas, IRC §1031 tax deferred exchanges, commercial balloon debt, and real estate cash flow modeling.
         </p>
       </div>
 
@@ -67,7 +67,7 @@ export const GuidesHub = () => {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search guides (e.g. DuckDB, Parquet)..."
+            placeholder="Search financial guides (e.g. DSCR, 1031, Amortization)..."
             className="w-full pl-10 pr-9 py-2 rounded-xl bg-white border border-slate-300 hover:border-slate-400 focus:border-indigo-500 text-xs sm:text-sm text-slate-900 placeholder-slate-400 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-2xs"
           />
           {searchQuery && (

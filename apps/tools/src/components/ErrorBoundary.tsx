@@ -108,7 +108,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           </div>
 
           {import.meta.env.DEV && (
-            <pre className="mt-6 p-3 rounded-xl bg-slate-100 border border-slate-200 text-left text-[11px] text-rose-600 overflow-auto max-h-48">
+            <pre className="mt-6 p-3 rounded-xl bg-slate-100 border border-slate-200 text-left text-[11px] text-rose-700 overflow-auto max-h-48">
               {error.message}
             </pre>
           )}

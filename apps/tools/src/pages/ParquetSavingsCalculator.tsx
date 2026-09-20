@@ -535,7 +535,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                 </div>
 
                 <div className="space-y-1.5">
-                  <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden flex items-center px-1 text-[10px] text-slate-500 border border-slate-200/80">
+                  <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden flex items-center px-1 text-[10px] text-slate-600 border border-slate-200/80">
                     <span>Raw Dataset (100%)</span>
                   </div>
                   <div
@@ -589,7 +589,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                 <div className="flex justify-between items-center py-2 border-b border-slate-100">
                   <span className="text-slate-600">Monthly Cloud Storage (S3 / Blob)</span>
                   <div className="space-x-3 text-right">
-                    <span className="text-slate-400 line-through">{currencyDecFmt(result.monthlyRawStorageCost)}</span>
+                    <span className="text-slate-600 line-through">{currencyDecFmt(result.monthlyRawStorageCost)}</span>
                     <span className="text-emerald-700 font-bold">{currencyDecFmt(result.monthlyParquetStorageCost)}</span>
                   </div>
                 </div>
@@ -598,7 +598,7 @@ export const ParquetSavingsCalculator = ({ onTrySample: _onTrySample }: ParquetS
                   <div className="flex justify-between items-center py-2 border-b border-slate-100">
                     <span className="text-slate-600">Monthly Query Scanning Fees</span>
                     <div className="space-x-3 text-right">
-                      <span className="text-slate-400 line-through">{currencyDecFmt(result.monthlyRawQueryCost)}</span>
+                      <span className="text-slate-600 line-through">{currencyDecFmt(result.monthlyRawQueryCost)}</span>
                       <span className="text-emerald-700 font-bold">{currencyDecFmt(result.monthlyParquetQueryCost)}</span>
                     </div>
                   </div>

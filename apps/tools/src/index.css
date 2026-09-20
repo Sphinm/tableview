@@ -54,32 +54,133 @@
 }
 
 :root {
-  /* Default: Clean Crisp High-Contrast Light Theme */
-  --color-bg-canvas: #f1f5f9;
-  --color-bg-card: #ffffff;
-  --color-border-subtle: #cbd5e1;
-  --color-border-strong: #94a3b8;
-  --color-text-tertiary: #94a3b8;
-  --color-text-placeholder: #64748b;
-  --color-text-secondary: #475569;
-  --color-text-sub: #334155;
-  --color-text-main: #1e293b;
-  --color-text-heading: #0f172a;
+  /*
+   * Both workbench apps render a dark surface end to end. These tokens
+   * previously declared the *light* palette copied from the finance suite
+   * while every shell rendered bg-neutral-950. Nothing consumed them, so the
+   * drift was invisible — but any future use would have painted light text on
+   * a dark canvas. They now describe the theme actually shipped.
+   */
+  --color-bg-canvas: #0a0a0a;
+  --color-bg-card: #171717;
+  --color-border-subtle: #262626;
+  --color-border-strong: #404040;
+  --color-text-tertiary: #737373;
+  --color-text-placeholder: #a3a3a3;
+  --color-text-secondary: #d4d4d4;
+  --color-text-sub: #e5e5e5;
+  --color-text-main: #f5f5f5;
+  --color-text-heading: #fafafa;
+
+  /* Accent shared by focus rings and interactive highlights. */
+  --color-focus-ring: #22d3ee;
+
+  /*
+   * Tell the browser to render native chrome — scrollbars, form controls,
+   * date pickers — dark. Without this they render light and look pasted on.
+   */
+  color-scheme: dark;
 }
 
 @layer base {
   body {
     @apply bg-slate-100/70 text-slate-900 antialiased selection:bg-indigo-500 selection:text-white min-h-screen text-[15px] sm:text-[16px] leading-relaxed;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    /*
+     * This workbench is read as columns of figures (row counts, byte sizes,
+     * schema stats, savings), so digits get a fixed advance. Column values line
+     * up and numbers stop jittering while being typed.
+     */
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
   }
   code, kbd, samp, pre {
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 }
 
+/*
+ * Keyboard focus. Zero-specificity :where() supplies an outline only to
+ * controls that do not already declare their own ring, so component-level
+ * focus styles keep winning. Pointer users never see it (:focus-visible).
+ */
+:where(a, button, [role='button'], summary, [tabindex]:not([tabindex='-1'])):focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip link: hidden until focused, then pinned to the top of the viewport. */
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 1000;
+  transform: translateY(-200%);
+  transition: transform 0.15s ease-out;
+  background-color: #0a0a0a;
+  color: var(--color-focus-ring);
+  border: 2px solid #22d3ee;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+}
+.skip-link:focus {
+  transform: translateY(0);
+  outline: none;
+  /*
+   * Show instantly. Animating a control whose entire job is to be visible the
+   * moment it is focused is a bad trade: hiding may animate, but the reveal
+   * must never depend on the animation clock advancing (throttled frames in a
+   * background tab can strand a focused skip link off-screen).
+   */
+  transition: none;
+}
+
+/* Honour the OS reduce-motion setting instead of animating regardless. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* Headings automatically crisp dark slate */
-h1, h2, h3, h4, h5, h6 {
-  color: #0f172a;
+/*
+ * Heading defaults live in @layer base on purpose.
+ *
+ * This rule was previously unlayered, and an unlayered rule beats EVERY layered
+ * rule regardless of specificity. Tailwind v4 emits utilities inside
+ * @layer utilities, so any text-* colour on a heading was silently discarded:
+ * a heading with class text-neutral-50 still computed to #0f172a. Inside a
+ * layer the utility wins again, which is what every caller already expects.
+ *
+ * The default is light because this app paints a dark canvas; headings inside
+ * light cards carry their own explicit dark colour.
+ */
+/*
+ * Heading defaults INHERIT their surface rather than hard-coding a colour.
+ *
+ * This app renders two surfaces: the dark application shell, and light content
+ * pages that paint their own bg-slate-50/text-slate-900 wrapper (the calculator
+ * pages). Components like the FAQ block and Related Guides are shared between
+ * both, so any fixed heading colour is invisible on one of them — a light
+ * heading measured 1:1 against the light content background.
+ *
+ * Inheriting lets each surface state its own text colour once and have every
+ * heading follow. It is also inside @layer base so utilities still win: an
+ * explicit text-* class on a heading overrides this.
+ */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    color: inherit;
+  }
 }
 
 /* Primary Solid Button: High-contrast utilitarian CTA */
@@ -265,7 +366,7 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
 }
 .code-highlight .token.function {
-  color: #0284c7; /* sky-600 */
+  color: #0369a1; /* sky-600 */
   font-weight: 600;
 }
 .code-highlight .token.property {
@@ -273,10 +374,10 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 600;
 }
 .code-highlight .token.string {
-  color: #059669; /* emerald-600 */
+  color: #047857; /* emerald-600 */
 }
 .code-highlight .token.number {
-  color: #d97706; /* amber-600 */
+  color: #b45309; /* amber-600 */
 }
 .code-highlight .token.boolean {
   color: #e11d48; /* rose-600 */
@@ -290,10 +391,10 @@ h1, h2, h3, h4, h5, h6 {
   color: #64748b; /* slate-500 */
 }
 .code-highlight .token.punctuation {
-  color: #94a3b8; /* slate-400 */
+  color: #64748b; /* slate-500 */
 }
 .code-highlight .token.comment {
-  color: #94a3b8; /* slate-400 */
+  color: #64748b; /* slate-500 */
   font-style: italic;
 }
 
@@ -337,7 +438,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 .code-highlight.dark-editor .token.operator,
 .dark-editor.code-highlight .token.operator {
-  color: #94a3b8; /* slate-400 */
+  color: #64748b; /* slate-500 */
 }
 .code-highlight.dark-editor .token.punctuation,
 .dark-editor.code-highlight .token.punctuation {

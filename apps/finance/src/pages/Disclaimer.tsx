@@ -6,7 +6,7 @@ export const Disclaimer = () => {
   useEffect(() => {
     updatePageMeta(
       'Disclaimer & Financial Disclosure | TableView.dev',
-      'Legal disclaimers, financial calculation disclosures, and terms of informational use for TableView.dev and its personal finance and cloud cost calculators.',
+      'Legal disclaimers, financial calculation disclosures, and terms of informational use for TableView.dev and its institutional real estate, mortgage, and loan underwriting calculators.',
       '/disclaimer'
     );
   }, []);
@@ -23,7 +23,7 @@ export const Disclaimer = () => {
           Disclaimer & Disclosure
         </h1>
         <p className="text-sm sm:text-base text-slate-800 leading-relaxed">
-          Please read this disclaimer carefully before utilizing any tools, financial calculators, data utilities, or guides on TableView.dev.
+          Please read this disclaimer carefully before utilizing any tools, financial calculators, debt modeling utilities, or guides on TableView.dev.
         </p>
       </div>
 
@@ -52,7 +52,7 @@ export const Disclaimer = () => {
             1. No Fiduciary or Client Relationship
           </h2>
           <p className="text-slate-800">
-            Your use of TableView.dev, including any calculation tools, articles, or contact forms, does not create an advisor-client, broker-client, or fiduciary relationship between you and TableView.dev or its creators. You should consult a qualified financial advisor, certified public accountant (CPA), licensed mortgage professional, or legal counsel before executing any property purchase, financing decision, or cloud infrastructure commitment.
+            Your use of TableView.dev, including any calculation tools, articles, or contact forms, does not create an advisor-client, broker-client, or fiduciary relationship between you and TableView.dev or its creators. You should consult a qualified financial advisor, certified public accountant (CPA), licensed mortgage professional, or legal counsel before executing any property purchase, debt structure, financing decision, or investment commitment.
           </p>
         </section>
 
@@ -62,11 +62,11 @@ export const Disclaimer = () => {
             2. Accuracy of Calculations and Estimates
           </h2>
           <p className="text-slate-800 mb-3">
-            While we endeavor to keep mathematical formulas, interest calculations, and cloud pricing benchmarks up to date:
+            While we endeavor to keep mathematical formulas, statutory interest calculations, and underwriting conventions up to date:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-slate-800">
             <li><strong>Market Variances:</strong> Actual mortgage interest rates, lender points, underwriting guidelines, and closing fees fluctuate dynamically based on macroeconomic conditions and individual credit profiles.</li>
-            <li><strong>Cloud Pricing Revisions:</strong> Cloud provider storage (e.g., AWS S3, Google Cloud, Azure) and database compute rates (e.g., Snowflake, Athena) are subject to periodic vendor price adjustments and regional availability.</li>
+            <li><strong>Statutory & Guideline Changes:</strong> Federal tax rules (including IRC §1031 like-kind exchange limits and depreciation recapture rates), Fannie Mae, Freddie Mac and FHA underwriting guidelines, and state transfer taxes are subject to legislative and regulatory change.</li>
             <li><strong>Estimates Only:</strong> All calculations are hypothetical estimates and do not guarantee actual savings, profits, or qualification approval from any third-party lender or cloud service provider.</li>
           </ul>
         </section>
@@ -77,7 +77,7 @@ export const Disclaimer = () => {
             3. 100% Client-Side Processing Assurance
           </h2>
           <p className="text-slate-800">
-            TableView.dev operates entirely within your browser client using WebAssembly. We do not store, inspect, transmit, or monetize your uploaded files or numeric inputs. Any dataset parsing errors, spreadsheet generation outcomes, or data conversions are executed solely on your device CPU.
+            TableView.dev runs entirely inside your browser. We do not store, inspect, transmit, or monetize your deal inputs, loan balances, rents, property addresses, or client financials. Every amortization schedule, DSCR calculation, and exported Excel or PDF dossier is generated solely on your own device.
           </p>
         </section>
 

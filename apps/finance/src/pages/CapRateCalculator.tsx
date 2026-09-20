@@ -37,6 +37,9 @@ import {
 } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
 import { InfoTooltip } from '../components/InfoTooltip';
+import { ResultAnnouncer } from '../components/ResultAnnouncer';
+import { composeAnnouncement } from '../lib/resultAnnouncement';
+import { formatUsd, formatUsdSigned } from '@tableview/shared';
 
 const currencyFmt = (val: number): string =>
   new Intl.NumberFormat('en-US', {
@@ -197,8 +200,8 @@ export default function CapRateCalculator() {
               >
                 {copiedLink ? (
                   <>
-                    <Check className="size-4 text-emerald-600" />
-                    <span className="text-emerald-600 font-medium">Link Copied!</span>
+                    <Check className="size-4 text-emerald-700" />
+                    <span className="text-emerald-700 font-medium">Link Copied!</span>
                   </>
                 ) : (
                   <>
@@ -238,7 +241,7 @@ export default function CapRateCalculator() {
                 Net Operating Income
                 <InfoTooltip content="Net Operating Income (NOI) equals Effective Gross Income minus all Operating Expenses. Follows institutional CRE standards by strictly excluding mortgage debt service." />
               </span>
-              <DollarSign className="size-4 text-emerald-600" />
+              <DollarSign className="size-4 text-emerald-700" />
             </div>
             <div className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
               {currencyFmt(output.noiAnnual)}
@@ -246,7 +249,7 @@ export default function CapRateCalculator() {
             </div>
             <div className="text-xs font-semibold text-emerald-700 mt-1 flex items-center gap-1">
               <span>{currencyFmt(output.noiMonthly)} / mo</span>
-              <span className="text-slate-400 font-normal">pre-debt</span>
+              <span className="text-slate-500 font-normal">pre-debt</span>
             </div>
           </div>
 
@@ -265,7 +268,7 @@ export default function CapRateCalculator() {
             <div className="text-xs font-semibold text-slate-600 mt-1 flex items-center gap-1.5">
               <span>GRM: {output.grossRentMultiplier.toFixed(1)}x</span>
               <span className="text-slate-300">•</span>
-              <span className={output.capRate >= 6.5 ? 'text-emerald-600' : 'text-slate-500'}>
+              <span className={output.capRate >= 6.5 ? 'text-emerald-700' : 'text-slate-500'}>
                 {output.capRate >= 7.5 ? 'High Yield' : output.capRate >= 5.5 ? 'Market Yield' : 'Core / Low Cap'}
               </span>
             </div>
@@ -283,10 +286,10 @@ export default function CapRateCalculator() {
             <div
               className={`text-2xl sm:text-3xl font-black tracking-tight ${
                 output.cashOnCashReturn > 8
-                  ? 'text-emerald-600'
+                  ? 'text-emerald-700'
                   : output.cashOnCashReturn > 0
                   ? 'text-blue-600'
-                  : 'text-rose-600'
+                  : 'text-rose-700'
               }`}
             >
               {percentFmt(output.cashOnCashReturn)}
@@ -307,7 +310,7 @@ export default function CapRateCalculator() {
             </div>
             <div
               className={`text-2xl sm:text-3xl font-black tracking-tight ${
-                output.netCashFlowMonthly >= 0 ? 'text-slate-900' : 'text-rose-600'
+                output.netCashFlowMonthly >= 0 ? 'text-slate-900' : 'text-rose-700'
               }`}
             >
               {currencyFmt(output.netCashFlowMonthly)}
@@ -336,9 +339,9 @@ export default function CapRateCalculator() {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               {output.verdict.status === 'negative' ? (
-                <AlertTriangle className="size-5 text-rose-600 shrink-0" />
+                <AlertTriangle className="size-5 text-rose-700 shrink-0" />
               ) : (
-                <CheckCircle2 className="size-5 text-emerald-600 shrink-0" />
+                <CheckCircle2 className="size-5 text-emerald-700 shrink-0" />
               )}
               <h3 className="font-bold text-sm sm:text-base">{output.verdict.title}</h3>
               <span
@@ -388,11 +391,11 @@ export default function CapRateCalculator() {
               </h2>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1 flex justify-between">
+                <label htmlFor="caprate-purchase-price" className="block text-xs font-semibold text-slate-700 mb-1 flex justify-between">
                   <span>Purchase Price</span>
                   <span className="text-indigo-600 font-bold">{currencyFmt(form.purchasePrice)}</span>
                 </label>
-                <CurrencyInput
+                <CurrencyInput id="caprate-purchase-price"
                   value={form.purchasePrice}
                   onChange={(val) => updateField('purchasePrice', val)}
                 />
@@ -400,10 +403,10 @@ export default function CapRateCalculator() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-down-payment" className="block text-xs font-semibold text-slate-700 mb-1">
                     Down Payment (%)
                   </label>
-                  <NumericInput
+                  <NumericInput id="caprate-down-payment"
                     value={form.downPaymentPercent}
                     onChange={(val) => updateField('downPaymentPercent', val)}
                     step={5}
@@ -430,10 +433,10 @@ export default function CapRateCalculator() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-closing-costs" className="block text-xs font-semibold text-slate-700 mb-1">
                     Closing Costs (%)
                   </label>
-                  <NumericInput
+                  <NumericInput id="caprate-closing-costs"
                     value={form.closingCostPercent}
                     onChange={(val) => updateField('closingCostPercent', val)}
                     step={0.5}
@@ -441,18 +444,18 @@ export default function CapRateCalculator() {
                     max={10}
                     suffix="%"
                   />
-                  <div className="text-2xs text-slate-400 mt-1 font-mono">
+                  <div className="text-2xs text-slate-500 mt-1 font-mono">
                     = {currencyFmt(output.closingCosts)}
                   </div>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1 flex justify-between">
+                <label htmlFor="caprate-upfront-rehab-repair-budget" className="block text-xs font-semibold text-slate-700 mb-1 flex justify-between">
                   <span>Upfront Rehab / Repair Budget</span>
                   <span className="text-slate-500 font-mono text-2xs">{currencyFmt(form.rehabBudget)}</span>
                 </label>
-                <CurrencyInput
+                <CurrencyInput id="caprate-upfront-rehab-repair-budget"
                   value={form.rehabBudget}
                   onChange={(val) => updateField('rehabBudget', val)}
                 />
@@ -482,10 +485,10 @@ export default function CapRateCalculator() {
                 <>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      <label htmlFor="caprate-mortgage-rate" className="block text-xs font-semibold text-slate-700 mb-1">
                         Mortgage Rate (%)
                       </label>
-                      <NumericInput
+                      <NumericInput id="caprate-mortgage-rate"
                         value={form.interestRate}
                         onChange={(val) => updateField('interestRate', val)}
                         step={0.125}
@@ -495,10 +498,10 @@ export default function CapRateCalculator() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs font-semibold text-slate-700 mb-1">
+                      <label htmlFor="caprate-loan-term-years" className="block text-xs font-semibold text-slate-700 mb-1">
                         Loan Term (Years)
                       </label>
-                      <NumericInput
+                      <NumericInput id="caprate-loan-term-years"
                         value={form.loanTermYears}
                         onChange={(val) => updateField('loanTermYears', val)}
                         step={5}
@@ -522,7 +525,7 @@ export default function CapRateCalculator() {
                 </>
               ) : (
                 <div className="p-3 bg-slate-50 rounded-xl text-xs text-slate-600 flex items-center gap-2">
-                  <ShieldCheck className="size-4 text-emerald-600 shrink-0" />
+                  <ShieldCheck className="size-4 text-emerald-700 shrink-0" />
                   <span>100% Cash Purchase. Zero mortgage payments and zero interest expense.</span>
                 </div>
               )}
@@ -531,25 +534,25 @@ export default function CapRateCalculator() {
             {/* 3. Rental Income */}
             <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-4">
               <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-                <DollarSign className="size-4 text-emerald-600" />
+                <DollarSign className="size-4 text-emerald-700" />
                 <span>Gross Rental Revenue</span>
               </h2>
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-monthly-rent" className="block text-xs font-semibold text-slate-700 mb-1">
                     Monthly Rent ($)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="caprate-monthly-rent"
                     value={form.monthlyRent}
                     onChange={(val) => updateField('monthlyRent', val)}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-other-income-mo" className="block text-xs font-semibold text-slate-700 mb-1">
                     Other Income ($/mo)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="caprate-other-income-mo"
                     value={form.otherMonthlyIncome}
                     onChange={(val) => updateField('otherMonthlyIncome', val)}
                   />
@@ -557,11 +560,11 @@ export default function CapRateCalculator() {
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1 flex justify-between">
+                <label htmlFor="caprate-vacancy-credit-loss-yr" className="block text-xs font-semibold text-slate-700 mb-1 flex justify-between">
                   <span>Vacancy & Credit Loss</span>
                   <span className="text-slate-500 text-2xs">{currencyFmt(output.vacancyLossAnnual)} / yr</span>
                 </label>
-                <NumericInput
+                <NumericInput id="caprate-vacancy-credit-loss-yr"
                   value={form.vacancyRate}
                   onChange={(val) => updateField('vacancyRate', val)}
                   step={1}
@@ -609,19 +612,19 @@ export default function CapRateCalculator() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-property-taxes-yr" className="block text-xs font-semibold text-slate-700 mb-1">
                     Property Taxes ($/yr)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="caprate-property-taxes-yr"
                     value={form.propertyTaxAnnual}
                     onChange={(val) => updateField('propertyTaxAnnual', val)}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-insurance-yr" className="block text-xs font-semibold text-slate-700 mb-1">
                     Insurance ($/yr)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="caprate-insurance-yr"
                     value={form.insuranceAnnual}
                     onChange={(val) => updateField('insuranceAnnual', val)}
                   />
@@ -630,19 +633,19 @@ export default function CapRateCalculator() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-hoa-dues-mo" className="block text-xs font-semibold text-slate-700 mb-1">
                     HOA Dues ($/mo)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="caprate-hoa-dues-mo"
                     value={form.hoaMonthly}
                     onChange={(val) => updateField('hoaMonthly', val)}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-property-mgmt" className="block text-xs font-semibold text-slate-700 mb-1">
                     Property Mgmt (%)
                   </label>
-                  <NumericInput
+                  <NumericInput id="caprate-property-mgmt"
                     value={form.managementFeePercent}
                     onChange={(val) => updateField('managementFeePercent', val)}
                     step={1}
@@ -655,10 +658,10 @@ export default function CapRateCalculator() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-maintenance-reserve" className="block text-xs font-semibold text-slate-700 mb-1">
                     Maintenance Reserve (%)
                   </label>
-                  <NumericInput
+                  <NumericInput id="caprate-maintenance-reserve"
                     value={form.maintenancePercent}
                     onChange={(val) => updateField('maintenancePercent', val)}
                     step={1}
@@ -668,10 +671,10 @@ export default function CapRateCalculator() {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-capex-reserve-mo" className="block text-xs font-semibold text-slate-700 mb-1">
                     CapEx Reserve ($/mo)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="caprate-capex-reserve-mo"
                     value={form.capexMonthly}
                     onChange={(val) => updateField('capexMonthly', val)}
                   />
@@ -680,19 +683,19 @@ export default function CapRateCalculator() {
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-owner-utilities-mo" className="block text-xs font-semibold text-slate-700 mb-1">
                     Owner Utilities ($/mo)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="caprate-owner-utilities-mo"
                     value={form.utilitiesMonthly}
                     onChange={(val) => updateField('utilitiesMonthly', val)}
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="caprate-other-opex-yr" className="block text-xs font-semibold text-slate-700 mb-1">
                     Other OpEx ($/yr)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="caprate-other-opex-yr"
                     value={form.otherExpensesAnnual}
                     onChange={(val) => updateField('otherExpensesAnnual', val)}
                   />
@@ -701,7 +704,7 @@ export default function CapRateCalculator() {
 
               <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">
                 <span className="font-semibold text-slate-600">Total Annual OpEx:</span>
-                <span className="font-bold text-rose-600 font-mono">
+                <span className="font-bold text-rose-700 font-mono">
                   {currencyFmt(output.totalOperatingExpensesAnnual)} / yr
                 </span>
               </div>
@@ -710,6 +713,19 @@ export default function CapRateCalculator() {
 
           {/* Right Results: Tabs & Analytics */}
           <div className="lg:col-span-7 space-y-6">
+            {/* Announce the recomputed yield metrics for screen readers. */}
+            <ResultAnnouncer
+              message={composeAnnouncement(
+                [
+                  { label: 'cap rate', value: `${output.capRate.toFixed(2)}%` },
+                  { label: 'cash-on-cash return', value: `${output.cashOnCashReturn.toFixed(2)}%` },
+                  { label: 'net cash flow', value: `${formatUsdSigned(output.netCashFlowMonthly)} per month` },
+                  { label: 'net operating income', value: `${formatUsd(output.noiAnnual)} per year` },
+                ],
+                { context: 'Results updated' }
+              )}
+            />
+
             {/* View Tabs */}
             <div className="flex items-center justify-between border-b border-slate-200 pb-2">
               <div className="flex gap-2">
@@ -778,7 +794,7 @@ export default function CapRateCalculator() {
                     </div>
                     <div className="p-3.5 flex justify-between items-center bg-slate-50/50">
                       <span className="text-slate-600">Less: Vacancy & Credit Loss ({form.vacancyRate}%)</span>
-                      <span className="font-mono text-rose-600">
+                      <span className="font-mono text-rose-700">
                         -{currencyFmt(output.vacancyLossAnnual)}
                       </span>
                     </div>
@@ -790,7 +806,7 @@ export default function CapRateCalculator() {
                     </div>
                     <div className="p-3.5 flex justify-between items-center bg-slate-50/50">
                       <span className="text-slate-600">Less: Total Operating Expenses (OpEx)</span>
-                      <span className="font-mono text-rose-600">
+                      <span className="font-mono text-rose-700">
                         -{currencyFmt(output.totalOperatingExpensesAnnual)}
                       </span>
                     </div>
@@ -805,7 +821,7 @@ export default function CapRateCalculator() {
                     </div>
                     <div className="p-3.5 flex justify-between items-center bg-slate-50/50">
                       <span className="text-slate-600">Less: Annual Debt Service (P&I)</span>
-                      <span className="font-mono text-rose-600">
+                      <span className="font-mono text-rose-700">
                         -{currencyFmt(output.annualDebtService)}
                       </span>
                     </div>
@@ -861,10 +877,10 @@ export default function CapRateCalculator() {
                     </div>
                     <p className="text-2xs text-slate-500 leading-relaxed">
                       50% benchmark OpEx is {currencyFmt(output.ruleOf50EstimatedExpenses)}. Your itemized OpEx is{' '}
-                      <span className={output.ruleOf50Variance > 0 ? 'text-rose-600 font-bold' : 'text-emerald-600 font-bold'}>
+                      <span className={output.ruleOf50Variance > 0 ? 'text-rose-700 font-bold' : 'text-emerald-700 font-bold'}>
                         {output.ruleOf50Variance > 0
-                          ? `+$${Math.abs(Math.round(output.ruleOf50Variance)).toLocaleString()} higher`
-                          : `-$${Math.abs(Math.round(output.ruleOf50Variance)).toLocaleString()} lower`}
+                          ? `+$${Math.abs(Math.round(output.ruleOf50Variance)).toLocaleString('en-US')} higher`
+                          : `-$${Math.abs(Math.round(output.ruleOf50Variance)).toLocaleString('en-US')} lower`}
                       </span>.
                     </p>
                   </div>
@@ -947,7 +963,7 @@ export default function CapRateCalculator() {
             {activeTab === 'projections' && (
               <div className="space-y-4">
                 <div className="bg-white rounded-2xl border border-slate-200 overflow-x-auto shadow-xs">
-                  <table className="w-full text-xs text-left border-collapse">
+                  <table className="fin-table text-xs text-left">
                     <thead>
                       <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold">
                         <th className="py-2.5 px-3">Year</th>
@@ -967,7 +983,7 @@ export default function CapRateCalculator() {
                           <td className="py-2.5 px-3 text-slate-700">{currencyFmt(p.propertyValue)}</td>
                           <td className="py-2.5 px-3 text-slate-500">{currencyFmt(p.loanBalance)}</td>
                           <td className="py-2.5 px-3 font-bold text-indigo-600">{currencyFmt(p.equity)}</td>
-                          <td className={`py-2.5 px-3 font-bold ${p.netCashFlowAnnual >= 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                          <td className={`py-2.5 px-3 font-bold ${p.netCashFlowAnnual >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
                             {currencyFmt(p.netCashFlowAnnual)}
                           </td>
                           <td className="py-2.5 px-3 text-slate-700">{currencyFmt(p.cumulativeCashFlow)}</td>

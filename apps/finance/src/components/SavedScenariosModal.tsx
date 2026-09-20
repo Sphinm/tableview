@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Bookmark, X, Trash2, Check, ArrowRight, Layers, Plus, Calendar, Lock } from 'lucide-react';
+import { Dialog } from '@tableview/ui';
 import { useAuth } from '../lib/useAuth';
 
 /**
@@ -127,8 +128,12 @@ export function SavedScenariosModal<T>({
   const comparedScenarios = scenarios.filter(s => selectedForCompare.includes(s.id));
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in">
-      <div className="relative w-full max-w-2xl bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[85vh]">
+    <Dialog
+      onClose={onClose}
+      labelledBy="saved-scenarios-title"
+      overlayClassName="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in"
+      panelClassName="relative w-full max-w-2xl bg-white border border-slate-200 rounded-2xl shadow-xl overflow-hidden flex flex-col max-h-[85vh]"
+    >
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -137,7 +142,7 @@ export function SavedScenariosModal<T>({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-slate-900">Saved Deal Scenarios</h3>
+                <h3 id="saved-scenarios-title" className="text-base font-bold text-slate-900">Saved Deal Scenarios</h3>
                 <span className={`text-[10px] font-mono px-2 py-0.5 rounded font-semibold border ${
                   isPro
                     ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
@@ -153,6 +158,7 @@ export function SavedScenariosModal<T>({
           </div>
           <button
             onClick={onClose}
+            aria-label="Close saved scenarios"
             className="p-1.5 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors cursor-pointer"
           >
             <X className="size-4" />
@@ -163,7 +169,7 @@ export function SavedScenariosModal<T>({
         {limitWarning && (
           <div className="p-3 bg-amber-50 border-b border-amber-200 text-amber-900 text-xs flex items-center justify-between gap-3 animate-in fade-in">
             <div className="flex items-center gap-2 font-medium">
-              <Lock className="size-4 text-amber-600 shrink-0" />
+              <Lock className="size-4 text-amber-700 shrink-0" />
               <span>Free tier is limited to 3 saved scenarios. Upgrade to Pro for unlimited client storage.</span>
             </div>
             {onUpgradePro && (
@@ -201,7 +207,7 @@ export function SavedScenariosModal<T>({
 
         {showSavedToast && (
           <div className="bg-emerald-50 border-b border-emerald-200 px-4 py-2 text-xs text-emerald-800 flex items-center gap-2 font-medium">
-            <Check className="size-3.5 text-emerald-600" />
+            <Check className="size-3.5 text-emerald-700" />
             <span>Scenario saved to browser storage!</span>
           </div>
         )}
@@ -289,7 +295,7 @@ export function SavedScenariosModal<T>({
                     </button>
                     <button
                       onClick={(e) => handleDelete(sc.id, e)}
-                      className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors cursor-pointer"
+                      className="p-1.5 rounded-lg text-slate-400 hover:text-rose-700 hover:bg-rose-50 transition-colors cursor-pointer"
                       title="Delete saved scenario"
                     >
                       <Trash2 className="size-3.5" />
@@ -306,7 +312,6 @@ export function SavedScenariosModal<T>({
           <span>{scenarios.length} saved scenario{scenarios.length === 1 ? '' : 's'}</span>
           <span className="text-[11px]">Select any item to instantly load into calculator</span>
         </div>
-      </div>
-    </div>
+    </Dialog>
   );
 }

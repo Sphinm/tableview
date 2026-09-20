@@ -9,6 +9,10 @@ import {
   FICO_PROFILES
 } from '../lib/mortgageCalculator';
 import { useAuth } from '../lib/useAuth';
+import { formatUsd } from '@tableview/shared';
+
+/* Locale-explicit USD so printed figures match on every machine. */
+const fmt = (n: number) => formatUsd(n);
 
 interface PrintableMortgageReportProps {
   homeValue: number;
@@ -144,15 +148,15 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
             <tbody>
               <tr className="border-b border-slate-200 py-1">
                 <td className="py-1 text-slate-700 font-medium">Property / Home Value:</td>
-                <td className="py-1 font-bold text-right text-slate-900 font-mono">${homeValue.toLocaleString()}</td>
+                <td className="py-1 font-bold text-right text-slate-900 font-mono">{fmt(homeValue)}</td>
               </tr>
               <tr className="border-b border-slate-200 py-1">
                 <td className="py-1 text-slate-700 font-medium">Down Payment:</td>
-                <td className="py-1 font-semibold text-right text-slate-900 font-mono">${downPayment.toLocaleString()} ({downPaymentPct}%)</td>
+                <td className="py-1 font-semibold text-right text-slate-900 font-mono">{fmt(downPayment)} ({downPaymentPct}%)</td>
               </tr>
               <tr className="border-b border-slate-200 py-1">
                 <td className="py-1 text-slate-700 font-medium">Initial Principal Loan Amount:</td>
-                <td className="py-1 font-black text-right text-indigo-700 font-mono">${loanAmount.toLocaleString()}</td>
+                <td className="py-1 font-black text-right text-indigo-700 font-mono">{fmt(loanAmount)}</td>
               </tr>
               <tr className="border-b border-slate-200 py-1">
                 <td className="py-1 text-slate-700 font-medium">Note Interest Rate:</td>
@@ -174,35 +178,35 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
         <div className="border-2 border-slate-300 rounded-lg p-4 bg-slate-50/70">
           <h2 className="text-xs font-black uppercase tracking-wider text-slate-950 border-b-2 border-slate-300 pb-1.5 mb-2.5 flex justify-between">
             <span>2. Monthly Payment (PITI Breakdown)</span>
-            <span className="text-indigo-700 font-black">${Math.round(totalMonthly).toLocaleString()}/mo</span>
+            <span className="text-indigo-700 font-black">{fmt(totalMonthly)}/mo</span>
           </h2>
           <table className="w-full text-xs">
             <tbody>
               <tr className="border-b border-slate-100 py-1">
                 <td className="py-1 text-slate-600">Principal & Interest (P&I):</td>
-                <td className="py-1 font-semibold text-right text-slate-900">${Math.round(summary.monthlyPrincipalAndInterest).toLocaleString()}</td>
+                <td className="py-1 font-semibold text-right text-slate-900">{fmt(summary.monthlyPrincipalAndInterest)}</td>
               </tr>
               <tr className="border-b border-slate-100 py-1">
                 <td className="py-1 text-slate-600">Estimated Property Taxes:</td>
-                <td className="py-1 font-semibold text-right text-slate-900">${Math.round(propertyTaxYearly / 12).toLocaleString()}</td>
+                <td className="py-1 font-semibold text-right text-slate-900">{fmt(propertyTaxYearly / 12)}</td>
               </tr>
               <tr className="border-b border-slate-100 py-1">
                 <td className="py-1 text-slate-600">Homeowners Insurance:</td>
-                <td className="py-1 font-semibold text-right text-slate-900">${Math.round(homeInsuranceYearly / 12).toLocaleString()}</td>
+                <td className="py-1 font-semibold text-right text-slate-900">{fmt(homeInsuranceYearly / 12)}</td>
               </tr>
               <tr className="border-b border-slate-100 py-1">
                 <td className="py-1 text-slate-600">Private Mortgage Ins. (PMI):</td>
                 <td className="py-1 font-semibold text-right text-slate-900">
-                  {summary.monthlyPmi > 0 ? `$${Math.round(summary.monthlyPmi).toLocaleString()}` : '$0 (None / ≥20% equity)'}
+                  {summary.monthlyPmi > 0 ? `${fmt(summary.monthlyPmi)}` : '$0 (None / ≥20% equity)'}
                 </td>
               </tr>
               <tr className="border-b border-slate-100 py-1">
                 <td className="py-1 text-slate-600">HOA Dues / Assessment:</td>
-                <td className="py-1 font-semibold text-right text-slate-900">${Math.round(monthlyHoa).toLocaleString()}</td>
+                <td className="py-1 font-semibold text-right text-slate-900">{fmt(monthlyHoa)}</td>
               </tr>
               <tr className="bg-indigo-50/60 font-bold">
                 <td className="py-1.5 px-1 text-indigo-900">Total Monthly Housing Cost:</td>
-                <td className="py-1.5 px-1 text-right text-indigo-900 text-sm font-black">${Math.round(totalMonthly).toLocaleString()}</td>
+                <td className="py-1.5 px-1 text-right text-indigo-900 text-sm font-black">{fmt(totalMonthly)}</td>
               </tr>
             </tbody>
           </table>
@@ -217,7 +221,7 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
               3. Estimated Cash to Close (Settlement Day Funds)
             </h2>
             <span className="text-sm font-black text-emerald-800 font-mono">
-              Total Required: ${Math.round(cashToClose.totalCashToClose).toLocaleString()}
+              Total Required: {fmt(cashToClose.totalCashToClose)}
             </span>
           </div>
 
@@ -226,15 +230,15 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
               <tbody>
                 <tr className="border-b border-slate-200 py-1">
                   <td className="py-1 text-slate-700 font-medium">Down Payment Equity:</td>
-                  <td className="py-1 font-bold text-right text-slate-900 font-mono">${Math.round(cashToClose.downPayment).toLocaleString()}</td>
+                  <td className="py-1 font-bold text-right text-slate-900 font-mono">{fmt(cashToClose.downPayment)}</td>
                 </tr>
                 <tr className="border-b border-slate-200 py-1">
                   <td className="py-1 text-slate-700 font-medium">Lender Origination & Processing:</td>
-                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">${Math.round(cashToClose.lenderFees).toLocaleString()}</td>
+                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">{fmt(cashToClose.lenderFees)}</td>
                 </tr>
                 <tr className="py-1">
                   <td className="py-1 text-slate-700 font-medium">Title & Settlement Attorney Fees:</td>
-                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">${Math.round(cashToClose.titleAndEscrow).toLocaleString()}</td>
+                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">{fmt(cashToClose.titleAndEscrow)}</td>
                 </tr>
               </tbody>
             </table>
@@ -243,15 +247,15 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
               <tbody>
                 <tr className="border-b border-slate-200 py-1">
                   <td className="py-1 text-slate-700 font-medium">Prepaids & Escrow Reserves (3-6 mo):</td>
-                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">${Math.round(cashToClose.prepaidsAndEscrow).toLocaleString()}</td>
+                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">{fmt(cashToClose.prepaidsAndEscrow)}</td>
                 </tr>
                 <tr className="border-b border-slate-200 py-1">
                   <td className="py-1 text-slate-700 font-medium">Third-Party Appraisal & Inspections:</td>
-                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">${Math.round(cashToClose.thirdPartyServices).toLocaleString()}</td>
+                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">{fmt(cashToClose.thirdPartyServices)}</td>
                 </tr>
                 <tr className="py-1">
                   <td className="py-1 text-slate-700 font-medium">Government Recording & Transfer Taxes:</td>
-                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">${Math.round(cashToClose.governmentFees).toLocaleString()}</td>
+                  <td className="py-1 font-semibold text-right text-slate-900 font-mono">{fmt(cashToClose.governmentFees)}</td>
                 </tr>
               </tbody>
             </table>
@@ -278,29 +282,29 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
           <div className="grid grid-cols-4 gap-3 text-xs text-center">
             <div className="p-2 bg-white rounded border border-slate-200">
               <span className="text-[10px] text-slate-500 font-medium block">Gross Annual Income</span>
-              <span className="font-bold text-slate-900 font-mono">${Math.round(dtiAnalysis.monthlyGrossIncome * 12).toLocaleString()}</span>
-              <span className="text-[10px] text-slate-400 block">${Math.round(dtiAnalysis.monthlyGrossIncome).toLocaleString()}/mo</span>
+              <span className="font-bold text-slate-900 font-mono">{fmt(dtiAnalysis.monthlyGrossIncome * 12)}</span>
+              <span className="text-[10px] text-slate-500 block">{fmt(dtiAnalysis.monthlyGrossIncome)}/mo</span>
             </div>
             <div className="p-2 bg-white rounded border border-slate-200">
               <span className="text-[10px] text-slate-500 font-medium block">Front-End DTI (Housing)</span>
               <span className={`font-bold font-mono text-sm ${dtiAnalysis.frontEndStatus === 'ideal' ? 'text-emerald-700' : 'text-slate-800'}`}>
                 {dtiAnalysis.frontEndDti}%
               </span>
-              <span className="text-[10px] text-slate-400 block">Benchmark: ≤ 28%</span>
+              <span className="text-[10px] text-slate-500 block">Benchmark: ≤ 28%</span>
             </div>
             <div className="p-2 bg-white rounded border border-slate-200">
               <span className="text-[10px] text-slate-500 font-medium block">Back-End DTI (Total Debt)</span>
               <span className={`font-bold font-mono text-sm ${dtiAnalysis.backEndStatus === 'ideal' || dtiAnalysis.backEndStatus === 'acceptable' ? 'text-emerald-700' : 'text-rose-700'}`}>
                 {dtiAnalysis.backEndDti}%
               </span>
-              <span className="text-[10px] text-slate-400 block">QM Conforming Cap: ≤ 43%</span>
+              <span className="text-[10px] text-slate-500 block">QM Conforming Cap: ≤ 43%</span>
             </div>
             <div className="p-2 bg-white rounded border border-slate-200">
               <span className="text-[10px] text-slate-500 font-medium block">Credit Score Tier</span>
               <span className="font-bold text-indigo-700 font-mono text-sm">
                 {ficoTier ? FICO_PROFILES[ficoTier]?.label || ficoTier : '760+'}
               </span>
-              <span className="text-[10px] text-slate-400 block">
+              <span className="text-[10px] text-slate-500 block">
                 LLPA: +{ficoTier ? FICO_PROFILES[ficoTier]?.llpaRateAdjustment : 0}%
               </span>
             </div>
@@ -316,17 +320,17 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
         <div className="grid grid-cols-4 gap-3 text-center">
           <div className="p-2 bg-white rounded border border-slate-200">
             <div className="text-[10px] text-slate-500 uppercase font-semibold">Total Payments</div>
-            <div className="text-sm font-bold text-slate-900 mt-0.5">${Math.round(summary.totalOfAllPayments).toLocaleString()}</div>
+            <div className="text-sm font-bold text-slate-900 mt-0.5">{fmt(summary.totalOfAllPayments)}</div>
             <div className="text-[10px] text-slate-500">Over {loanTermYears} years</div>
           </div>
           <div className="p-2 bg-white rounded border border-slate-200">
             <div className="text-[10px] text-slate-500 uppercase font-semibold">Total Interest Paid</div>
-            <div className="text-sm font-bold text-rose-600 mt-0.5">${Math.round(summary.totalInterestPaid).toLocaleString()}</div>
+            <div className="text-sm font-bold text-rose-700 mt-0.5">{fmt(summary.totalInterestPaid)}</div>
             <div className="text-[10px] text-slate-500">{((summary.totalInterestPaid / (loanAmount || 1)) * 100).toFixed(0)}% of principal</div>
           </div>
           <div className="p-2 bg-white rounded border border-slate-200">
             <div className="text-[10px] text-slate-500 uppercase font-semibold">PMI Cancellation</div>
-            <div className="text-sm font-bold text-emerald-600 mt-0.5">
+            <div className="text-sm font-bold text-emerald-700 mt-0.5">
               {summary.isPmiRequired ? 'Auto at 78% LTV' : 'No PMI Required'}
             </div>
             <div className="text-[10px] text-slate-500">HPA 1998 standard</div>
@@ -340,7 +344,7 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
 
         {extraMonthlyPrincipal > 0 && (
           <div className="mt-3 p-2 rounded bg-emerald-50 border border-emerald-200 text-xs text-emerald-900">
-            <span className="font-bold">Acceleration Scenario Active:</span> Making an additional ${extraMonthlyPrincipal.toLocaleString()} monthly principal payment significantly shortens loan duration and saves substantial compound interest.
+            <span className="font-bold">Acceleration Scenario Active:</span> Making an additional {fmt(extraMonthlyPrincipal)} monthly principal payment significantly shortens loan duration and saves substantial compound interest.
           </div>
         )}
       </div>
@@ -378,13 +382,13 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
                   <td className="py-1 px-2 font-sans font-bold text-slate-950">
                     {row.monthName} {row.year} <span className="text-slate-500 font-normal text-[9px]">(M{row.monthIndex})</span>
                   </td>
-                  <td className="py-1 px-2 text-right text-slate-800">${Math.round(row.startingBalance).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-emerald-700 font-semibold">${Math.round(row.principalPaid).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-rose-700">${Math.round(row.interestPaid).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-slate-600">${Math.round(row.propertyTax + row.homeInsurance).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right font-bold text-slate-900">${Math.round(row.totalPayment).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right font-bold text-slate-950">${Math.round(row.endingBalance).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-slate-700">${Math.round(row.totalInterestToDate).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right text-slate-800">{fmt(row.startingBalance)}</td>
+                  <td className="py-1 px-2 text-right text-emerald-700 font-semibold">{fmt(row.principalPaid)}</td>
+                  <td className="py-1 px-2 text-right text-rose-700">{fmt(row.interestPaid)}</td>
+                  <td className="py-1 px-2 text-right text-slate-600">{fmt(row.propertyTax + row.homeInsurance)}</td>
+                  <td className="py-1 px-2 text-right font-bold text-slate-900">{fmt(row.totalPayment)}</td>
+                  <td className="py-1 px-2 text-right font-bold text-slate-950">{fmt(row.endingBalance)}</td>
+                  <td className="py-1 px-2 text-right text-slate-700">{fmt(row.totalInterestToDate)}</td>
                 </tr>
               ))}
             </tbody>
@@ -407,13 +411,13 @@ export const PrintableMortgageReport: React.FC<PrintableMortgageReportProps> = (
               {annualSchedule.map((row) => (
                 <tr key={row.year} className="even:bg-slate-50/70">
                   <td className="py-1 px-2 font-sans font-bold text-slate-950">Year {row.year}</td>
-                  <td className="py-1 px-2 text-right text-slate-800">${Math.round(row.startingBalance).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-emerald-700 font-semibold">${Math.round(row.principalPaid).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-rose-700">${Math.round(row.interestPaid).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-slate-600">${Math.round(row.propertyTax + row.homeInsurance).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right font-bold text-slate-900">${Math.round(row.totalPayment).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right font-bold text-slate-950">${Math.round(row.endingBalance).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-slate-700">${Math.round(row.totalInterestToDate).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right text-slate-800">{fmt(row.startingBalance)}</td>
+                  <td className="py-1 px-2 text-right text-emerald-700 font-semibold">{fmt(row.principalPaid)}</td>
+                  <td className="py-1 px-2 text-right text-rose-700">{fmt(row.interestPaid)}</td>
+                  <td className="py-1 px-2 text-right text-slate-600">{fmt(row.propertyTax + row.homeInsurance)}</td>
+                  <td className="py-1 px-2 text-right font-bold text-slate-900">{fmt(row.totalPayment)}</td>
+                  <td className="py-1 px-2 text-right font-bold text-slate-950">{fmt(row.endingBalance)}</td>
+                  <td className="py-1 px-2 text-right text-slate-700">{fmt(row.totalInterestToDate)}</td>
                 </tr>
               ))}
             </tbody>

@@ -27,7 +27,6 @@ import {
   type CompressOptions,
   type CompressResult,
 } from '../lib/ffmpeg';
-import { useAuth } from '../lib/useAuth';
 import { updatePageMeta } from '../lib/router';
 import { STATIC_PAGE_META } from '../data/routeMeta';
 import { SuiteSubNav } from '../components/SuiteSubNav';
@@ -35,7 +34,13 @@ import { InfoTooltip } from '../components/InfoTooltip';
 import { analytics, trackEvent } from '../lib/analytics';
 
 export function VideoCompressor() {
-  const { consumeCredit } = useAuth();
+  /*
+   * This page used to call useAuth().consumeCredit() after a successful
+   * encode. The compressor app has no AuthProvider — it is a free,
+   * account-less tool — so the call threw during render and the whole page
+   * landed in the error boundary. The credit gate could never have run here,
+   * so it is removed rather than propped up with a dummy provider.
+   */
 
   useEffect(() => {
     const meta = STATIC_PAGE_META['/video-compressor'];
@@ -170,7 +175,6 @@ export function VideoCompressor() {
 
       setResult(res);
       setCompareTab('compressed');
-      consumeCredit(1);
     } catch (err: unknown) {
       console.error('Compression failed:', err);
       const msg = err instanceof Error ? err.message : 'Compression failed. Try choosing 720p or adjusting the settings.';
@@ -312,7 +316,7 @@ export function VideoCompressor() {
                 </div>
 
                 {/* Format Pills */}
-                <div className="flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-slate-500 font-mono">
+                <div className="flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-slate-600 font-mono">
                   <span className="px-2 py-0.5 rounded bg-slate-200/70">MP4</span>
                   <span className="px-2 py-0.5 rounded bg-slate-200/70">WebM</span>
                   <span className="px-2 py-0.5 rounded bg-slate-200/70">MOV</span>
@@ -523,7 +527,7 @@ export function VideoCompressor() {
                           }`}
                         >
                           <div className="text-xs font-bold">{item.label}</div>
-                          <div className="text-[10px] text-slate-500 mt-0.5">{item.desc}</div>
+                          <div className="text-[10px] text-slate-600 mt-0.5">{item.desc}</div>
                         </button>
                       ))}
                     </div>
@@ -614,7 +618,7 @@ export function VideoCompressor() {
                           content="Controls visual quality vs file size. Lower values (18-22) retain near-lossless detail; higher values (28-35) drastically reduce file size."
                         />
                       </div>
-                      <span className="text-slate-400 text-[11px]">
+                      <span className="text-slate-500 text-[11px]">
                         {crf < 23 ? 'Ultra High Quality' : crf <= 28 ? 'Balanced' : 'High Compression'}
                       </span>
                     </div>
@@ -626,7 +630,7 @@ export function VideoCompressor() {
                       onChange={(e) => setCrf(parseInt(e.target.value))}
                       className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
                     />
-                    <div className="flex justify-between text-[10px] text-slate-400 mt-1">
+                    <div className="flex justify-between text-[10px] text-slate-500 mt-1">
                       <span>18 (Near Lossless)</span>
                       <span>28 (Balanced)</span>
                       <span>35 (Smallest)</span>
@@ -676,7 +680,7 @@ export function VideoCompressor() {
                           {muteAudio ? <VolumeX className="size-3.5 text-amber-500" /> : <Volume2 className="size-3.5 text-indigo-600" />}
                           <span>Mute / Remove Audio Track</span>
                         </div>
-                        <p className="text-slate-400 text-[11px] mt-0.5">
+                        <p className="text-slate-500 text-[11px] mt-0.5">
                           Saves up to 15%-25% additional space for silent or gameplay clips
                         </p>
                       </div>
@@ -694,7 +698,7 @@ export function VideoCompressor() {
                       {metadata ? formatBytes(estimatedBytes) : '—'}
                     </span>
                     {metadata && (
-                      <span className="text-emerald-600">
+                      <span className="text-emerald-700">
                         (-{estimatedSavedPct}%)
                       </span>
                     )}
@@ -736,14 +740,14 @@ export function VideoCompressor() {
                   href={result.url}
                   download={`compressed_${metadata?.name || 'video.mp4'}`}
                   onClick={() => analytics.exportClicked({ format: 'mp4', rowCount: 1 })}
-                  className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.99] flex items-center justify-center gap-2"
+                  className="w-full py-3.5 px-4 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.99] flex items-center justify-center gap-2"
                 >
                   <Download className="size-4" />
                   <span>Download Compressed Video ({formatBytes(result.size)})</span>
                 </a>
               )}
 
-              <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
+              <div className="flex items-center justify-between text-[11px] text-slate-500 px-1">
                 <span className="flex items-center gap-1">
                   <Shield className="size-3 text-emerald-600" />
                   <span>100% In-Browser Privacy</span>

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { X, Sparkles, ShieldCheck } from 'lucide-react';
+import { Dialog } from '@tableview/ui';
 import { useAuth } from '../lib/useAuth';
 
 export function AuthModal() {
@@ -124,12 +125,12 @@ export function AuthModal() {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200">
-      <div
-        className="relative w-full max-w-md overflow-hidden bg-white border border-slate-200 rounded-3xl shadow-2xl transition-all"
-        role="dialog"
-        aria-modal="true"
-      >
+    <Dialog
+      onClose={closeAuthModal}
+      labelledBy="auth-modal-title"
+      overlayClassName="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200"
+      panelClassName="relative w-full max-w-md overflow-hidden bg-white border border-slate-200 rounded-3xl shadow-2xl transition-all"
+    >
         {/* Subtle decorative top ambient highlight */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-48 h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent" />
 
@@ -148,7 +149,7 @@ export function AuthModal() {
             <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-indigo-50 text-indigo-600 mb-3.5 border border-indigo-100 shadow-xs">
               <Sparkles className="size-5 text-indigo-600" />
             </div>
-            <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">
+            <h2 id="auth-modal-title" className="text-2xl font-extrabold text-slate-900 tracking-tight">
               Sign In to TableView
             </h2>
             <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed max-w-xs mx-auto">
@@ -210,11 +211,10 @@ export function AuthModal() {
 
           {/* Privacy Trust Guarantee Badge */}
           <div className="mt-6 pt-5 border-t border-slate-100 flex items-center justify-center gap-2 text-xs text-slate-500">
-            <ShieldCheck className="w-4 h-4 text-emerald-600 shrink-0" />
+            <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
             <span>Privacy First: Your files never leave your device</span>
           </div>
         </div>
-      </div>
-    </div>
+    </Dialog>
   );
 }

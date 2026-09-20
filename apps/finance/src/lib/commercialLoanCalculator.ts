@@ -254,10 +254,10 @@ export function calculateCommercialLoan(inputs: CommercialLoanInputs): Commercia
     refinanceAnalysis = 'Fully amortizing loan. The principal will be paid down to $0 at the end of term with zero balloon refinancing risk.';
   } else if (balloonDuePercentOfOriginal > 80) {
     refinanceRiskLevel = 'High';
-    refinanceAnalysis = `High refinancing dependency: At Year ${balloonTermYears}, you will still owe $${balloonDueAmount.toLocaleString()} (${balloonDuePercentOfOriginal}% of original debt). You must refinance, sell the property, or pay cash. If market interest rates rise or commercial property values soften, qualifying for a new loan may require an equity injection.`;
+    refinanceAnalysis = `High refinancing dependency: At Year ${balloonTermYears}, you will still owe $${balloonDueAmount.toLocaleString('en-US')} (${balloonDuePercentOfOriginal}% of original debt). You must refinance, sell the property, or pay cash. If market interest rates rise or commercial property values soften, qualifying for a new loan may require an equity injection.`;
   } else if (balloonDuePercentOfOriginal > 60) {
     refinanceRiskLevel = 'Moderate';
-    refinanceAnalysis = `Moderate refinancing dependency: At Year ${balloonTermYears}, $${balloonDueAmount.toLocaleString()} (${balloonDuePercentOfOriginal}%) remains. You will have built solid principal equity, but refinancing terms should be planned 6–12 months prior to the balloon deadline.`;
+    refinanceAnalysis = `Moderate refinancing dependency: At Year ${balloonTermYears}, $${balloonDueAmount.toLocaleString('en-US')} (${balloonDuePercentOfOriginal}%) remains. You will have built solid principal equity, but refinancing terms should be planned 6–12 months prior to the balloon deadline.`;
   } else {
     refinanceRiskLevel = 'Low';
     refinanceAnalysis = `Low refinancing risk: By Year ${balloonTermYears}, more than half of the loan principal will be amortized. You will hold substantial property equity making refinancing straightforward.`;

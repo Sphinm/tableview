@@ -6,15 +6,102 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#ffffff" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="TableView" />
+    <!-- iOS does not support SVG apple-touch-icons; must be a PNG. -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
+    <!-- Primary Meta Tags -->
     <title>TableView — Institutional Real Estate & Lending Underwriting Suite</title>
     <meta name="title" content="TableView — Institutional Real Estate & Lending Underwriting Suite" />
     <meta
       name="description"
       content="Institutional debt modeling, DSCR loans, Fix & Flip MAO, IRC §1031 exchange deferrals, and commercial real estate underwriting running 100% private in your browser."
     />
+    <meta
+      name="keywords"
+      content="dscr loan calculator, commercial real estate loan, 1031 exchange calculator, salary to hourly, hard money calculator, mortgage calculator, fix and flip, debt service coverage ratio"
+    />
     <link rel="canonical" href="https://tableview.dev/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://tableview.dev/" />
+    <meta property="og:title" content="TableView — Institutional Real Estate & Lending Underwriting Suite" />
+    <meta
+      property="og:description"
+      content="Institutional debt modeling, DSCR loans, Fix & Flip MAO, IRC §1031 exchange deferrals, and commercial real estate underwriting running 100% private in your browser."
+    />
+    <meta property="og:site_name" content="TableView.dev" />
+
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://tableview.dev/" />
+    <meta property="twitter:title" content="TableView — Institutional Real Estate & Lending Underwriting Suite" />
+    <meta
+      property="twitter:description"
+      content="Institutional debt modeling, DSCR loans, Fix & Flip MAO, IRC §1031 exchange deferrals, and commercial real estate underwriting running 100% private in your browser."
+    />
+
+    <!--
+      Google Consent Mode v2 — MUST execute before any Google/ads/analytics tag.
+      Default is DENIED (GDPR/ePrivacy safe); src/lib/consent.ts upgrades this to
+      granted only after explicit user consent.
+    -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      window.gtag = gtag;
+
+      gtag('consent', 'default', {
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+        analytics_storage: 'denied',
+        functionality_storage: 'granted',
+        security_storage: 'granted',
+        wait_for_update: 500
+      });
+
+      // Restore a previously granted choice as early as possible.
+      try {
+        if (localStorage.getItem('tableview_cookie_consent') === 'accepted') {
+          gtag('consent', 'update', {
+            ad_storage: 'granted',
+            ad_user_data: 'granted',
+            ad_personalization: 'granted',
+            analytics_storage: 'granted'
+          });
+        }
+      } catch (e) {}
+    </script>
+
+    <!-- Google Identity Services (GIS) for Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client?hl=en" async defer></script>
+
+    <!-- Google AdSense Script Tag -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3414270480046504"
+      crossorigin="anonymous"></script>
+
+    <!-- Structured Data: WebApplication (replaced per-route by scripts/prerender.ts) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "TableView.dev",
+        "url": "https://tableview.dev",
+        "description": "100% private in-browser financial and commercial real estate underwriting suite running entirely client-side with zero server uploads.",
+        "applicationCategory": "FinanceApplication",
+        "operatingSystem": "All",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
   </head>
-  <body class="bg-neutral-950 text-neutral-100 antialiased min-h-screen">
+  <body class="bg-slate-50 text-slate-900 antialiased min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

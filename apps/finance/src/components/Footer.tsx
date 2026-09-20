@@ -46,7 +46,7 @@ export const Footer = ({ onTrySample: _onTrySample, currentPath: _currentPath }:
                 <a
                   href="/cap-rate-calculator"
                   onClick={(e) => handleNav(e, '/cap-rate-calculator')}
-                  className="text-emerald-700 hover:text-emerald-800 font-semibold hover:underline transition-colors flex items-center justify-between"
+                  className="text-emerald-700 hover:text-emerald-800 font-semibold hover:underline transition-colors inline-flex items-center gap-1.5"
                 >
                   <span>Cap Rate & Cash Flow</span>
                   <span className="text-[9px] px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200 font-mono">
@@ -296,8 +296,24 @@ export const Footer = ({ onTrySample: _onTrySample, currentPath: _currentPath }:
           </div>
         </div>
 
+        {/*
+          Regulatory disclosure. A modelling tool that prints dollar figures and
+          underwriting verdicts must say plainly, next to them, that the output
+          is an estimate and not advice — otherwise users reasonably read a
+          "Qualifies at 1.28x" badge as a lending decision.
+        */}
+        <div className="pt-6">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 text-[11px] leading-relaxed text-slate-600 space-y-1.5">
+            <p>
+              Every figure is an estimate derived solely from
+              the assumptions you enter and does not constitute a loan commitment, rate quote, appraisal
+              or underwriting decision.
+            </p>
+          </div>
+        </div>
+
         {/* Bottom copyright bar */}
-        <div className="pt-6 border-t border-slate-200 text-xs text-slate-700 font-medium flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="pt-6 mt-6 border-t border-slate-200 text-xs text-slate-700 font-medium flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <span>© {new Date().getFullYear()} TableView.dev. All rights reserved.</span>
           </div>

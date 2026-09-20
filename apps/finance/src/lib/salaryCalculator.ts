@@ -183,8 +183,8 @@ export function calculateSalary(inputs: SalaryInputs): SalarySummary {
     {
       period: 'Annual',
       amount: Math.round(annualSalary),
-      formatted: `$${Math.round(annualSalary).toLocaleString()}`,
-      notes: `${totalAnnualHours.toLocaleString()} standard working hours/year`
+      formatted: `$${Math.round(annualSalary).toLocaleString('en-US')}`,
+      notes: `${totalAnnualHours.toLocaleString('en-US')} standard working hours/year`
     }
   ];
 

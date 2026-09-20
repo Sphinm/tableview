@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'bun:test';
 import { toIsoDate } from '../isoDate';
-import { guidesData } from '../../data/guides';
 
 describe('toIsoDate', () => {
   it('converts the display format used by guides', () => {
@@ -39,13 +38,4 @@ describe('toIsoDate', () => {
     expect(toIsoDate(null)).toBeNull();
   });
 
-  it('produces a valid ISO date for every published guide', () => {
-    // A guide whose date cannot be parsed would make its TechArticle ineligible
-    // for rich results, which is exactly the bug this helper exists to prevent.
-    for (const guide of guidesData) {
-      const iso = toIsoDate(guide.date);
-      expect(iso, `guide "${guide.slug}" has unparseable date "${guide.date}"`).not.toBeNull();
-      expect(iso!).toMatch(/^\d{4}-\d{2}-\d{2}$/);
-    }
-  });
 });

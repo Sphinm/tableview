@@ -50,29 +50,29 @@ export const PageHeader = ({
     <header className={`mb-6 ${className}`}>
       {/* 1. Optional Breadcrumbs Trail (TopBar already provides global breadcrumbs) */}
       {showBreadcrumbs && breadcrumbs && breadcrumbs.length > 0 && (
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs font-medium text-slate-600 mb-3 flex-wrap">
+        <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-xs font-medium text-neutral-400 mb-3 flex-wrap">
           <button
             type="button"
             onClick={() => navigateTo('/')}
-            className="inline-flex items-center gap-1 text-slate-600 hover:text-slate-900 font-semibold hover:underline transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 text-neutral-400 hover:text-neutral-100 font-semibold hover:underline transition-colors cursor-pointer"
             title="Back to Home"
           >
-            <Home className="size-3.5 text-slate-500" />
+            <Home className="size-3.5 text-neutral-500" />
             <span>Home</span>
           </button>
           {breadcrumbs.map((crumb, idx) => (
             <React.Fragment key={idx}>
-              <ChevronRight className="size-3 text-slate-400 shrink-0" />
+              <ChevronRight className="size-3 text-neutral-600 shrink-0" />
               {crumb.path ? (
                 <button
                   type="button"
                   onClick={() => navigateTo(crumb.path!)}
-                  className="text-slate-600 hover:text-slate-900 font-semibold hover:underline transition-colors cursor-pointer"
+                  className="text-neutral-400 hover:text-neutral-100 font-semibold hover:underline transition-colors cursor-pointer"
                 >
                   {crumb.label}
                 </button>
               ) : (
-                <span className="text-slate-900 font-bold">{crumb.label}</span>
+                <span className="text-neutral-100 font-bold">{crumb.label}</span>
               )}
             </React.Fragment>
           ))}
@@ -90,13 +90,13 @@ export const PageHeader = ({
           </div>
         )}
 
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 tracking-tight leading-snug">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-neutral-50 tracking-tight leading-snug">
           {title}
-          {titleHighlight && <span className="text-indigo-600 ml-2">{titleHighlight}</span>}
+          {titleHighlight && <span className="text-cyan-400 ml-2">{titleHighlight}</span>}
         </h1>
 
         {description && (
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed max-w-3xl">
+          <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed max-w-3xl">
             {description}
           </p>
         )}

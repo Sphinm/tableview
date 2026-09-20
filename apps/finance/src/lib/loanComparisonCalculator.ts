@@ -280,7 +280,7 @@ export function compareLoans(loanAParams: LoanParameters, loanBParams: LoanParam
     const loserClean = betterOverall === 'A' ? cleanNameB : cleanNameA;
     const winnerEg = betterOverall === 'A' ? egA : egB;
     const loserEg = betterOverall === 'A' ? egB : egA;
-    const costSavings = Math.abs(totalCostDiff).toLocaleString();
+    const costSavings = Math.abs(totalCostDiff).toLocaleString('en-US');
 
     headline = `${winnerClean} saves you $${costSavings} in total lifetime costs compared to ${loserClean}.`;
 

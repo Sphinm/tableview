@@ -73,6 +73,17 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
     };
   }, []);
 
+  // The mobile drawer is a full-height overlay; without locking the body the
+  // page scrolls behind it and the user loses their place on close.
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileMenuOpen]);
+
   const handleNav = (path: string) => {
     const targetUrl = getCrossSuiteUrl(path, 'finance');
     if (targetUrl.startsWith('http')) {
@@ -132,19 +143,9 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
             className="flex items-center gap-2.5 group shrink-0"
           >
             <BrandLogo size={32} className="shrink-0 group-hover:scale-105 transition-transform" />
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5">
-                <span className="font-extrabold text-slate-900 tracking-tight text-base sm:text-lg leading-tight">
-                  TableView
-                </span>
-                <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 text-slate-600 border border-slate-200">
-                  .dev
-                </span>
-              </div>
-              <span className="text-[10px] font-semibold text-emerald-700 tracking-wide uppercase">
-                Underwriting Suite
-              </span>
-            </div>
+            <span className="font-extrabold text-slate-900 tracking-tight text-base sm:text-lg leading-tight">
+              TableView
+            </span>
           </a>
 
           {/* Desktop Navigation */}
@@ -158,6 +159,9 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   setCommercialOpen(false);
                   setTaxOpen(false);
                 }}
+                aria-expanded={residentialOpen}
+                aria-haspopup="true"
+                aria-controls="nav-residential-menu"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   isResidentialActive || residentialOpen
                     ? 'bg-slate-100 text-indigo-700 font-bold'
@@ -172,7 +176,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
               </button>
 
               {residentialOpen && (
-                <div className="absolute left-0 mt-2 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div id="nav-residential-menu" className="absolute left-0 mt-2 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                     Conforming & Prime Debt
                   </div>
@@ -236,6 +240,9 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   setResidentialOpen(false);
                   setTaxOpen(false);
                 }}
+                aria-expanded={commercialOpen}
+                aria-haspopup="true"
+                aria-controls="nav-commercial-menu"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   isCommercialActive || commercialOpen
                     ? 'bg-slate-100 text-indigo-700 font-bold'
@@ -250,7 +257,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
               </button>
 
               {commercialOpen && (
-                <div className="absolute left-0 mt-2 w-84 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div id="nav-commercial-menu" className="absolute left-0 mt-2 w-84 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                     Investor & Institutional Lending
                   </div>
@@ -345,6 +352,9 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   setResidentialOpen(false);
                   setCommercialOpen(false);
                 }}
+                aria-expanded={taxOpen}
+                aria-haspopup="true"
+                aria-controls="nav-tax-menu"
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                   isTaxActive || taxOpen
                     ? 'bg-slate-100 text-indigo-700 font-bold'
@@ -359,7 +369,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
               </button>
 
               {taxOpen && (
-                <div className="absolute left-0 mt-2 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div id="nav-tax-menu" className="absolute left-0 mt-2 w-80 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-3 py-1 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                     Tax Deferral & Wealth
                   </div>
@@ -483,7 +493,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                       logout();
                       setUserMenuOpen(false);
                     }}
-                    className="w-full text-left px-3 py-2 text-rose-600 hover:bg-rose-50 rounded-xl flex items-center gap-2 font-semibold transition-colors cursor-pointer"
+                    className="w-full text-left px-3 py-2 text-rose-700 hover:bg-rose-50 rounded-xl flex items-center gap-2 font-semibold transition-colors cursor-pointer"
                   >
                     <LogOut className="size-3.5" />
                     <span>Sign Out</span>
@@ -508,6 +518,8 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             className="p-2 rounded-xl border border-slate-200 text-slate-700 hover:bg-slate-100 lg:hidden cursor-pointer"
             aria-label="Toggle Navigation Menu"
+            aria-expanded={mobileMenuOpen}
+            aria-controls="mobile-nav-drawer"
           >
             {mobileMenuOpen ? <X className="size-5" /> : <Menu className="size-5" />}
           </button>
@@ -516,7 +528,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-4 max-h-[85vh] overflow-y-auto shadow-lg animate-in fade-in slide-in-from-top-2 duration-150">
+        <div id="mobile-nav-drawer" className="lg:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-4 max-h-[85vh] overflow-y-auto shadow-lg animate-in fade-in slide-in-from-top-2 duration-150">
           {/* 1. Residential Accordion */}
           <div className="border border-slate-200 rounded-xl overflow-hidden">
             <button
@@ -669,7 +681,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
 
           {/* Client-Side Privacy Callout */}
           <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] leading-relaxed flex items-center gap-2">
-            <ShieldCheck className="size-4 text-emerald-600 shrink-0" />
+            <ShieldCheck className="size-4 text-emerald-700 shrink-0" />
             <span>100% In-Browser Sandbox · Zero sensitive financials stored or transmitted.</span>
           </div>
         </div>

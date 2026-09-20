@@ -34,7 +34,7 @@ export function SuiteSwitcher({ currentSuite }: SuiteSwitcherProps) {
   return (
     <div className="bg-neutral-950 border-b border-neutral-800/80 px-4 py-1.5 text-xs text-neutral-400 flex flex-wrap items-center justify-between gap-2">
       <div className="flex items-center gap-2">
-        <span className="font-semibold text-neutral-500 uppercase tracking-wider text-[10px]">
+        <span className="font-semibold text-neutral-400 uppercase tracking-wider text-[10px]">
           TableView Suite:
         </span>
         <div className="flex items-center gap-1">
@@ -62,7 +62,7 @@ export function SuiteSwitcher({ currentSuite }: SuiteSwitcherProps) {
           })}
         </div>
       </div>
-      <div className="hidden sm:flex items-center gap-1.5 text-neutral-500 text-[11px]">
+      <div className="hidden sm:flex items-center gap-1.5 text-neutral-400 text-[11px]">
         <Sparkles className="w-3 h-3 text-emerald-400" />
         <span>Institutional-grade Web Calculators & In-Browser Tools</span>
       </div>

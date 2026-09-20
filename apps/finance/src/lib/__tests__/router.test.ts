@@ -33,55 +33,53 @@ describe('Router Routing & Aliases Engine', () => {
     (globalThis as any).window.history.replaceState({}, '', path);
   };
 
-  it('routes root / to workbench', () => {
+  it('routes root / to the underwriting hub', () => {
     setPath('/');
-    const route = parseCurrentLocation();
-    expect(route.path).toBe('/');
+    expect(parseCurrentLocation().path).toBe('/');
   });
 
-  it('routes standard file tools to /tools/:toolSlug', () => {
-    setPath('/csv-viewer');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'csv-viewer' });
-
-    setPath('/parquet-to-excel');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'parquet-to-excel' });
-
-    setPath('/sql-workbench');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'sql-workbench' });
+  it('routes every financial calculator to its interactive page', () => {
+    for (const p of [
+      '/dscr-loan-calculator',
+      '/mortgage-calculator',
+      '/refinance-calculator',
+      '/hard-money-calculator',
+      '/cap-rate-calculator',
+      '/brrrr-calculator',
+      '/section-1031-exchange-calculator',
+      '/commercial-loan-calculator',
+      '/finance-calculator',
+    ]) {
+      setPath(p);
+      expect(parseCurrentLocation().path).toBe(p);
+    }
   });
 
-  it('routes dedicated calculators directly to their interactive pages', () => {
-    setPath('/dscr-loan-calculator');
+  it('resolves calculator aliases to their canonical calculator', () => {
+    setPath('/dscr');
     expect(parseCurrentLocation().path).toBe('/dscr-loan-calculator');
 
-    setPath('/mortgage-calculator');
-    expect(parseCurrentLocation().path).toBe('/mortgage-calculator');
-
-    setPath('/refinance-calculator');
-    expect(parseCurrentLocation().path).toBe('/refinance-calculator');
-
-    setPath('/hard-money-calculator');
+    setPath('/fix-and-flip-calculator');
     expect(parseCurrentLocation().path).toBe('/hard-money-calculator');
 
-    setPath('/snowflake-cost-calculator');
-    expect(parseCurrentLocation().path).toBe('/snowflake-cost-calculator');
+    setPath('/brrrr-method-calculator');
+    expect(parseCurrentLocation().path).toBe('/brrrr-calculator');
 
-    setPath('/parquet-storage-calculator');
-    expect(parseCurrentLocation().path).toBe('/parquet-storage-calculator');
-
-    setPath('/finance-calculator');
-    expect(parseCurrentLocation().path).toBe('/finance-calculator');
+    setPath('/1031');
+    expect(parseCurrentLocation().path).toBe('/section-1031-exchange-calculator');
   });
 
-  it('resolves tool aliases properly', () => {
+  it('no longer resolves data-tool or compressor URLs', () => {
+    // Those suites live on their own origins now; the finance router must not
+    // claim them, or they would render the finance 404 behind a fake route.
+    setPath('/csv-viewer');
+    expect(parseCurrentLocation().path).toBe('/csv-viewer');
+
     setPath('/open-csv');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'csv-viewer' });
+    expect(parseCurrentLocation().path).toBe('/open-csv');
 
-    setPath('/sql-runner');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'sql-workbench' });
-
-    setPath('/jsonl-viewer');
-    expect(parseCurrentLocation()).toEqual({ path: '/tools/:toolSlug', slug: 'json-viewer' });
+    setPath('/video-compressor');
+    expect(parseCurrentLocation().path).toBe('/video-compressor');
   });
 
   it('resolves informational pages and aliases', () => {
@@ -105,7 +103,7 @@ describe('Router Routing & Aliases Engine', () => {
     setPath('/guide');
     expect(parseCurrentLocation().path).toBe('/guides');
 
-    setPath('/guides/what-is-apache-parquet');
-    expect(parseCurrentLocation()).toEqual({ path: '/guides/:slug', slug: 'what-is-apache-parquet' });
+    setPath('/guides/how-to-calculate-dscr');
+    expect(parseCurrentLocation()).toEqual({ path: '/guides/:slug', slug: 'how-to-calculate-dscr' });
   });
 });

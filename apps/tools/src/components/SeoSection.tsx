@@ -86,10 +86,10 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
       {/* Bento Grid: Core Product Capabilities */}
       <div className="mb-20">
         <div className="text-center max-w-3xl mx-auto mb-12">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-neutral-50 tracking-tight mb-3">
             Engineered for Modern Data & Financial Workflows
           </h2>
-          <p className="text-base sm:text-lg text-slate-600">
+          <p className="text-base sm:text-lg text-neutral-300">
             No heavy desktop installations, no Python dependencies, and zero security compromises.
           </p>
         </div>
@@ -119,7 +119,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
             <div className="rounded-xl bg-slate-50 border border-slate-200 p-4 font-mono text-xs sm:text-sm text-slate-800 overflow-x-auto shadow-2xs">
               <div className="flex items-center justify-between pb-2 mb-2 border-b border-slate-200 text-slate-500 text-xs">
                 <span>duckdb-wasm-interactive-query</span>
-                <span className="text-emerald-600 font-mono font-semibold">⚡ 4ms execution</span>
+                <span className="text-emerald-700 font-mono font-semibold">⚡ 4ms execution</span>
               </div>
               <p className="text-indigo-600 font-bold">SELECT <span className="text-slate-800 font-normal">category, count(*), round(avg(amount), 2) AS avg_rev</span></p>
               <p className="text-indigo-600 font-bold">FROM <span className="text-amber-700 font-normal">parquet_scan('dataset.parquet')</span></p>
@@ -135,7 +135,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 <div className="size-8 rounded-lg bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600">
                   <ShieldCheck className="size-4.5" />
                 </div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-emerald-600">
+                <span className="text-xs font-semibold uppercase tracking-wider text-emerald-700">
                   Zero Telemetry
                 </span>
               </div>
@@ -202,7 +202,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
                 <div className="size-8 rounded-lg bg-cyan-50 border border-cyan-200 flex items-center justify-center text-cyan-600">
                   <Table className="size-4.5" />
                 </div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-cyan-600">
+                <span className="text-xs font-semibold uppercase tracking-wider text-cyan-700">
                   Statistical Profiling
                 </span>
               </div>
@@ -236,10 +236,10 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
       {/* Tools Suite Directory */}
       <div className="mb-20">
         <div className="text-center max-w-3xl mx-auto mb-10">
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight mb-3">
+          <h2 className="text-2xl sm:text-3xl font-bold text-neutral-50 tracking-tight mb-3">
             Free Dedicated Online Data Tools
           </h2>
-          <p className="text-sm sm:text-base text-slate-600">
+          <p className="text-sm sm:text-base text-neutral-300">
             Select a specialized tool below to start viewing, converting, or inspecting your datasets.
           </p>
         </div>
@@ -289,7 +289,7 @@ export const SeoSection = ({ toolConfig }: SeoSectionProps) => {
 
       {/* FAQ Section */}
       <div className="max-w-3xl mx-auto mb-12">
-        <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 text-center mb-6">
+        <h2 className="text-2xl sm:text-3xl font-bold text-neutral-50 text-center mb-6">
           Frequently Asked Questions
         </h2>
 

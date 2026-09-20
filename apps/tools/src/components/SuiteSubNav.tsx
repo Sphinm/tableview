@@ -185,9 +185,9 @@ export const SuiteSubNav = ({ suite, currentPath, className = '' }: SuiteSubNavP
 
       {/* Desktop: Horizontal Pill Bar */}
       <div className="hidden sm:flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100/90 border border-slate-200/90 flex-wrap shadow-2xs">
-        <div className="flex items-center gap-1.5 px-2.5 py-1 text-slate-500 text-xs font-medium shrink-0">
+        <div className="flex items-center gap-1.5 px-2.5 py-1 text-slate-600 text-xs font-medium shrink-0">
           <Layers className="size-3.5 text-indigo-600" />
-          <span className="text-[11px] uppercase tracking-wider font-semibold text-slate-500">
+          <span className="text-[11px] uppercase tracking-wider font-semibold text-slate-600">
             Suite:
           </span>
         </div>

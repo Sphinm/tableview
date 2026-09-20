@@ -86,8 +86,8 @@ export const WebsiteStatusChecker: React.FC = () => {
   };
 
   return (
-    <div className="w-full">
-      <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 pt-10 pb-12">
+    <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 -my-6 bg-slate-50 text-slate-900 min-h-[calc(100vh-7rem)] w-full">
+      <div className="max-w-2xl mx-auto w-full px-4 sm:px-6 py-12">
 
         {/* Compact heading */}
         <div className="mb-5">
@@ -150,7 +150,7 @@ export const WebsiteStatusChecker: React.FC = () => {
           <div className="mt-4 animate-in fade-in duration-150">
             {result.status === 'UP' && (
               <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 flex items-center gap-3">
-                <div className="size-9 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
+                <div className="size-9 rounded-xl bg-emerald-700 text-white flex items-center justify-center shrink-0">
                   <CheckCircle2 className="size-5" />
                 </div>
                 <div>

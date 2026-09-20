@@ -52,7 +52,7 @@ export const ShareCalculationButton = ({
     >
       {copied ? (
         <>
-          <Check className="size-3.5 text-emerald-600" />
+          <Check className="size-3.5 text-emerald-700" />
           <span className="text-emerald-700 font-semibold">Link Copied!</span>
         </>
       ) : (

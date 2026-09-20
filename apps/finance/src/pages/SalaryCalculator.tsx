@@ -24,6 +24,9 @@ import { RelatedCalculators } from '../components/RelatedCalculators';
 import { AdSlot } from '../components/AdSlot';
 import { PrintReportButton, PrintableReportHeader, PageHeader } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
+import { formatUsdCents, formatUsd } from '@tableview/shared';
+import { ResultAnnouncer } from '../components/ResultAnnouncer';
+import { composeAnnouncement } from '../lib/resultAnnouncement';
 
 const salaryCalculatorSchemas = [
   {
@@ -180,9 +183,9 @@ export const SalaryCalculator = ({
 
   const subtitle = useMemo(() => {
     if (mode === 'salary-to-hourly') {
-      return `At ${summary.hoursPerWeek} hours/week (${summary.totalAnnualHours.toLocaleString()} hours/year), an annual salary of $${summary.annualSalary.toLocaleString()} equals $${summary.hourlyRate.toFixed(2)} per hour.`;
+      return `At ${summary.hoursPerWeek} hours/week (${summary.totalAnnualHours.toLocaleString('en-US')} hours/year), an annual salary of $${summary.annualSalary.toLocaleString('en-US')} equals $${summary.hourlyRate.toFixed(2)} per hour.`;
     }
-    return `At ${summary.hoursPerWeek} hours/week, an hourly wage of $${summary.hourlyRate.toFixed(2)} equals an annual salary of $${summary.annualSalary.toLocaleString()} across ${summary.weeksPerYear} working weeks.`;
+    return `At ${summary.hoursPerWeek} hours/week, an hourly wage of $${summary.hourlyRate.toFixed(2)} equals an annual salary of $${summary.annualSalary.toLocaleString('en-US')} across ${summary.weeksPerYear} working weeks.`;
   }, [mode, summary]);
 
   const handleExportExcel = () => {
@@ -194,7 +197,7 @@ export const SalaryCalculator = ({
       [],
       ['Input Parameters', 'Value'],
       ['Conversion Mode', mode === 'salary-to-hourly' ? 'Salary to Hourly' : 'Hourly to Salary'],
-      ['Input Base Pay', mode === 'salary-to-hourly' ? `$${amount.toLocaleString()}/yr` : `$${amount}/hr`],
+      ['Input Base Pay', mode === 'salary-to-hourly' ? `$${amount.toLocaleString('en-US')}/yr` : `$${amount}/hr`],
       ['Work Hours Per Week', hoursPerWeek],
       ['Work Weeks Per Year', weeksPerYear],
       ['Total Annual Work Hours', summary.totalAnnualHours],
@@ -206,13 +209,13 @@ export const SalaryCalculator = ({
       [],
       ['Overtime Compensation (FLSA)', 'Rate', 'Annualized Pay'],
       ['Standard Hourly Base', `$${summary.hourlyRate.toFixed(2)}/hr`, 'Base regular rate'],
-      ['1.5x Time-and-a-Half', `$${summary.overtimeRate15x.toFixed(2)}/hr`, `$${summary.annualOvertimePay.toLocaleString()}/yr (${overtimeHours} hrs/wk)`],
+      ['1.5x Time-and-a-Half', `$${summary.overtimeRate15x.toFixed(2)}/hr`, `$${summary.annualOvertimePay.toLocaleString('en-US')}/yr (${overtimeHours} hrs/wk)`],
       ['2.0x Double Time', `$${summary.overtimeRate20x.toFixed(2)}/hr`, 'Holiday / Premium overtime'],
-      ['Total Comp (Base + Overtime)', `$${summary.totalAnnualCompensationWithOvertime.toLocaleString()}/yr`, 'Total gross compensation'],
+      ['Total Comp (Base + Overtime)', `$${summary.totalAnnualCompensationWithOvertime.toLocaleString('en-US')}/yr`, 'Total gross compensation'],
       [],
       ['Paid Time Off (PTO) Valuation', 'Value', 'Details'],
       ['Total PTO Days', summary.totalPtoDays, `${summary.totalPtoHours} total paid hours`],
-      ['Monetary Value of PTO', `$${summary.ptoMonetaryValue.toLocaleString()}`, 'Direct gross value of company-sponsored PTO']
+      ['Monetary Value of PTO', `$${summary.ptoMonetaryValue.toLocaleString('en-US')}`, 'Direct gross value of company-sponsored PTO']
     ];
 
     const ws = XLSX.utils.aoa_to_sheet(summaryData);
@@ -253,12 +256,12 @@ export const SalaryCalculator = ({
             >
               {copied ? (
                 <>
-                  <Check className="size-3.5 text-emerald-600" />
+                  <Check className="size-3.5 text-emerald-700" />
                   <span className="text-emerald-700">Copied!</span>
                 </>
               ) : (
                 <>
-                  <Share2 className="size-3.5 text-emerald-600" />
+                  <Share2 className="size-3.5 text-emerald-700" />
                   <span>Share</span>
                 </>
               )}
@@ -331,19 +334,19 @@ export const SalaryCalculator = ({
           {/* Main calculated result */}
           <div className="space-y-1">
             <div className="flex items-center gap-2 text-xs font-semibold text-emerald-700 uppercase tracking-wider">
-              <Clock className="size-3.5 text-emerald-600" />
+              <Clock className="size-3.5 text-emerald-700" />
               <span>{mode === 'salary-to-hourly' ? 'Calculated Hourly Wage' : 'Equivalent Annual Salary'}</span>
             </div>
             <div className="flex items-baseline gap-2">
               <span className="text-4xl sm:text-5xl font-extrabold text-slate-900 tracking-tight font-mono">
-                {mode === 'salary-to-hourly' ? `$${summary.hourlyRate.toFixed(2)}` : `$${summary.annualSalary.toLocaleString()}`}
+                {mode === 'salary-to-hourly' ? `$${summary.hourlyRate.toFixed(2)}` : `$${summary.annualSalary.toLocaleString('en-US')}`}
               </span>
               <span className="text-base sm:text-lg font-medium text-emerald-700">
                 {mode === 'salary-to-hourly' ? '/ hr' : '/ yr'}
               </span>
             </div>
             <p className="text-xs text-slate-600">
-              Standard {summary.hoursPerWeek} hrs/week × {summary.weeksPerYear} weeks ({summary.totalAnnualHours.toLocaleString()} annual paid hours)
+              Standard {summary.hoursPerWeek} hrs/week × {summary.weeksPerYear} weeks ({summary.totalAnnualHours.toLocaleString('en-US')} annual paid hours)
             </p>
           </div>
 
@@ -352,17 +355,17 @@ export const SalaryCalculator = ({
             <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs min-w-[110px]">
               <div className="text-[11px] text-slate-500 mb-0.5">Bi-Weekly (26x)</div>
               <div className="text-base font-bold text-sky-700 font-mono">
-                ${summary.biWeeklyRate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {formatUsdCents(summary.biWeeklyRate)}
               </div>
-              <div className="text-[10px] text-slate-400">Every 2 weeks</div>
+              <div className="text-[10px] text-slate-500">Every 2 weeks</div>
             </div>
 
             <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs min-w-[110px]">
               <div className="text-[11px] text-slate-500 mb-0.5">Monthly Check</div>
               <div className="text-base font-bold text-emerald-700 font-mono">
-                ${summary.monthlyRate.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                {formatUsdCents(summary.monthlyRate)}
               </div>
-              <div className="text-[10px] text-slate-400">12 pay periods</div>
+              <div className="text-[10px] text-slate-500">12 pay periods</div>
             </div>
 
             <div className="bg-white p-3 rounded-xl border border-slate-200 shadow-2xs min-w-[110px]">
@@ -370,7 +373,7 @@ export const SalaryCalculator = ({
               <div className="text-base font-bold text-amber-800 font-mono">
                 ${summary.overtimeRate15x.toFixed(2)}/hr
               </div>
-              <div className="text-[10px] text-slate-400">FLSA minimum</div>
+              <div className="text-[10px] text-slate-500">FLSA minimum</div>
             </div>
           </div>
         </div>
@@ -415,10 +418,11 @@ export const SalaryCalculator = ({
 
               {/* Base Amount Input */}
               <div>
-                <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                <label htmlFor="salary-base-amount" className="block text-xs font-bold text-slate-900 mb-1.5">
                   {mode === 'salary-to-hourly' ? 'Annual Base Salary ($)' : 'Hourly Pay Rate ($/hr)'}
                 </label>
                 <CurrencyInput
+                  id="salary-base-amount"
                   value={amount}
                   onChange={(val) => setAmount(val)}
                   allowDecimal={mode === 'hourly-to-salary'}
@@ -434,6 +438,7 @@ export const SalaryCalculator = ({
                 </div>
                 <input
                   type="range"
+                  aria-label="Hours worked per week"
                   min={10}
                   max={80}
                   step={1}
@@ -441,7 +446,7 @@ export const SalaryCalculator = ({
                   onChange={(e) => setHoursPerWeek(Number(e.target.value))}
                   className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-mono">
+                <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
                   <span>20h (Part-time)</span>
                   <span>40h (Standard)</span>
                   <span>60h (Heavy)</span>
@@ -456,6 +461,7 @@ export const SalaryCalculator = ({
                 </div>
                 <input
                   type="range"
+                  aria-label="Weeks worked per year"
                   min={30}
                   max={52}
                   step={1}
@@ -463,7 +469,7 @@ export const SalaryCalculator = ({
                   onChange={(e) => setWeeksPerYear(Number(e.target.value))}
                   className="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-emerald-600"
                 />
-                <div className="flex justify-between text-[10px] text-slate-400 mt-1 font-mono">
+                <div className="flex justify-between text-[10px] text-slate-500 mt-1 font-mono">
                   <span>36w (Seasonal)</span>
                   <span>50w (2w unpaid)</span>
                   <span>52w (Full Year)</span>
@@ -484,6 +490,7 @@ export const SalaryCalculator = ({
                 </div>
                 <input
                   type="range"
+                  aria-label="Expected overtime hours per week"
                   min={0}
                   max={30}
                   step={0.5}
@@ -507,8 +514,8 @@ export const SalaryCalculator = ({
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="block text-[11px] text-slate-500 mb-1">Paid Holidays</label>
-                    <NumericInput
+                    <label htmlFor="salary-paid-holidays" className="block text-[11px] text-slate-500 mb-1">Paid Holidays</label>
+                    <NumericInput id="salary-paid-holidays"
                       min={0}
                       max={30}
                       value={paidHolidays}
@@ -517,8 +524,8 @@ export const SalaryCalculator = ({
                     />
                   </div>
                   <div>
-                    <label className="block text-[11px] text-slate-500 mb-1">Paid Vacation / Sick</label>
-                    <NumericInput
+                    <label htmlFor="salary-paid-vacation-sick" className="block text-[11px] text-slate-500 mb-1">Paid Vacation / Sick</label>
+                    <NumericInput id="salary-paid-vacation-sick"
                       min={0}
                       max={50}
                       value={paidVacation}
@@ -536,22 +543,22 @@ export const SalaryCalculator = ({
                 Total Annual Comp (Base + Overtime)
               </div>
               <div className="text-2xl font-bold text-slate-900 font-mono">
-                ${summary.totalAnnualCompensationWithOvertime.toLocaleString()}
+                ${summary.totalAnnualCompensationWithOvertime.toLocaleString('en-US')}
               </div>
               <div className="text-xs text-slate-600 mt-2 space-y-1">
                 <div className="flex justify-between">
                   <span>Base Gross Salary:</span>
-                  <span className="text-slate-900 font-medium font-mono">${summary.annualSalary.toLocaleString()}</span>
+                  <span className="text-slate-900 font-medium font-mono">${summary.annualSalary.toLocaleString('en-US')}</span>
                 </div>
                 {summary.annualOvertimePay > 0 && (
                   <div className="flex justify-between">
                     <span>Overtime Pay ({overtimeHours}h/wk):</span>
-                    <span className="text-amber-800 font-medium font-mono">+${summary.annualOvertimePay.toLocaleString()}</span>
+                    <span className="text-amber-800 font-medium font-mono">+${summary.annualOvertimePay.toLocaleString('en-US')}</span>
                   </div>
                 )}
-                <div className="flex justify-between border-t border-emerald-200/60 pt-1 text-purple-700">
+                <div className="flex justify-between border-t border-emerald-200/60 pt-1 text-emerald-800">
                   <span>Embedded PTO Value:</span>
-                  <span className="font-mono">${summary.ptoMonetaryValue.toLocaleString()}</span>
+                  <span className="font-mono">${summary.ptoMonetaryValue.toLocaleString('en-US')}</span>
                 </div>
               </div>
             </div>
@@ -559,6 +566,18 @@ export const SalaryCalculator = ({
 
           {/* Right Column: Wage Matrix Table & Detailed FLSA Specs (7 cols) */}
           <div className="lg:col-span-7 space-y-6">
+            {/* Announce the recomputed pay conversion for screen readers. */}
+            <ResultAnnouncer
+              message={composeAnnouncement(
+                [
+                  { label: 'hourly rate', value: formatUsdCents(summary.hourlyRate) },
+                  { label: 'annual salary', value: formatUsd(summary.annualSalary) },
+                  { label: 'total annual compensation', value: formatUsd(summary.totalAnnualCompensationWithOvertime) },
+                ],
+                { context: 'Results updated' }
+              )}
+            />
+
             {/* Conversion Matrix Table */}
             <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-2xs">
               <div className="px-5 py-4 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -572,7 +591,7 @@ export const SalaryCalculator = ({
                   <a
                     href="/excel-viewer"
                     onClick={(e) => { e.preventDefault(); navigateTo('/excel-viewer'); }}
-                    className="text-[11px] text-slate-500 hover:text-emerald-600 transition-colors flex items-center gap-1"
+                    className="text-[11px] text-slate-500 hover:text-emerald-700 transition-colors flex items-center gap-1"
                   >
                     <span>Free In-Browser Viewer</span>
                     <ArrowRight className="size-3" />
@@ -581,7 +600,7 @@ export const SalaryCalculator = ({
                     onClick={handleExportExcel}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 text-slate-700 text-xs font-medium border border-slate-200 transition cursor-pointer"
                   >
-                    <Download className="w-3.5 h-3.5 text-emerald-600" />
+                    <Download className="w-3.5 h-3.5 text-emerald-700" />
                     <span>Export .xlsx</span>
                   </button>
                 </div>
@@ -603,7 +622,7 @@ export const SalaryCalculator = ({
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           {row.period}
                         </td>
-                        <td className="px-5 py-3.5 font-bold text-emerald-600 text-base font-mono">
+                        <td className="px-5 py-3.5 font-bold text-emerald-700 text-base font-mono">
                           {row.formatted}
                         </td>
                         <td className="px-5 py-3.5 text-xs text-slate-500">
@@ -619,7 +638,7 @@ export const SalaryCalculator = ({
             {/* FLSA Overtime Tiers Card */}
             <div className="bg-white border border-slate-200 rounded-2xl p-5 shadow-2xs">
               <h3 className="text-base font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                <Clock className="w-4 h-4 text-amber-600" />
+                <Clock className="w-4 h-4 text-amber-700" />
                 Fair Labor Standards Act (FLSA) Overtime Breakdown
               </h3>
               <p className="text-xs text-slate-600 mb-4 leading-relaxed">
@@ -673,7 +692,7 @@ export const SalaryCalculator = ({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-5 rounded-xl bg-slate-50/80 border border-slate-200">
               <h3 className="text-base font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-700" />
                 Bi-Weekly vs Semi-Monthly Payroll
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
@@ -687,7 +706,7 @@ export const SalaryCalculator = ({
 
             <div className="p-5 rounded-xl bg-slate-50/80 border border-slate-200">
               <h3 className="text-base font-semibold text-slate-900 mb-2 flex items-center gap-2">
-                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <CheckCircle2 className="w-4 h-4 text-emerald-700" />
                 Exempt vs Non-Exempt Status (FLSA)
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
@@ -703,7 +722,7 @@ export const SalaryCalculator = ({
           {/* Interactive FAQ Accordion */}
           <div className="pt-4 border-t border-slate-200">
             <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-              <HelpCircle className="w-5 h-5 text-emerald-600" />
+              <HelpCircle className="w-5 h-5 text-emerald-700" />
               Frequently Asked Questions About Wage Conversion
             </h2>
             <div className="space-y-3">
@@ -731,7 +750,7 @@ export const SalaryCalculator = ({
                     className="w-full px-4 py-3 text-left font-medium text-slate-800 hover:text-slate-900 flex items-center justify-between text-sm transition"
                   >
                     <span>{faq.q}</span>
-                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openFaq === idx ? 'rotate-180 text-emerald-600' : ''}`} />
+                    <ChevronDown className={`w-4 h-4 text-slate-400 transition-transform ${openFaq === idx ? 'rotate-180 text-emerald-700' : ''}`} />
                   </button>
                   {openFaq === idx && (
                     <div className="px-4 pb-4 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pt-3">

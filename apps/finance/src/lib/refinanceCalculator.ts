@@ -380,7 +380,7 @@ export function calculateRefinance(inputs: RefinanceInputs): RefinanceSummary {
   let clockResetWarning: string | undefined;
   if (isResettingClock && lifetimeInterestSaved < 0) {
     const extraYears = (extraMonthsAdded / 12).toFixed(1).replace('.0', '');
-    const addedCost = Math.round(Math.abs(lifetimeInterestSaved)).toLocaleString();
+    const addedCost = Math.round(Math.abs(lifetimeInterestSaved)).toLocaleString('en-US');
     clockResetWarning = `Resetting your loan term adds ${extraYears} year(s) to your total debt payoff horizon, which increases lifetime interest by $${addedCost} despite the lower monthly payments. Consider making extra principal payments to avoid paying more overall.`;
   }
 

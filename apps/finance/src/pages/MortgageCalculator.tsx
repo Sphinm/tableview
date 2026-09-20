@@ -50,6 +50,9 @@ import { SuiteSubNav } from '../components/SuiteSubNav';
 import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
 import { ProBrandingModal } from '../components/ProBrandingModal';
 import { InfoTooltip } from '../components/InfoTooltip';
+import { ResultAnnouncer } from '../components/ResultAnnouncer';
+import { composeAnnouncement } from '../lib/resultAnnouncement';
+import { formatUsd } from '@tableview/shared';
 
 // Sourced from the shared registry so the rendered page, the JSON-LD and the
 // prerendered HTML can never disagree. This page previously declared FAQPage
@@ -536,7 +539,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                 Auto-Populated from Natural Language Scenario
               </span>
               <span className="text-indigo-300">
-                Home Value: <strong className="text-white">${homeValue.toLocaleString()}</strong> · Down Payment: <strong className="text-white">${downPayment.toLocaleString()}</strong> · Rate: <strong className="text-white">{interestRate}%</strong> · Term: <strong className="text-white">{loanTermYears} Yrs</strong>
+                Home Value: <strong className="text-white">${homeValue.toLocaleString('en-US')}</strong> · Down Payment: <strong className="text-white">${downPayment.toLocaleString('en-US')}</strong> · Rate: <strong className="text-white">{interestRate}%</strong> · Term: <strong className="text-white">{loanTermYears} Yrs</strong>
               </span>
             </div>
           </div>
@@ -552,7 +555,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
         <div className="lg:col-span-6 space-y-6">
           <div className="bg-white border border-slate-300/80 rounded-2xl p-5 sm:p-7 space-y-5 shadow-sm">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200/80 pb-3 flex items-center gap-2">
-              <DollarSign className="size-4 text-emerald-600" />
+              <DollarSign className="size-4 text-emerald-700" />
               Property & Loan Information
             </h2>
 
@@ -751,7 +754,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
           {/* Taxes, Insurance, and HOA Fees Card */}
           <div className="bg-white border border-slate-300/80 rounded-2xl p-5 sm:p-7 space-y-5 shadow-sm">
             <h2 className="text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-200/80 pb-3 flex items-center gap-2">
-              <ShieldCheck className="size-4 text-cyan-600" />
+              <ShieldCheck className="size-4 text-cyan-700" />
               Taxes, Insurance & Fees
             </h2>
 
@@ -949,6 +952,18 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
 
         {/* Right Column: Results & Repayment Breakdown (6 Cols) */}
         <div id="results-section" className="lg:col-span-6 space-y-5 scroll-mt-20">
+          {/* Speak the recalculated payment so input changes are perceivable. */}
+          <ResultAnnouncer
+            message={composeAnnouncement(
+              [
+                { label: 'monthly payment', value: formatUsd(summary.totalMonthlyPayment) },
+                { label: 'loan amount', value: formatUsd(summary.loanAmount) },
+                { label: 'total interest over the term', value: formatUsd(summary.totalInterestPaid) },
+              ],
+              { context: 'Results updated' }
+            )}
+          />
+
           {/* Main Monthly Payment Hero Card (High Contrast Dark Slate) */}
           <div className="bg-slate-900 text-white rounded-2xl p-6 sm:p-7 space-y-5 shadow-lg border border-slate-800 relative overflow-hidden">
             <div className="absolute top-0 right-0 -mt-10 -mr-10 size-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -1009,7 +1024,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
               {/* Legend & Breakdown Items */}
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 pt-1">
                 <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700/80 space-y-0.5">
-                  <div className="flex items-center gap-1.5 text-xs text-indigo-400 font-medium">
+                  <div className="flex items-center gap-1.5 text-xs text-indigo-300 font-medium">
                     <span className="size-2 rounded-full bg-indigo-500" />
                     <span>Principal & Interest</span>
                   </div>
@@ -1184,7 +1199,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
 
                 <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="text-xs text-slate-500 block">Total of All Payments</span>
-                  <span className="text-lg font-bold text-emerald-600 font-mono">
+                  <span className="text-lg font-bold text-emerald-700 font-mono">
                     {fmt(summary.totalOfAllPayments)}
                   </span>
                   <span className="text-[11px] text-slate-500 block mt-0.5">
@@ -1211,7 +1226,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="text-slate-500 text-[11px] block">Total Interest</span>
-                  <span className="text-sm font-bold text-rose-600 font-mono">{fmt(summary.totalInterestPaid)}</span>
+                  <span className="text-sm font-bold text-rose-700 font-mono">{fmt(summary.totalInterestPaid)}</span>
                 </div>
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200">
                   <span className="text-slate-500 text-[11px] block">Payoff Date</span>
@@ -1230,7 +1245,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             <div className="bg-white border border-slate-300/90 rounded-2xl p-5 sm:p-6 space-y-5 shadow-xs animate-in fade-in-50 duration-200">
               <div className="flex items-center justify-between border-b border-slate-200 pb-3">
                 <div className="flex items-center gap-2">
-                  <Wallet className="size-4 text-emerald-600" />
+                  <Wallet className="size-4 text-emerald-700" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Estimated Cash to Close Breakdown
                   </h3>
@@ -1360,10 +1375,10 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
               {/* Income and Debts Quick Inputs */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="mortgage-gross-annual-household-income" className="block text-xs font-semibold text-slate-700 mb-1">
                     Gross Annual Household Income ($)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="mortgage-gross-annual-household-income"
                     value={grossAnnualIncome}
                     onChange={setGrossAnnualIncome}
                     className="py-2 text-xs font-mono"
@@ -1374,10 +1389,10 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label htmlFor="mortgage-monthly-debt-obligations-mo" className="block text-xs font-semibold text-slate-700 mb-1">
                     Monthly Debt Obligations ($/mo)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="mortgage-monthly-debt-obligations-mo"
                     value={monthlyOtherDebts}
                     onChange={setMonthlyOtherDebts}
                     className="py-2 text-xs font-mono"
@@ -1469,7 +1484,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
               <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
                 <div>
                   <span className="text-slate-600 block">Max Recommended Monthly Housing at 43% QM Cap:</span>
-                  <span className="text-[11px] text-slate-500">Assuming current ${monthlyOtherDebts.toLocaleString()}/mo debt load</span>
+                  <span className="text-[11px] text-slate-500">Assuming current ${monthlyOtherDebts.toLocaleString('en-US')}/mo debt load</span>
                 </div>
                 <span className="text-base font-bold font-mono text-slate-900">
                   {fmtInt(dtiAnalysis.maxSuggestedHousingPayment)}/mo
@@ -1483,7 +1498,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             <div className="bg-white border border-slate-300/90 rounded-2xl p-6 space-y-4 shadow-xs animate-in fade-in-50 duration-200">
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2">
-                  <Sparkles className="size-4 text-emerald-600" />
+                  <Sparkles className="size-4 text-emerald-700" />
                   <h3 className="text-sm font-bold text-slate-900">
                     Bi-Weekly Mortgage & Early Payoff Acceleration
                   </h3>
@@ -1499,7 +1514,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                   <span className="text-xl font-black text-emerald-700 font-mono mt-0.5">
                     {fmt(biweekly.interestSaved)}
                   </span>
-                  <span className="text-[11px] text-emerald-600 block mt-0.5">Saved in mortgage interest</span>
+                  <span className="text-[11px] text-emerald-700 block mt-0.5">Saved in mortgage interest</span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-indigo-50/50 border border-indigo-200/80">
@@ -1671,12 +1686,12 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
 
         {/* Amortization Table */}
         <div className="overflow-x-auto rounded-xl border border-slate-200 bg-white">
-          <table className="w-full text-left text-xs font-mono">
+          <table className="fin-table text-left text-xs font-mono">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-700 font-sans font-semibold">
               <tr>
                 <th className="py-3 px-4">{scheduleView === 'annual' ? 'Year' : 'Date'}</th>
                 <th className="py-3 px-4">Starting Balance</th>
-                <th className="py-3 px-4 text-emerald-600">Principal Paid</th>
+                <th className="py-3 px-4 text-emerald-700">Principal Paid</th>
                 <th className="py-3 px-4 text-indigo-600">Interest Paid</th>
                 <th className="py-3 px-4">Taxes & Ins</th>
                 <th className="py-3 px-4 font-bold text-slate-900">Total Payment</th>
@@ -1692,7 +1707,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                         {row.year}
                       </td>
                       <td className="py-2.5 px-4 text-slate-600">{fmt(row.startingBalance)}</td>
-                      <td className="py-2.5 px-4 text-emerald-600 font-medium">{fmt(row.principalPaid)}</td>
+                      <td className="py-2.5 px-4 text-emerald-700 font-medium">{fmt(row.principalPaid)}</td>
                       <td className="py-2.5 px-4 text-indigo-600 font-medium">{fmt(row.interestPaid)}</td>
                       <td className="py-2.5 px-4 text-slate-600">
                         {fmt(row.propertyTax + row.homeInsurance + row.pmi + row.hoa)}
@@ -1708,7 +1723,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
                         {row.monthName} {row.year} <span className="text-[10px] text-slate-500">(#{row.monthIndex})</span>
                       </td>
                       <td className="py-2.5 px-4 text-slate-600">{fmt(row.startingBalance)}</td>
-                      <td className="py-2.5 px-4 text-emerald-600 font-medium">{fmt(row.principalPaid)}</td>
+                      <td className="py-2.5 px-4 text-emerald-700 font-medium">{fmt(row.principalPaid)}</td>
                       <td className="py-2.5 px-4 text-indigo-600 font-medium">{fmt(row.interestPaid)}</td>
                       <td className="py-2.5 px-4 text-slate-600">
                         {fmt(row.propertyTax + row.homeInsurance + row.pmi + row.hoa)}
@@ -1789,51 +1804,51 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             <tbody className="divide-y divide-slate-100">
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">In-Browser Privacy</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Yes (Zero Data Egress)</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Yes (Zero Data Egress)</td>
                 <td className="py-3 px-4 text-slate-500">No (Server-Tracked)</td>
                 <td className="py-3 px-4 text-slate-500">No (Account / Cloud Tracking)</td>
-                <td className="py-3 px-4 text-emerald-600">Yes</td>
+                <td className="py-3 px-4 text-emerald-700">Yes</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">No Lead Capture / Broker Spam</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Yes (Never Sells Your Data)</td>
-                <td className="py-3 px-4 text-rose-600">No (Sells Phone Leads)</td>
-                <td className="py-3 px-4 text-rose-600">No (Lender Lead Forms)</td>
-                <td className="py-3 px-4 text-amber-600">No (Lead Forms)</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Yes (Never Sells Your Data)</td>
+                <td className="py-3 px-4 text-rose-700">No (Sells Phone Leads)</td>
+                <td className="py-3 px-4 text-rose-700">No (Lender Lead Forms)</td>
+                <td className="py-3 px-4 text-amber-700">No (Lead Forms)</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">Monthly + Lump-Sum Extra Payments</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Yes (Both Supported)</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Yes (Both Supported)</td>
                 <td className="py-3 px-4 text-slate-700">Yes</td>
                 <td className="py-3 px-4 text-slate-500">Monthly Only</td>
                 <td className="py-3 px-4 text-slate-700">Yes</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">Bi-Weekly Accelerated Schedule</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Built-In Comparison</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Built-In Comparison</td>
                 <td className="py-3 px-4 text-slate-500">Hidden in Sub-menu</td>
-                <td className="py-3 px-4 text-rose-600">Not Supported</td>
+                <td className="py-3 px-4 text-rose-700">Not Supported</td>
                 <td className="py-3 px-4 text-slate-700">Yes</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">Interactive SVG Visual Payoff Chart</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Yes (Zero Bloat SVG)</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Yes (Zero Bloat SVG)</td>
                 <td className="py-3 px-4 text-slate-700">Yes</td>
                 <td className="py-3 px-4 text-slate-500">Basic Donut Only</td>
                 <td className="py-3 px-4 text-slate-700">Yes</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">Excel / CSV Spreadsheet Export</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">1-Click Full Schedule</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">1-Click Full Schedule</td>
                 <td className="py-3 px-4 text-slate-500">CSV Only</td>
-                <td className="py-3 px-4 text-rose-600">Not Supported</td>
+                <td className="py-3 px-4 text-rose-700">Not Supported</td>
                 <td className="py-3 px-4 text-slate-500">Basic Text / CSV</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">Shareable Pre-filled URL</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Instant 1-Click Link</td>
-                <td className="py-3 px-4 text-rose-600">Not Supported</td>
-                <td className="py-3 px-4 text-rose-600">Not Supported</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Instant 1-Click Link</td>
+                <td className="py-3 px-4 text-rose-700">Not Supported</td>
+                <td className="py-3 px-4 text-rose-700">Not Supported</td>
                 <td className="py-3 px-4 text-slate-500">Query string only</td>
               </tr>
             </tbody>
@@ -1935,8 +1950,8 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
         monthlyHoa
       }}
       currentMetrics={{
-        headline: `$${Math.round(summary.totalMonthlyPayment).toLocaleString()}/mo`,
-        subline: `${loanTermYears}yr Fixed @ ${interestRate}% ($${Math.round(summary.loanAmount).toLocaleString()} Loan)`
+        headline: `$${Math.round(summary.totalMonthlyPayment).toLocaleString('en-US')}/mo`,
+        subline: `${loanTermYears}yr Fixed @ ${interestRate}% ($${Math.round(summary.loanAmount).toLocaleString('en-US')} Loan)`
       }}
       onLoadScenario={(data) => {
         if (data.homeValue) setHomeValue(data.homeValue);
@@ -1957,7 +1972,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
     <LenderReadyDossierModal
       isOpen={showDossierModal}
       onClose={() => setShowDossierModal(false)}
-      dealTitle={`${loanTermYears}Y Fixed Mortgage · $${homeValue.toLocaleString()}`}
+      dealTitle={`${loanTermYears}Y Fixed Mortgage · $${homeValue.toLocaleString('en-US')}`}
       dealId={`mtg_${homeValue}_${Math.round(summary.loanAmount)}_${interestRate}_${loanTermYears}`}
       onExportExcel={handleExportExcel}
       onPrintOfficialPdf={handleExportPdf}

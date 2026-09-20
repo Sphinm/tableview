@@ -35,7 +35,7 @@ export const TermsOfService = () => {
             2. Description of Service & Software Architecture
           </h2>
           <p className="text-slate-800 mb-3">
-            TableView.dev provides an in-browser utility for viewing, inspecting, querying with DuckDB SQL, and converting tabular file formats (such as Apache Parquet, CSV, TSV, and JSON).
+            TableView.dev provides an in-browser suite for modeling and underwriting real estate investments, calculating mortgage and commercial debt structures, estimating IRS §1031 tax deferrals, and running personal financial planning simulations.
           </p>
           <p className="text-slate-800">
             The client-side core of TableView.dev operates under open developer standards and is licensed under the <strong>MIT License</strong>.

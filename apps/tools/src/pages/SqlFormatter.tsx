@@ -11,7 +11,7 @@ import {
 } from 'lucide-react';
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { AdSlot } from '../components/AdSlot';
-import { PageHeader } from '../components/calculator-kit';
+import { PageHeader } from '../components/calculator-kit/PageHeader';
 import { CodeEditor } from '../components/CodeEditor';
 
 const sqlFormatterSchemas = [

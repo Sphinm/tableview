@@ -68,13 +68,13 @@ This guide describes how to configure your three sub-projects on Cloudflare Page
 To run individual sub-applications locally:
 
 ```bash
-# Finance Underwriting Suite (port 5173)
+# Finance Underwriting Suite (port 8123)
 bun run dev:finance
 
-# Data Tools & Parquet Workbench (port 5174)
+# Data Tools & Parquet Workbench (port 8124)
 bun run dev:tools
 
-# Media Compressor (port 5175)
+# Media Compressor (port 8125)
 bun run dev:compressor
 
 # Build all applications

@@ -11,7 +11,6 @@ import { applyTheme } from './lib/theme';
 import { ArrowLeft, FileQuestion } from 'lucide-react';
 import { HOME_META, GUIDES_HUB_META, STATIC_PAGE_META } from './data/routeMeta';
 import { SALARY_LONG_TAIL_SLUG_MAP } from './data/salaryLongTail';
-import { getCrossSuiteUrl } from '@tableview/shared';
 
 // Lazy-loaded financial pages
 const FinanceCalculatorHub = lazy(() => import('./pages/FinanceCalculatorHub').then(m => ({ default: m.FinanceCalculatorHub })));
@@ -19,6 +18,7 @@ const MortgageCalculator = lazy(() => import('./pages/MortgageCalculator').then(
 const RefinanceCalculator = lazy(() => import('./pages/RefinanceCalculator').then(m => ({ default: m.RefinanceCalculator })));
 const DscrCalculator = lazy(() => import('./pages/DscrCalculator').then(m => ({ default: m.DscrCalculator })));
 const CapRateCalculator = lazy(() => import('./pages/CapRateCalculator').then(m => ({ default: m.CapRateCalculator })));
+const BrrrrCalculator = lazy(() => import('./pages/BrrrrCalculator').then(m => ({ default: m.BrrrrCalculator })));
 const HardMoneyCalculator = lazy(() => import('./pages/HardMoneyCalculator').then(m => ({ default: m.HardMoneyCalculator })));
 const Section1031Calculator = lazy(() => import('./pages/Section1031Calculator').then(m => ({ default: m.Section1031Calculator })));
 const CommercialLoanCalculator = lazy(() => import('./pages/CommercialLoanCalculator').then(m => ({ default: m.CommercialLoanCalculator })));
@@ -76,6 +76,9 @@ export function App() {
     ) {
       return <CapRateCalculator />;
     }
+    if (path === '/brrrr-calculator' || path === '/brrrr-method-calculator') {
+      return <BrrrrCalculator />;
+    }
     if (path === '/hard-money-calculator') {
       return <HardMoneyCalculator />;
     }
@@ -121,16 +124,15 @@ export function App() {
       return <Disclaimer />;
     }
 
-    // Default fallback to Finance Hub
+    // Pure Financial 404
     return (
       <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
         <div className="size-14 rounded-2xl bg-amber-50 border border-amber-200 flex items-center justify-center mb-4 shadow-xs">
-          <FileQuestion className="size-7 text-amber-600" />
+          <FileQuestion className="size-7 text-amber-700" />
         </div>
-        <h2 className="text-xl font-bold text-slate-900 mb-2">Tool Not Found in Financial Suite</h2>
+        <h2 className="text-xl font-bold text-slate-900 mb-2">Underwriting Page Not Found</h2>
         <p className="text-slate-600 text-sm max-w-md mb-6 leading-relaxed">
-          The requested financial tool is not available on tableview.dev. Looking for Parquet, SQL, or Video tools?
-          Visit our specialized standalone web suites.
+          The requested financial tool or article is not available. Explore our core loan modeling and investment calculators below:
         </p>
         <div className="flex flex-wrap items-center justify-center gap-3">
           <a
@@ -138,19 +140,31 @@ export function App() {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 text-white font-semibold text-xs hover:bg-indigo-700 transition shadow-xs"
           >
             <ArrowLeft className="size-3.5" />
-            Financial Workbench
+            Underwriting Hub
           </a>
           <a
-            href={getCrossSuiteUrl('/parquet-viewer', 'finance')}
+            href="/mortgage-calculator"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-slate-800 font-semibold text-xs hover:bg-slate-50 transition border border-slate-300 shadow-2xs"
           >
-            Data Workbench
+            Mortgage Calculator
           </a>
           <a
-            href={getCrossSuiteUrl('/video-compressor', 'finance')}
+            href="/dscr-loan-calculator"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-slate-800 font-semibold text-xs hover:bg-slate-50 transition border border-slate-300 shadow-2xs"
           >
-            Media Compressor
+            DSCR Loan
+          </a>
+          <a
+            href="/cap-rate-calculator"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-slate-800 font-semibold text-xs hover:bg-slate-50 transition border border-slate-300 shadow-2xs"
+          >
+            Cap Rate & Cash Flow
+          </a>
+          <a
+            href="/brrrr-calculator"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white text-slate-800 font-semibold text-xs hover:bg-slate-50 transition border border-slate-300 shadow-2xs"
+          >
+            BRRRR Method
           </a>
         </div>
       </div>
@@ -160,9 +174,17 @@ export function App() {
   return (
     <AuthProvider>
       <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-indigo-500/20 selection:text-indigo-900">
+        {/*
+          Keyboard users should not have to tab through the full mega-menu on
+          every navigation. The link is visible only while focused.
+        */}
+        <a href="#main-content" className="skip-link">
+          Skip to calculator
+        </a>
+
         <FinanceHeader currentPath={currentNavPath} />
 
-        <main className="flex-1 w-full min-w-0">
+        <main id="main-content" tabIndex={-1} className="flex-1 w-full min-w-0 focus:outline-none">
           <Suspense fallback={<GlobalLoading message="Loading underwriting engine..." />}>
             {renderContent()}
           </Suspense>

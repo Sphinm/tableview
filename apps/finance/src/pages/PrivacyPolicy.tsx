@@ -29,7 +29,7 @@ export const PrivacyPolicy = () => {
               The 100% Client-Side Sandbox Guarantee
             </h3>
             <p className="text-xs sm:text-sm text-slate-800 leading-relaxed">
-              When you drag, drop, or open an Apache Parquet, CSV, TSV, or JSON file in TableView.dev, <strong>zero bytes are uploaded to our servers</strong>. All file parsing, DuckDB SQL execution, and Excel conversions happen entirely inside your local browser memory via WebAssembly (Wasm). Your confidential business data never leaves your computer.
+              When you model property purchases, mortgage financing, rental cash flows, or 1031 exchanges in TableView.dev, <strong>zero bytes are uploaded to our servers</strong>. All underwriting algorithms, amortization schedules, and risk assessments execute entirely inside your local browser memory via client-side JavaScript. Your confidential deal figures, client financials, and property addresses never leave your computer.
             </p>
           </div>
         </div>
@@ -43,7 +43,7 @@ export const PrivacyPolicy = () => {
             1. Information We Collect
           </h2>
           <p className="mb-3 text-slate-800">
-            Because our core application operates entirely client-side, TableView.dev does not collect, store, or view the contents of your datasets. However, like most web applications, we may receive limited technical information automatically:
+            Because our core application operates entirely client-side, TableView.dev does not collect, store, or view the contents of your financial calculations or deal parameters. However, like most web applications, we may receive limited technical information automatically:
           </p>
           <ul className="list-disc pl-5 space-y-1.5 text-slate-800">
             <li><strong>Web Server Log Data:</strong> Internet Protocol (IP) addresses, browser type, Internet Service Provider (ISP), referring/exit pages, platform type, and date/time stamps provided by our static hosting infrastructure (e.g., Cloudflare Pages).</li>

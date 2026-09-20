@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { RefinanceChartPoint } from '../lib/refinanceCalculator';
+import { chartTrendAriaLabel, formatUsd } from '@tableview/shared';
 
 interface RefinanceBalanceChartProps {
   data: RefinanceChartPoint[];
@@ -74,6 +75,28 @@ export const RefinanceBalanceChart: React.FC<RefinanceBalanceChartProps> = ({
 
       <div className="relative w-full overflow-hidden">
         <svg
+          /*
+           * Complex image. Endpoint values summarise the two balance
+           * trajectories and the cumulative savings.
+           */
+          role="img"
+          aria-label={chartTrendAriaLabel(title, [
+            {
+              name: 'Old balance',
+              from: formatUsd(data[0].oldBalance),
+              to: formatUsd(data[data.length - 1].oldBalance),
+            },
+            {
+              name: 'New refinanced balance',
+              from: formatUsd(data[0].newBalance),
+              to: formatUsd(data[data.length - 1].newBalance),
+            },
+            {
+              name: 'Cumulative savings',
+              from: formatUsd(data[0].cumulativeSavings),
+              to: formatUsd(data[data.length - 1].cumulativeSavings),
+            },
+          ])}
           viewBox={`0 0 ${width} ${height}`}
           style={{ touchAction: 'pan-y' }}
           className="w-full h-auto select-none cursor-crosshair"

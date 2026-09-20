@@ -1,7 +1,7 @@
 import { ShieldCheck, BookOpen, Lock, Scale, Clock } from 'lucide-react';
 
 interface MethodologyDisclosureProps {
-  type?: 'mortgage' | 'dscr' | 'refinance' | 'hardmoney' | 'cloud' | 'section1031' | 'loanComparison' | 'commercial' | 'salary';
+  type?: 'mortgage' | 'dscr' | 'refinance' | 'hardmoney' | 'section1031' | 'loanComparison' | 'commercial' | 'salary';
 }
 
 export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosureProps) => {
@@ -96,28 +96,6 @@ export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosu
               icon: Lock,
               title: '100% Private Deal Analysis',
               desc: 'Your basis, depreciation history, and projected gains never leave your device. No account, no upload, no server-side record of your holdings.'
-            }
-          ]
-        };
-
-      case 'cloud':
-        return {
-          title: 'Cloud FinOps & Benchmark Standards',
-          standards: [
-            {
-              icon: Scale,
-              title: 'Public Cloud Provider Benchmarks',
-              desc: 'Pricing calibrated against published rates: AWS S3 Standard ($0.023/GB/mo), Athena queries ($5.00/TB scanned), and Snowflake Standard Edition ($2.00-$4.00/credit).'
-            },
-            {
-              icon: BookOpen,
-              title: 'Columnar Compression Heuristics',
-              desc: 'Calculates data compression ratios (5x - 10x) based on real-world Apache Parquet dictionary encoding, RLE, and Snappy/ZSTD benchmarks.'
-            },
-            {
-              icon: Lock,
-              title: 'Zero Telemetry & Egress Fees',
-              desc: 'Benchmark your cloud data architecture client-side without connecting your AWS or Snowflake IAM credentials.'
             }
           ]
         };
@@ -218,7 +196,7 @@ export const MethodologyDisclosure = ({ type = 'mortgage' }: MethodologyDisclosu
   return (
     <div className="p-6 rounded-2xl bg-white border border-slate-200 text-slate-700 shadow-2xs mt-12 mb-8">
       <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-100">
-        <ShieldCheck className="size-4 text-emerald-600" />
+        <ShieldCheck className="size-4 text-emerald-700" />
         <h3 className="text-xs font-bold uppercase tracking-wider text-slate-900">
           {info.title}
         </h3>

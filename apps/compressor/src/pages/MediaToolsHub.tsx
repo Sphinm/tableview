@@ -189,7 +189,7 @@ export const MediaToolsHub = () => {
             <button
               type="button"
               onClick={() => navigateTo('/image-compressor')}
-              className="w-full py-3 rounded-xl text-sm font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
+              className="w-full py-3 rounded-xl text-sm font-bold bg-emerald-700 hover:bg-emerald-800 text-white shadow-xs flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.99]"
             >
               <span>Launch Image Compressor</span>
               <ArrowRight className="size-4" />
@@ -206,7 +206,7 @@ export const MediaToolsHub = () => {
       {/* Specialized Single-Format Shortcuts Grid */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold">
+          <span className="text-xs font-mono uppercase tracking-wider text-neutral-400 font-semibold">
             Dedicated Single-Format Compression Tools
           </span>
         </div>
@@ -223,7 +223,7 @@ export const MediaToolsHub = () => {
                   <h3 className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
                     {item.title}
                   </h3>
-                  <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shrink-0">
+                  <span className="text-[10px] font-semibold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200 shrink-0">
                     {item.badge}
                   </span>
                 </div>

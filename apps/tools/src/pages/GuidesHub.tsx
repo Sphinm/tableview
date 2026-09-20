@@ -43,7 +43,8 @@ export const GuidesHub = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-slate-900">
+    <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 -my-6 bg-slate-50 text-slate-900 min-h-[calc(100vh-7rem)]">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 text-slate-900">
       {/* Header */}
       <div className="mb-10 text-center sm:text-left">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-white border border-slate-300 text-slate-900 mb-4 shadow-2xs">
@@ -274,6 +275,7 @@ export const GuidesHub = () => {
       )}
 
       <AdSlot unit="guideInArticle" className="mt-16" />
+    </div>
     </div>
   );
 };

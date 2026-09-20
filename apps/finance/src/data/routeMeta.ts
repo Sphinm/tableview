@@ -13,41 +13,20 @@ export interface PageMeta {
 }
 
 export const HOME_META: PageMeta = {
-  title: 'TableView: Private In-Browser Financial & Data Tools',
+  title: 'TableView: Institutional Real Estate & Lending Underwriting Suite',
   description:
-    'Institutional debt modeling, commercial real estate underwriting, IRC §1031 tax deferral, and payroll analytics running 100% client-side in WebAssembly. Zero server uploads.',
+    'Institutional real estate underwriting, DSCR loans, BRRRR strategy, fix & flip MAO, IRC §1031 tax deferrals, and commercial debt modeling running 100% private in your browser.',
   canonical: '/',
 };
 
-export const DATA_TOOLS_META: PageMeta = {
-  title: 'In-Browser Data Workbench & DuckDB SQL | TableView',
-  description:
-    '100% private in-browser data workspace. Inspect, convert, and query large CSV, Excel (.xlsx), Apache Parquet, and JSON files with DuckDB-Wasm SIMD. Zero server uploads.',
-  canonical: '/data-tools',
-};
-
-export const DATA_CONVERTER_META: PageMeta = {
-  title: 'Convert CSV, Excel, Parquet & JSON Online | TableView',
-  description:
-    'Convert datasets between Apache Parquet, Microsoft Excel (.xlsx), CSV, and JSON 100% in your browser. Powered by DuckDB-Wasm, ZSTD columnar compression, zero server uploads, completely private.',
-  canonical: '/data-converter',
-};
-
-export const AI_ARTICLE_POLISHER_META: PageMeta = {
-  title: 'AI Article Polisher: Remove AI Tone Online | TableView',
-  description:
-    'Polish Chinese and English articles with Gemini AI. Cut AI-tone patterns grounded in a 2.83M-character corpus study, review every edit with a word-level diff, then copy or export.',
-  canonical: '/ai-article-polisher',
-};
-
 export const GUIDES_HUB_META: PageMeta = {
-  title: 'Apache Parquet & DuckDB Guides | TableView.dev',
+  title: 'Real Estate & Lending Underwriting Guides | TableView.dev',
   description:
-    'In-depth technical guides, architecture comparisons, and performance benchmarks for Apache Parquet, DuckDB-Wasm, and columnar formats.',
+    'In-depth practitioner guides, mathematical formulas, and underwriting benchmarks for DSCR loans, 1031 tax exchanges, mortgage amortization, and commercial debt.',
   canonical: '/guides',
 };
 
-/** Meta for the six dedicated calculators plus the finance hub. */
+/** Meta for every dedicated calculator plus the underwriting hub. */
 export const CALCULATOR_META: Record<string, PageMeta> = {
   '/mortgage-calculator': {
     title: 'Mortgage Calculator: Payments & Amortization | TableView',
@@ -79,17 +58,17 @@ export const CALCULATOR_META: Record<string, PageMeta> = {
       'Free, 100% private in-browser mortgage refinance break-even calculator. Compare monthly savings, net equity break-even, roll-in closing costs, and 30-year reset clock warnings without broker ads or lead forms.',
     canonical: '/refinance-calculator',
   },
-  '/snowflake-cost-calculator': {
-    title: 'Snowflake Cost & Credit Calculator | TableView',
+  '/brrrr-calculator': {
+    title: 'BRRRR Calculator: Buy, Rehab, Rent, Refinance | TableView',
     description:
-      'Free in-browser Snowflake cost and credit calculator. Estimate monthly compute, multi-cluster warehouse autoscaling, storage, and auto-suspend FinOps savings.',
-    canonical: '/snowflake-cost-calculator',
+      'Free in-browser BRRRR strategy calculator and BiggerPockets Pro alternative. Model acquisition, rehab, rental cash flow, cash-out refinance, net capital left, and infinite return without paywalls.',
+    canonical: '/brrrr-calculator',
   },
-  '/parquet-storage-calculator': {
-    title: 'Parquet S3 & Athena Cloud Savings Calculator | TableView',
+  '/brrrr-method-calculator': {
+    title: 'BRRRR Method Strategy & Cash-Out Refi Calculator | TableView',
     description:
-      'Calculate exact cloud bill savings by converting CSV, JSON, or text logs to Apache Parquet. Estimate AWS S3 storage reduction and Athena/BigQuery scan savings.',
-    canonical: '/parquet-storage-calculator',
+      'Comprehensive 4-phase BRRRR calculator for real estate investors. Underwrite purchase, rehab holding costs, tenant stabilization, and 30-year cash-out refinance.',
+    canonical: '/brrrr-method-calculator',
   },
   '/section-1031-exchange-calculator': {
     title: '1031 Exchange Calculator: Boot & Capital Gains | TableView',
@@ -115,22 +94,10 @@ export const CALCULATOR_META: Record<string, PageMeta> = {
       'Convert annual salary to hourly wage, daily, weekly, bi-weekly (26x), and monthly paycheck. Compute FLSA 1.5x overtime and PTO value with Excel export.',
     canonical: '/salary-to-hourly-calculator',
   },
-  '/json-formatter': {
-    title: 'Online JSON Formatter & Validator | TableView',
-    description:
-      'Format, indent, validate, and minify JSON online. 100% private in-browser tool with line and column syntax error detection. Zero server uploads.',
-    canonical: '/json-formatter',
-  },
-  '/sql-formatter': {
-    title: 'Online SQL Formatter & Beautifier | TableView',
-    description:
-      'Beautify, indent, format, and minify SQL queries online. Supports DuckDB, PostgreSQL, MySQL, SQLite, Snowflake, and BigQuery. 100% in-browser.',
-    canonical: '/sql-formatter',
-  },
   '/finance-calculator': {
-    title: 'Financial & Loan Calculators Hub | TableView',
+    title: 'Real Estate & Lending Underwriting Calculators | TableView',
     description:
-      'Free, 100% private in-browser financial planning calculators. Calculate auto loans, personal loans, compound savings interest, and credit card payoff strategies.',
+      'Free, 100% private in-browser underwriting calculators for real estate investors and lenders. Model mortgages, DSCR rental loans, cap rates, BRRRR, hard money and fix-and-flip deals, 1031 exchanges, and commercial debt.',
     canonical: '/finance-calculator',
   },
   '/amortization-schedule-calculator': {
@@ -167,15 +134,14 @@ export const CALCULATOR_META: Record<string, PageMeta> = {
 
 /** Meta for the informational / legal pages. */
 export const STATIC_PAGE_META: Record<string, PageMeta> = {
-  '/data-tools': DATA_TOOLS_META,
   '/about': {
-    title: 'About TableView.dev: In-Browser Data Processing',
-    description: 'Learn about TableView.dev and our client-side architecture.',
+    title: 'About TableView: Institutional Real Estate & Lending Underwriting',
+    description: 'Learn about TableView.dev and our 100% private, client-side financial underwriting architecture.',
     canonical: '/about',
   },
   '/contact': {
     title: 'Contact & Feedback | TableView.dev',
-    description: 'Contact the TableView engineering team.',
+    description: 'Contact the TableView financial engineering team.',
     canonical: '/contact',
   },
   '/privacy': {
@@ -183,10 +149,20 @@ export const STATIC_PAGE_META: Record<string, PageMeta> = {
     description: 'TableView privacy policy: 100% local processing with zero server file storage.',
     canonical: '/privacy',
   },
+  '/privacy-policy': {
+    title: 'Privacy Policy | TableView.dev',
+    description: 'TableView privacy policy: 100% local processing with zero server file storage.',
+    canonical: '/privacy-policy',
+  },
   '/terms': {
     title: 'Terms of Service | TableView.dev',
     description: 'TableView terms of service.',
     canonical: '/terms',
+  },
+  '/terms-of-service': {
+    title: 'Terms of Service | TableView.dev',
+    description: 'TableView terms of service.',
+    canonical: '/terms-of-service',
   },
   '/disclaimer': {
     title: 'Disclaimer & Disclosure | TableView.dev',
@@ -194,59 +170,4 @@ export const STATIC_PAGE_META: Record<string, PageMeta> = {
       'Legal disclaimers, financial calculation disclosures, and terms of informational use for TableView.dev.',
     canonical: '/disclaimer',
   },
-  '/media-tools': {
-    title: 'Media Compression Studio: Video & Images | TableView',
-    description:
-      'Compress videos and batch optimize images 100% in your browser. Wasm-powered MP4, WebM, PNG, and JPG compression with zero server uploads and no watermarks.',
-    canonical: '/media-tools',
-  },
-  '/video-compressor': {
-    title: 'Free Online Video Compressor (No Watermark) | TableView',
-    description:
-      'Fast online video compressor with zero server upload. Reduce MP4, MOV, WebM, and MKV file size with preset quality or exact target MB. 100% private in-browser.',
-    canonical: '/video-compressor',
-  },
-  '/image-compressor': {
-    title: 'Batch Online Image Compressor: JPG, PNG, WebP | TableView',
-    description:
-      'Batch compress images online without quality loss. Supports JPEG, PNG, and WebP with before/after visual comparison and 1-click ZIP packaging.',
-    canonical: '/image-compressor',
-  },
-  '/compress-mp4': {
-    title: 'Compress MP4 Video Online Free (No Watermark) | TableView',
-    description:
-      'Free online MP4 compressor. Shrink MP4 video file size up to 90% in your browser with WebAssembly FFmpeg. Zero uploads, zero watermarks, and custom target MB.',
-    canonical: '/compress-mp4',
-  },
-  '/compress-video-for-discord': {
-    title: 'Compress Video for Discord (Under 25MB) | TableView',
-    description:
-      'Compress video for Discord free online. Easily reduce video size below Discord\'s 25MB or 50MB file size limit with high visual quality and no watermarks.',
-    canonical: '/compress-video-for-discord',
-  },
-  '/compress-png': {
-    title: 'Compress PNG Online Free: Lossless & Alpha | TableView',
-    description:
-      'Compress PNG images online with full transparency support. Reduce PNG file size by up to 70% in your browser tab without uploading photos to external servers.',
-    canonical: '/compress-png',
-  },
-  '/compress-jpg': {
-    title: 'Compress JPG & JPEG Images Online Free | TableView',
-    description:
-      'Compress JPG and JPEG photos online for free. Adjust compression quality, resize dimensions, and batch download optimized images as a ZIP file.',
-    canonical: '/compress-jpg',
-  },
-  '/compress-webp': {
-    title: 'Compress WebP Images Online Free & Fast | TableView',
-    description:
-      'Compress and optimize WebP images directly in your browser. Reduce file size while preserving high visual fidelity and alpha transparency. 100% private.',
-    canonical: '/compress-webp',
-  },
-  '/is-it-down': {
-    title: 'Is It Down Right Now? Website Uptime Checker | TableView',
-    description:
-      'Check if a website is down for everyone or just you. Instant real-time server status and response code tested from global edge nodes.',
-    canonical: '/is-it-down',
-  },
-  '/data-converter': DATA_CONVERTER_META,
 };

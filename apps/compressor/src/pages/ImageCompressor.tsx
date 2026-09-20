@@ -250,7 +250,7 @@ export function ImageCompressor() {
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-emerald-600/20 transition-all active:scale-95"
+                    className="px-5 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-xl text-xs sm:text-sm font-bold shadow-md shadow-emerald-600/20 transition-all active:scale-95"
                   >
                     Browse Images
                   </button>
@@ -275,7 +275,7 @@ export function ImageCompressor() {
                   </button>
                 </div>
 
-                <div className="flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-slate-500 font-mono">
+                <div className="flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-slate-600 font-mono">
                   <span className="px-2 py-0.5 rounded bg-slate-200/70">JPG</span>
                   <span className="px-2 py-0.5 rounded bg-slate-200/70">PNG</span>
                   <span className="px-2 py-0.5 rounded bg-slate-200/70">WebP</span>
@@ -341,7 +341,7 @@ export function ImageCompressor() {
                       alt="Compressed"
                       className="max-h-full w-auto max-w-full object-contain pointer-events-none"
                     />
-                    <div className="absolute top-3 right-3 bg-emerald-600/90 text-white text-[11px] font-bold px-2 py-0.5 rounded-md shadow-sm pointer-events-none">
+                    <div className="absolute top-3 right-3 bg-emerald-700 text-white text-[11px] font-bold px-2 py-0.5 rounded-md shadow-sm pointer-events-none">
                       Compressed ({formatBytes(activeItem.compressedSize)})
                     </div>
 
@@ -400,7 +400,7 @@ export function ImageCompressor() {
                           <div className="text-xs font-bold text-slate-900 truncate" title={item.name}>
                             {item.name}
                           </div>
-                          <div className="text-[10px] text-slate-500 flex items-center gap-1.5">
+                          <div className="text-[10px] text-slate-600 flex items-center gap-1.5">
                             <span>{item.width}×{item.height}</span>
                             <span>•</span>
                             <span className="line-through">{formatBytes(item.originalSize)}</span>
@@ -449,7 +449,7 @@ export function ImageCompressor() {
                   <button
                     type="button"
                     onClick={handleDownloadAllZip}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-bold shadow-xs transition-all active:scale-95"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-lg font-bold shadow-xs transition-all active:scale-95"
                   >
                     <FileArchive className="size-3.5" />
                     <span>Download All (ZIP)</span>
@@ -500,9 +500,9 @@ export function ImageCompressor() {
                   <div>
                     <div className="flex items-center justify-between text-xs mb-1.5">
                       <label className="font-bold text-slate-700">
-                        Visual Quality: <strong className="text-emerald-600">{quality}%</strong>
+                        Visual Quality: <strong className="text-emerald-700">{quality}%</strong>
                       </label>
-                      <span className="text-slate-400 text-[11px]">
+                      <span className="text-slate-500 text-[11px]">
                         {quality >= 85 ? 'High Visual' : quality >= 65 ? 'Optimal Balance' : 'Max Compression'}
                       </span>
                     </div>
@@ -667,7 +667,7 @@ export function ImageCompressor() {
                   }
                 }}
                 disabled={isProcessing}
-                className="w-full py-3.5 px-4 bg-emerald-600 hover:bg-emerald-700 disabled:opacity-50 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.99] flex items-center justify-center gap-2"
+                className="w-full py-3.5 px-4 bg-emerald-700 hover:bg-emerald-800 disabled:opacity-50 text-white font-bold rounded-2xl transition-all shadow-lg shadow-emerald-600/20 active:scale-[0.99] flex items-center justify-center gap-2"
               >
                 {isProcessing ? (
                   <>
@@ -687,7 +687,7 @@ export function ImageCompressor() {
                 )}
               </button>
 
-              <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
+              <div className="flex items-center justify-between text-[11px] text-slate-500 px-1">
                 <span className="flex items-center gap-1">
                   <Shield className="size-3 text-emerald-600" />
                   <span>100% In-Browser Privacy</span>

@@ -38,5 +38,3 @@ export const GlobalLoading: React.FC<GlobalLoadingProps> = ({
     </div>
   );
 };
-
-export const PageSkeleton = GlobalLoading;

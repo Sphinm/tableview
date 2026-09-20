@@ -74,6 +74,9 @@ export function ToolsHeader({ currentPath }: ToolsHeaderProps) {
             <div className="relative" ref={convertersRef}>
               <button
                 onClick={() => setConvertersOpen(!convertersOpen)}
+                aria-expanded={convertersOpen}
+                aria-haspopup="true"
+                aria-controls="converters-menu"
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   convertersOpen || currentPath.includes('converter') || currentPath.includes('to-')
                     ? 'bg-neutral-800 text-cyan-400'
@@ -85,7 +88,7 @@ export function ToolsHeader({ currentPath }: ToolsHeaderProps) {
               </button>
 
               {convertersOpen && (
-                <div className="absolute left-0 mt-2 w-56 bg-neutral-900 border border-neutral-800 rounded-xl shadow-xl py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div id="converters-menu" className="absolute left-0 mt-2 w-56 bg-neutral-900 border border-neutral-800 rounded-xl shadow-xl py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <button
                     onClick={() => { navigateTo('/data-converter'); setConvertersOpen(false); }}
                     className="w-full text-left px-3.5 py-2 text-xs text-neutral-200 hover:bg-neutral-800 flex items-center gap-2"
@@ -122,6 +125,9 @@ export function ToolsHeader({ currentPath }: ToolsHeaderProps) {
             <div className="relative" ref={finopsRef}>
               <button
                 onClick={() => setFinopsOpen(!finopsOpen)}
+                aria-expanded={finopsOpen}
+                aria-haspopup="true"
+                aria-controls="finops-menu"
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   finopsOpen || currentPath.includes('calculator')
                     ? 'bg-neutral-800 text-cyan-400'
@@ -133,7 +139,7 @@ export function ToolsHeader({ currentPath }: ToolsHeaderProps) {
               </button>
 
               {finopsOpen && (
-                <div className="absolute left-0 mt-2 w-64 bg-neutral-900 border border-neutral-800 rounded-xl shadow-xl py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                <div id="finops-menu" className="absolute left-0 mt-2 w-64 bg-neutral-900 border border-neutral-800 rounded-xl shadow-xl py-1.5 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                   <button
                     onClick={() => { navigateTo('/parquet-storage-calculator'); setFinopsOpen(false); }}
                     className="w-full text-left px-3.5 py-2 text-xs text-neutral-200 hover:bg-neutral-800 flex items-center gap-2"

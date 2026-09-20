@@ -48,6 +48,9 @@ import { SuiteSubNav } from '../components/SuiteSubNav';
 import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
 import { ProBrandingModal } from '../components/ProBrandingModal';
 import { InfoTooltip } from '../components/InfoTooltip';
+import { ResultAnnouncer } from '../components/ResultAnnouncer';
+import { composeAnnouncement } from '../lib/resultAnnouncement';
+import { formatUsd, formatUsdSigned } from '@tableview/shared';
 
 // Sourced from the shared registry: see the note in MortgageCalculator.tsx.
 const refinanceFaqs = getCalculatorFaqs('/refinance-calculator');
@@ -481,10 +484,10 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="refinance-original-home-price" className="block text-xs font-semibold text-slate-700 mb-1">
                   Original Home Price
                 </label>
-                <CurrencyInput
+                <CurrencyInput id="refinance-original-home-price"
                   value={homePrice}
                   onChange={handleHomePriceChange}
                   className="py-2 text-xs font-mono"
@@ -492,10 +495,10 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="refinance-original-down-payment" className="block text-xs font-semibold text-slate-700 mb-1">
                   Original Down Payment
                 </label>
-                <CurrencyInput
+                <CurrencyInput id="refinance-original-down-payment"
                   value={downPayment}
                   onChange={handleDownPaymentChange}
                   className="py-2 text-xs font-mono"
@@ -503,10 +506,10 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="refinance-original-loan-amount" className="block text-xs font-semibold text-slate-700 mb-1">
                   Original Loan Amount
                 </label>
-                <CurrencyInput
+                <CurrencyInput id="refinance-original-loan-amount"
                   value={originalLoanAmount}
                   onChange={setOriginalLoanAmount}
                   className="py-2 text-xs font-mono"
@@ -531,7 +534,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
               <div>
                 <div className="flex items-center gap-1.5 mb-1">
-                  <label className="block text-xs font-semibold text-slate-700">
+                  <label htmlFor="refinance-current-interest-rate" className="block text-xs font-semibold text-slate-700">
                     Current Interest Rate
                   </label>
                   <InfoTooltip
@@ -539,7 +542,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                     content="Your existing loan's note rate. Compare against today's Freddie Mac PMMS benchmark to evaluate rate savings."
                   />
                 </div>
-                <NumericInput
+                <NumericInput id="refinance-current-interest-rate"
                   value={currentInterestRate}
                   onChange={setCurrentInterestRate}
                   suffix="%"
@@ -552,7 +555,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-1.5">
-                    <label className="block text-xs font-semibold text-slate-700">
+                    <label htmlFor="refinance-months-already-paid" className="block text-xs font-semibold text-slate-700">
                       Months Already Paid
                     </label>
                     <InfoTooltip
@@ -587,6 +590,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                   </div>
                 ) : (
                   <NumericInput
+                    id="refinance-months-already-paid"
                     value={monthsAlreadyPaid}
                     onChange={setMonthsAlreadyPaid}
                     suffix="Mo"
@@ -646,7 +650,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
           <div className="p-5 sm:p-6 rounded-2xl bg-white border border-slate-300 border-t-4 border-t-emerald-600 shadow-sm space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <h2 className="text-sm font-bold text-slate-900 flex items-center gap-2 uppercase tracking-wide">
-                <RefreshCw className="size-4 text-emerald-600" />
+                <RefreshCw className="size-4 text-emerald-700" />
                 <span>2. Refinanced Loan</span>
               </h2>
               <span className="text-xs font-mono px-2 py-0.5 rounded-lg bg-emerald-50 text-emerald-700 border border-emerald-200 font-semibold">New Terms</span>
@@ -679,10 +683,10 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="refinance-new-interest-rate" className="block text-xs font-semibold text-slate-700 mb-1">
                   New Interest Rate
                 </label>
-                <NumericInput
+                <NumericInput id="refinance-new-interest-rate"
                   value={newInterestRate}
                   onChange={setNewInterestRate}
                   suffix="%"
@@ -693,10 +697,10 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="refinance-years-before-sell-horizon" className="block text-xs font-semibold text-slate-700 mb-1">
                   Years Before Sell / Horizon
                 </label>
-                <NumericInput
+                <NumericInput id="refinance-years-before-sell-horizon"
                   value={yearsBeforeSell}
                   onChange={setYearsBeforeSell}
                   suffix="Yrs"
@@ -709,7 +713,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
               <div>
                 <div className="flex items-center gap-1.5 mb-1">
-                  <label className="block text-xs font-semibold text-slate-700">
+                  <label htmlFor="refinance-cash-out-amount-optional" className="block text-xs font-semibold text-slate-700">
                     Cash-Out Amount (Optional)
                   </label>
                   <InfoTooltip
@@ -717,7 +721,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                     content="Borrowing extra cash against your home equity. Fannie Mae & Freddie Mac cap conventional cash-out refinances at 80% Loan-to-Value to prevent default risk."
                   />
                 </div>
-                <CurrencyInput
+                <CurrencyInput id="refinance-cash-out-amount-optional"
                   value={cashOutAmount}
                   onChange={setCashOutAmount}
                   className="py-2 text-xs font-mono"
@@ -726,7 +730,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                   <div className="flex items-center justify-between text-[11px] text-slate-500 mt-1">
                     <span>
                       Resulting LTV:{' '}
-                      <strong className={`font-mono ${summary.isExceedingCashOutLtv ? 'text-rose-600 font-bold' : 'text-slate-800'}`}>
+                      <strong className={`font-mono ${summary.isExceedingCashOutLtv ? 'text-rose-700 font-bold' : 'text-slate-800'}`}>
                         {summary.cashOutLtv}%
                       </strong>{' '}
                       (Conventional Max: 80%)
@@ -749,11 +753,11 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             {summary.isExceedingCashOutLtv && (
               <div className="p-3.5 bg-amber-50 border border-amber-300 rounded-xl text-xs text-amber-900 space-y-1.5 shadow-2xs">
                 <div className="font-bold flex items-center gap-1.5 text-amber-950">
-                  <AlertTriangle className="size-4 text-amber-600 shrink-0" />
+                  <AlertTriangle className="size-4 text-amber-700 shrink-0" />
                   <span>Conventional 80.0% Cash-Out LTV Limit Exceeded ({summary.cashOutLtv}% &gt; 80.0%)</span>
                 </div>
                 <p className="text-[11px] text-amber-800 leading-relaxed">
-                  Fannie Mae and Freddie Mac cap conventional cash-out refinances at an <strong>80.0% Loan-to-Value (LTV)</strong> ceiling. Your new proposed loan balance is ${Math.round(summary.newLoanAmount).toLocaleString()}. To qualify conventionally, limit cash-out to <strong>{fmt(summary.maxAllowedCashOut)}</strong>, or consider an FHA cash-out refinance (up to 85% LTV with upfront + monthly MIP).
+                  Fannie Mae and Freddie Mac cap conventional cash-out refinances at an <strong>80.0% Loan-to-Value (LTV)</strong> ceiling. Your new proposed loan balance is ${Math.round(summary.newLoanAmount).toLocaleString('en-US')}. To qualify conventionally, limit cash-out to <strong>{fmt(summary.maxAllowedCashOut)}</strong>, or consider an FHA cash-out refinance (up to 85% LTV with upfront + monthly MIP).
                 </p>
                 <div className="pt-0.5">
                   <button
@@ -771,7 +775,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-between text-xs">
               <div>
                 <span className="text-slate-500 block">New Monthly Payment</span>
-                <span className="font-mono font-bold text-emerald-600 text-sm">
+                <span className="font-mono font-bold text-emerald-700 text-sm">
                   {fmt(summary.newMonthlyPayment)}
                 </span>
               </div>
@@ -797,7 +801,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <label className="block text-xs font-semibold text-slate-700">
+                  <label htmlFor="refinance-discount-points" className="block text-xs font-semibold text-slate-700">
                     Discount Points
                   </label>
                   <InfoTooltip
@@ -805,7 +809,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                     content="1 point = 1% of new loan amount. Points paid on a refinance must be amortized over the life of the loan for tax deductions."
                   />
                 </div>
-                <NumericInput
+                <NumericInput id="refinance-discount-points"
                   value={discountPoints}
                   onChange={setDiscountPoints}
                   suffix="%"
@@ -817,7 +821,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <label className="block text-xs font-semibold text-slate-700">
+                  <label htmlFor="refinance-origination-fee" className="block text-xs font-semibold text-slate-700">
                     Origination Fee
                   </label>
                   <InfoTooltip
@@ -825,7 +829,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                     content="Lender underwriting and processing charge, typically 0.5% to 1.0% of the new loan amount."
                   />
                 </div>
-                <NumericInput
+                <NumericInput id="refinance-origination-fee"
                   value={originationPercent}
                   onChange={setOriginationPercent}
                   suffix="%"
@@ -837,7 +841,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
               <div>
                 <div className="flex items-center gap-1 mb-1">
-                  <label className="block text-xs font-semibold text-slate-700">
+                  <label htmlFor="refinance-other-closing-costs" className="block text-xs font-semibold text-slate-700">
                     Other Closing Costs
                   </label>
                   <InfoTooltip
@@ -845,7 +849,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                     content="Fixed closing expenses including title search, lender's title insurance, appraisal, escrow fee, recording fee, and credit check."
                   />
                 </div>
-                <CurrencyInput
+                <CurrencyInput id="refinance-other-closing-costs"
                   value={otherClosingCosts}
                   onChange={setOtherClosingCosts}
                   className="py-2 text-xs font-mono"
@@ -883,8 +887,8 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] text-slate-600 mb-1 font-medium">Federal Income Tax</label>
-                  <NumericInput
+                  <label htmlFor="refinance-federal-income-tax" className="block text-[11px] text-slate-600 mb-1 font-medium">Federal Income Tax</label>
+                  <NumericInput id="refinance-federal-income-tax"
                     value={federalTaxRate}
                     onChange={setFederalTaxRate}
                     suffix="%"
@@ -895,8 +899,8 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                 </div>
 
                 <div>
-                  <label className="block text-[11px] text-slate-600 mb-1 font-medium">State Income Tax</label>
-                  <NumericInput
+                  <label htmlFor="refinance-state-income-tax" className="block text-[11px] text-slate-600 mb-1 font-medium">State Income Tax</label>
+                  <NumericInput id="refinance-state-income-tax"
                     value={stateTaxRate}
                     onChange={setStateTaxRate}
                     suffix="%"
@@ -919,6 +923,23 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
         {/* Right Column: Executive Results & Detailed Breakdowns (7 cols) */}
         <div className="lg:col-span-7 space-y-6">
+          {/* Announce the recomputed savings and break-even for screen readers. */}
+          <ResultAnnouncer
+            message={composeAnnouncement(
+              [
+                { label: 'new monthly payment', value: formatUsd(summary.newMonthlyPayment) },
+                { label: 'monthly savings', value: formatUsdSigned(summary.monthlyPaymentSavings) },
+                {
+                  label: 'break-even',
+                  value: summary.breakEvenMonths
+                    ? `${summary.breakEvenMonths} months`
+                    : 'not reached within the loan term',
+                },
+              ],
+              { context: 'Results updated' }
+            )}
+          />
+
           {/* Executive Verdict Card (High-Contrast Hero) */}
           <div className="relative rounded-2xl border border-slate-800 bg-slate-900 text-white p-6 sm:p-8 shadow-lg overflow-hidden">
             <div className="absolute top-0 right-0 -mt-8 -mr-8 size-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
@@ -1092,7 +1113,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
                 <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900">
                   <div className="font-bold text-sm text-emerald-950 mb-1 flex items-center gap-1.5">
-                    <CheckCircle2 className="size-4 text-emerald-600" />
+                    <CheckCircle2 className="size-4 text-emerald-700" />
                     <span>The Bottom Line:</span>
                   </div>
                   <p className="text-xs leading-relaxed text-emerald-800">
@@ -1159,7 +1180,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
                 <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
                   <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                    <Calendar className="size-3.5 text-emerald-600" />
+                    <Calendar className="size-3.5 text-emerald-700" />
                     <span>2. Monthly Payments</span>
                   </h3>
                 </div>
@@ -1284,7 +1305,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
                 <div className="flex items-center justify-between pb-3 mb-3 border-b border-slate-100">
                   <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                    <PiggyBank className="size-3.5 text-emerald-600" />
+                    <PiggyBank className="size-3.5 text-emerald-700" />
                     <span>5. Final Loan Balance & Equity</span>
                   </h3>
                 </div>
@@ -1348,7 +1369,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                   </div>
                   <div className="flex items-center justify-between text-slate-700">
                     <span className="font-sans">Less Total Closing Costs:</span>
-                    <span className="font-bold text-rose-600">-{fmt(summary.totalClosingCosts)}</span>
+                    <span className="font-bold text-rose-700">-{fmt(summary.totalClosingCosts)}</span>
                   </div>
                   <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-sm sm:text-base">
                     <span className="font-bold text-slate-900 font-sans">
@@ -1356,7 +1377,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                     </span>
                     <span
                       className={`font-black ${
-                        summary.totalNetBenefit >= 0 ? 'text-emerald-700' : 'text-rose-600'
+                        summary.totalNetBenefit >= 0 ? 'text-emerald-700' : 'text-rose-700'
                       }`}
                     >
                       {fmt(summary.totalNetBenefit)}
@@ -1432,7 +1453,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               className="px-3 py-1.5 rounded-lg bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:text-slate-900 flex items-center gap-1.5 transition-all cursor-pointer shadow-xs"
               title="Export to Excel"
             >
-              <FileSpreadsheet className="size-3.5 text-emerald-600" />
+              <FileSpreadsheet className="size-3.5 text-emerald-700" />
               <span>Excel (.xlsx)</span>
             </button>
           </div>
@@ -1473,16 +1494,16 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                       <td className="py-2 px-3 text-right text-slate-600">{fmt(row.oldAnnualInterest)}</td>
                       <td className="py-2 px-3 text-right text-slate-800">{fmt(row.oldEndingBalance)}</td>
                       <td className="py-2 px-3 text-right text-slate-800">{fmt(row.newAnnualPayment)}</td>
-                      <td className="py-2 px-3 text-right text-emerald-600 font-medium">{fmt(row.newAnnualInterest)}</td>
+                      <td className="py-2 px-3 text-right text-emerald-700 font-medium">{fmt(row.newAnnualInterest)}</td>
                       <td className="py-2 px-3 text-right text-slate-800">{fmt(row.newEndingBalance)}</td>
                       <td
                         className={`py-2 px-3 text-right font-semibold ${
-                          row.annualSavings >= 0 ? 'text-emerald-600' : 'text-amber-600'
+                          row.annualSavings >= 0 ? 'text-emerald-700' : 'text-amber-700'
                         }`}
                       >
                         {fmt(row.annualSavings, true)}
                       </td>
-                      <td className="py-2 px-3 text-right text-emerald-600 font-medium">
+                      <td className="py-2 px-3 text-right text-emerald-700 font-medium">
                         {fmt(row.endingEquityDiff)}
                       </td>
                     </tr>
@@ -1518,18 +1539,18 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
                       <td className="py-2 px-3 text-right text-slate-600">{fmt(row.oldInterest)}</td>
                       <td className="py-2 px-3 text-right text-slate-800">{fmt(row.oldBalance)}</td>
                       <td className="py-2 px-3 text-right text-slate-800">{fmt(row.newPayment)}</td>
-                      <td className="py-2 px-3 text-right text-emerald-600 font-medium">{fmt(row.newInterest)}</td>
+                      <td className="py-2 px-3 text-right text-emerald-700 font-medium">{fmt(row.newInterest)}</td>
                       <td className="py-2 px-3 text-right text-slate-800">{fmt(row.newBalance)}</td>
                       <td
                         className={`py-2 px-3 text-right font-medium ${
-                          row.monthlySavings >= 0 ? 'text-emerald-600' : 'text-amber-600'
+                          row.monthlySavings >= 0 ? 'text-emerald-700' : 'text-amber-700'
                         }`}
                       >
                         {fmt(row.monthlySavings, true)}
                       </td>
                       <td
                         className={`py-2 px-3 text-right font-bold ${
-                          row.cumulativeNetBenefit >= 0 ? 'text-emerald-600' : 'text-rose-600'
+                          row.cumulativeNetBenefit >= 0 ? 'text-emerald-700' : 'text-rose-700'
                         }`}
                       >
                         {fmt(row.cumulativeNetBenefit, true)}
@@ -1601,51 +1622,51 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             <tbody className="divide-y divide-slate-200">
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">In-Browser Privacy</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Yes (Zero Data Egress)</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Yes (Zero Data Egress)</td>
                 <td className="py-3 px-4 text-slate-600">No (Server-Tracked)</td>
                 <td className="py-3 px-4 text-slate-600">No (Lead Capture)</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">No Lead Generation / Spam Calls</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Yes (No Lead Forms)</td>
-                <td className="py-3 px-4 text-rose-600">No (Aggressive Loan Offers)</td>
-                <td className="py-3 px-4 text-rose-600">No (Advisor Lead Capture)</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Yes (No Lead Forms)</td>
+                <td className="py-3 px-4 text-rose-700">No (Aggressive Loan Offers)</td>
+                <td className="py-3 px-4 text-rose-700">No (Advisor Lead Capture)</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">30-Year Reset Clock Warning</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Automated Risk Alert</td>
-                <td className="py-3 px-4 text-rose-600">Not Supported</td>
-                <td className="py-3 px-4 text-rose-600">Not Supported</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Automated Risk Alert</td>
+                <td className="py-3 px-4 text-rose-700">Not Supported</td>
+                <td className="py-3 px-4 text-rose-700">Not Supported</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">Net Equity Break-Even (Tax Adjusted)</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Dual Break-Even Engine</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Dual Break-Even Engine</td>
                 <td className="py-3 px-4 text-slate-600">Cash Flow Only</td>
                 <td className="py-3 px-4 text-slate-600">Cash Flow Only</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">Roll Closing Costs into Loan ($0 Out of Pocket)</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">1-Click Toggle</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">1-Click Toggle</td>
                 <td className="py-3 px-4 text-slate-700">Manual adjustments</td>
                 <td className="py-3 px-4 text-slate-700">Yes</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">Visual Balance Payoff Chart</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Yes (Zero-Bloat SVG)</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Yes (Zero-Bloat SVG)</td>
                 <td className="py-3 px-4 text-slate-700">Yes</td>
                 <td className="py-3 px-4 text-slate-600">Basic Bar Only</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">Full Amortization Excel Export</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">1-Click Full Schedule</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">1-Click Full Schedule</td>
                 <td className="py-3 px-4 text-slate-600">CSV Only</td>
-                <td className="py-3 px-4 text-rose-600">Not Supported</td>
+                <td className="py-3 px-4 text-rose-700">Not Supported</td>
               </tr>
               <tr className="hover:bg-slate-50/80">
                 <td className="py-3 px-4 font-semibold text-slate-900">Shareable Pre-filled URL</td>
-                <td className="py-3 px-4 text-emerald-600 font-bold">Instant 1-Click Link</td>
-                <td className="py-3 px-4 text-rose-600">Not Supported</td>
-                <td className="py-3 px-4 text-rose-600">Not Supported</td>
+                <td className="py-3 px-4 text-emerald-700 font-bold">Instant 1-Click Link</td>
+                <td className="py-3 px-4 text-rose-700">Not Supported</td>
+                <td className="py-3 px-4 text-rose-700">Not Supported</td>
               </tr>
             </tbody>
           </table>
@@ -1667,7 +1688,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <TrendingDown className="size-4 text-emerald-600" />
+              <TrendingDown className="size-4 text-emerald-700" />
               <span>1. The Break-Even Horizon Rule</span>
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed">
@@ -1692,7 +1713,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
           <div className="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <Percent className="size-4 text-amber-600" />
+              <Percent className="size-4 text-amber-700" />
               <span>3. Discount Points vs Par Rate</span>
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed">
@@ -1702,7 +1723,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
           <div className="p-5 rounded-xl bg-slate-50 border border-slate-200 space-y-2.5">
             <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <AlertTriangle className="size-4 text-rose-600" />
+              <AlertTriangle className="size-4 text-rose-700" />
               <span>4. TCJA Tax Deduction Reality</span>
             </h3>
             <p className="text-xs text-slate-600 leading-relaxed">
@@ -1747,8 +1768,8 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
         rollCostsIntoLoan
       }}
       currentMetrics={{
-        headline: summary.monthlyPaymentSavings >= 0 ? `Save $${Math.round(summary.monthlyPaymentSavings).toLocaleString()}/mo` : `+$${Math.round(Math.abs(summary.monthlyPaymentSavings)).toLocaleString()}/mo`,
-        subline: summary.breakEvenMonths !== null ? `Break-even in ${summary.breakEvenMonths} mos · Net Benefit: $${Math.round(summary.totalNetBenefit).toLocaleString()}` : `Clock Reset Warning`
+        headline: summary.monthlyPaymentSavings >= 0 ? `Save $${Math.round(summary.monthlyPaymentSavings).toLocaleString('en-US')}/mo` : `+$${Math.round(Math.abs(summary.monthlyPaymentSavings)).toLocaleString('en-US')}/mo`,
+        subline: summary.breakEvenMonths !== null ? `Break-even in ${summary.breakEvenMonths} mos · Net Benefit: $${Math.round(summary.totalNetBenefit).toLocaleString('en-US')}` : `Clock Reset Warning`
       }}
       onLoadScenario={(data) => {
         if (data.homePrice) setHomePrice(data.homePrice);
@@ -1774,7 +1795,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
     <LenderReadyDossierModal
       isOpen={showDossierModal}
       onClose={() => setShowDossierModal(false)}
-      dealTitle={`Refinance Evaluation · $${Math.round(summary.newLoanAmount).toLocaleString()} (${newTermYears}Y @ ${newInterestRate}%)`}
+      dealTitle={`Refinance Evaluation · $${Math.round(summary.newLoanAmount).toLocaleString('en-US')} (${newTermYears}Y @ ${newInterestRate}%)`}
       dealId={`refi_${Math.round(summary.newLoanAmount)}_${newInterestRate}_${newTermYears}`}
       onExportExcel={handleDownloadExcel}
       onPrintOfficialPdf={handleExportPdf}

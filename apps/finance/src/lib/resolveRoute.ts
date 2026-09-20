@@ -1,4 +1,3 @@
-import { TOOLS_CONFIG } from '../data/tools';
 import { isGuideSlug, GUIDE_SLUGS } from '../data/guideSlugs';
 import { SALARY_LONG_TAIL_MAP, SALARY_LONG_TAIL_PAGES } from '../data/salaryLongTail';
 
@@ -8,52 +7,10 @@ export interface RouteState {
 }
 
 /**
- * Keyword aliases mapping high-intent search URLs onto the canonical tool page.
+ * Calculator / hub URL families, each mapped to its canonical route.
  * Kept in a pure module so the build-time prerenderer and the runtime router
  * resolve every alias to exactly the same destination.
  */
-export const TOOL_ALIASES: Record<string, string> = {
-  'open-csv': 'csv-viewer',
-  'csv': 'csv-viewer',
-  'view-csv': 'csv-viewer',
-  'csv-reader': 'csv-viewer',
-  'open-excel': 'excel-viewer',
-  'xlsx-viewer': 'excel-viewer',
-  'xls-viewer': 'excel-viewer',
-  'excel': 'excel-viewer',
-  'open-parquet': 'parquet-viewer',
-  'parquet-reader': 'parquet-viewer',
-  'sql': 'sql-workbench',
-  'sql-on-csv': 'sql-workbench',
-  'sql-on-parquet': 'sql-workbench',
-  'query-csv': 'sql-workbench',
-  'query-parquet': 'sql-workbench',
-  'csv-sql': 'sql-workbench',
-  'sql-runner': 'sql-workbench',
-  'sql-on-csv-parquet': 'sql-workbench',
-  'duckdb': 'sql-workbench',
-  'sql-console': 'sql-workbench',
-  'convert-parquet-to-csv': 'parquet-to-csv',
-  'convert-csv-to-parquet': 'csv-to-parquet',
-  'convert-csv-to-excel': 'csv-to-excel',
-  'convert-excel-to-csv': 'excel-to-csv',
-  'convert-json-to-csv': 'json-to-csv',
-  'convert-json-to-excel': 'json-to-excel',
-  'convert-excel-to-json': 'excel-to-json',
-  'convert-tsv-to-csv': 'tsv-viewer',
-  'tsv': 'tsv-viewer',
-  'view-tsv': 'tsv-viewer',
-  'tsv-reader': 'tsv-viewer',
-  'geoparquet': 'geoparquet-viewer',
-  'ndjson-viewer': 'json-viewer',
-  'jsonl-viewer': 'json-viewer',
-  'ai-polisher': 'ai-article-polisher',
-  'article-polisher': 'ai-article-polisher',
-  'remove-ai-tone': 'ai-article-polisher',
-  'polish-article': 'ai-article-polisher',
-};
-
-/** Calculator / hub URL families, each mapped to its canonical route. */
 const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
   { pattern: /^\/(?:tools\/)?(?:mortgage-calculator|mortgage)$/, path: '/mortgage-calculator' },
   {
@@ -66,7 +23,7 @@ const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
   },
   {
     // The optional .php suffix applies to BOTH forms. It previously hung off the
-    // `calculators/` alternative only, so /should-i-refinance.php fell through
+    // 'calculators/' alternative only, so /should-i-refinance.php fell through
     // and rendered a 404 page.
     pattern: /^\/(?:tools\/)?(?:refinance-calculator|refinance|(?:calculators\/)?should-i-refinance(?:\.php)?)$/,
     path: '/refinance-calculator',
@@ -86,12 +43,8 @@ const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
     path: '/hard-money-calculator',
   },
   {
-    pattern: /^\/(?:tools\/)?(?:snowflake-cost-calculator|snowflake-calculator|snowflake-warehouse-calculator)$/,
-    path: '/snowflake-cost-calculator',
-  },
-  {
-    pattern: /^\/(?:tools\/)?(?:parquet-storage-calculator|parquet-savings-calculator|parquet-cost-calculator)$/,
-    path: '/parquet-storage-calculator',
+    pattern: /^\/(?:tools\/)?(?:brrrr-calculator|brrrr-method-calculator|brrrr)$/,
+    path: '/brrrr-calculator',
   },
   {
     // 1031 / like-kind exchange. "1031" alone is a real search term, and
@@ -122,55 +75,7 @@ const CALCULATOR_ROUTES: { pattern: RegExp; path: string }[] = [
       /^\/(?:tools\/)?(?:salary-to-hourly-calculator|hourly-to-salary-calculator|salary-to-hourly|hourly-to-salary|salary-calculator)$/,
     path: '/salary-to-hourly-calculator',
   },
-  {
-    pattern: /^\/(?:tools\/)?(?:json-formatter|json-beautifier|json-validator|json-viewer-online|format-json)$/,
-    path: '/json-formatter',
-  },
-  {
-    pattern: /^\/(?:tools\/)?(?:sql-formatter|sql-beautifier|sql-minify|format-sql)$/,
-    path: '/sql-formatter',
-  },
-  {
-    pattern: /^\/(?:tools\/)?(?:media-tools|media|compression-tools)$/,
-    path: '/media-tools',
-  },
-  {
-    pattern: /^\/(?:tools\/)?(?:video-compressor|compress-video|video-compress|reduce-video-size)$/,
-    path: '/video-compressor',
-  },
-  {
-    pattern: /^\/(?:tools\/)?(?:compress-mp4|mp4-compressor|mp4-compress)$/,
-    path: '/compress-mp4',
-  },
-  {
-    pattern: /^\/(?:tools\/)?(?:compress-video-for-discord|discord-video-compressor)$/,
-    path: '/compress-video-for-discord',
-  },
-  {
-    pattern: /^\/(?:tools\/)?(?:image-compressor|compress-image|image-compress|photo-compressor|reduce-image-size)$/,
-    path: '/image-compressor',
-  },
-  {
-    pattern: /^\/(?:tools\/)?(?:compress-png|png-compressor|png-compress)$/,
-    path: '/compress-png',
-  },
-  {
-    pattern: /^\/(?:tools\/)?(?:compress-jpg|compress-jpeg|jpeg-compressor|jpg-compressor)$/,
-    path: '/compress-jpg',
-  },
-  {
-    pattern: /^\/(?:tools\/)?(?:compress-webp|webp-compressor|webp-compress)$/,
-    path: '/compress-webp',
-  },
-  {
-    pattern: /^\/(?:tools\/)?is-it-down$/,
-    path: '/is-it-down',
-  },
   { pattern: /^\/(?:finance-calculator|calculators|financial-calculators|calculator)$/, path: '/finance-calculator' },
-  {
-    pattern: /^\/(?:tools\/)?(?:data-converter|converter|converters|format-converter)$/,
-    path: '/data-converter',
-  },
 ];
 
 /** Informational page aliases. */
@@ -182,7 +87,6 @@ const STATIC_ALIASES: { pattern: RegExp; path: string }[] = [
 ];
 
 export const GUIDE_ALIASES: Record<string, string> = {
-  'duckdb-wasm-in-browser-analytics': 'duckdb-wasm-in-browser-olap',
   'dscr-loan-complete-guide': 'dscr-loans-complete-investor-guide',
   'section-1031-exchange-timeline-rules': 'section-1031-exchange-rules-timeline',
 };
@@ -190,14 +94,11 @@ export const GUIDE_ALIASES: Record<string, string> = {
 const GUIDE_HUB_PATTERN = /^\/(?:guides|guide|docs|blog|articles?)$/;
 const GUIDE_DETAIL_PATTERN = /^\/(?:guides|guide|docs|blog|articles?)\/([a-zA-Z0-9_-]+)$/;
 
-/** Data Workbench aliases. */
-const WORKBENCH_PATTERN = /^\/(?:data-tools|data-workbench|workbench|tools|viewers)$/;
-
 /**
  * Pure path -> route resolution. No window, no DOM: safe to run in the browser,
  * in unit tests, and inside the build-time prerenderer.
  *
- * @param cleanPath pathname only — already stripped of query/hash, trailing slash removed
+ * @param cleanPath pathname only - already stripped of query/hash, trailing slash removed
  */
 export function resolveRoutePath(cleanPath: string): RouteState {
   const raw = !cleanPath ? '/' : cleanPath;
@@ -214,13 +115,6 @@ export function resolveRoutePath(cleanPath: string): RouteState {
     return { path: '/salary-to-hourly-calculator', slug: SALARY_LONG_TAIL_MAP[raw].slug };
   }
 
-  const potentialToolSlug = raw.startsWith('/tools/') ? raw.replace('/tools/', '') : raw.slice(1);
-  const resolvedToolSlug = TOOL_ALIASES[potentialToolSlug] || potentialToolSlug;
-
-  if (resolvedToolSlug && TOOLS_CONFIG[resolvedToolSlug]) {
-    return { path: '/tools/:toolSlug', slug: resolvedToolSlug };
-  }
-
   const guideMatch = raw.match(GUIDE_DETAIL_PATTERN);
   if (guideMatch) {
     const rawSlug = guideMatch[1];
@@ -228,7 +122,7 @@ export function resolveRoutePath(cleanPath: string): RouteState {
     return { path: '/guides/:slug', slug: resolvedSlug };
   }
 
-  // Direct guide slugs indexed by search engines (e.g. /what-is-apache-parquet)
+  // Direct guide slugs indexed by search engines (e.g. /how-to-calculate-dscr)
   const potentialGuideSlug = raw.startsWith('/') ? raw.slice(1) : raw;
   const resolvedPotentialSlug = GUIDE_ALIASES[potentialGuideSlug] || potentialGuideSlug;
   if (isGuideSlug(resolvedPotentialSlug)) {
@@ -237,10 +131,6 @@ export function resolveRoutePath(cleanPath: string): RouteState {
 
   if (GUIDE_HUB_PATTERN.test(raw)) {
     return { path: '/guides' };
-  }
-
-  if (WORKBENCH_PATTERN.test(raw)) {
-    return { path: '/data-tools' };
   }
 
   return { path: raw };
@@ -257,13 +147,9 @@ export function resolveRoutePath(cleanPath: string): RouteState {
  */
 export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/',
-  '/data-tools',
-  '/data-converter',
-  '/tools/:toolSlug',
   '/guides',
   '/guides/:slug',
   '/finance-calculator',
-  '/calculator',
   '/mortgage-calculator',
   '/amortization-schedule-calculator',
   '/mortgage-payoff-calculator',
@@ -272,8 +158,7 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/dscr-loan-calculator',
   '/cap-rate-calculator',
   '/hard-money-calculator',
-  '/snowflake-cost-calculator',
-  '/parquet-storage-calculator',
+  '/brrrr-calculator',
   '/section-1031-exchange-calculator',
   '/1031-exchange-timeline-calculator',
   '/loan-comparison-calculator',
@@ -281,18 +166,6 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/balloon-payment-calculator',
   '/salary-to-hourly-calculator',
   ...SALARY_LONG_TAIL_PAGES.map((p) => p.path),
-  '/media-tools',
-  '/json-formatter',
-  '/sql-formatter',
-  '/video-compressor',
-  '/compress-mp4',
-  '/compress-video-for-discord',
-  '/image-compressor',
-  '/compress-png',
-  '/compress-jpg',
-  '/compress-webp',
-  '/is-it-down',
-  '/ai-article-polisher',
   '/about',
   '/contact',
   '/privacy',
@@ -314,25 +187,13 @@ export const CALCULATOR_CANONICAL_PATHS: ReadonlySet<string> = new Set([
   '/dscr-loan-calculator',
   '/cap-rate-calculator',
   '/hard-money-calculator',
-  '/snowflake-cost-calculator',
-  '/parquet-storage-calculator',
+  '/brrrr-calculator',
   '/section-1031-exchange-calculator',
   '/1031-exchange-timeline-calculator',
   '/loan-comparison-calculator',
   '/commercial-loan-calculator',
   '/balloon-payment-calculator',
   '/salary-to-hourly-calculator',
-]);
-
-export const COMPRESSION_CANONICAL_PATHS: ReadonlySet<string> = new Set([
-  '/media-tools',
-  '/video-compressor',
-  '/compress-mp4',
-  '/compress-video-for-discord',
-  '/image-compressor',
-  '/compress-png',
-  '/compress-jpg',
-  '/compress-webp',
 ]);
 
 /**
@@ -347,54 +208,19 @@ export function isCalculatorRoute(currentPath: string): boolean {
 }
 
 /**
- * Checks if a given path or alias represents a video or image compression tool.
- */
-export function isCompressionRoute(currentPath: string): boolean {
-  if (!currentPath) return false;
-  const cleanPath = currentPath.split('?')[0].split('#')[0].replace(/\/$/, '') || '/';
-  const resolved = resolveRoutePath(cleanPath);
-  return COMPRESSION_CANONICAL_PATHS.has(resolved.path);
-}
-
-/**
  * Resolves any URL path (including bare slugs, aliases, and keyword redirects)
- * into its primary canonical destination path (e.g. /open-csv -> /csv-viewer,
- * /dscr -> /dscr-loan-calculator, /what-is-apache-parquet -> /guides/what-is-apache-parquet).
+ * into its primary canonical destination path (e.g. /dscr -> /dscr-loan-calculator,
+ * /how-to-calculate-dscr -> /guides/how-to-calculate-dscr).
  */
 export function getCanonicalPath(rawPath: string): string {
   if (!rawPath || rawPath === '/') return '/';
   const clean = rawPath.split('?')[0].split('#')[0].replace(/\/$/, '') || '/';
   const resolved = resolveRoutePath(clean);
 
-  if (resolved.path === '/tools/:toolSlug' && resolved.slug) {
-    return TOOLS_CONFIG[resolved.slug]?.path || `/${resolved.slug}`;
-  }
   if (resolved.path === '/guides/:slug' && resolved.slug) {
-    return `/guides/${resolved.slug}`;
+    return '/guides/' + resolved.slug;
   }
   return resolved.path;
-}
-
-export type NavCategoryId = 'home' | 'calculators' | 'data' | 'media' | 'guides' | 'system' | 'static' | 'unknown';
-
-/**
- * Classifies any URL path into its top-level navigation module.
- * Guarantees mutually exclusive classification across the entire platform.
- */
-export function getRouteCategory(rawPath: string): NavCategoryId {
-  const canonical = getCanonicalPath(rawPath);
-  if (canonical === '/') return 'home';
-  if (canonical === '/guides' || canonical.startsWith('/guides/')) return 'guides';
-  if (CALCULATOR_CANONICAL_PATHS.has(canonical)) return 'calculators';
-  if (COMPRESSION_CANONICAL_PATHS.has(canonical)) return 'media';
-  if (canonical === '/is-it-down') return 'system';
-  if (['/about', '/contact', '/privacy', '/terms', '/disclaimer'].includes(canonical)) return 'static';
-  if (canonical === '/data-tools' || canonical === '/data-converter' || canonical === '/json-formatter' || canonical === '/sql-formatter') return 'data';
-
-  const slug = canonical.replace(/^\//, '');
-  if (TOOLS_CONFIG[slug]) return 'data';
-
-  return 'unknown';
 }
 
 /**
@@ -409,29 +235,8 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
     if (!targets.has(url)) targets.set(url, canonical);
   };
 
-  // Homepage (Financial Modeling Engine)
+  // Homepage (Real Estate & Lending Underwriting Hub)
   add('/', '/');
-
-  // Secondary Data Tools Workbench & Aliases
-  add('/data-tools', '/data-tools');
-  add('/workbench', '/data-tools');
-  add('/tools', '/data-tools');
-  add('/viewers', '/data-tools');
-
-  // Universal Data Converter & Aliases
-  add('/data-converter', '/data-converter');
-  add('/converters', '/data-converter');
-  add('/converter', '/data-converter');
-
-  // Tool landing pages (canonical paths)
-  for (const slug of Object.keys(TOOLS_CONFIG)) {
-    add(`/${slug}`, `/${slug}`);
-  }
-
-  // Keyword aliases -> canonical tool page
-  for (const [alias, slug] of Object.entries(TOOL_ALIASES)) {
-    add(`/${alias}`, `/${slug}`);
-  }
 
   // Calculator aliases
   const calculatorAliases: Record<string, string[]> = {
@@ -454,8 +259,7 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
       '/rental-property-cash-flow-calculator',
     ],
     '/hard-money-calculator': ['/hard-money', '/fix-and-flip-calculator', '/hard-money-loan-calculator'],
-    '/snowflake-cost-calculator': ['/snowflake-calculator', '/snowflake-warehouse-calculator'],
-    '/parquet-storage-calculator': ['/parquet-savings-calculator', '/parquet-cost-calculator'],
+    '/brrrr-calculator': ['/brrrr', '/brrrr-method-calculator'],
     '/finance-calculator': ['/calculators', '/financial-calculators', '/calculator'],
     '/section-1031-exchange-calculator': [
       '/1031',
@@ -478,21 +282,8 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
       '/hourly-to-salary',
       '/salary-calculator',
     ],
-    '/json-formatter': ['/json-beautifier', '/json-validator', '/json-viewer-online', '/format-json'],
-    '/sql-formatter': ['/sql-beautifier', '/sql-minify', '/format-sql'],
-    '/video-compressor': ['/compress-video', '/video-compress', '/reduce-video-size'],
-    '/compress-mp4': ['/mp4-compressor', '/mp4-compress'],
-    '/compress-video-for-discord': ['/discord-video-compressor'],
-    '/image-compressor': ['/compress-image', '/image-compress', '/photo-compressor', '/reduce-image-size'],
-    '/compress-png': ['/png-compressor', '/png-compress'],
-    '/compress-jpg': ['/compress-jpeg', '/jpeg-compressor', '/jpg-compressor'],
-    '/compress-webp': ['/webp-compressor', '/webp-compress'],
-    '/media-tools': ['/media', '/compression-tools'],
-    '/is-it-down': [],
   };
   for (const [canonical, aliases] of Object.entries(calculatorAliases)) {
-    // The canonical itself must exist too — /finance-calculator is not in
-    // TOOLS_CONFIG, so without this its aliases pointed at a missing page.
     add(canonical, canonical);
     for (const alias of aliases) add(alias, canonical);
   }
@@ -505,12 +296,12 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
   // Guides
   add('/guides', '/guides');
   for (const slug of GUIDE_SLUGS) {
-    add(`/guides/${slug}`, `/guides/${slug}`);
-    add(`/${slug}`, `/guides/${slug}`);
+    add('/guides/' + slug, '/guides/' + slug);
+    add('/' + slug, '/guides/' + slug);
   }
   for (const [alias, canonicalSlug] of Object.entries(GUIDE_ALIASES)) {
-    add(`/guides/${alias}`, `/guides/${canonicalSlug}`);
-    add(`/${alias}`, `/guides/${canonicalSlug}`);
+    add('/guides/' + alias, '/guides/' + canonicalSlug);
+    add('/' + alias, '/guides/' + canonicalSlug);
   }
 
   // Informational

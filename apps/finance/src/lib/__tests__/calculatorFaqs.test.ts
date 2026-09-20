@@ -52,15 +52,13 @@ describe('Calculator FAQ registry', () => {
   });
 
   it('registers every calculator that used to ship no crawlable content', () => {
-    // These six previously had zero static words. A missing key would silently
+    // These previously had zero static words. A missing key would silently
     // revert them to invisible-without-JavaScript.
     const required = [
       '/mortgage-calculator',
       '/refinance-calculator',
       '/dscr-loan-calculator',
       '/hard-money-calculator',
-      '/snowflake-cost-calculator',
-      '/parquet-storage-calculator',
       '/section-1031-exchange-calculator',
     ];
     for (const path of required) {

@@ -1,5 +1,15 @@
 import React from 'react';
 import { type DscrInputs, type DscrResult, type DscrAmortizationRow } from '../lib/dscrCalculator';
+import { formatUsd, formatUsdCents } from '@tableview/shared';
+
+/*
+ * Printed figures must be identical on every machine. Delegating to the shared
+ * formatters pins the locale to en-US, so a lender PDF never renders "1.234,5"
+ * on a European browser. Defined at module scope: these tables have hundreds of
+ * cells and Intl.NumberFormat construction is comparatively expensive.
+ */
+const fmt = (n: number) => formatUsd(n);
+const fmtCents = (n: number) => formatUsdCents(n);
 
 export interface DscrAnnualAmortizationRow {
   year: number;
@@ -31,7 +41,6 @@ export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
     day: 'numeric',
   });
 
-  const fmt = (n: number) => `$${Math.round(n).toLocaleString()}`;
   const isMonthly = scheduleView === 'monthly';
 
   return (
@@ -234,19 +243,19 @@ export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
                     Month {row.month} <span className="text-slate-500 font-normal text-[9px]">(Yr {row.year})</span>
                   </td>
                   <td className="py-1 px-2 text-right text-slate-900 font-bold">
-                    ${row.payment.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {fmtCents(row.payment)}
                   </td>
                   <td className="py-1 px-2 text-right text-emerald-700 font-semibold">
-                    ${row.principal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {fmtCents(row.principal)}
                   </td>
                   <td className="py-1 px-2 text-right text-rose-700">
-                    ${row.interest.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                    {fmtCents(row.interest)}
                   </td>
                   <td className="py-1 px-2 text-right font-bold text-slate-950">
-                    ${Math.round(row.balance).toLocaleString()}
+                    {fmt(row.balance)}
                   </td>
                   <td className="py-1 px-2 text-right text-slate-700">
-                    ${Math.round(row.accumulatedInterest ?? 0).toLocaleString()}
+                    {fmt(row.accumulatedInterest ?? 0)}
                   </td>
                 </tr>
               ))}
@@ -268,11 +277,11 @@ export const PrintableDscrReport: React.FC<PrintableDscrReportProps> = ({
               {annualSchedule.map((row) => (
                 <tr key={row.year} className="even:bg-slate-50/70">
                   <td className="py-1 px-2 font-sans font-bold text-slate-950">Year {row.year}</td>
-                  <td className="py-1 px-2 text-right text-slate-900 font-bold">${Math.round(row.payment).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-emerald-700 font-semibold">${Math.round(row.principal).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-rose-700">${Math.round(row.interest).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right font-bold text-slate-950">${Math.round(row.balance).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-slate-700">${Math.round(row.accumulatedInterest ?? 0).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right text-slate-900 font-bold">{fmt(row.payment)}</td>
+                  <td className="py-1 px-2 text-right text-emerald-700 font-semibold">{fmt(row.principal)}</td>
+                  <td className="py-1 px-2 text-right text-rose-700">{fmt(row.interest)}</td>
+                  <td className="py-1 px-2 text-right font-bold text-slate-950">{fmt(row.balance)}</td>
+                  <td className="py-1 px-2 text-right text-slate-700">{fmt(row.accumulatedInterest ?? 0)}</td>
                 </tr>
               ))}
             </tbody>

@@ -46,7 +46,8 @@ export const Contact = () => {
   )}`;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 text-slate-800">
+    <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 -my-6 bg-slate-50 text-slate-900 min-h-[calc(100vh-7rem)]">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-12 text-slate-800">
       {/* Header */}
       <div className="mb-12 pb-8 border-b border-slate-200 text-center sm:text-left">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-50 border border-indigo-200 text-indigo-700 mb-4 shadow-2xs">
@@ -300,6 +301,7 @@ export const Contact = () => {
         </div>
       </div>
 
+    </div>
     </div>
   );
 };

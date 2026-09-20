@@ -37,6 +37,9 @@ import {
 } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
 import { InfoTooltip } from '../components/InfoTooltip';
+import { ResultAnnouncer } from '../components/ResultAnnouncer';
+import { composeAnnouncement } from '../lib/resultAnnouncement';
+import { formatUsd, formatUsdSigned } from '@tableview/shared';
 
 const HARD_MONEY_PRESETS: CalculatorPreset<HardMoneyInputs>[] = [
   {
@@ -439,12 +442,12 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               >
                 {copiedLink ? (
                   <>
-                    <Check className="size-4 text-emerald-600" />
-                    <span className="text-emerald-600 font-medium">Link Copied!</span>
+                    <Check className="size-4 text-emerald-700" />
+                    <span className="text-emerald-700 font-medium">Link Copied!</span>
                   </>
                 ) : (
                   <>
-                    <Share2 className="size-4 text-amber-600" />
+                    <Share2 className="size-4 text-amber-700" />
                     <span>Share Deal</span>
                   </>
                 )}
@@ -469,17 +472,17 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
           <div className="lg:col-span-5 space-y-6">
             <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-5">
               <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pb-3">
-                <Hammer className="size-4.5 text-amber-600" />
+                <Hammer className="size-4.5 text-amber-700" />
                 <span>Property & Renovation Numbers</span>
               </h2>
 
               {/* Purchase Price */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex justify-between">
+                <label htmlFor="hardmoney-acquisition-purchase-price" className="block text-xs font-semibold text-slate-700 mb-1.5 flex justify-between">
                   <span>Acquisition / Purchase Price</span>
                   <span className="text-slate-900 font-mono font-bold">{currencyFmt(purchasePrice)}</span>
                 </label>
-                <CurrencyInput
+                <CurrencyInput id="hardmoney-acquisition-purchase-price"
                   value={purchasePrice}
                   onChange={(v) => setPurchasePrice(Math.max(0, v))}
                   className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
@@ -489,10 +492,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               {/* Rehab Budget & ARV */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="hardmoney-rehab-budget" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Rehab Budget ($)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="hardmoney-rehab-budget"
                     value={rehabBudget}
                     onChange={(v) => setRehabBudget(Math.max(0, v))}
                     className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
@@ -501,7 +504,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
                 <div>
                   <div className="flex items-center gap-1 mb-1.5">
-                    <label className="block text-xs font-semibold text-slate-700">
+                    <label htmlFor="hardmoney-after-repair-value-arv" className="block text-xs font-semibold text-slate-700">
                       After Repair Value (ARV)
                     </label>
                     <InfoTooltip
@@ -509,7 +512,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                       content="The anticipated resale value of the property once all construction, cosmetic updates, and repairs are completed."
                     />
                   </div>
-                  <CurrencyInput
+                  <CurrencyInput id="hardmoney-after-repair-value-arv"
                     value={afterRepairValue}
                     onChange={(v) => setAfterRepairValue(Math.max(0, v))}
                     className="py-2 text-base sm:text-sm font-mono font-bold text-amber-700 focus:border-amber-500"
@@ -519,14 +522,14 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
               {/* Financing Terms */}
               <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pt-3 pb-3">
-                <DollarSign className="size-4.5 text-emerald-600" />
+                <DollarSign className="size-4.5 text-emerald-700" />
                 <span>Hard Money Loan Terms</span>
               </h2>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <div className="flex items-center gap-1 mb-1.5">
-                    <label className="block text-xs font-semibold text-slate-700">
+                    <label htmlFor="hardmoney-purchase-ltv" className="block text-xs font-semibold text-slate-700">
                       Purchase LTV (%)
                     </label>
                     <InfoTooltip
@@ -534,7 +537,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                       content="The percentage of the purchase price funded by the lender. Borrowers cover the remaining percentage as down payment."
                     />
                   </div>
-                  <NumericInput
+                  <NumericInput id="hardmoney-purchase-ltv"
                     value={ltvPercent}
                     onChange={(v) => setLtvPercent(Math.max(0, Math.min(100, v)))}
                     suffix="%"
@@ -543,10 +546,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="hardmoney-rehab-financed" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Rehab Financed (%)
                   </label>
-                  <NumericInput
+                  <NumericInput id="hardmoney-rehab-financed"
                     value={rehabFinancedPercent}
                     onChange={(v) => setRehabFinancedPercent(Math.max(0, Math.min(100, v)))}
                     suffix="%"
@@ -557,10 +560,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="hardmoney-interest-rate" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Interest Rate (%)
                   </label>
-                  <NumericInput
+                  <NumericInput id="hardmoney-interest-rate"
                     value={interestRate}
                     onChange={(v) => setInterestRate(Math.max(0, v))}
                     suffix="%"
@@ -571,7 +574,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
                 <div>
                   <div className="flex items-center gap-1 mb-1.5">
-                    <label className="block text-xs font-semibold text-slate-700">
+                    <label htmlFor="hardmoney-origination-points" className="block text-xs font-semibold text-slate-700">
                       Origination Points
                     </label>
                     <InfoTooltip
@@ -579,7 +582,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                       content="Upfront fees charged by the private lender (typically 1 to 3 points, where 1 point = 1% of total loan amount)."
                     />
                   </div>
-                  <NumericInput
+                  <NumericInput id="hardmoney-origination-points"
                     value={originationPoints}
                     onChange={(v) => setOriginationPoints(Math.max(0, v))}
                     suffix="%"
@@ -589,10 +592,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="hardmoney-underwriting-admin" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Underwriting / Admin ($)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="hardmoney-underwriting-admin"
                     value={lenderUnderwritingFees}
                     onChange={(v) => setLenderUnderwritingFees(Math.max(0, v))}
                     className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
@@ -619,10 +622,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="hardmoney-monthly-holding-cost" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Monthly Holding Cost ($)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="hardmoney-monthly-holding-cost"
                     value={monthlyHoldingCosts}
                     onChange={(v) => setMonthlyHoldingCosts(Math.max(0, v))}
                     className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
@@ -633,10 +636,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               {/* Selling Costs */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="hardmoney-realtor-commission" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Realtor Commission (%)
                   </label>
-                  <NumericInput
+                  <NumericInput id="hardmoney-realtor-commission"
                     value={realtorCommissionPercent}
                     onChange={(v) => setRealtorCommissionPercent(Math.max(0, v))}
                     suffix="%"
@@ -646,10 +649,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="hardmoney-exit-closing-cost" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Exit Closing Cost (%)
                   </label>
-                  <NumericInput
+                  <NumericInput id="hardmoney-exit-closing-cost"
                     value={exitClosingCostsPercent}
                     onChange={(v) => setExitClosingCostsPercent(Math.max(0, v))}
                     suffix="%"
@@ -663,6 +666,21 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
           {/* Right Column: Profit & 70% Rule Dashboard (7 cols) */}
           <div id="hardmoney-results" className="lg:col-span-7 space-y-6 scroll-mt-20">
+            {/* Announce the recomputed profit and 70% rule for screen readers. */}
+            <ResultAnnouncer
+              message={composeAnnouncement(
+                [
+                  { label: 'net profit', value: formatUsdSigned(result.netProfit) },
+                  { label: 'return on investment', value: `${result.roiPercent.toFixed(1)}%` },
+                  { label: 'maximum allowable offer', value: formatUsd(result.maxAllowableOffer70Rule) },
+                ],
+                {
+                  context: 'Results updated',
+                  trailing: `${result.verdictLabel}. ${result.is70RuleCompliant ? 'Meets the 70% rule.' : 'Exceeds the 70% rule threshold.'}`,
+                }
+              )}
+            />
+
             {/* Net Profit Hero Card */}
             <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
               <div className="flex flex-wrap items-start justify-between gap-4">
@@ -673,7 +691,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <div className="flex items-baseline gap-3 mt-1">
                     <span
                       className={`text-4xl sm:text-5xl font-black font-mono tracking-tight ${
-                        result.netProfit >= 0 ? 'text-emerald-600' : 'text-red-600'
+                        result.netProfit >= 0 ? 'text-emerald-700' : 'text-red-600'
                       }`}
                     >
                       {result.netProfit >= 0 ? '+' : ''}
@@ -697,7 +715,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
                 <div className="text-right">
                   <span className="text-xs text-slate-500 block">Cash-on-Cash Return</span>
-                  <span className="text-2xl font-black font-mono text-amber-600 mt-0.5 block">
+                  <span className="text-2xl font-black font-mono text-amber-700 mt-0.5 block">
                     {result.roiPercent}%
                   </span>
                   <span className="text-[11px] text-slate-500">
@@ -751,15 +769,15 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">
                   {currencyFmt(result.totalLoanAmount)}
                 </span>
-                <span className="text-[10px] text-slate-400">Purchase + Rehab</span>
+                <span className="text-[10px] text-slate-500">Purchase + Rehab</span>
               </div>
 
               <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
                 <span className="text-[11px] text-slate-500 block">Initial Cash</span>
-                <span className="text-base font-bold font-mono text-amber-600 mt-0.5 block">
+                <span className="text-base font-bold font-mono text-amber-700 mt-0.5 block">
                   {currencyFmt(result.initialCashRequired)}
                 </span>
-                <span className="text-[10px] text-slate-400">Down + Points + Fees</span>
+                <span className="text-[10px] text-slate-500">Down + Points + Fees</span>
               </div>
 
               <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
@@ -767,7 +785,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">
                   {currencyDecFmt(result.monthlyInterestPayment)}
                 </span>
-                <span className="text-[10px] text-slate-400">Interest-only</span>
+                <span className="text-[10px] text-slate-500">Interest-only</span>
               </div>
 
               <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
@@ -775,7 +793,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">
                   {currencyFmt(result.totalProjectCost)}
                 </span>
-                <span className="text-[10px] text-slate-400">All-in basis</span>
+                <span className="text-[10px] text-slate-500">All-in basis</span>
               </div>
             </div>
 
@@ -823,7 +841,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <span className="text-slate-600">
                     4. Holding Interest ({projectDurationMonths} mos @ {interestRate}%)
                   </span>
-                  <span className="text-amber-600 font-semibold">{currencyDecFmt(result.totalInterestPaid)}</span>
+                  <span className="text-amber-700 font-semibold">{currencyDecFmt(result.totalInterestPaid)}</span>
                 </div>
                 <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
                   <span className="text-slate-600">
@@ -903,15 +921,15 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </p>
                 <ul className="space-y-2 pt-1">
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
                     <span><strong>8% – 10% Transaction Costs:</strong> Buy/sell closing costs, title insurance, transfer taxes, and 5%–6% exit realtor commissions.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
                     <span><strong>6% – 8% Financing & Holding:</strong> Lender origination points, monthly interest-only payments, property taxes, insurance, and utilities during construction.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
                     <span><strong>12% – 15% Net Investor Profit:</strong> The target profit spread compensating the operator for risk, capital outlay, and general contracting execution.</span>
                   </li>
                 </ul>
@@ -935,7 +953,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-100">
                   <span className="text-slate-500">Less: Estimated Rehab Budget</span>
-                  <span className="text-rose-600 font-semibold">−$65,000</span>
+                  <span className="text-rose-700 font-semibold">−$65,000</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-100">
                   <span className="text-slate-600 font-bold">Maximum Allowable Offer (MAO)</span>
@@ -994,7 +1012,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <td className="p-3.5 text-slate-800">Turnkey rental buy-and-hold, BRRRR cash-out refinance</td>
                     <td className="p-3.5 text-slate-700 font-semibold">14 to 21 Days</td>
                     <td className="p-3.5 text-slate-700">6.8% – 8.5% (30-Year Fixed / 10-Yr I/O)</td>
-                    <td className="p-3.5 text-rose-600 font-medium">No (Must be habitable)</td>
+                    <td className="p-3.5 text-rose-700 font-medium">No (Must be habitable)</td>
                     <td className="p-3.5 text-slate-700">Property gross rental income vs PITIA debt</td>
                   </tr>
                   <tr className="hover:bg-slate-50/80">
@@ -1008,9 +1026,9 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <tr className="hover:bg-slate-50/80">
                     <td className="p-3.5 font-bold text-slate-700">Conventional Fannie/Freddie</td>
                     <td className="p-3.5 text-slate-800">Primary residence or low-leverage turnkey rental</td>
-                    <td className="p-3.5 text-rose-600 font-semibold">30 to 45+ Days</td>
+                    <td className="p-3.5 text-rose-700 font-semibold">30 to 45+ Days</td>
                     <td className="p-3.5 text-slate-700">6.2% – 7.2% (15 or 30-Year Fixed Amortized)</td>
-                    <td className="p-3.5 text-rose-600 font-medium">No (Rigid inspection standards)</td>
+                    <td className="p-3.5 text-rose-700 font-medium">No (Rigid inspection standards)</td>
                     <td className="p-3.5 text-slate-700">Strict personal W-2 income & &lt;45% DTI ceiling</td>
                   </tr>
                 </tbody>
@@ -1022,7 +1040,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
               <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
-                <DollarSign className="size-5 text-amber-600" />
+                <DollarSign className="size-5 text-amber-700" />
                 Dutch Interest vs As-Incurred Interest
               </h3>
               <p className="text-xs text-slate-600 leading-relaxed">
@@ -1033,7 +1051,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <span className="font-semibold text-emerald-700">As-Incurred Interest:</span> You only pay interest on the purchase loan amount plus the exact rehab funds disbursed so far. This saves $2,000–$6,000 on typical flips.
                 </div>
                 <div className="p-2.5 rounded-lg bg-slate-50 border border-slate-200">
-                  <span className="font-semibold text-rose-600">Dutch Interest:</span> The lender charges interest on the full approved loan balance (including unreleased construction funds sitting in escrow) from day one.
+                  <span className="font-semibold text-rose-700">Dutch Interest:</span> The lender charges interest on the full approved loan balance (including unreleased construction funds sitting in escrow) from day one.
                 </div>
               </div>
             </div>
@@ -1084,14 +1102,14 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">Pricing &amp; Property Limits</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">100% Free (Unlimited Deals)</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Limited to 15, then $14-$29/mo</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Limited to 15, then $14-$29/mo</td>
                     <td className="py-3 px-4 text-slate-600">Free (Lead Gen Funnel)</td>
                   </tr>
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">Account Registration Required</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">None (Instant In-Browser)</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Mandatory Account</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Mandatory Contact Form</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Mandatory Account</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Mandatory Contact Form</td>
                   </tr>
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">70% Rule MAO + Live ROI Analysis</td>
@@ -1109,19 +1127,19 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     <td className="py-3 px-4 font-semibold text-slate-900">Full Excel / CSV Workbook Export</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">1-Click Full Model Export</td>
                     <td className="py-3 px-4 text-amber-700">PDF Report (Paid Plan Only)</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Not Supported</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Not Supported</td>
                   </tr>
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">Shareable Pre-filled URL</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">Instant 1-Click Link</td>
                     <td className="py-3 px-4 text-slate-600">Paid Tier Feature</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Not Supported</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Not Supported</td>
                   </tr>
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">In-Browser Privacy</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">Yes (Zero Data Egress)</td>
                     <td className="py-3 px-4 text-slate-600">Stored in Cloud Database</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Lender Sales Call List</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Lender Sales Call List</td>
                   </tr>
                 </tbody>
               </table>
@@ -1150,7 +1168,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
             Net Flip Profit
           </span>
           <div className="text-xl font-black font-mono leading-tight flex items-baseline gap-2">
-            <span className={result.netProfit >= 0 ? 'text-emerald-600' : 'text-rose-600'}>
+            <span className={result.netProfit >= 0 ? 'text-emerald-700' : 'text-rose-700'}>
               {currencyFmt(result.netProfit)}
             </span>
             <span className="text-xs font-semibold text-slate-500 font-sans">

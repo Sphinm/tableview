@@ -1,6 +1,10 @@
 import React from 'react';
 import { type RefinanceInputs, type RefinanceSummary, type AnnualRefinanceRow, type RefinanceScheduleRow } from '../lib/refinanceCalculator';
 import { useAuth } from '../lib/useAuth';
+import { formatUsd } from '@tableview/shared';
+
+/* Locale-explicit USD so printed figures match on every machine. */
+const fmt = (n: number) => formatUsd(n);
 
 interface PrintableRefinanceReportProps {
   inputs: RefinanceInputs;
@@ -27,7 +31,6 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
   const isWhiteLabel = Boolean(user?.plan === 'pro' && user?.branding?.enabled && (user?.branding?.companyName || user?.branding?.agentName));
   const branding = user?.branding;
 
-  const fmt = (n: number) => `$${Math.round(n).toLocaleString()}`;
   const isPositiveSavings = summary.monthlyPaymentSavings > 0;
 
   return (
@@ -122,8 +125,8 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
             </tr>
             <tr>
               <td className="py-2 px-4 text-slate-600">Interest Rate (Note Rate)</td>
-              <td className="py-2 px-4 text-right font-bold font-mono text-rose-600">{inputs.currentInterestRate.toFixed(3)}%</td>
-              <td className="py-2 px-4 text-right font-bold font-mono text-emerald-600">{inputs.newInterestRate.toFixed(3)}%</td>
+              <td className="py-2 px-4 text-right font-bold font-mono text-rose-700">{inputs.currentInterestRate.toFixed(3)}%</td>
+              <td className="py-2 px-4 text-right font-bold font-mono text-emerald-700">{inputs.newInterestRate.toFixed(3)}%</td>
               <td className="py-2 px-4 text-right font-bold font-mono text-emerald-700">
                 {(inputs.currentInterestRate - inputs.newInterestRate).toFixed(3)}% lower
               </td>
@@ -232,18 +235,18 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
                 <tr key={row.month} className="even:bg-slate-50/70">
                   <td className="py-0.5 px-1.5 font-sans font-bold text-slate-900">{row.month}</td>
                   <td className="py-0.5 px-1.5 font-sans text-slate-600">Yr {row.year}</td>
-                  <td className="py-0.5 px-1.5 text-right">${Math.round(row.oldBalance).toLocaleString()}</td>
-                  <td className="py-0.5 px-1.5 text-right font-semibold text-slate-900">${Math.round(row.newBalance).toLocaleString()}</td>
-                  <td className="py-0.5 px-1.5 text-right text-slate-600">${Math.round(row.oldPayment).toLocaleString()}</td>
-                  <td className="py-0.5 px-1.5 text-right text-slate-600">${Math.round(row.newPayment).toLocaleString()}</td>
-                  <td className={`py-0.5 px-1.5 text-right font-semibold ${row.monthlySavings >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
-                    ${Math.round(row.monthlySavings).toLocaleString()}
+                  <td className="py-0.5 px-1.5 text-right">{fmt(row.oldBalance)}</td>
+                  <td className="py-0.5 px-1.5 text-right font-semibold text-slate-900">{fmt(row.newBalance)}</td>
+                  <td className="py-0.5 px-1.5 text-right text-slate-600">{fmt(row.oldPayment)}</td>
+                  <td className="py-0.5 px-1.5 text-right text-slate-600">{fmt(row.newPayment)}</td>
+                  <td className={`py-0.5 px-1.5 text-right font-semibold ${row.monthlySavings >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                    {fmt(row.monthlySavings)}
                   </td>
-                  <td className={`py-0.5 px-1.5 text-right font-semibold ${row.cumulativeSavings >= 0 ? 'text-emerald-700' : 'text-rose-600'}`}>
-                    ${Math.round(row.cumulativeSavings).toLocaleString()}
+                  <td className={`py-0.5 px-1.5 text-right font-semibold ${row.cumulativeSavings >= 0 ? 'text-emerald-700' : 'text-rose-700'}`}>
+                    {fmt(row.cumulativeSavings)}
                   </td>
                   <td className="py-0.5 px-1.5 text-right font-bold text-indigo-700">
-                    ${Math.round(row.equityDifference).toLocaleString()}
+                    {fmt(row.equityDifference)}
                   </td>
                 </tr>
               ))}
@@ -266,12 +269,12 @@ export const PrintableRefinanceReport: React.FC<PrintableRefinanceReportProps> =
               {annualSchedule.map((row) => (
                 <tr key={row.year} className="even:bg-slate-50/70">
                   <td className="py-1 px-2 font-sans font-bold text-slate-900">{row.year}</td>
-                  <td className="py-1 px-2 text-right">${Math.round(row.oldEndingBalance).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right font-semibold text-slate-900">${Math.round(row.newEndingBalance).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-slate-600">${Math.round(row.oldAnnualInterest).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right text-slate-600">${Math.round(row.newAnnualInterest).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right font-semibold text-emerald-700">${Math.round(row.annualSavings).toLocaleString()}</td>
-                  <td className="py-1 px-2 text-right font-bold text-indigo-700">${Math.round(row.endingEquityDiff).toLocaleString()}</td>
+                  <td className="py-1 px-2 text-right">{fmt(row.oldEndingBalance)}</td>
+                  <td className="py-1 px-2 text-right font-semibold text-slate-900">{fmt(row.newEndingBalance)}</td>
+                  <td className="py-1 px-2 text-right text-slate-600">{fmt(row.oldAnnualInterest)}</td>
+                  <td className="py-1 px-2 text-right text-slate-600">{fmt(row.newAnnualInterest)}</td>
+                  <td className="py-1 px-2 text-right font-semibold text-emerald-700">{fmt(row.annualSavings)}</td>
+                  <td className="py-1 px-2 text-right font-bold text-indigo-700">{fmt(row.endingEquityDiff)}</td>
                 </tr>
               ))}
             </tbody>

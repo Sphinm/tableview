@@ -164,4 +164,176 @@ describe('Local Parameter Extractor & Instant Math Engine (0ms, 100% Offline)', 
       expect(res2?.params.find((p) => p.key === 'interestRate')?.value).toBe(7.25);
     });
   });
+
+  /**
+   * Regression suite for defects found by running the extractor over realistic
+   * broker email. Each case below previously produced a wrong number or failed
+   * outright; they are recorded so the same mistakes cannot return.
+   */
+  describe('Regression: ordinary English words must not corrupt amounts', () => {
+    it('does not read the "w" of "with" as the Chinese 万 shorthand', () => {
+      // "$1,200,000 with 20% down" used to parse as "000 w" -> 0, which then
+      // failed the >= 10000 price check and returned null for the whole deal.
+      // After the boundary fix it briefly became $12,000,000,000.
+      expect(parseAmount('$1,200,000 with 20% down')).toBe(1200000);
+      const res = extractAndCalculateDeal(
+        'New construction townhome listed at $1,200,000 with 20% down payment and 5.875% rate over 15 years.'
+      );
+      expect(res).not.toBeNull();
+      expect(res?.params.find((p) => p.key === 'price')?.value).toBe(1200000);
+    });
+
+    it('does not read the "m" of "mortgage" as the million shorthand', () => {
+      expect(parseAmount('$600,000 mortgage')).toBe(600000);
+      const res = extractAndCalculateDeal(
+        'I want to refinance my $600,000 mortgage. Current rate 7.25%, new rate 6.25%, 30 year.'
+      );
+      expect(res).not.toBeNull();
+      // A figure described as a mortgage is the BALANCE, not a purchase price.
+      expect(res?.targetCalculator).toBe('refinance');
+      expect(res?.params.find((p) => p.key === 'origLoan')?.value).toBe(600000);
+    });
+
+    it('still parses genuine unit shorthands', () => {
+      expect(parseAmount('$850k')).toBe(850000);
+      expect(parseAmount('1.2M')).toBe(1200000);
+      expect(parseAmount('85万')).toBe(850000);
+      expect(parseAmount('$850,000')).toBe(850000);
+      expect(parseAmount('1,200k')).toBe(1200000);
+    });
+
+    it('does not read the "k" of a following word as thousands', () => {
+      // "k" must be a suffix, not the first letter of the next word.
+      expect(parseAmount('$450,000 kitchen renovation')).toBe(450000);
+    });
+  });
+
+  describe('Regression: price selection', () => {
+    it('prefers a plainly stated price over a shorthand down payment', () => {
+      // "Property is 450000 and I have 90k to put down" previously picked the
+      // 90k down payment as the price.
+      const res = extractAndCalculateDeal('Property is 450000 and I have 90k to put down.');
+      expect(res?.params.find((p) => p.key === 'price')?.value).toBe(450000);
+    });
+
+    it('ignores smaller fee and escrow amounts when a price is stated', () => {
+      const res = extractAndCalculateDeal(
+        'Purchase price $700,000. Taxes $8,400/yr, insurance $1,800/yr, HOA $250/mo, 25% down at 7.125%.'
+      );
+      expect(res?.params.find((p) => p.key === 'price')?.value).toBe(700000);
+      expect(res?.params.find((p) => p.key === 'interestRate')?.value).toBe(7.125);
+    });
+
+    it('does not mistake an annual property tax figure for the price', () => {
+      const res = extractAndCalculateDeal(
+        'Annual property tax is $11,500. Home value $575,000. 20% down at 6.875% for 30 years.'
+      );
+      expect(res?.params.find((p) => p.key === 'price')?.value).toBe(575000);
+    });
+  });
+
+  describe('Regression: hyphenated loan terms', () => {
+    it('parses "30-year", "15-year" and "30-yr" as the loan term', () => {
+      // The term regex required whitespace before the unit, so the standard
+      // English spelling "30-year" was silently defaulted to 30 even when the
+      // text said 15.
+      const r15 = extractAndCalculateDeal('A $1,200,000 townhouse with 20% down at 5.875% over a 15-year term.');
+      expect(r15?.params.find((p) => p.key === 'loanTerm')?.value).toBe(15);
+      expect(r15?.params.find((p) => p.key === 'loanTerm')?.isAssumed).toBe(false);
+
+      const r30 = extractAndCalculateDeal('Looking at a $650,000 home. 20% down, 6.625% 30-year fixed.');
+      expect(r30?.params.find((p) => p.key === 'loanTerm')?.value).toBe(30);
+      expect(r30?.params.find((p) => p.key === 'loanTerm')?.isAssumed).toBe(false);
+
+      const rYr = extractAndCalculateDeal('$500,000 property, 25% down, 7% 20-yr.');
+      expect(rYr?.params.find((p) => p.key === 'loanTerm')?.value).toBe(20);
+    });
+  });
+
+  describe('Regression: rate fidelity', () => {
+    it('displays the quoted rate exactly, not rounded to two decimals', () => {
+      // Rates are quoted to an eighth. The URL carried 5.875 while the chip
+      // read "5.88%", so the panel disagreed with the input.
+      const res = extractAndCalculateDeal('$1,200,000 with 20% down at 5.875% over 15 years.');
+      expect(res?.params.find((p) => p.key === 'interestRate')?.formattedValue).toBe('5.875%');
+      expect(res?.prefilledUrl).toContain('rate=5.875');
+    });
+
+    it('trims trailing zeros instead of rendering 7.500%', () => {
+      const res = extractAndCalculateDeal('$850,000 rental, 25% down at 7.5% for 30 years, rent $7,200/mo.');
+      expect(res?.params.find((p) => p.key === 'interestRate')?.formattedValue).toBe('7.5%');
+    });
+  });
+
+  describe('Regression: intent routing', () => {
+    it('routes a fix-and-flip listing to the hard money calculator', () => {
+      // "flip" / "hard money" / "rehab" were detected but the flag was never
+      // consumed, so flips were modelled as a conventional purchase and the
+      // rehab budget, ARV and bridge rate were all discarded.
+      const res = extractAndCalculateDeal(
+        'Looking at a flip: purchase $400,000, rehab $75,000, ARV $600,000. Need a hard money loan at 12%.'
+      );
+      expect(res?.targetCalculator).toBe('hard_money');
+      expect(res?.targetRoute).toBe('/hard-money-calculator');
+      expect(res?.params.find((p) => p.key === 'price')?.value).toBe(400000);
+      expect(res?.params.find((p) => p.key === 'rehab')?.value).toBe(75000);
+      expect(res?.params.find((p) => p.key === 'arv')?.value).toBe(600000);
+      expect(res?.params.find((p) => p.key === 'interestRate')?.value).toBe(12);
+      expect(res?.prefilledUrl).toContain('/hard-money-calculator?');
+      expect(res?.prefilledUrl).toContain('arv=600000');
+    });
+
+    it('routes a rate-and-term refinance to the refinance calculator', () => {
+      const res = extractAndCalculateDeal(
+        'I want to refinance my $600,000 mortgage. Current rate 7.25%, new rate 6.25%, 30 year.'
+      );
+      expect(res?.targetCalculator).toBe('refinance');
+      expect(res?.targetRoute).toBe('/refinance-calculator');
+      // The new rate drives the decision, so it is the primary rate shown.
+      expect(res?.params.find((p) => p.key === 'interestRate')?.value).toBe(6.25);
+      expect(res?.params.find((p) => p.key === 'currentRate')?.value).toBe(7.25);
+      // A loan balance implies a property value; refinance needs both.
+      expect(res?.params.find((p) => p.key === 'price')?.value).toBe(750000);
+    });
+
+    it('keeps the property value and the balance apart on a cash-out refinance', () => {
+      // Both figures look alike and the balance sits one word after "home".
+      const res = extractAndCalculateDeal(
+        'Cash out refinance on a $900,000 home, owe $500,000, want 6.75% 30-year.'
+      );
+      expect(res?.targetCalculator).toBe('refinance');
+      expect(res?.params.find((p) => p.key === 'price')?.value).toBe(900000);
+      expect(res?.params.find((p) => p.key === 'origLoan')?.value).toBe(500000);
+      expect(res?.params.find((p) => p.key === 'interestRate')?.value).toBe(6.75);
+    });
+
+    it('does not route an ordinary purchase as a refinance', () => {
+      const res = extractAndCalculateDeal(
+        'Looking at a $650,000 single family home in Seattle. 20% down, 6.625% 30-year fixed, owner occupied.'
+      );
+      expect(res?.targetCalculator).toBe('mortgage');
+    });
+  });
+
+  describe('Regression: price selection by context', () => {
+    it('ignores a closing-cost figure mentioned before the price', () => {
+      const res = extractAndCalculateDeal(
+        'Closing costs around $12,000 and the rate is 7%. The property itself is $525,000, 20% down.'
+      );
+      expect(res?.params.find((p) => p.key === 'price')?.value).toBe(525000);
+      expect(res?.params.find((p) => p.key === 'interestRate')?.value).toBe(7);
+    });
+
+    it('ignores an annual tax figure stated immediately before the value', () => {
+      const res = extractAndCalculateDeal(
+        'Annual property tax is $11,500. Home value $575,000. 20% down at 6.875% for 30 years.'
+      );
+      expect(res?.params.find((p) => p.key === 'price')?.value).toBe(575000);
+    });
+
+    it('prefers a property value over a shorthand down payment', () => {
+      const res = extractAndCalculateDeal('Property is 450000 and I have 90k to put down.');
+      expect(res?.params.find((p) => p.key === 'price')?.value).toBe(450000);
+    });
+  });
 });

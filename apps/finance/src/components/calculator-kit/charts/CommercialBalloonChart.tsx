@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { CalendarClock } from 'lucide-react';
 import type { CommercialAmortizationYear } from '../../../lib/commercialLoanCalculator';
+import { formatUsd } from '@tableview/shared';
 
 interface CommercialBalloonChartProps {
   schedule: CommercialAmortizationYear[];
@@ -82,7 +83,7 @@ export const CommercialBalloonChart = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1 rounded-md bg-amber-50 text-amber-600 border border-amber-200">
+            <span className="p-1 rounded-md bg-amber-50 text-amber-700 border border-amber-200">
               <CalendarClock className="size-4" />
             </span>
             <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
@@ -115,6 +116,12 @@ export const CommercialBalloonChart = ({
       {/* SVG Canvas */}
       <div className="relative w-full overflow-hidden">
         <svg
+          /*
+           * Complex image. The balloon date and remaining balance are the point
+           * of this chart, so they lead the description.
+           */
+          role="img"
+          aria-label={`${title}. Loan of ${formatUsd(originalLoanAmount)} amortising over ${amortizationYears} years, with a balloon due at year ${balloonYears} leaving ${formatUsd(balloonBalance)} outstanding.`}
           viewBox={`0 0 ${width} ${height}`}
           style={{ touchAction: 'pan-y' }}
           className="w-full h-auto select-none cursor-crosshair"

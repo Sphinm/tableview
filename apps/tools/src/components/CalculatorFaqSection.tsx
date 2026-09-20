@@ -32,8 +32,13 @@ export const CalculatorFaqSection = ({
 
   return (
     <section className={`w-full max-w-7xl mx-auto space-y-4 ${className}`}>
-      <h3 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-        <HelpCircle className="size-5 text-indigo-600" />
+      {/*
+        No fixed colour: this block renders on both the dark shell and the light
+        calculator pages, and a hard-coded value is invisible on one of them (a
+        light heading measured 1:1 against the light content background).
+      */}
+      <h3 className="text-xl font-bold flex items-center gap-2">
+        <HelpCircle className="size-5 opacity-70" />
         {title}
       </h3>
       <div className="space-y-3">

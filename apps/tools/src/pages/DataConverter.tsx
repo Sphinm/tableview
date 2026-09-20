@@ -289,8 +289,8 @@ export const DataConverter: React.FC = () => {
 
       {/* Quick Conversion Presets */}
       <div className="mb-8">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-slate-900 uppercase tracking-wider mb-3">
-          <Sparkles className="size-3.5 text-amber-500" />
+        <div className="flex items-center gap-1.5 text-xs font-bold text-neutral-200 uppercase tracking-wider mb-3">
+          <Sparkles className="size-3.5 text-amber-400" />
           <span>Popular Conversion Pairs</span>
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3">
@@ -383,7 +383,7 @@ export const DataConverter: React.FC = () => {
                   onClick={() => setTargetFormat(fmt.id)}
                   className={`px-3 py-1.5 rounded-xl text-xs font-semibold inline-flex items-center gap-1.5 transition-all cursor-pointer ${
                     isSelected
-                      ? 'bg-emerald-600 text-white shadow-xs'
+                      ? 'bg-emerald-700 text-white shadow-xs'
                       : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
                 >
@@ -475,7 +475,7 @@ export const DataConverter: React.FC = () => {
                 <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500 mt-1">
                   <span>Size: <strong className="text-slate-800">{fileSize ? formatBytes(fileSize) : '—'}</strong></span>
                   <span>•</span>
-                  <span>Total Rows: <strong className="text-slate-800">{totalRowCount.toLocaleString()}</strong></span>
+                  <span>Total Rows: <strong className="text-slate-800">{totalRowCount.toLocaleString('en-US')}</strong></span>
                   <span>•</span>
                   <span>Columns: <strong className="text-slate-800">{columns.length}</strong></span>
                 </div>
@@ -536,7 +536,7 @@ export const DataConverter: React.FC = () => {
                 type="button"
                 onClick={handleConvert}
                 disabled={isConverting}
-                className="px-6 py-3 rounded-2xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer transition-transform active:scale-95 disabled:opacity-50"
+                className="px-6 py-3 rounded-2xl bg-emerald-700 hover:bg-emerald-800 text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 cursor-pointer transition-transform active:scale-95 disabled:opacity-50"
               >
                 {isConverting ? (
                   <>
@@ -582,7 +582,7 @@ export const DataConverter: React.FC = () => {
               <button
                 type="button"
                 onClick={handleConvert}
-                className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-2xs transition-all cursor-pointer"
+                className="px-4 py-2 rounded-xl bg-emerald-700 hover:bg-emerald-800 text-white text-xs font-bold shadow-2xs transition-all cursor-pointer"
               >
                 Download Again
               </button>
@@ -595,7 +595,7 @@ export const DataConverter: React.FC = () => {
               <div className="flex items-center gap-2">
                 <Table className="size-4 text-slate-500" />
                 <span className="text-xs font-bold text-slate-800">Dataset Preview (First 5 Rows)</span>
-                <span className="text-[10px] text-slate-400 font-mono">Total {totalRowCount.toLocaleString()} rows</span>
+                <span className="text-[10px] text-slate-400 font-mono">Total {totalRowCount.toLocaleString('en-US')} rows</span>
               </div>
             </div>
 
@@ -638,12 +638,12 @@ export const DataConverter: React.FC = () => {
       </div>
 
       {/* Knowledge & FAQ Section */}
-      <div className="mt-12 pt-8 border-t border-slate-200">
+      <div className="mt-12 pt-8 border-t border-neutral-800">
         <div className="max-w-3xl">
-          <h3 className="text-xl font-bold text-slate-900 tracking-tight mb-2">
+          <h3 className="text-xl font-bold text-neutral-50 tracking-tight mb-2">
             Frequently Asked Questions & Architecture
           </h3>
-          <p className="text-xs sm:text-sm text-slate-600 mb-6">
+          <p className="text-xs sm:text-sm text-neutral-300 mb-6">
             Everything you need to know about in-browser dataset conversion.
           </p>
 

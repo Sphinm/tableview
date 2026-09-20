@@ -103,7 +103,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           <div
             ref={gutterRef}
             className={`select-none text-right py-[14px] px-3 font-mono text-xs leading-[20px] shrink-0 overflow-hidden min-w-[44px] ${
-              dark ? 'bg-slate-950/80 text-slate-600 border-r border-slate-800' : 'bg-slate-50 text-slate-400 border-r border-slate-200'
+              dark ? 'bg-slate-950/80 text-slate-600 border-r border-slate-800' : 'bg-slate-50 text-slate-500 border-r border-slate-200'
             }`}
           >
             {Array.from({ length: lineCount }).map((_, i) => (
@@ -118,7 +118,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
             dark ? 'dark-editor' : ''
           }`}
           dangerouslySetInnerHTML={{
-            __html: highlightedCode || `<span class="text-slate-400">${placeholder || '// Empty'}</span>`
+            __html: highlightedCode || `<span class="text-slate-500">${placeholder || '// Empty'}</span>`
           }}
         />
       </div>
@@ -135,7 +135,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
         <div
           ref={gutterRef}
           className={`select-none text-right py-[14px] px-3 font-mono text-xs leading-[20px] shrink-0 overflow-hidden min-w-[44px] pointer-events-none ${
-            dark ? 'bg-slate-950/80 text-slate-600 border-r border-slate-800' : 'bg-slate-50 text-slate-400 border-r border-slate-200'
+            dark ? 'bg-slate-950/80 text-slate-600 border-r border-slate-800' : 'bg-slate-50 text-slate-500 border-r border-slate-200'
           }`}
         >
           {Array.from({ length: lineCount }).map((_, i) => (
@@ -170,7 +170,7 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({
           autoComplete="off"
           autoCorrect="off"
           wrap={wrapLines ? 'soft' : 'off'}
-          className={`absolute inset-0 w-full h-full m-0 p-[14px] bg-transparent resize-none font-mono text-xs leading-[20px] border-0 outline-none ${whiteSpaceClass} overflow-auto select-text scrollbar-thin placeholder:text-slate-400 ${
+          className={`absolute inset-0 w-full h-full m-0 p-[14px] bg-transparent resize-none font-mono text-xs leading-[20px] border-0 outline-none ${whiteSpaceClass} overflow-auto select-text scrollbar-thin placeholder:text-slate-500 ${
             dark
               ? 'caret-white text-transparent selection:bg-indigo-500/40'
               : 'caret-indigo-600 text-transparent selection:bg-indigo-500/25'

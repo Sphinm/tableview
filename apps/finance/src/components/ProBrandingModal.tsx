@@ -12,6 +12,7 @@ import {
   ShieldCheck,
   Lock,
 } from 'lucide-react';
+import { Dialog } from '@tableview/ui';
 import { useAuth } from '../lib/useAuth';
 import type { BrandingProfile } from '../lib/authTypes';
 
@@ -67,8 +68,12 @@ export const ProBrandingModal: React.FC<ProBrandingModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200">
-      <div className="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+    <Dialog
+      onClose={onClose}
+      labelledBy="pro-branding-title"
+      overlayClassName="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+      panelClassName="relative w-full max-w-2xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-8"
+    >
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-200 bg-slate-900 text-white flex items-center justify-between">
           <div className="flex items-center gap-2.5">
@@ -77,7 +82,7 @@ export const ProBrandingModal: React.FC<ProBrandingModalProps> = ({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-base font-bold text-white tracking-tight">Custom White-Label Branding</h3>
+                <h3 id="pro-branding-title" className="text-base font-bold text-white tracking-tight">Custom White-Label Branding</h3>
                 {isPro ? (
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-indigo-600 text-white">
                     PRO ACTIVE
@@ -110,7 +115,7 @@ export const ProBrandingModal: React.FC<ProBrandingModalProps> = ({
               <Eye className="size-3.5 text-indigo-600" />
               Live Report Header Preview (How your clients see it):
             </span>
-            <span className="font-mono text-[10px] text-slate-400">PDF Print View</span>
+            <span className="font-mono text-[10px] text-slate-500">PDF Print View</span>
           </div>
 
           <div className="rounded-xl border border-slate-300 bg-white p-4 shadow-2xs">
@@ -133,7 +138,7 @@ export const ProBrandingModal: React.FC<ProBrandingModalProps> = ({
               </div>
             </div>
             {form.customDisclaimer && (
-              <p className="mt-2 text-[10px] text-slate-400 italic leading-tight">
+              <p className="mt-2 text-[10px] text-slate-500 italic leading-tight">
                 {form.customDisclaimer}
               </p>
             )}
@@ -145,7 +150,7 @@ export const ProBrandingModal: React.FC<ProBrandingModalProps> = ({
           {!isPro && (
             <div className="p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between gap-3">
               <div className="flex items-center gap-2">
-                <Sparkles className="size-4 text-amber-600 shrink-0" />
+                <Sparkles className="size-4 text-amber-700 shrink-0" />
                 <span>You are currently previewing. Upgrade to <strong>TableView Pro</strong> to activate white-label on all PDF exports.</span>
               </div>
               {onUpgradeToPro && (
@@ -311,7 +316,6 @@ export const ProBrandingModal: React.FC<ProBrandingModalProps> = ({
             </div>
           </div>
         </form>
-      </div>
-    </div>
+    </Dialog>
   );
 };

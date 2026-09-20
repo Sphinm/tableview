@@ -1,13 +1,13 @@
 {
-  "name": "TableView.dev — In-Browser Data & Finance Workspace",
+  "name": "TableView.dev - Real Estate & Lending Underwriting Suite",
   "short_name": "TableView",
-  "description": "100% private in-browser data workspace and bank-grade real estate loan calculators. Files are never uploaded.",
+  "description": "100% private in-browser real estate and lending underwriting calculators: DSCR, cap rate, BRRRR, fix-and-flip, 1031 exchange, and commercial debt. Nothing is uploaded.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
-  "background_color": "#050608",
-  "theme_color": "#050608",
-  "categories": ["finance", "productivity", "utilities", "developer"],
+  "background_color": "#f8fafc",
+  "theme_color": "#ffffff",
+  "categories": ["finance", "business", "productivity"],
   "icons": [
     {
       "src": "/icon-192.png",
@@ -30,10 +30,10 @@
   ],
   "shortcuts": [
     {
-      "name": "Mortgage Calculator",
-      "short_name": "Mortgage",
-      "description": "Calculate monthly home loan payment with PITI & PMI",
-      "url": "/mortgage-calculator",
+      "name": "Cap Rate & Cash Flow",
+      "short_name": "Cap Rate",
+      "description": "Underwrite NOI, cap rate and rental cash flow",
+      "url": "/cap-rate-calculator",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
@@ -44,17 +44,17 @@
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
-      "name": "Refinance Calculator",
-      "short_name": "Refinance",
-      "description": "Mortgage refinance break-even and savings calculator",
-      "url": "/refinance-calculator",
+      "name": "BRRRR Calculator",
+      "short_name": "BRRRR",
+      "description": "Model the buy, rehab, rent, refinance cycle",
+      "url": "/brrrr-calculator",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     },
     {
-      "name": "Parquet Inspector",
-      "short_name": "Parquet",
-      "description": "Inspect and query Apache Parquet files locally",
-      "url": "/parquet-viewer",
+      "name": "Mortgage Calculator",
+      "short_name": "Mortgage",
+      "description": "Calculate monthly home loan payment with PITI & PMI",
+      "url": "/mortgage-calculator",
       "icons": [{ "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" }]
     }
   ]

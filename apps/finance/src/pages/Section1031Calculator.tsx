@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useId } from 'react';
 import {
   Calculator,
   Calendar,
@@ -117,31 +117,50 @@ interface FieldProps {
   tooltip?: { title?: string; content: React.ReactNode };
 }
 
-const Field = ({ label, value, onChange, prefix, suffix, step = 1, hint, tooltip }: FieldProps) => (
-  <label className="block">
-    <span className="block text-xs font-medium text-slate-700 mb-1.5 flex items-center gap-1">
-      <span>{label}</span>
-      {tooltip && <InfoTooltip title={tooltip.title} content={tooltip.content} />}
-    </span>
-    {prefix === '$' ? (
-      <CurrencyInput
-        value={Number.isFinite(value) ? value : 0}
-        onChange={onChange}
-        className="py-2.5 rounded-xl text-sm"
-      />
-    ) : (
-      <NumericInput
-        value={Number.isFinite(value) ? value : 0}
-        onChange={onChange}
-        prefix={prefix}
-        suffix={suffix}
-        step={step}
-        className="py-2.5 rounded-xl text-sm"
-      />
-    )}
-    {hint && <span className="block text-[11px] text-slate-500 mt-1 leading-snug">{hint}</span>}
-  </label>
-);
+/**
+ * Labelled numeric field.
+ *
+ * The previous version wrapped everything in a single <label>. That looks
+ * equivalent but is not: an implicit label binds to the FIRST labelable
+ * descendant, and InfoTooltip renders a <button>, so any field carrying a
+ * tooltip silently associated its label with the help button and left the
+ * actual input unnamed for screen readers. Nesting a button inside a label is
+ * also wrong on its own terms — clicking the tooltip would activate the field.
+ * Explicit id/htmlFor keeps the association on the input and lets the tooltip
+ * sit beside the label instead of inside it.
+ */
+const Field = ({ label, value, onChange, prefix, suffix, step = 1, hint, tooltip }: FieldProps) => {
+  const inputId = useId();
+  return (
+    <div className="block">
+      <div className="flex items-center gap-1 mb-1.5">
+        <label htmlFor={inputId} className="block text-xs font-medium text-slate-700">
+          {label}
+        </label>
+        {tooltip && <InfoTooltip title={tooltip.title} content={tooltip.content} />}
+      </div>
+      {prefix === '$' ? (
+        <CurrencyInput
+          id={inputId}
+          value={Number.isFinite(value) ? value : 0}
+          onChange={onChange}
+          className="py-2.5 rounded-xl text-sm"
+        />
+      ) : (
+        <NumericInput
+          id={inputId}
+          value={Number.isFinite(value) ? value : 0}
+          onChange={onChange}
+          prefix={prefix}
+          suffix={suffix}
+          step={step}
+          className="py-2.5 rounded-xl text-sm"
+        />
+      )}
+      {hint && <span className="block text-[11px] text-slate-600 mt-1 leading-snug">{hint}</span>}
+    </div>
+  );
+};
 
 const StatRow = ({
   label,
@@ -156,8 +175,8 @@ const StatRow = ({
 }) => {
   const toneClass = {
     default: 'text-slate-900',
-    positive: 'text-emerald-600',
-    negative: 'text-rose-600',
+    positive: 'text-emerald-700',
+    negative: 'text-rose-700',
     muted: 'text-slate-500',
   }[tone];
   return (
@@ -530,7 +549,7 @@ export const Section1031Calculator = () => {
           <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 shadow-xs">
             <div className="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3 mb-5">
               <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-900">
-                <Landmark className="size-4 text-emerald-600" />
+                <Landmark className="size-4 text-emerald-700" />
                 {compareMode ? 'Replacement Candidates' : 'Replacement Property (what you are buying)'}
               </h2>
               <button
@@ -582,7 +601,7 @@ export const Section1031Calculator = () => {
                               type="button"
                               onClick={() => removeCandidate(candidate.id)}
                               aria-label={`Remove ${candidate.label}`}
-                              className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-slate-100 transition-colors cursor-pointer"
+                              className="p-1 rounded-lg text-slate-400 hover:text-rose-700 hover:bg-slate-100 transition-colors cursor-pointer"
                             >
                               <Trash2 className="size-3.5" />
                             </button>
@@ -625,7 +644,7 @@ export const Section1031Calculator = () => {
                         <span>
                           Tax due: <span className="font-mono font-bold">{fmt(tax)}</span>
                           {row && row.taxVsBest > 0 && (
-                            <span className="text-rose-600 ml-1">(+{fmt(row.taxVsBest)})</span>
+                            <span className="text-rose-700 ml-1">(+{fmt(row.taxVsBest)})</span>
                           )}
                         </span>
                       </div>
@@ -677,7 +696,7 @@ export const Section1031Calculator = () => {
           {/* Timeline */}
           <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 shadow-xs">
             <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-5">
-              <Clock className="size-4 text-amber-600" />
+              <Clock className="size-4 text-amber-700" />
               Statutory Deadlines
             </h2>
 
@@ -719,7 +738,7 @@ export const Section1031Calculator = () => {
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="size-4 text-amber-600" />
+                  <Calendar className="size-4 text-amber-700" />
                   <span className="text-xs font-semibold text-slate-700">45-Day Identification</span>
                 </div>
                 <div className="text-lg font-mono font-bold text-slate-900">
@@ -727,7 +746,7 @@ export const Section1031Calculator = () => {
                 </div>
                 <div
                   className={`text-xs mt-1 ${
-                    idDeadlinePassed ? 'text-rose-600 font-semibold' : 'text-slate-500'
+                    idDeadlinePassed ? 'text-rose-700 font-semibold' : 'text-slate-500'
                   }`}
                 >
                   {idDeadlinePassed
@@ -744,7 +763,7 @@ export const Section1031Calculator = () => {
                 }`}
               >
                 <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="size-4 text-emerald-600" />
+                  <Calendar className="size-4 text-emerald-700" />
                   <span className="text-xs font-semibold text-slate-700">180-Day Exchange</span>
                 </div>
                 <div className="text-lg font-mono font-bold text-slate-900">
@@ -752,7 +771,7 @@ export const Section1031Calculator = () => {
                 </div>
                 <div
                   className={`text-xs mt-1 ${
-                    exchDeadlinePassed ? 'text-rose-600 font-semibold' : 'text-slate-500'
+                    exchDeadlinePassed ? 'text-rose-700 font-semibold' : 'text-slate-500'
                   }`}
                 >
                   {exchDeadlinePassed
@@ -764,7 +783,7 @@ export const Section1031Calculator = () => {
 
             {result.exchangeDeadlineDriver === 'tax-return-due-date' && (
               <div className="mt-4 p-3 rounded-xl bg-amber-50 border border-amber-200 flex items-start gap-2.5">
-                <AlertTriangle className="size-4 text-amber-600 shrink-0 mt-0.5" />
+                <AlertTriangle className="size-4 text-amber-700 shrink-0 mt-0.5" />
                 <p className="text-xs text-amber-800 leading-relaxed">
                   Your exchange period ends on <strong>April 15</strong>, not day 180. §1031 cuts the
                   exchange period short at the due date of that year&apos;s tax return. Filing an
@@ -777,7 +796,7 @@ export const Section1031Calculator = () => {
           {/* Identification */}
           <section className="rounded-2xl bg-white border border-slate-200 p-5 sm:p-6 shadow-xs">
             <h2 className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-900 border-b border-slate-100 pb-3 mb-5">
-              <Scale className="size-4 text-cyan-600" />
+              <Scale className="size-4 text-cyan-700" />
               Identification Limits
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -804,9 +823,9 @@ export const Section1031Calculator = () => {
               }`}
             >
               {result.identificationCompliant ? (
-                <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
               ) : (
-                <AlertTriangle className="size-4 text-rose-600 shrink-0 mt-0.5" />
+                <AlertTriangle className="size-4 text-rose-700 shrink-0 mt-0.5" />
               )}
               <div className="text-xs leading-relaxed">
                 <p
@@ -832,10 +851,12 @@ export const Section1031Calculator = () => {
             <button
               type="button"
               onClick={() => setShowRates((v) => !v)}
+              aria-expanded={showRates}
+              aria-controls="tax-rate-assumptions"
               className="w-full p-5 sm:p-6 flex items-center justify-between gap-4 cursor-pointer text-left hover:bg-slate-50 transition-colors"
             >
               <span className="flex items-center gap-2 text-sm font-bold uppercase tracking-wider text-slate-900">
-                <Calculator className="size-4 text-purple-600" />
+                <Calculator className="size-4 text-indigo-600" />
                 Tax Rate Assumptions
               </span>
               <ChevronDown
@@ -845,7 +866,7 @@ export const Section1031Calculator = () => {
               />
             </button>
             {showRates && (
-              <div className="px-5 sm:px-6 pb-5 sm:pb-6 border-t border-slate-100 pt-5">
+              <div id="tax-rate-assumptions" className="px-5 sm:px-6 pb-5 sm:pb-6 border-t border-slate-100 pt-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <Field
                     label="Federal Long-Term Capital Gains"
@@ -925,7 +946,7 @@ export const Section1031Calculator = () => {
                   <div className="text-[11px] uppercase tracking-wider text-slate-500 mb-1">
                     Gain Deferred
                   </div>
-                  <div className="text-xl font-mono font-bold text-emerald-600">
+                  <div className="text-xl font-mono font-bold text-emerald-700">
                     {fmt(result.deferredGain)}
                   </div>
                 </div>
@@ -963,7 +984,7 @@ export const Section1031Calculator = () => {
                         <span className="text-xs font-mono shrink-0">
                           {fmt(row.result.totalTaxDue)}
                           {row.taxVsBest > 0 && (
-                            <span className="text-rose-600 ml-1">+{fmt(row.taxVsBest)}</span>
+                            <span className="text-rose-700 ml-1">+{fmt(row.taxVsBest)}</span>
                           )}
                         </span>
                       </div>
@@ -1034,7 +1055,7 @@ export const Section1031Calculator = () => {
                   onClick={handleExportExcel}
                   className="flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 hover:text-slate-900 transition-colors cursor-pointer shadow-xs"
                 >
-                  <FileSpreadsheet className="size-3.5 text-emerald-600" />
+                  <FileSpreadsheet className="size-3.5 text-emerald-700" />
                   Excel
                 </button>
                 <button

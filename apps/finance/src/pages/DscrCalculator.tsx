@@ -40,6 +40,9 @@ import {
 import { SuiteSubNav } from '../components/SuiteSubNav';
 import { InfoTooltip } from '../components/InfoTooltip';
 import { AiUnderwritingCard } from '../components/AiUnderwritingCard';
+import { ResultAnnouncer } from '../components/ResultAnnouncer';
+import { composeAnnouncement } from '../lib/resultAnnouncement';
+import { formatUsdSigned, formatUsd } from '@tableview/shared';
 
 interface DscrPresetValues {
   propertyValue: number;
@@ -570,8 +573,8 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               >
                 {copiedLink ? (
                   <>
-                    <Check className="size-4 text-emerald-600" />
-                    <span className="text-emerald-600 font-medium">Link Copied!</span>
+                    <Check className="size-4 text-emerald-700" />
+                    <span className="text-emerald-700 font-medium">Link Copied!</span>
                   </>
                 ) : (
                   <>
@@ -604,25 +607,156 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
         {/* AI Deal Copilot Pre-fill Notification Banner */}
         {isPrefilledFromCopilot && (
-          <div className="mb-6 px-4 py-3 rounded-xl bg-emerald-950/80 border border-emerald-500/40 text-xs flex flex-wrap items-center justify-between gap-3 text-emerald-200 shadow-md">
+          <div className="mb-6 px-4 py-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs flex flex-wrap items-center justify-between gap-3 shadow-xs">
             <div className="flex items-center gap-2.5">
-              <div className="p-1.5 rounded-lg bg-emerald-600/30 text-emerald-400 border border-emerald-400/30">
+              <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-700 border border-emerald-200">
                 <Sparkles className="size-4" />
               </div>
               <div>
-                <span className="font-bold text-white tracking-tight block">
+                <span className="font-bold text-slate-900 tracking-tight block">
                   Auto-Populated from Natural Language Scenario
                 </span>
-                <span className="text-emerald-300">
-                  Property Value: <strong className="text-white">${propertyValue.toLocaleString()}</strong> · Down Payment: <strong className="text-white">{downPayment}%</strong> · Gross Rent: <strong className="text-white">${monthlyRent.toLocaleString()}/mo</strong> · Rate: <strong className="text-white">{interestRate}%</strong>
+                <span className="text-emerald-800">
+                  Property Value: <strong className="text-slate-900">${propertyValue.toLocaleString('en-US')}</strong> · Down Payment: <strong className="text-slate-900">{downPayment}%</strong> · Gross Rent: <strong className="text-slate-900">${monthlyRent.toLocaleString('en-US')}/mo</strong> · Rate: <strong className="text-slate-900">{interestRate}%</strong>
                 </span>
               </div>
             </div>
-            <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-semibold">
+            <span className="text-[11px] font-mono px-2.5 py-1 rounded bg-white text-emerald-700 border border-emerald-200 font-semibold">
               Ready for Underwriting
             </span>
           </div>
         )}
+
+        {/* Primary Verdict Band: key answers surfaced above the fold */}
+        <section id="dscr-results" className="scroll-mt-20 space-y-4 mb-8">
+          {/*
+            Speak the headline verdict when the figures settle. Without this a
+            screen-reader user gets no feedback that an input changed the
+            answer.
+          */}
+          <ResultAnnouncer
+            message={composeAnnouncement(
+              [
+                { label: 'DSCR', value: `${result.grossDscr.toFixed(2)}x` },
+                { label: 'monthly net cash flow', value: formatUsdSigned(result.monthlyNetCashFlow) },
+                { label: 'PITIA', value: formatUsd(result.monthlyPitia) },
+              ],
+              { context: 'Results updated', trailing: result.statusLabel + '.' }
+            )}
+          />
+
+          {/* Primary Result Hero Card */}
+          <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold block">
+                    Debt-Service Coverage Ratio (DSCR)
+                  </span>
+                  <InfoTooltip
+                    title="What is DSCR?"
+                    content="DSCR = Gross Rental Income ÷ Total Debt Service (PITIA). A DSCR of 1.25x means the property generates 25% more rental income than required to pay the mortgage, taxes, and insurance."
+                  />
+                </div>
+                <div className="flex items-baseline gap-3 mt-1">
+                  <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-indigo-600">
+                    {result.grossDscr.toFixed(2)}x
+                  </span>
+                  <span
+                    className={`text-sm font-semibold px-2.5 py-1 rounded-md border ${
+                      result.qualificationStatus === 'prime'
+                        ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : result.qualificationStatus === 'standard'
+                        ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
+                        : result.qualificationStatus === 'low'
+                        ? 'bg-amber-50 text-amber-800 border-amber-200'
+                        : 'bg-red-50 text-red-700 border-red-200'
+                    }`}
+                  >
+                    {result.statusLabel}
+                  </span>
+                </div>
+              </div>
+
+              <div className="text-right">
+                <span className="text-xs text-slate-500 block">Monthly Net Cash Flow</span>
+                <span
+                  className={`text-xl sm:text-2xl font-black font-mono mt-0.5 block ${
+                    result.monthlyNetCashFlow >= 0 ? 'text-emerald-700' : 'text-red-600'
+                  }`}
+                >
+                  {result.monthlyNetCashFlow >= 0 ? '+' : ''}
+                  {currencyDecFmt(result.monthlyNetCashFlow)}
+                </span>
+                <span className="text-[11px] text-slate-500">after all operating expenses</span>
+              </div>
+            </div>
+
+            <p className="mt-4 text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200">
+              {result.statusDescription}
+            </p>
+
+            {/* Progress Visual Bar for DSCR */}
+            <div className="mt-5 pt-3 border-t border-slate-100">
+              <div className="flex justify-between text-[11px] font-mono text-slate-500 mb-1.5">
+                <span>0.75x (Breakeven Risk)</span>
+                <span>1.0x (PITIA Breakeven)</span>
+                <span>1.25x (Prime Target)</span>
+                <span>1.5x+ (Super Cashflow)</span>
+              </div>
+              <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden flex border border-slate-200">
+                <div
+                  className={`h-full transition-all duration-300 ${
+                    result.grossDscr >= 1.25
+                      ? 'bg-emerald-500'
+                      : result.grossDscr >= 1.0
+                      ? 'bg-indigo-500'
+                      : result.grossDscr >= 0.75
+                      ? 'bg-amber-500'
+                      : 'bg-red-500'
+                  }`}
+                  style={{ width: `${Math.min(100, Math.max(5, (result.grossDscr / 1.75) * 100))}%` }}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Financial Highlights Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-[11px] text-slate-500 block">Monthly PITIA</span>
+              <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">
+                {currencyFmt(result.monthlyPitia)}
+              </span>
+              <span className="text-[10px] text-slate-500">Debt + Escrows</span>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-[11px] text-slate-500 block">Cash-on-Cash ROI</span>
+              <span className="text-base font-bold font-mono text-emerald-700 mt-0.5 block">
+                {result.cashOnCashReturn}%
+              </span>
+              <span className="text-[10px] text-slate-500">Annual Return</span>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-[11px] text-slate-500 block">Loan Amount</span>
+              <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">
+                {currencyFmt(result.loanAmount)}
+              </span>
+              <span className="text-[10px] text-slate-500">{result.ltv}% LTV</span>
+            </div>
+
+            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
+              <span className="text-[11px] text-slate-500 block">Max Loan (1.25x)</span>
+              <span className="text-base font-bold font-mono text-indigo-600 mt-0.5 block">
+                {currencyFmt(result.maxLoanAmountAtTargetDscr)}
+              </span>
+              <span className="text-[10px] text-slate-500">at current rent</span>
+            </div>
+          </div>
+
+        </section>
 
         {/* Main Calculator Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
@@ -636,11 +770,11 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
               {/* Purchase Price */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex justify-between">
+                <label htmlFor="dscr-purchase-property-value" className="block text-xs font-semibold text-slate-700 mb-1.5 flex justify-between">
                   <span>Purchase / Property Value</span>
                   <span className="text-indigo-600 font-mono font-bold">{currencyFmt(propertyValue)}</span>
                 </label>
-                <CurrencyInput
+                <CurrencyInput id="dscr-purchase-property-value"
                   value={propertyValue}
                   onChange={(v) => setPropertyValue(Math.max(0, v))}
                   className="py-2 text-base sm:text-sm font-mono"
@@ -650,7 +784,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               {/* Down Payment */}
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-semibold text-slate-700">Down Payment</label>
+                  <label htmlFor="dscr-down-payment" className="text-xs font-semibold text-slate-700">Down Payment</label>
                   <div className="flex items-center rounded-lg bg-slate-100 border border-slate-200 p-0.5 text-[11px] font-mono">
                     <button
                       type="button"
@@ -679,6 +813,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
                 {downPaymentType === 'percent' ? (
                   <NumericInput
+                    id="dscr-down-payment"
                     value={downPayment}
                     onChange={(v) => setDownPayment(Math.max(0, v))}
                     suffix="%"
@@ -687,6 +822,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   />
                 ) : (
                   <CurrencyInput
+                    id="dscr-down-payment"
                     value={downPayment}
                     onChange={(v) => setDownPayment(Math.max(0, v))}
                     className="py-2 text-base sm:text-sm font-mono"
@@ -701,10 +837,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               {/* Interest Rate & Term */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="dscr-interest-rate" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Interest Rate (%)
                   </label>
-                  <NumericInput
+                  <NumericInput id="dscr-interest-rate"
                     value={interestRate}
                     onChange={(v) => setInterestRate(Math.max(0, v))}
                     suffix="%"
@@ -753,23 +889,33 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
               {/* Rental Income & Expenses */}
               <h2 className="text-base font-bold text-slate-900 flex items-center gap-2 border-b border-slate-100 pt-3 pb-3">
-                <TrendingUp className="size-4.5 text-emerald-600" />
+                <TrendingUp className="size-4.5 text-emerald-700" />
                 <span>Rental Income & Operating Expenses</span>
               </h2>
 
               {/* Monthly Gross Rent */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex justify-between">
+                {/*
+                  The tooltip button sits beside the label, not inside it: an
+                  implicit label binds to the first labelable descendant, so a
+                  nested button would take the association away from the input.
+                */}
+                <div className="flex items-center justify-between mb-1.5">
                   <span className="inline-flex items-center gap-1">
-                    <span>Monthly Gross Rent Expected</span>
+                    <label
+                      htmlFor="dscr-monthly-gross-rent-expected-mo"
+                      className="text-xs font-semibold text-slate-700"
+                    >
+                      Monthly Gross Rent Expected
+                    </label>
                     <InfoTooltip
                       title="Appraiser 1007 Rent Schedule"
                       content="The market rent determined by an appraiser's Form 1007 (or existing lease agreement) used by DSCR underwriters."
                     />
                   </span>
                   <span className="text-emerald-700 font-mono font-bold">{currencyFmt(monthlyRent)}/mo</span>
-                </label>
-                <CurrencyInput
+                </div>
+                <CurrencyInput id="dscr-monthly-gross-rent-expected-mo"
                   value={monthlyRent}
                   onChange={(v) => setMonthlyRent(Math.max(0, v))}
                   className="py-2 text-base sm:text-sm font-mono"
@@ -779,10 +925,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               {/* Taxes & Insurance */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="dscr-annual-property-tax" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Annual Property Tax
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="dscr-annual-property-tax"
                     value={annualPropertyTax}
                     onChange={(v) => setAnnualPropertyTax(Math.max(0, v))}
                     className="py-2 text-base sm:text-sm font-mono"
@@ -790,10 +936,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="dscr-annual-insurance" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Annual Insurance
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="dscr-annual-insurance"
                     value={annualInsurance}
                     onChange={(v) => setAnnualInsurance(Math.max(0, v))}
                     className="py-2 text-base sm:text-sm font-mono"
@@ -804,10 +950,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
               {/* HOA & Operating Reserves */}
               <div className="grid grid-cols-3 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="dscr-monthly-hoa" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Monthly HOA ($)
                   </label>
-                  <CurrencyInput
+                  <CurrencyInput id="dscr-monthly-hoa"
                     value={monthlyHoa}
                     onChange={(v) => setMonthlyHoa(Math.max(0, v))}
                     className="py-2 text-base sm:text-sm font-mono"
@@ -816,7 +962,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
                 <div>
                   <div className="flex items-center gap-1 mb-1.5">
-                    <label className="block text-xs font-semibold text-slate-700">
+                    <label htmlFor="dscr-vacancy" className="block text-xs font-semibold text-slate-700">
                       Vacancy (%)
                     </label>
                     <InfoTooltip
@@ -824,7 +970,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                       content="Typical underwriting allowance of 5% to 8% to account for month-to-month tenant transitions."
                     />
                   </div>
-                  <NumericInput
+                  <NumericInput id="dscr-vacancy"
                     value={vacancyRate}
                     onChange={(v) => setVacancyRate(Math.max(0, v))}
                     suffix="%"
@@ -833,10 +979,10 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="dscr-mgmt-fee" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Mgmt Fee (%)
                   </label>
-                  <NumericInput
+                  <NumericInput id="dscr-mgmt-fee"
                     value={managementFeeRate}
                     onChange={(v) => setManagementFeeRate(Math.max(0, v))}
                     suffix="%"
@@ -848,118 +994,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
           </div>
 
           {/* Right Column: Key Results & DSCR Gauge (7 cols) */}
-          <div id="dscr-results" className="lg:col-span-7 space-y-6 scroll-mt-20">
-            {/* Primary Result Hero Card */}
-            <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs font-mono uppercase tracking-wider text-slate-500 font-semibold block">
-                      Debt-Service Coverage Ratio (DSCR)
-                    </span>
-                    <InfoTooltip
-                      title="What is DSCR?"
-                      content="DSCR = Gross Rental Income ÷ Total Debt Service (PITIA). A DSCR of 1.25x means the property generates 25% more rental income than required to pay the mortgage, taxes, and insurance."
-                    />
-                  </div>
-                  <div className="flex items-baseline gap-3 mt-1">
-                    <span className="text-4xl sm:text-5xl font-black font-mono tracking-tight text-indigo-600">
-                      {result.grossDscr.toFixed(2)}x
-                    </span>
-                    <span
-                      className={`text-sm font-semibold px-2.5 py-1 rounded-md border ${
-                        result.qualificationStatus === 'prime'
-                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                          : result.qualificationStatus === 'standard'
-                          ? 'bg-indigo-50 text-indigo-700 border-indigo-200'
-                          : result.qualificationStatus === 'low'
-                          ? 'bg-amber-50 text-amber-800 border-amber-200'
-                          : 'bg-red-50 text-red-700 border-red-200'
-                      }`}
-                    >
-                      {result.statusLabel}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="text-right">
-                  <span className="text-xs text-slate-500 block">Monthly Net Cash Flow</span>
-                  <span
-                    className={`text-xl sm:text-2xl font-black font-mono mt-0.5 block ${
-                      result.monthlyNetCashFlow >= 0 ? 'text-emerald-600' : 'text-red-600'
-                    }`}
-                  >
-                    {result.monthlyNetCashFlow >= 0 ? '+' : ''}
-                    {currencyDecFmt(result.monthlyNetCashFlow)}
-                  </span>
-                  <span className="text-[11px] text-slate-500">after all operating expenses</span>
-                </div>
-              </div>
-
-              <p className="mt-4 text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200">
-                {result.statusDescription}
-              </p>
-
-              {/* Progress Visual Bar for DSCR */}
-              <div className="mt-5 pt-3 border-t border-slate-100">
-                <div className="flex justify-between text-[11px] font-mono text-slate-500 mb-1.5">
-                  <span>0.75x (Breakeven Risk)</span>
-                  <span>1.0x (PITIA Breakeven)</span>
-                  <span>1.25x (Prime Target)</span>
-                  <span>1.5x+ (Super Cashflow)</span>
-                </div>
-                <div className="w-full h-3 bg-slate-100 rounded-full overflow-hidden flex border border-slate-200">
-                  <div
-                    className={`h-full transition-all duration-300 ${
-                      result.grossDscr >= 1.25
-                        ? 'bg-emerald-500'
-                        : result.grossDscr >= 1.0
-                        ? 'bg-indigo-500'
-                        : result.grossDscr >= 0.75
-                        ? 'bg-amber-500'
-                        : 'bg-red-500'
-                    }`}
-                    style={{ width: `${Math.min(100, Math.max(5, (result.grossDscr / 1.75) * 100))}%` }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Financial Highlights Grid */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-                <span className="text-[11px] text-slate-500 block">Monthly PITIA</span>
-                <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">
-                  {currencyFmt(result.monthlyPitia)}
-                </span>
-                <span className="text-[10px] text-slate-400">Debt + Escrows</span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-                <span className="text-[11px] text-slate-500 block">Cash-on-Cash ROI</span>
-                <span className="text-base font-bold font-mono text-emerald-600 mt-0.5 block">
-                  {result.cashOnCashReturn}%
-                </span>
-                <span className="text-[10px] text-slate-400">Annual Return</span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-                <span className="text-[11px] text-slate-500 block">Loan Amount</span>
-                <span className="text-base font-bold font-mono text-slate-900 mt-0.5 block">
-                  {currencyFmt(result.loanAmount)}
-                </span>
-                <span className="text-[10px] text-slate-400">{result.ltv}% LTV</span>
-              </div>
-
-              <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-xs">
-                <span className="text-[11px] text-slate-500 block">Max Loan (1.25x)</span>
-                <span className="text-base font-bold font-mono text-indigo-600 mt-0.5 block">
-                  {currencyFmt(result.maxLoanAmountAtTargetDscr)}
-                </span>
-                <span className="text-[10px] text-slate-400">at current rent</span>
-              </div>
-            </div>
-
+          <div className="lg:col-span-7 space-y-6">
             {/* AI Underwriting Health Check (TypeSafe System 1) */}
             <AiUnderwritingCard
               dscr={result.grossDscr}
@@ -1152,7 +1187,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
           {/* Table */}
           <div className="rounded-2xl border border-slate-200 bg-white shadow-xs overflow-hidden">
             <div className="overflow-x-auto max-h-[420px]">
-              <table className="w-full border-collapse text-left font-mono text-xs">
+              <table className="fin-table text-left font-mono text-xs">
                 <thead className="bg-slate-50 sticky top-0 border-b border-slate-200 text-slate-700">
                   <tr>
                     <th className="p-3">Period</th>
@@ -1235,15 +1270,15 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                 </div>
                 <ul className="space-y-2 pt-2">
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
                     <span><strong>Gross Rental Income:</strong> Verified via appraisal Form 1007 (Rent Schedule), executed lease agreements, or 12-month AirDNA short-term rental market performance.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
                     <span><strong>Monthly PITIA:</strong> The comprehensive mortgage liability, including principal amortized over 30 years, note interest rate, real estate taxes, hazard/flood insurance, and mandatory HOA dues.</span>
                   </li>
                   <li className="flex items-start gap-2">
-                    <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                    <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
                     <span><strong>Interest-Only Advantage:</strong> Electing an Interest-Only (I/O) structure removes principal from the denominator during initial years, substantially elevating your DSCR ratio.</span>
                   </li>
                 </ul>
@@ -1275,7 +1310,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-100">
                   <span className="text-slate-600 font-bold">Total Monthly PITIA Debt</span>
-                  <span className="text-rose-600 font-bold">$3,039 / mo</span>
+                  <span className="text-rose-700 font-bold">$3,039 / mo</span>
                 </div>
                 <div className="flex justify-between py-1 border-b border-slate-100">
                   <span className="text-slate-600 font-bold">Market Rental Income</span>
@@ -1390,13 +1425,13 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <tr className="hover:bg-slate-50/80">
                     <td className="p-3.5 font-semibold text-slate-800">Property Portfolio Limit</td>
                     <td className="p-3.5 text-emerald-700 font-semibold">Unlimited Properties</td>
-                    <td className="p-3.5 text-rose-600 font-semibold">Capped at 10 Mortgaged Properties</td>
+                    <td className="p-3.5 text-rose-700 font-semibold">Capped at 10 Mortgaged Properties</td>
                     <td className="p-3.5 text-emerald-700 font-semibold">Unlimited Properties</td>
                   </tr>
                   <tr className="hover:bg-slate-50/80">
                     <td className="p-3.5 font-semibold text-slate-800">Vesting in LLC / Entity</td>
                     <td className="p-3.5 text-emerald-700 font-semibold">Permitted & Highly Encouraged</td>
-                    <td className="p-3.5 text-rose-600">Individual Names Only (No LLCs)</td>
+                    <td className="p-3.5 text-rose-700">Individual Names Only (No LLCs)</td>
                     <td className="p-3.5 text-emerald-700 font-semibold">Required in Business Entity</td>
                   </tr>
                   <tr className="hover:bg-slate-50/80">
@@ -1445,14 +1480,14 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">Pricing &amp; Usage Limits</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">100% Free Forever (Unlimited)</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">5 Reports Free, then $39/mo Pro</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">5 Reports Free, then $39/mo Pro</td>
                     <td className="py-3 px-4 text-slate-600">Free but Gated by Broker Contact</td>
                   </tr>
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">Account / Sign-Up Requirement</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">None (Instant In-Browser)</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Mandatory Registration</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Mandatory Lead Form</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Mandatory Registration</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Mandatory Lead Form</td>
                   </tr>
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">Residential &amp; Commercial DSCR Standards</td>
@@ -1464,25 +1499,25 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                     <td className="py-3 px-4 font-semibold text-slate-900">Reverse Max Loan Solver (Target 1.25x)</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">Built-In Automatic Solver</td>
                     <td className="py-3 px-4 text-slate-600">Manual Guess &amp; Check</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Not Available</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Not Available</td>
                   </tr>
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">Full Amortization &amp; Cash-Flow Table</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">Yes + 1-Click Excel Export</td>
                     <td className="py-3 px-4 text-amber-700">PDF Report (Requires Pro)</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Summary Only</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Summary Only</td>
                   </tr>
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">Shareable Pre-filled URL</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">Instant 1-Click Link</td>
                     <td className="py-3 px-4 text-slate-600">Saved in User Account</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Not Supported</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Not Supported</td>
                   </tr>
                   <tr className="hover:bg-slate-50/50">
                     <td className="py-3 px-4 font-semibold text-slate-900">Data Privacy (Zero Data Egress)</td>
                     <td className="py-3 px-4 text-emerald-700 font-bold">In-Browser Private</td>
                     <td className="py-3 px-4 text-slate-600">Saved to Cloud Account</td>
-                    <td className="py-3 px-4 text-rose-600 font-medium">Captured for Sales Outreach</td>
+                    <td className="py-3 px-4 text-rose-700 font-medium">Captured for Sales Outreach</td>
                   </tr>
                 </tbody>
               </table>
@@ -1511,7 +1546,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
             DSCR Coverage
           </span>
           <div className="text-xl font-black font-mono leading-tight flex items-baseline gap-2">
-            <span className={result.grossDscr >= 1.25 ? 'text-emerald-600' : result.grossDscr >= 1.0 ? 'text-indigo-600' : 'text-rose-600'}>
+            <span className={result.grossDscr >= 1.25 ? 'text-emerald-700' : result.grossDscr >= 1.0 ? 'text-indigo-600' : 'text-rose-700'}>
               {result.grossDscr.toFixed(2)}x
             </span>
             <span className="text-xs font-semibold text-slate-500 font-sans">({result.statusLabel})</span>

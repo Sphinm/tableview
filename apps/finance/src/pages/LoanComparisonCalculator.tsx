@@ -35,6 +35,9 @@ import { SuiteSubNav } from '../components/SuiteSubNav';
 import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
 import { ProBrandingModal } from '../components/ProBrandingModal';
 import { InfoTooltip } from '../components/InfoTooltip';
+import { formatUsdCents, formatUsd } from '@tableview/shared';
+import { ResultAnnouncer } from '../components/ResultAnnouncer';
+import { composeAnnouncement } from '../lib/resultAnnouncement';
 
 const LOAN_PRESETS: CalculatorPreset<{ a: LoanParameters; b: LoanParameters }>[] = [
   {
@@ -209,20 +212,20 @@ export const LoanComparisonCalculator = () => {
       ['Date', new Date().toLocaleDateString()],
       [],
       ['Metric', loanA.name, loanB.name, 'Difference (A - B)'],
-      ['Loan Amount', `$${loanA.loanAmount.toLocaleString()}`, `$${loanB.loanAmount.toLocaleString()}`, `$${(loanA.loanAmount - loanB.loanAmount).toLocaleString()}`],
+      ['Loan Amount', `$${loanA.loanAmount.toLocaleString('en-US')}`, `$${loanB.loanAmount.toLocaleString('en-US')}`, `$${(loanA.loanAmount - loanB.loanAmount).toLocaleString('en-US')}`],
       ['Interest Rate (APR)', `${loanA.interestRate}%`, `${loanB.interestRate}%`, `${(loanA.interestRate - loanB.interestRate).toFixed(3)}%`],
       ['Loan Term', `${loanA.termYears} Years`, `${loanB.termYears} Years`, `${loanA.termYears - loanB.termYears} Years`],
-      ['Scheduled Monthly Payment', `$${comparison.loanA.scheduledMonthlyPayment.toLocaleString()}`, `$${comparison.loanB.scheduledMonthlyPayment.toLocaleString()}`, `$${comparison.monthlyPaymentDiff.toFixed(2)}`],
-      ['Actual Monthly Payment (w/ Extra)', `$${comparison.loanA.actualMonthlyPayment.toLocaleString()}`, `$${comparison.loanB.actualMonthlyPayment.toLocaleString()}`, `$${comparison.monthlyPaymentDiff.toFixed(2)}`],
+      ['Scheduled Monthly Payment', `$${comparison.loanA.scheduledMonthlyPayment.toLocaleString('en-US')}`, `$${comparison.loanB.scheduledMonthlyPayment.toLocaleString('en-US')}`, `$${comparison.monthlyPaymentDiff.toFixed(2)}`],
+      ['Actual Monthly Payment (w/ Extra)', `$${comparison.loanA.actualMonthlyPayment.toLocaleString('en-US')}`, `$${comparison.loanB.actualMonthlyPayment.toLocaleString('en-US')}`, `$${comparison.monthlyPaymentDiff.toFixed(2)}`],
       ['Payoff Horizon', `${comparison.loanA.actualYearsToPayoff} Years`, `${comparison.loanB.actualYearsToPayoff} Years`, `${(comparison.loanA.actualYearsToPayoff - comparison.loanB.actualYearsToPayoff).toFixed(1)} Years`],
-      ['Upfront Closing Costs & Points', `$${comparison.loanA.upfrontClosingCosts.toLocaleString()}`, `$${comparison.loanB.upfrontClosingCosts.toLocaleString()}`, `$${comparison.upfrontCostDiff.toLocaleString()}`],
-      ['Total Lifetime Interest Paid', `$${comparison.loanA.totalInterestPaid.toLocaleString()}`, `$${comparison.loanB.totalInterestPaid.toLocaleString()}`, `$${comparison.totalInterestDiff.toLocaleString()}`],
-      ['Total Lifetime Loan Cost', `$${comparison.loanA.totalLoanCost.toLocaleString()}`, `$${comparison.loanB.totalLoanCost.toLocaleString()}`, `$${comparison.totalCostDiff.toLocaleString()}`],
+      ['Upfront Closing Costs & Points', `$${comparison.loanA.upfrontClosingCosts.toLocaleString('en-US')}`, `$${comparison.loanB.upfrontClosingCosts.toLocaleString('en-US')}`, `$${comparison.upfrontCostDiff.toLocaleString('en-US')}`],
+      ['Total Lifetime Interest Paid', `$${comparison.loanA.totalInterestPaid.toLocaleString('en-US')}`, `$${comparison.loanB.totalInterestPaid.toLocaleString('en-US')}`, `$${comparison.totalInterestDiff.toLocaleString('en-US')}`],
+      ['Total Lifetime Loan Cost', `$${comparison.loanA.totalLoanCost.toLocaleString('en-US')}`, `$${comparison.loanB.totalLoanCost.toLocaleString('en-US')}`, `$${comparison.totalCostDiff.toLocaleString('en-US')}`],
       [],
       ['CFPB Loan Estimate (LE) Benchmarks', '', '', ''],
-      ['In 5 Years: Total Payments', `$${comparison.loanA.in5YearsTotalPaid.toLocaleString()}`, `$${comparison.loanB.in5YearsTotalPaid.toLocaleString()}`, `$${(comparison.loanA.in5YearsTotalPaid - comparison.loanB.in5YearsTotalPaid).toLocaleString()}`],
-      ['In 5 Years: Principal Paid Off (Equity)', `$${comparison.loanA.in5YearsPrincipalPaid.toLocaleString()}`, `$${comparison.loanB.in5YearsPrincipalPaid.toLocaleString()}`, `$${(comparison.loanA.in5YearsPrincipalPaid - comparison.loanB.in5YearsPrincipalPaid).toLocaleString()}`],
-      ['In 5 Years: Net Borrowing Cost', `$${comparison.loanA.in5YearsNetCost.toLocaleString()}`, `$${comparison.loanB.in5YearsNetCost.toLocaleString()}`, `$${comparison.in5YearsNetCostDiff.toLocaleString()}`],
+      ['In 5 Years: Total Payments', `$${comparison.loanA.in5YearsTotalPaid.toLocaleString('en-US')}`, `$${comparison.loanB.in5YearsTotalPaid.toLocaleString('en-US')}`, `$${(comparison.loanA.in5YearsTotalPaid - comparison.loanB.in5YearsTotalPaid).toLocaleString('en-US')}`],
+      ['In 5 Years: Principal Paid Off (Equity)', `$${comparison.loanA.in5YearsPrincipalPaid.toLocaleString('en-US')}`, `$${comparison.loanB.in5YearsPrincipalPaid.toLocaleString('en-US')}`, `$${(comparison.loanA.in5YearsPrincipalPaid - comparison.loanB.in5YearsPrincipalPaid).toLocaleString('en-US')}`],
+      ['In 5 Years: Net Borrowing Cost', `$${comparison.loanA.in5YearsNetCost.toLocaleString('en-US')}`, `$${comparison.loanB.in5YearsNetCost.toLocaleString('en-US')}`, `$${comparison.in5YearsNetCostDiff.toLocaleString('en-US')}`],
       ['Total Interest Percentage (TIP)', `${comparison.loanA.totalInterestPercentage}%`, `${comparison.loanB.totalInterestPercentage}%`, `${(comparison.loanA.totalInterestPercentage - comparison.loanB.totalInterestPercentage).toFixed(2)}%`],
       [],
       ['Decision Recommendation', comparison.recommendation.headline],
@@ -300,8 +303,8 @@ export const LoanComparisonCalculator = () => {
             >
               {copied ? (
                 <>
-                  <Check className="size-4 text-emerald-600" />
-                  <span className="text-emerald-600">Link Copied!</span>
+                  <Check className="size-4 text-emerald-700" />
+                  <span className="text-emerald-700">Link Copied!</span>
                 </>
               ) : (
                 <>
@@ -323,6 +326,24 @@ export const LoanComparisonCalculator = () => {
       />
 
       <SuiteSubNav suite="mortgage" />
+
+      {/* Announce the comparison verdict for screen readers. */}
+      <ResultAnnouncer
+        message={composeAnnouncement(
+          [
+            { label: loanA.name + ' monthly payment', value: formatUsdCents(comparison.loanA.actualMonthlyPayment) },
+            { label: loanB.name + ' monthly payment', value: formatUsdCents(comparison.loanB.actualMonthlyPayment) },
+            { label: 'lifetime cost difference', value: formatUsd(Math.abs(comparison.totalCostDiff)) },
+          ],
+          {
+            context: 'Results updated',
+            trailing:
+              comparison.recommendation.betterOverall === 'TIE'
+                ? 'The two loans are effectively equivalent.'
+                : `Option ${comparison.recommendation.betterOverall} is lower cost overall.`,
+          }
+        )}
+      />
 
       {/* Main Verdict Recommendation Banner */}
       <div className={`p-6 rounded-2xl border mb-8 shadow-xs transition-all ${
@@ -358,27 +379,27 @@ export const LoanComparisonCalculator = () => {
             <div>
               <span className="text-[11px] text-slate-500 block font-medium">Monthly Diff</span>
               <span className={`text-base font-bold font-mono ${
-                comparison.monthlyPaymentDiff > 0 ? 'text-emerald-600' : comparison.monthlyPaymentDiff < 0 ? 'text-amber-600' : 'text-slate-800'
+                comparison.monthlyPaymentDiff > 0 ? 'text-emerald-700' : comparison.monthlyPaymentDiff < 0 ? 'text-amber-700' : 'text-slate-800'
               }`}>
                 {comparison.monthlyPaymentDiff > 0
-                  ? `-$${comparison.monthlyPaymentDiff.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+                  ? `-${formatUsdCents(comparison.monthlyPaymentDiff)}`
                   : comparison.monthlyPaymentDiff < 0
-                  ? `+$${Math.abs(comparison.monthlyPaymentDiff).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-                  : '$0'}
+                  ? `+${formatUsdCents(Math.abs(comparison.monthlyPaymentDiff))}`
+                  : '$0.00'}
               </span>
             </div>
             <div>
               <span className="text-[11px] text-slate-500 block font-medium">5-Yr Net Savings</span>
               <span className={`text-base font-bold font-mono ${
-                comparison.in5YearsNetCostDiff !== 0 ? 'text-emerald-600' : 'text-slate-800'
+                comparison.in5YearsNetCostDiff !== 0 ? 'text-emerald-700' : 'text-slate-800'
               }`}>
-                ${Math.abs(comparison.in5YearsNetCostDiff).toLocaleString()}
+                ${Math.abs(comparison.in5YearsNetCostDiff).toLocaleString('en-US')}
               </span>
             </div>
             <div className="col-span-2 sm:col-span-1">
               <span className="text-[11px] text-slate-500 block font-medium">Lifetime Cost Saved</span>
-              <span className="text-base font-bold font-mono text-emerald-600">
-                ${Math.abs(comparison.totalCostDiff).toLocaleString()}
+              <span className="text-base font-bold font-mono text-emerald-700">
+                ${Math.abs(comparison.totalCostDiff).toLocaleString('en-US')}
               </span>
             </div>
           </div>
@@ -474,6 +495,7 @@ export const LoanComparisonCalculator = () => {
             <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-200">
               <input
                 type="text"
+                aria-label="Loan Option A name"
                 value={loanA.name}
                 onChange={(e) => setLoanA({ ...loanA, name: e.target.value })}
                 className="bg-transparent text-lg font-bold text-indigo-700 focus:outline-none focus:border-b border-indigo-500 w-full"
@@ -485,8 +507,8 @@ export const LoanComparisonCalculator = () => {
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">Loan Amount ($)</label>
-                <CurrencyInput
+                <label htmlFor="loancomparison-loan-amount" className="block text-xs font-medium text-slate-700 mb-1.5">Loan Amount ($)</label>
+                <CurrencyInput id="loancomparison-loan-amount"
                   value={loanA.loanAmount}
                   onChange={(val) => setLoanA({ ...loanA, loanAmount: val })}
                   className="focus:border-indigo-500"
@@ -496,7 +518,7 @@ export const LoanComparisonCalculator = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-medium text-slate-700">Interest Rate (%)</label>
+                    <label htmlFor="loancomparison-interest-rate-a" className="block text-xs font-medium text-slate-700">Interest Rate (%)</label>
                     <button
                       type="button"
                       onClick={() => setLoanA({ ...loanA, interestRate: LATEST_PMMS_RATES.fixed30.rate })}
@@ -507,6 +529,7 @@ export const LoanComparisonCalculator = () => {
                     </button>
                   </div>
                   <NumericInput
+                    id="loancomparison-interest-rate-a"
                     value={loanA.interestRate}
                     onChange={(val) => setLoanA({ ...loanA, interestRate: val })}
                     suffix="%"
@@ -533,13 +556,13 @@ export const LoanComparisonCalculator = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="flex items-center gap-1 mb-1.5">
-                    <label className="block text-xs font-medium text-slate-700">Points (%)</label>
+                    <label htmlFor="loancomparison-points" className="block text-xs font-medium text-slate-700">Points (%)</label>
                     <InfoTooltip
                       title="Discount Points"
                       content="1 point = 1% of loan amount paid at closing to lower the rate. Helpful if you stay in the home past the break-even date."
                     />
                   </div>
-                  <NumericInput
+                  <NumericInput id="loancomparison-points"
                     value={loanA.originationPoints}
                     onChange={(val) => setLoanA({ ...loanA, originationPoints: val })}
                     suffix="%"
@@ -548,13 +571,13 @@ export const LoanComparisonCalculator = () => {
                 </div>
                 <div>
                   <div className="flex items-center gap-1 mb-1.5">
-                    <label className="block text-xs font-medium text-slate-700">Upfront Fees ($)</label>
+                    <label htmlFor="loancomparison-upfront-fees" className="block text-xs font-medium text-slate-700">Upfront Fees ($)</label>
                     <InfoTooltip
                       title="Closing Fees"
                       content="Lender underwriting, appraisal, credit report, and title fees due at closing (excluding points)."
                     />
                   </div>
-                  <CurrencyInput
+                  <CurrencyInput id="loancomparison-upfront-fees"
                     value={loanA.upfrontFees}
                     onChange={(val) => setLoanA({ ...loanA, upfrontFees: val })}
                     className="focus:border-indigo-500"
@@ -563,8 +586,8 @@ export const LoanComparisonCalculator = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">Extra Monthly Principal ($)</label>
-                <CurrencyInput
+                <label htmlFor="loancomparison-extra-monthly-principal" className="block text-xs font-medium text-slate-700 mb-1.5">Extra Monthly Principal ($)</label>
+                <CurrencyInput id="loancomparison-extra-monthly-principal"
                   value={loanA.extraMonthlyPayment}
                   onChange={(val) => setLoanA({ ...loanA, extraMonthlyPayment: val })}
                   className="focus:border-indigo-500"
@@ -578,20 +601,20 @@ export const LoanComparisonCalculator = () => {
             <div className="flex items-center justify-between">
               <span className="text-xs text-indigo-900/70 font-medium">Monthly Payment</span>
               <span className="text-xl font-black font-mono text-indigo-950">
-                ${comparison.loanA.actualMonthlyPayment.toLocaleString()}
+                ${comparison.loanA.actualMonthlyPayment.toLocaleString('en-US')}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-indigo-900/70 font-medium">Total Interest Paid</span>
-              <span className="font-mono text-slate-800 font-semibold">${comparison.loanA.totalInterestPaid.toLocaleString()}</span>
+              <span className="font-mono text-slate-800 font-semibold">${comparison.loanA.totalInterestPaid.toLocaleString('en-US')}</span>
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-indigo-900/70 font-medium">Upfront Costs</span>
-              <span className="font-mono text-slate-800 font-semibold">${comparison.loanA.upfrontClosingCosts.toLocaleString()}</span>
+              <span className="font-mono text-slate-800 font-semibold">${comparison.loanA.upfrontClosingCosts.toLocaleString('en-US')}</span>
             </div>
             <div className="flex items-center justify-between text-xs pt-2 border-t border-indigo-200 font-semibold">
               <span className="text-indigo-950">Total Lifetime Cost</span>
-              <span className="font-mono text-indigo-700 font-bold">${comparison.loanA.totalLoanCost.toLocaleString()}</span>
+              <span className="font-mono text-indigo-700 font-bold">${comparison.loanA.totalLoanCost.toLocaleString('en-US')}</span>
             </div>
           </div>
         </div>
@@ -602,19 +625,20 @@ export const LoanComparisonCalculator = () => {
             <div className="flex items-center justify-between pb-4 mb-5 border-b border-slate-200">
               <input
                 type="text"
+                aria-label="Loan Option B name"
                 value={loanB.name}
                 onChange={(e) => setLoanB({ ...loanB, name: e.target.value })}
                 className="bg-transparent text-lg font-bold text-emerald-700 focus:outline-none focus:border-b border-emerald-500 w-full"
               />
-              <span className="text-xs font-mono px-2.5 py-0.5 rounded-lg bg-emerald-600 text-white font-bold shrink-0 ml-2 shadow-2xs">
+              <span className="text-xs font-mono px-2.5 py-0.5 rounded-lg bg-emerald-700 text-white font-bold shrink-0 ml-2 shadow-2xs">
                 Option B
               </span>
             </div>
 
             <div className="space-y-4">
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">Loan Amount ($)</label>
-                <CurrencyInput
+                <label htmlFor="loancomparison-loan-amount-2" className="block text-xs font-medium text-slate-700 mb-1.5">Loan Amount ($)</label>
+                <CurrencyInput id="loancomparison-loan-amount-2"
                   value={loanB.loanAmount}
                   onChange={(val) => setLoanB({ ...loanB, loanAmount: val })}
                   className="focus:border-emerald-500"
@@ -624,17 +648,18 @@ export const LoanComparisonCalculator = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-medium text-slate-700">Interest Rate (%)</label>
+                    <label htmlFor="loancomparison-interest-rate-b" className="block text-xs font-medium text-slate-700">Interest Rate (%)</label>
                     <button
                       type="button"
                       onClick={() => setLoanB({ ...loanB, interestRate: LATEST_PMMS_RATES.fixed15.rate })}
-                      className="text-[10px] text-emerald-600 hover:text-emerald-800 font-semibold cursor-pointer underline"
+                      className="text-[10px] text-emerald-700 hover:text-emerald-800 font-semibold cursor-pointer underline"
                       title="Apply Freddie Mac PMMS 15Y Conforming Benchmark"
                     >
                       PMMS {LATEST_PMMS_RATES.fixed15.rate}%
                     </button>
                   </div>
                   <NumericInput
+                    id="loancomparison-interest-rate-b"
                     value={loanB.interestRate}
                     onChange={(val) => setLoanB({ ...loanB, interestRate: val })}
                     suffix="%"
@@ -661,13 +686,13 @@ export const LoanComparisonCalculator = () => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <div className="flex items-center gap-1 mb-1.5">
-                    <label className="block text-xs font-medium text-slate-700">Points (%)</label>
+                    <label htmlFor="loancomparison-points-2" className="block text-xs font-medium text-slate-700">Points (%)</label>
                     <InfoTooltip
                       title="Discount Points"
                       content="1 point = 1% of loan amount paid at closing to lower the rate. Helpful if you stay in the home past the break-even date."
                     />
                   </div>
-                  <NumericInput
+                  <NumericInput id="loancomparison-points-2"
                     value={loanB.originationPoints}
                     onChange={(val) => setLoanB({ ...loanB, originationPoints: val })}
                     suffix="%"
@@ -676,13 +701,13 @@ export const LoanComparisonCalculator = () => {
                 </div>
                 <div>
                   <div className="flex items-center gap-1 mb-1.5">
-                    <label className="block text-xs font-medium text-slate-700">Upfront Fees ($)</label>
+                    <label htmlFor="loancomparison-upfront-fees-2" className="block text-xs font-medium text-slate-700">Upfront Fees ($)</label>
                     <InfoTooltip
                       title="Closing Fees"
                       content="Lender underwriting, appraisal, credit report, and title fees due at closing (excluding points)."
                     />
                   </div>
-                  <CurrencyInput
+                  <CurrencyInput id="loancomparison-upfront-fees-2"
                     value={loanB.upfrontFees}
                     onChange={(val) => setLoanB({ ...loanB, upfrontFees: val })}
                     className="focus:border-emerald-500"
@@ -691,8 +716,8 @@ export const LoanComparisonCalculator = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-slate-700 mb-1.5">Extra Monthly Principal ($)</label>
-                <CurrencyInput
+                <label htmlFor="loancomparison-extra-monthly-principal-2" className="block text-xs font-medium text-slate-700 mb-1.5">Extra Monthly Principal ($)</label>
+                <CurrencyInput id="loancomparison-extra-monthly-principal-2"
                   value={loanB.extraMonthlyPayment}
                   onChange={(val) => setLoanB({ ...loanB, extraMonthlyPayment: val })}
                   className="focus:border-emerald-500"
@@ -706,20 +731,20 @@ export const LoanComparisonCalculator = () => {
             <div className="flex items-center justify-between">
               <span className="text-xs text-emerald-900/70 font-medium">Monthly Payment</span>
               <span className="text-xl font-black font-mono text-emerald-950">
-                ${comparison.loanB.actualMonthlyPayment.toLocaleString()}
+                ${comparison.loanB.actualMonthlyPayment.toLocaleString('en-US')}
               </span>
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-emerald-900/70 font-medium">Total Interest Paid</span>
-              <span className="font-mono text-slate-800 font-semibold">${comparison.loanB.totalInterestPaid.toLocaleString()}</span>
+              <span className="font-mono text-slate-800 font-semibold">${comparison.loanB.totalInterestPaid.toLocaleString('en-US')}</span>
             </div>
             <div className="flex items-center justify-between text-xs">
               <span className="text-emerald-900/70 font-medium">Upfront Costs</span>
-              <span className="font-mono text-slate-800 font-semibold">${comparison.loanB.upfrontClosingCosts.toLocaleString()}</span>
+              <span className="font-mono text-slate-800 font-semibold">${comparison.loanB.upfrontClosingCosts.toLocaleString('en-US')}</span>
             </div>
             <div className="flex items-center justify-between text-xs pt-2 border-t border-emerald-200 font-semibold">
               <span className="text-emerald-950">Total Lifetime Cost</span>
-              <span className="font-mono text-emerald-700 font-bold">${comparison.loanB.totalLoanCost.toLocaleString()}</span>
+              <span className="font-mono text-emerald-700 font-bold">${comparison.loanB.totalLoanCost.toLocaleString('en-US')}</span>
             </div>
           </div>
         </div>
@@ -745,25 +770,25 @@ export const LoanComparisonCalculator = () => {
             <tbody className="divide-y divide-slate-100 text-xs">
               <tr className="hover:bg-slate-50/80 transition-colors">
                 <td className="p-4 font-medium text-slate-900">Scheduled Monthly Payment (P&I)</td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanA.scheduledMonthlyPayment.toLocaleString()}</td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanB.scheduledMonthlyPayment.toLocaleString()}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.scheduledMonthlyPayment.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.scheduledMonthlyPayment.toLocaleString('en-US')}</td>
                 <td className="p-4 font-mono text-right text-slate-600">
                   {comparison.monthlyPaymentDiff > 0 ? `Option B saves $${comparison.monthlyPaymentDiff.toFixed(2)}/mo` : comparison.monthlyPaymentDiff < 0 ? `Option A saves $${Math.abs(comparison.monthlyPaymentDiff).toFixed(2)}/mo` : 'Equal'}
                 </td>
               </tr>
               <tr className="hover:bg-slate-50/80 transition-colors">
                 <td className="p-4 font-medium text-slate-900">Total Lifetime Interest</td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanA.totalInterestPaid.toLocaleString()}</td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanB.totalInterestPaid.toLocaleString()}</td>
-                <td className="p-4 font-mono text-right font-semibold text-emerald-600">
-                  ${Math.abs(comparison.totalInterestDiff).toLocaleString()} {comparison.totalInterestDiff > 0 ? 'less with B' : 'less with A'}
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.totalInterestPaid.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.totalInterestPaid.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-right font-semibold text-emerald-700">
+                  ${Math.abs(comparison.totalInterestDiff).toLocaleString('en-US')} {comparison.totalInterestDiff > 0 ? 'less with B' : 'less with A'}
                 </td>
               </tr>
               <tr className="hover:bg-slate-50/80 transition-colors">
                 <td className="p-4 font-medium text-slate-900">Upfront Points & Closing Fees</td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanA.upfrontClosingCosts.toLocaleString()}</td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanB.upfrontClosingCosts.toLocaleString()}</td>
-                <td className="p-4 font-mono text-right text-slate-600">${Math.abs(comparison.upfrontCostDiff).toLocaleString()} diff</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.upfrontClosingCosts.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.upfrontClosingCosts.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-right text-slate-600">${Math.abs(comparison.upfrontCostDiff).toLocaleString('en-US')} diff</td>
               </tr>
               {comparison.breakEvenMonths && (
                 <tr className="bg-indigo-50/70 hover:bg-indigo-50 transition-colors">
@@ -779,17 +804,17 @@ export const LoanComparisonCalculator = () => {
                   <td colSpan={2} className="p-4 text-xs text-indigo-800">
                     Lower monthly payment recoups higher upfront closing fees in:
                   </td>
-                  <td className="p-4 font-mono font-bold text-right text-emerald-600">
+                  <td className="p-4 font-mono font-bold text-right text-emerald-700">
                     ~{comparison.breakEvenMonths} Months ({(comparison.breakEvenMonths / 12).toFixed(1)} Years)
                   </td>
                 </tr>
               )}
               <tr className="hover:bg-slate-50/80 font-bold bg-slate-50/70 transition-colors">
                 <td className="p-4 text-slate-900">Total Lifetime Out-of-Pocket Cost</td>
-                <td className="p-4 font-mono text-indigo-700">${comparison.loanA.totalLoanCost.toLocaleString()}</td>
-                <td className="p-4 font-mono text-emerald-700">${comparison.loanB.totalLoanCost.toLocaleString()}</td>
-                <td className="p-4 font-mono text-right text-emerald-600 font-extrabold">
-                  ${Math.abs(comparison.totalCostDiff).toLocaleString()} {comparison.totalCostDiff > 0 ? 'Savings on B' : 'Savings on A'}
+                <td className="p-4 font-mono text-indigo-700">${comparison.loanA.totalLoanCost.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-emerald-700">${comparison.loanB.totalLoanCost.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-right text-emerald-700 font-extrabold">
+                  ${Math.abs(comparison.totalCostDiff).toLocaleString('en-US')} {comparison.totalCostDiff > 0 ? 'Savings on B' : 'Savings on A'}
                 </td>
               </tr>
 
@@ -804,11 +829,11 @@ export const LoanComparisonCalculator = () => {
                   <span>In 5 Years: Total Payments Made</span>
                   <span className="text-[10px] text-slate-500 block">Total P&I payments made over the first 60 months</span>
                 </td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanA.in5YearsTotalPaid.toLocaleString()}</td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanB.in5YearsTotalPaid.toLocaleString()}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.in5YearsTotalPaid.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.in5YearsTotalPaid.toLocaleString('en-US')}</td>
                 <td className="p-4 font-mono text-right text-slate-600">
                   {comparison.loanA.in5YearsTotalPaid !== comparison.loanB.in5YearsTotalPaid
-                    ? `$${Math.abs(comparison.loanA.in5YearsTotalPaid - comparison.loanB.in5YearsTotalPaid).toLocaleString()} ${comparison.loanA.in5YearsTotalPaid > comparison.loanB.in5YearsTotalPaid ? 'less with B' : 'less with A'}`
+                    ? `$${Math.abs(comparison.loanA.in5YearsTotalPaid - comparison.loanB.in5YearsTotalPaid).toLocaleString('en-US')} ${comparison.loanA.in5YearsTotalPaid > comparison.loanB.in5YearsTotalPaid ? 'less with B' : 'less with A'}`
                     : 'Equal'}
                 </td>
               </tr>
@@ -817,10 +842,10 @@ export const LoanComparisonCalculator = () => {
                   <span>In 5 Years: Principal Paid Off (Equity Built)</span>
                   <span className="text-[10px] text-slate-500 block">Debt eliminated and converted to home equity</span>
                 </td>
-                <td className="p-4 font-mono font-semibold text-indigo-700">${comparison.loanA.in5YearsPrincipalPaid.toLocaleString()}</td>
-                <td className="p-4 font-mono font-semibold text-emerald-700">${comparison.loanB.in5YearsPrincipalPaid.toLocaleString()}</td>
-                <td className="p-4 font-mono text-right font-semibold text-emerald-600">
-                  ${Math.abs(comparison.loanA.in5YearsPrincipalPaid - comparison.loanB.in5YearsPrincipalPaid).toLocaleString()} {comparison.loanB.in5YearsPrincipalPaid > comparison.loanA.in5YearsPrincipalPaid ? 'more equity with B' : 'more equity with A'}
+                <td className="p-4 font-mono font-semibold text-indigo-700">${comparison.loanA.in5YearsPrincipalPaid.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono font-semibold text-emerald-700">${comparison.loanB.in5YearsPrincipalPaid.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-right font-semibold text-emerald-700">
+                  ${Math.abs(comparison.loanA.in5YearsPrincipalPaid - comparison.loanB.in5YearsPrincipalPaid).toLocaleString('en-US')} {comparison.loanB.in5YearsPrincipalPaid > comparison.loanA.in5YearsPrincipalPaid ? 'more equity with B' : 'more equity with A'}
                 </td>
               </tr>
               <tr className="hover:bg-slate-50/80 transition-colors">
@@ -828,18 +853,18 @@ export const LoanComparisonCalculator = () => {
                   <span>In 5 Years: Net Cost of Borrowing</span>
                   <span className="text-[10px] text-slate-500 block">Interest + Upfront Fees minus Equity Built</span>
                 </td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanA.in5YearsNetCost.toLocaleString()}</td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanB.in5YearsNetCost.toLocaleString()}</td>
-                <td className="p-4 font-mono text-right font-bold text-emerald-600">
-                  ${Math.abs(comparison.in5YearsNetCostDiff).toLocaleString()} {comparison.in5YearsNetCostDiff > 0 ? 'lower net cost on B' : 'lower net cost on A'}
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.in5YearsNetCost.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.in5YearsNetCost.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-right font-bold text-emerald-700">
+                  ${Math.abs(comparison.in5YearsNetCostDiff).toLocaleString('en-US')} {comparison.in5YearsNetCostDiff > 0 ? 'lower net cost on B' : 'lower net cost on A'}
                 </td>
               </tr>
               <tr className="hover:bg-slate-50/80 transition-colors">
                 <td className="p-4 font-medium text-slate-900">5-Year Ending Balance (Month 60)</td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanA.in5YearsEndingBalance.toLocaleString()}</td>
-                <td className="p-4 font-mono text-slate-800">${comparison.loanB.in5YearsEndingBalance.toLocaleString()}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanA.in5YearsEndingBalance.toLocaleString('en-US')}</td>
+                <td className="p-4 font-mono text-slate-800">${comparison.loanB.in5YearsEndingBalance.toLocaleString('en-US')}</td>
                 <td className="p-4 font-mono text-right text-slate-600">
-                  ${Math.abs(comparison.loanA.in5YearsEndingBalance - comparison.loanB.in5YearsEndingBalance).toLocaleString()} diff
+                  ${Math.abs(comparison.loanA.in5YearsEndingBalance - comparison.loanB.in5YearsEndingBalance).toLocaleString('en-US')} diff
                 </td>
               </tr>
               <tr className="hover:bg-slate-50/80 transition-colors">

@@ -8,7 +8,7 @@ type ComponentLoader = () => Promise<unknown>;
  * JS chunk before the user clicks, eliminating Suspense fallback loading screens.
  */
 const ROUTE_LOADERS: Record<string, ComponentLoader> = {
-  // Calculators & Real Estate / FinOps Suites
+  // Real Estate & Lending Calculators
   '/mortgage-calculator': () => import('../pages/MortgageCalculator'),
   '/amortization-schedule-calculator': () => import('../pages/MortgageCalculator'),
   '/mortgage-payoff-calculator': () => import('../pages/MortgageCalculator'),
@@ -17,6 +17,7 @@ const ROUTE_LOADERS: Record<string, ComponentLoader> = {
   '/dscr-loan-calculator': () => import('../pages/DscrCalculator'),
   '/cap-rate-calculator': () => import('../pages/CapRateCalculator'),
   '/hard-money-calculator': () => import('../pages/HardMoneyCalculator'),
+  '/brrrr-calculator': () => import('../pages/BrrrrCalculator'),
   '/commercial-loan-calculator': () => import('../pages/CommercialLoanCalculator'),
   '/balloon-payment-calculator': () => import('../pages/CommercialLoanCalculator'),
   '/section-1031-exchange-calculator': () => import('../pages/Section1031Calculator'),

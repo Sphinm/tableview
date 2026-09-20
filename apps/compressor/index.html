@@ -1,17 +1,84 @@
 <!doctype html>
-<html lang="en" class="light">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#ffffff" />
+    <!-- Matches the dark app chrome; a white value painted light mobile UI bars. -->
+    <meta name="theme-color" content="#0a0a0a" />
+    <meta name="color-scheme" content="dark" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="TableView Media Compressor" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+
     <title>TableView Media Compressor — 100% In-Browser Video & Image Compression</title>
     <meta name="title" content="TableView Media Compressor — 100% In-Browser Video & Image Compression" />
     <meta
       name="description"
       content="Compress large MP4, WebM, PNG, JPG, and WebP files directly in your web browser with WebAssembly FFmpeg. Zero uploads, 100% private."
     />
+    <meta
+      name="keywords"
+      content="compress video, compress mp4, compress image, compress png, compress jpg, compress webp, compress video for discord, image compressor, video compressor"
+    />
+    <link rel="canonical" href="https://compress.tableview.dev/" />
+    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://compress.tableview.dev/" />
+    <meta property="og:title" content="TableView Media Compressor — 100% In-Browser Video & Image Compression" />
+    <meta
+      property="og:description"
+      content="Compress large MP4, WebM, PNG, JPG, and WebP files directly in your web browser with WebAssembly FFmpeg. Zero uploads, 100% private."
+    />
+    <meta property="og:site_name" content="TableView.dev" />
+
+    <!-- Twitter Card -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://compress.tableview.dev/" />
+    <meta property="twitter:title" content="TableView Media Compressor — 100% In-Browser Video & Image Compression" />
+    <meta
+      property="twitter:description"
+      content="Compress large MP4, WebM, PNG, JPG, and WebP files directly in your web browser with WebAssembly FFmpeg. Zero uploads, 100% private."
+    />
+
+    <!-- Google Consent Mode v2 — default DENIED before any Google/ads/analytics tag -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      window.gtag = gtag;
+      gtag('consent', 'default', {
+        ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
+        analytics_storage: 'denied', functionality_storage: 'granted', security_storage: 'granted',
+        wait_for_update: 500
+      });
+      try {
+        if (localStorage.getItem('tableview_cookie_consent') === 'accepted') {
+          gtag('consent', 'update', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' });
+        }
+      } catch (e) {}
+    </script>
+    <script src="https://accounts.google.com/gsi/client?hl=en" async defer></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3414270480046504" crossorigin="anonymous"></script>
+
+    <!-- Structured Data: WebApplication (replaced per-route by scripts/prerender.ts) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "TableView Media Compressor",
+        "url": "https://compress.tableview.dev",
+        "description": "100% private in-browser video and image compression powered by WebAssembly FFmpeg.",
+        "applicationCategory": "MultimediaApplication",
+        "operatingSystem": "All",
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+      }
+    </script>
   </head>
   <body class="bg-neutral-950 text-neutral-100 antialiased min-h-screen">
     <div id="root"></div>

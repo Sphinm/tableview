@@ -1,5 +1,9 @@
 import React from 'react';
 import { type HardMoneyInputs, type HardMoneyResult } from '../lib/hardMoneyCalculator';
+import { formatUsd } from '@tableview/shared';
+
+/* Locale-explicit USD so printed figures match on every machine. */
+const fmt = (n: number) => formatUsd(n);
 
 interface PrintableHardMoneyReportProps {
   inputs: HardMoneyInputs;
@@ -15,8 +19,6 @@ export const PrintableHardMoneyReport: React.FC<PrintableHardMoneyReportProps> =
     month: 'long',
     day: 'numeric',
   });
-
-  const fmt = (n: number) => `$${Math.round(n).toLocaleString()}`;
 
   return (
     <div className="hidden print:block font-sans text-slate-900 bg-white p-2">

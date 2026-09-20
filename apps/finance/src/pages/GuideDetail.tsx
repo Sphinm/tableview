@@ -10,7 +10,7 @@ import {
   BookOpen,
   Share2,
   Check,
-  Table,
+  Calculator,
   ChevronDown
 } from 'lucide-react';
 import { AdSlot } from '../components/AdSlot';
@@ -119,7 +119,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
             onClick={handleShare}
             className="flex items-center gap-1.5 px-3 py-1 rounded-lg bg-white hover:bg-slate-50 text-xs text-slate-800 hover:text-slate-900 border border-slate-200 shadow-2xs transition-colors cursor-pointer font-medium"
           >
-            {copiedLink ? <Check className="size-3.5 text-emerald-600" /> : <Share2 className="size-3.5 text-slate-600" />}
+            {copiedLink ? <Check className="size-3.5 text-emerald-700" /> : <Share2 className="size-3.5 text-slate-600" />}
             <span>{copiedLink ? 'Link Copied!' : 'Share'}</span>
           </button>
         </div>
@@ -220,12 +220,12 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
                   <span className="font-mono text-[11px] uppercase tracking-wider font-semibold">{section.code.language}</span>
                   <button
                     onClick={() => handleCopyCode(section.code!.code, sectionIdx)}
-                    className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer text-[11px] font-medium"
+                    className="flex items-center gap-1 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer text-[11px] font-medium"
                   >
                     {copiedCodeIndex === sectionIdx ? (
                       <>
-                        <Check className="size-3 text-emerald-600" />
-                        <span className="text-emerald-600 font-semibold">Copied</span>
+                        <Check className="size-3 text-emerald-700" />
+                        <span className="text-emerald-700 font-semibold">Copied</span>
                       </>
                     ) : (
                       <span>Copy Code</span>
@@ -309,22 +309,22 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
         )}
       </div>
 
-      {/* CTA Box to Workbench */}
+      {/* CTA Box to Financial Calculators */}
       <div className="my-12 p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 shadow-2xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
         <div>
           <h3 className="text-base font-bold text-slate-900 mb-1.5 flex items-center gap-2">
-            <Table className="size-4 text-indigo-600" />
-            Inspect Parquet Files Instantly
+            <Calculator className="size-4 text-indigo-600" />
+            Underwrite Deals with Institutional Precision
           </h3>
           <p className="text-xs sm:text-sm text-slate-800 max-w-md leading-relaxed">
-            Need to inspect schemas or convert Parquet to Excel? TableView runs 100% locally in your browser with zero server uploads.
+            Model DSCR loans, rental cash flows, fix & flip ROI, and 1031 tax exchanges directly in your browser with 100% private client-side calculations.
           </p>
         </div>
         <button
           onClick={() => navigateTo('/')}
           className="btn-primary px-5 py-2.5 rounded-xl text-xs font-semibold shadow-sm transition-colors whitespace-nowrap cursor-pointer"
         >
-          Open TableView Workbench →
+          Open Underwriting Hub →
         </button>
       </div>
 
@@ -332,7 +332,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
       {relatedGuides.length > 0 && (
         <div className="pt-8 border-t border-slate-200">
           <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-4">
-            Related Technical Guides
+            Related Financial Guides
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {relatedGuides.map((rel) => (

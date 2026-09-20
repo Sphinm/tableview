@@ -12,8 +12,6 @@ import { STATIC_PAGE_META } from './data/routeMeta';
 const VideoCompressor = lazy(() => import('./pages/VideoCompressor').then(m => ({ default: m.VideoCompressor })));
 const ImageCompressor = lazy(() => import('./pages/ImageCompressor').then(m => ({ default: m.ImageCompressor })));
 const MediaToolsHub = lazy(() => import('./pages/MediaToolsHub').then(m => ({ default: m.MediaToolsHub })));
-const GuidesHub = lazy(() => import('./pages/GuidesHub').then(m => ({ default: m.GuidesHub })));
-const GuideDetail = lazy(() => import('./pages/GuideDetail').then(m => ({ default: m.GuideDetail })));
 const About = lazy(() => import('./pages/About').then(m => ({ default: m.About })));
 const Contact = lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
@@ -21,7 +19,7 @@ const TermsOfService = lazy(() => import('./pages/TermsOfService').then(m => ({ 
 const Disclaimer = lazy(() => import('./pages/Disclaimer').then(m => ({ default: m.Disclaimer })));
 
 export function App() {
-  const { path, slug, pathname } = useRouter();
+  const { path, pathname } = useRouter();
   const currentNavPath = pathname || path;
 
   useEffect(() => {
@@ -69,22 +67,16 @@ export function App() {
     if (path === '/media-tools') {
       return <MediaToolsHub />;
     }
-    if (path === '/guides') {
-      return <GuidesHub />;
-    }
-    if (path.startsWith('/guides/') && slug) {
-      return <GuideDetail slug={slug} />;
-    }
     if (path === '/about') {
       return <About />;
     }
     if (path === '/contact') {
       return <Contact />;
     }
-    if (path === '/privacy-policy') {
+    if (path === '/privacy') {
       return <PrivacyPolicy />;
     }
-    if (path === '/terms-of-service') {
+    if (path === '/terms') {
       return <TermsOfService />;
     }
     if (path === '/disclaimer') {
@@ -130,7 +122,12 @@ export function App() {
       <SuiteSwitcher currentSuite="compressor" />
       <CompressorHeader currentPath={currentNavPath} />
 
-      <main className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Keyboard users can bypass the nav instead of tabbing through it. */}
+      <a href="#main-content" className="skip-link">
+        Skip to compressor
+      </a>
+
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 focus:outline-none">
         <Suspense fallback={<GlobalLoading message="Initializing FFmpeg WebAssembly engine..." />}>
           {renderContent()}
         </Suspense>

@@ -7,6 +7,7 @@ import { useRouter, updatePageMeta } from './lib/router';
 import { applyTheme } from './lib/theme';
 import { FileQuestion, ArrowLeft } from 'lucide-react';
 import { DATA_TOOLS_META, STATIC_PAGE_META } from './data/routeMeta';
+import { TOOLS_CONFIG } from './data/tools';
 
 // Lazy-loaded data and developer pages
 const DataConverter = lazy(() => import('./pages/DataConverter').then(m => ({ default: m.DataConverter })));
@@ -46,13 +47,11 @@ export function App() {
       return <DataToolsWorkbench onFileSelected={() => {}} isLoading={false} />;
     }
     if (
-      path === '/parquet-viewer' ||
-      path === '/csv-viewer' ||
-      path === '/parquet-to-excel' ||
-      path === '/csv-to-parquet' ||
-      path === '/parquet-to-csv' ||
-      path === '/json-to-parquet' ||
-      path === '/parquet-schema-inspector' ||
+      (slug &&
+        TOOLS_CONFIG[slug] &&
+        TOOLS_CONFIG[slug].category !== 'calculator' &&
+        TOOLS_CONFIG[slug].category !== 'media' &&
+        TOOLS_CONFIG[slug].category !== 'developer') ||
       path.startsWith('/data-converter')
     ) {
       return <DataConverter />;
@@ -84,10 +83,10 @@ export function App() {
     if (path === '/contact') {
       return <Contact />;
     }
-    if (path === '/privacy-policy') {
+    if (path === '/privacy') {
       return <PrivacyPolicy />;
     }
-    if (path === '/terms-of-service') {
+    if (path === '/terms') {
       return <TermsOfService />;
     }
     if (path === '/disclaimer') {
@@ -133,7 +132,12 @@ export function App() {
       <SuiteSwitcher currentSuite="tools" />
       <ToolsHeader currentPath={currentNavPath} />
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Keyboard users can bypass the nav instead of tabbing through it. */}
+      <a href="#main-content" className="skip-link">
+        Skip to workbench
+      </a>
+
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 focus:outline-none">
         <Suspense fallback={<GlobalLoading message="Loading data workbench..." />}>
           {renderContent()}
         </Suspense>

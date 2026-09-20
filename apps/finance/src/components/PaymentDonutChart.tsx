@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { chartAriaLabel, formatUsd } from '@tableview/shared';
 
 interface SliceItem {
   id: string;
@@ -104,7 +105,27 @@ export const PaymentDonutChart: React.FC<PaymentDonutChartProps> = ({
     <div className="rounded-2xl bg-white border border-slate-200 shadow-xs p-5 flex flex-col xl:flex-row items-center gap-6">
       {/* Donut graphic */}
       <div className="relative shrink-0 flex items-center justify-center">
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className="-rotate-90">
+        <svg
+          /*
+           * Complex image: name it and describe its series, otherwise assistive
+           * tech announces only "graphic".
+           */
+          role="img"
+          aria-label={chartAriaLabel(
+            'Monthly Housing Payment Allocation',
+            slices
+              .filter((s) => s.amount > 0)
+              .map((s) => ({
+                label: s.label,
+                value: formatUsd(s.amount),
+                share: totalMonthly > 0 ? `${((s.amount / totalMonthly) * 100).toFixed(1)}%` : undefined,
+              }))
+          )}
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          className="-rotate-90"
+        >
           <circle
             cx={center}
             cy={center}
@@ -134,7 +155,7 @@ export const PaymentDonutChart: React.FC<PaymentDonutChartProps> = ({
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none">
           <span className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider">Total Monthly</span>
           <span className="text-xl sm:text-2xl font-black text-slate-900 mt-0.5 tracking-tight">{fmt(total)}</span>
-          <span className="text-[10px] text-slate-400 font-mono">/month</span>
+          <span className="text-[10px] text-slate-500 font-mono">/month</span>
         </div>
       </div>
 
@@ -174,7 +195,7 @@ export const PaymentDonutChart: React.FC<PaymentDonutChartProps> = ({
               </div>
               <div className="text-right shrink-0 font-mono whitespace-nowrap">
                 <span className={`font-bold ${s.textColor}`}>{fmt(s.amount)}</span>
-                <span className="text-[10px] text-slate-500 ml-1.5">({s.percentage}%)</span>
+                <span className="text-[10px] text-slate-600 ml-1.5">({s.percentage}%)</span>
               </div>
             </div>
           ))}

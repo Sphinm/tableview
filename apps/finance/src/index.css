@@ -51,6 +51,42 @@
   --color-slate-200: #e2e8f0;
   --color-slate-100: #f1f5f9;
   --color-slate-50: #f8fafc;
+
+  /*
+   * Institutional navy ramp.
+   *
+   * The accent used to be Tailwind's stock indigo (#4f46e5) — a vivid
+   * violet-blue that reads "consumer AI startup". Underwriting software is
+   * bought on trust, so the accent is re-tuned to a desaturated, high-contrast
+   * navy: the colour of ledgers, term sheets and regulator filings. Every
+   * component already speaks the indigo utility scale, so overriding the ramp
+   * here re-skins the whole suite consistently — buttons, links, focus rings
+   * and charts — without a class-name sweep, and keeps the other apps' palettes
+   * untouched.
+   */
+  --color-indigo-50: #eff5fb;
+  --color-indigo-100: #dce8f5;
+  --color-indigo-200: #bdd3ea;
+  --color-indigo-300: #8fb4d9;
+  --color-indigo-400: #5a8dc2;
+  --color-indigo-500: #356ba4;
+  --color-indigo-600: #1f5386;
+  --color-indigo-700: #1a446d;
+  --color-indigo-800: #17385a;
+  --color-indigo-900: #142f4a;
+  --color-indigo-950: #0c1f33;
+
+  /*
+   * P&L semantics. In a lending suite gains, losses and cautions are a
+   * first-class part of the language, so they get named tokens instead of
+   * ad-hoc greens and reds scattered through individual components.
+   */
+  --color-positive: #047857;
+  --color-positive-soft: #ecfdf5;
+  --color-negative: #b91c1c;
+  --color-negative-soft: #fef2f2;
+  --color-caution: #b45309;
+  --color-caution-soft: #fffbeb;
 }
 
 :root {
@@ -65,38 +101,225 @@
   --color-text-sub: #334155;
   --color-text-main: #1e293b;
   --color-text-heading: #0f172a;
+
+  /* Single source of truth for keyboard focus and the primary accent. */
+  --color-focus-ring: #1f5386;
+  --color-accent: #1f5386;
 }
 
 @layer base {
   body {
     @apply bg-slate-100/70 text-slate-900 antialiased selection:bg-indigo-500 selection:text-white min-h-screen text-[15px] sm:text-[16px] leading-relaxed;
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+    /*
+     * Tabular (monospaced) figures everywhere. A financial workbench lives or
+     * dies on whether a column of dollars lines up: proportional digits make
+     * $111,111 visually narrower than $999,999, so scanned spreadsheets and
+     * KPI grids look ragged. Fixing the digit advance also stops numbers from
+     * jittering while they are typed into an input. This is deliberately
+     * global — it is the single strongest "this is a finance product" signal
+     * in the type system.
+     */
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
   }
   code, kbd, samp, pre {
     font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   }
 }
 
-/* Headings automatically crisp dark slate */
-h1, h2, h3, h4, h5, h6 {
-  color: #0f172a;
+/*
+ * Keyboard focus. Components with their own Tailwind focus ring keep it; the
+ * :where() wrapper gives this rule zero specificity so it only supplies an
+ * outline to controls that would otherwise show none. Pointer users get no
+ * ring, because :focus-visible does not match a mouse click.
+ */
+:where(a, button, [role='button'], summary, [tabindex]:not([tabindex='-1'])):focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip link: hidden until focused, then pinned to the top of the viewport. */
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 1000;
+  transform: translateY(-200%);
+  transition: transform 0.15s ease-out;
+  background-color: #ffffff;
+  color: var(--color-focus-ring);
+  border: 2px solid var(--color-focus-ring);
+  border-radius: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  box-shadow: 0 8px 24px -6px rgba(15, 23, 42, 0.25);
+}
+.skip-link:focus {
+  transform: translateY(0);
+  outline: none;
+  /*
+   * Show instantly. Animating a control whose entire job is to be visible the
+   * moment it is focused is a bad trade: hiding may animate, but the reveal
+   * must never depend on the animation clock advancing (throttled frames in a
+   * background tab can strand a focused skip link off-screen).
+   */
+  transition: none;
+}
+
+/*
+ * Respect the operating system's reduce-motion setting. The suite leans on
+ * pulsing badges, sliding dropdowns and animated charts; for vestibular-
+ * sensitive users we collapse all of it to effectively instant rather than
+ * removing the state change outright.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ==========================================================================
+   Financial data tables
+   ==========================================================================
+   Amortisation schedules and 10-year projections are the tables users actually
+   read numbers off. In financial reporting the figure columns share a common
+   *right* edge so digits line up on the decimal and magnitudes can be compared
+   down a column at a glance; left-aligned money forces the eye to hunt for the
+   units. The suite was inconsistent here — the refinance comparison table was
+   right-aligned while the DSCR, mortgage, commercial and cap-rate schedules
+   were left-aligned.
+
+   This rule encodes the convention once. The first column of every such table
+   is the period/label column, so every later column is right-aligned. Zebra
+   striping is added because a 30-year schedule is far past the width where the
+   eye can track a row unaided.
+   ========================================================================== */
+.fin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fin-table th:not(:first-child),
+.fin-table td:not(:first-child) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.fin-table tbody tr:nth-child(even) {
+  background-color: rgba(241, 245, 249, 0.6);
+}
+
+.fin-table tbody tr:hover {
+  background-color: rgba(226, 232, 240, 0.75);
+}
+
+/* ==========================================================================
+   Marketing hero band
+   ==========================================================================
+   The landing hero previously sat on the same near-white canvas as the rest of
+   the app: a white badge on a white page, grey body copy, and a navy headline
+   carrying all of the (limited) visual weight. It read as flat and gave a
+   prospective borrower nothing to anchor on.
+
+   This band establishes the hierarchy a financial product needs - a deep ink
+   surface that signals authority, a fine ledger grid for texture, and a warm
+   bloom that keeps it from reading as a plain dark block. Gold on ink is the
+   long-standing convention for premium finance (terminal amber, private-bank
+   stationery), so it reads as "serious money" rather than "SaaS gradient".
+   ========================================================================== */
+.hero-band {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  /*
+   * Mid-navy, not near-black. The first pass used #0c1f33 -> #142f4a, which is
+   * within a few percent of pure black and read as a heavy slab rather than a
+   * financial product. These stops sit two full steps lighter on the navy ramp
+   * so the band reads as a rich blue surface, while the diagonal still carries
+   * enough depth to separate it from the page.
+   *
+   * The bloom opacity is deliberately kept low: it lands on the top-right where
+   * the headline and body copy sit, and a stronger wash would push light text
+   * below AA there.
+   */
+  background:
+    radial-gradient(115% 130% at 88% -15%, rgba(90, 141, 194, 0.3) 0%, transparent 58%),
+    radial-gradient(95% 115% at 6% 112%, rgba(251, 191, 36, 0.14) 0%, transparent 62%),
+    linear-gradient(158deg, #1a446d 0%, #235a94 48%, #17385a 100%);
+}
+
+/*
+ * Ledger rule texture: a very fine grid, faded toward the bottom so it never
+ * competes with the call to action.
+ */
+.hero-band::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(148, 163, 184, 0.1) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.1) 1px, transparent 1px);
+  background-size: 58px 58px;
+  -webkit-mask-image: radial-gradient(125% 105% at 50% 0%, #000 28%, transparent 80%);
+  mask-image: radial-gradient(125% 105% at 50% 0%, #000 28%, transparent 80%);
+  pointer-events: none;
+}
+
+/* Warm top hairline: one premium accent, not a rainbow. */
+.hero-band::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.85) 50%, transparent);
+  pointer-events: none;
+}
+
+/* Stat tile. Sits on the light canvas below the hero, so it is a light card. */
+.hero-stat {
+  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+}
+
+/*
+ * Headings default to crisp dark slate.
+ *
+ * Kept inside @layer base deliberately: an unlayered rule beats every layered
+ * rule, so while this was unlayered any text-* colour utility on a heading was
+ * silently ignored. Inside the base layer a utility on the element wins.
+ */
+@layer base {
+  h1, h2, h3, h4, h5, h6 {
+    color: #0f172a;
+  }
 }
 
 /* Primary Solid Button: High-contrast utilitarian CTA */
 .btn-primary {
-  background-color: #4f46e5;
+  background-color: #1f5386;
   color: #ffffff !important;
-  border: 1px solid #4338ca;
-  box-shadow: 0 1px 2px 0 rgba(79, 70, 229, 0.2);
-  transition: all 0.15s ease-in-out;
+  border: 1px solid #1a446d;
+  box-shadow: 0 1px 2px 0 rgba(31, 83, 134, 0.2);
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 .btn-primary:hover {
-  background-color: #4338ca;
-  border-color: #3730a3;
+  background-color: #1a446d;
+  border-color: #17385a;
   color: #ffffff !important;
 }
 .btn-primary:active {
-  transform: scale(0.98);
+  background-color: #17385a;
 }
 
 /* Secondary Button: Outlined card button with crisp border */
@@ -105,7 +328,7 @@ h1, h2, h3, h4, h5, h6 {
   color: #0f172a !important;
   border: 1px solid #e2e8f0;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
-  transition: all 0.15s ease-in-out;
+  transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 .btn-secondary:hover {
   background-color: #f8fafc;
@@ -113,19 +336,19 @@ h1, h2, h3, h4, h5, h6 {
   border-color: #cbd5e1;
 }
 .btn-secondary:active {
-  transform: scale(0.98);
+  background-color: #f1f5f9;
 }
 
 /* Brand Logo Icon Container */
 .brand-icon {
-  background-color: #4f46e5;
+  background-color: #1f5386;
   color: #ffffff !important;
-  border: 1px solid #4338ca;
+  border: 1px solid #1a446d;
 }
 
 /* High-contrast Recommended Badge */
 .badge-recommended {
-  background-color: #4f46e5;
+  background-color: #1f5386;
   color: #ffffff !important;
 }
 
@@ -243,108 +466,4 @@ h1, h2, h3, h4, h5, h6 {
   a[href]:after {
     content: none !important;
   }
-}
-
-/* ==========================================================================
-   Code Editor Syntax Highlighting (Prism.js Theme)
-   ========================================================================== */
-.code-editor-root pre,
-.code-editor-root textarea {
-  font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
-  font-size: 12px !important;
-  line-height: 20px !important;
-  letter-spacing: 0px !important;
-  tab-size: 2 !important;
-  -moz-tab-size: 2 !important;
-  box-sizing: border-box !important;
-}
-
-/* Light Theme Syntax Tokens */
-.code-highlight .token.keyword {
-  color: #4f46e5; /* indigo-600 */
-  font-weight: 700;
-}
-.code-highlight .token.function {
-  color: #0284c7; /* sky-600 */
-  font-weight: 600;
-}
-.code-highlight .token.property {
-  color: #0f172a; /* slate-900 */
-  font-weight: 600;
-}
-.code-highlight .token.string {
-  color: #059669; /* emerald-600 */
-}
-.code-highlight .token.number {
-  color: #d97706; /* amber-600 */
-}
-.code-highlight .token.boolean {
-  color: #e11d48; /* rose-600 */
-  font-weight: 600;
-}
-.code-highlight .token.null {
-  color: #dc2626; /* red-600 */
-  font-weight: 600;
-}
-.code-highlight .token.operator {
-  color: #64748b; /* slate-500 */
-}
-.code-highlight .token.punctuation {
-  color: #94a3b8; /* slate-400 */
-}
-.code-highlight .token.comment {
-  color: #94a3b8; /* slate-400 */
-  font-style: italic;
-}
-
-/* Dark Theme Syntax Tokens */
-.code-highlight.dark-editor,
-.dark-editor .code-highlight {
-  color: #f1f5f9;
-}
-.code-highlight.dark-editor .token.keyword,
-.dark-editor.code-highlight .token.keyword {
-  color: #818cf8; /* indigo-400 */
-  font-weight: 700;
-}
-.code-highlight.dark-editor .token.function,
-.dark-editor.code-highlight .token.function {
-  color: #38bdf8; /* sky-400 */
-  font-weight: 600;
-}
-.code-highlight.dark-editor .token.property,
-.dark-editor.code-highlight .token.property {
-  color: #e2e8f0; /* slate-200 */
-  font-weight: 600;
-}
-.code-highlight.dark-editor .token.string,
-.dark-editor.code-highlight .token.string {
-  color: #34d399; /* emerald-400 */
-}
-.code-highlight.dark-editor .token.number,
-.dark-editor.code-highlight .token.number {
-  color: #fbbf24; /* amber-400 */
-}
-.code-highlight.dark-editor .token.boolean,
-.dark-editor.code-highlight .token.boolean {
-  color: #fb7185; /* rose-400 */
-  font-weight: 600;
-}
-.code-highlight.dark-editor .token.null,
-.dark-editor.code-highlight .token.null {
-  color: #f87171; /* red-400 */
-  font-weight: 600;
-}
-.code-highlight.dark-editor .token.operator,
-.dark-editor.code-highlight .token.operator {
-  color: #94a3b8; /* slate-400 */
-}
-.code-highlight.dark-editor .token.punctuation,
-.dark-editor.code-highlight .token.punctuation {
-  color: #64748b; /* slate-500 */
-}
-.code-highlight.dark-editor .token.comment,
-.dark-editor.code-highlight .token.comment {
-  color: #64748b; /* slate-500 */
-  font-style: italic;
 }

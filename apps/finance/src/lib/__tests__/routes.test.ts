@@ -1,6 +1,5 @@
 import { describe, it, expect } from 'bun:test';
 import { listPrerenderTargets, resolveRoutePath, isKnownRoute, isCalculatorRoute, GUIDE_SLUGS } from '../resolveRoute';
-import { TOOLS_CONFIG } from '../../data/tools';
 import { guidesData } from '../../data/guides';
 import { HOME_META, GUIDES_HUB_META, CALCULATOR_META, STATIC_PAGE_META } from '../../data/routeMeta';
 import { SALARY_LONG_TAIL_MAP } from '../../data/salaryLongTail';
@@ -8,13 +7,9 @@ import { SALARY_LONG_TAIL_MAP } from '../../data/salaryLongTail';
 /** Route keys the app actually renders (mirrors App.tsx's switch). */
 const APP_ROUTES = new Set([
   '/',
-  '/data-tools',
-  '/data-converter',
-  '/tools/:toolSlug',
   '/guides',
   '/guides/:slug',
   '/finance-calculator',
-  '/calculator',
   '/mortgage-calculator',
   '/amortization-schedule-calculator',
   '/mortgage-payoff-calculator',
@@ -23,33 +18,19 @@ const APP_ROUTES = new Set([
   '/dscr-loan-calculator',
   '/cap-rate-calculator',
   '/hard-money-calculator',
-  '/snowflake-cost-calculator',
-  '/parquet-storage-calculator',
+  '/brrrr-calculator',
   '/section-1031-exchange-calculator',
   '/1031-exchange-timeline-calculator',
   '/loan-comparison-calculator',
   '/commercial-loan-calculator',
   '/balloon-payment-calculator',
   '/salary-to-hourly-calculator',
-  '/json-formatter',
-  '/sql-formatter',
-  '/media-tools',
-  '/video-compressor',
-  '/compress-mp4',
-  '/compress-video-for-discord',
-  '/image-compressor',
-  '/compress-png',
-  '/compress-jpg',
-  '/compress-webp',
-  '/is-it-down',
   '/about',
   '/contact',
   '/privacy',
   '/terms',
   '/disclaimer',
 ]);
-
-const TOOLS_BY_PATH = new Map(Object.values(TOOLS_CONFIG).map((cfg) => [cfg.path, cfg]));
 
 /** Mirrors the title resolution order in scripts/prerender.ts. */
 function titleFor(canonical: string): string | undefined {
@@ -58,7 +39,7 @@ function titleFor(canonical: string): string | undefined {
 
   if (canonical.startsWith('/guides/')) {
     const guide = guidesData.find((g) => g.slug === canonical.replace('/guides/', ''));
-    return guide ? (guide.metaTitle || `${guide.title} | TableView.dev`) : undefined;
+    return guide ? (guide.metaTitle || guide.title + ' | TableView.dev') : undefined;
   }
 
   const calc = CALCULATOR_META[canonical];
@@ -67,28 +48,18 @@ function titleFor(canonical: string): string | undefined {
   const salaryPage = SALARY_LONG_TAIL_MAP[canonical];
   if (salaryPage) return salaryPage.metaTitle;
 
-  const tool = TOOLS_BY_PATH.get(canonical);
-  if (tool) return tool.metaTitle;
-
   return STATIC_PAGE_META[canonical]?.title;
 }
 
 const targets = listPrerenderTargets();
 
 describe('Prerender target manifest', () => {
-  it('covers every tool landing page', () => {
-    const urls = new Set(targets.map((t) => t.url));
-    for (const cfg of Object.values(TOOLS_CONFIG)) {
-      expect(urls.has(cfg.path)).toBe(true);
-    }
-  });
-
   it('covers every guide, both canonical and bare-slug form', () => {
     const urls = new Set(targets.map((t) => t.url));
     for (const slug of GUIDE_SLUGS) {
-      expect(urls.has(`/guides/${slug}`)).toBe(true);
+      expect(urls.has('/guides/' + slug)).toBe(true);
       // Bare slugs are indexed by search engines and must keep working.
-      expect(urls.has(`/${slug}`)).toBe(true);
+      expect(urls.has('/' + slug)).toBe(true);
     }
   });
 
@@ -96,7 +67,7 @@ describe('Prerender target manifest', () => {
     const unresolvable: string[] = [];
     for (const { url } of targets) {
       const route = resolveRoutePath(url).path;
-      if (!APP_ROUTES.has(route)) unresolvable.push(`${url} -> ${route}`);
+      if (!APP_ROUTES.has(route)) unresolvable.push(url + ' -> ' + route);
     }
     expect(unresolvable).toEqual([]);
   });
@@ -117,7 +88,7 @@ describe('Prerender target manifest', () => {
       const title = titleFor(canonical);
       if (!title) continue;
       const owner = seen.get(title);
-      if (owner && owner !== canonical) collisions.push(`${owner} vs ${canonical}`);
+      if (owner && owner !== canonical) collisions.push(owner + ' vs ' + canonical);
       else seen.set(title, canonical);
     }
 
@@ -154,37 +125,33 @@ describe('Prerender target manifest', () => {
     }
   });
 
-  it('sends the sitemap-contradicting aliases to the workbench canonical', () => {
-    // These two were previously listed in the sitemap with their own URL while
-    // canonicalising to /sql-workbench, which Search Console reports as a
-    // "Duplicate, Google chose different canonical" error.
-    const target = (url: string) => targets.find((t) => t.url === url);
-    expect(target('/sql-on-csv')?.canonical).toBe('/sql-workbench');
-    expect(target('/sql-on-parquet')?.canonical).toBe('/sql-workbench');
+  it('registers the BRRRR calculator and folds the method alias into it', () => {
+    const byUrl = new Map(targets.map((t) => [t.url, t.canonical]));
+    expect(byUrl.get('/brrrr-calculator')).toBe('/brrrr-calculator');
+    expect(byUrl.get('/brrrr-method-calculator')).toBe('/brrrr-calculator');
+    expect(resolveRoutePath('/brrrr-method-calculator').path).toBe('/brrrr-calculator');
   });
 });
 
 describe('Route resolution used by both runtime and prerenderer', () => {
-  it('maps high-intent aliases to their tool page', () => {
-    expect(resolveRoutePath('/open-csv')).toEqual({ path: '/tools/:toolSlug', slug: 'csv-viewer' });
-    expect(resolveRoutePath('/duckdb')).toEqual({ path: '/tools/:toolSlug', slug: 'sql-workbench' });
-  });
-
   it('maps calculator aliases to the dedicated calculator route', () => {
     expect(resolveRoutePath('/should-i-refinance.php').path).toBe('/refinance-calculator');
     expect(resolveRoutePath('/calculators/should-i-refinance.php').path).toBe('/refinance-calculator');
     expect(resolveRoutePath('/fix-and-flip-calculator').path).toBe('/hard-money-calculator');
+    expect(resolveRoutePath('/brrrr').path).toBe('/brrrr-calculator');
   });
 
-  it('treats an unknown path as a 404 rather than a tool', () => {
+  it('no longer claims data-tool or compressor URLs for the finance suite', () => {
+    // Those suites live on their own origins; on tableview.dev they are 404s.
+    expect(resolveRoutePath('/csv-viewer').path).toBe('/csv-viewer');
+    expect(resolveRoutePath('/duckdb').path).toBe('/duckdb');
+    expect(resolveRoutePath('/video-compressor').path).toBe('/video-compressor');
     expect(resolveRoutePath('/definitely-not-real').path).toBe('/definitely-not-real');
   });
 });
 
 describe('Known-route classification (drives the noindex 404 guard)', () => {
   it('classifies every route produced by a prerender target as known', () => {
-    // A false negative here would stamp noindex onto a real page, because App's
-    // meta effect runs after the child page's own updatePageMeta call.
     const unknown = targets
       .map((t) => resolveRoutePath(t.url).path)
       .filter((route) => !isKnownRoute(route));
@@ -193,12 +160,13 @@ describe('Known-route classification (drives the noindex 404 guard)', () => {
   });
 
   it('classifies guide detail pages as known', () => {
-    expect(isKnownRoute(resolveRoutePath('/guides/what-is-apache-parquet').path)).toBe(true);
+    expect(isKnownRoute(resolveRoutePath('/guides/how-to-calculate-dscr').path)).toBe(true);
   });
 
-  it('classifies tool landing pages as known', () => {
-    expect(isKnownRoute(resolveRoutePath('/csv-viewer').path)).toBe(true);
-    expect(isKnownRoute(resolveRoutePath('/open-csv').path)).toBe(true);
+  it('classifies every calculator canonical path as known', () => {
+    for (const p of ['/brrrr-calculator', '/dscr-loan-calculator', '/cap-rate-calculator', '/commercial-loan-calculator']) {
+      expect(isKnownRoute(p)).toBe(true);
+    }
   });
 
   it('does not classify a typo as known', () => {
@@ -219,8 +187,7 @@ describe('Known-route classification (drives the noindex 404 guard)', () => {
         '/refinance-calculator',
         '/dscr-loan-calculator',
         '/hard-money-calculator',
-        '/snowflake-cost-calculator',
-        '/parquet-storage-calculator',
+        '/brrrr-calculator',
         '/section-1031-exchange-calculator',
         '/loan-comparison-calculator',
         '/commercial-loan-calculator',
@@ -239,17 +206,17 @@ describe('Known-route classification (drives the noindex 404 guard)', () => {
       expect(isCalculatorRoute('/100000-a-year-is-how-much-an-hour')).toBe(true);
     });
 
-    it('returns false for data tools, guides, and static pages', () => {
+    it('returns false for non-financial tools, guides, and static pages', () => {
       expect(isCalculatorRoute('/')).toBe(false);
       expect(isCalculatorRoute('/csv-viewer')).toBe(false);
-      expect(isCalculatorRoute('/parquet-viewer')).toBe(false);
       expect(isCalculatorRoute('/sql-workbench')).toBe(false);
       expect(isCalculatorRoute('/json-formatter')).toBe(false);
+      expect(isCalculatorRoute('/video-compressor')).toBe(false);
       expect(isCalculatorRoute('/guides')).toBe(false);
       expect(isCalculatorRoute('/about')).toBe(false);
       expect(isCalculatorRoute('/privacy')).toBe(false);
 
-      // Regression: Guides containing financial keywords like "loan", "dscr", "exchange", "mortgage"
+      // Regression: guides containing financial keywords like "loan", "dscr", "exchange", "mortgage"
       // must NEVER be misclassified as calculator routes!
       expect(isCalculatorRoute('/guides/dscr-loans-complete-investor-guide')).toBe(false);
       expect(isCalculatorRoute('/guides/section-1031-exchange-rules-timeline')).toBe(false);

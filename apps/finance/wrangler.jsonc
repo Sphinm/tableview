@@ -15,6 +15,11 @@
 			"binding": "DB",
 			"database_name": "tableview_db",
 			"database_id": "f443a7bb-b053-4dad-8344-6498cca3b580"
+		},
+		{
+			"binding": "tableview_logs",
+			"database_name": "tableview_logs",
+			"database_id": "094641b5-1b90-4c0e-b124-666745abadfb"
 		}
 	],
 	"vars": {

@@ -60,9 +60,9 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
   if (!guide) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
-        <BookOpen className="size-12 text-slate-400 mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-slate-900 mb-2">Guide Not Found</h1>
-        <p className="text-xs sm:text-sm text-slate-600 mb-6">
+        <BookOpen className="size-12 text-neutral-500 mx-auto mb-4" />
+        <h1 className="text-2xl font-bold text-neutral-50 mb-2">Guide Not Found</h1>
+        <p className="text-xs sm:text-sm text-neutral-300 mb-6">
           The requested technical guide could not be found or may have been updated.
         </p>
         <button
@@ -92,7 +92,8 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
   const relatedGuides = guidesData.filter((g) => g.slug !== guide.slug).slice(0, 2);
 
   return (
-    <article className="max-w-4xl mx-auto px-4 sm:px-6 py-10 text-slate-800">
+    <div className="relative -mx-4 sm:-mx-6 lg:-mx-8 -my-6 bg-slate-50 text-slate-900 min-h-[calc(100vh-7rem)]">
+      <article className="max-w-4xl mx-auto px-4 sm:px-6 py-12 text-slate-800">
       {/* Breadcrumbs */}
       <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-xs text-slate-600 mb-8 font-medium">
         <a
@@ -124,7 +125,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
           </button>
         </div>
 
-        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight mb-4">
+        <h1 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight mb-4">
           {guide.title}
         </h1>
 
@@ -201,7 +202,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
       <div className="space-y-12 leading-relaxed text-sm text-slate-800">
         {guide.sections.map((section, sectionIdx) => (
           <section key={section.id} id={section.id} className="scroll-mt-24">
-            <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-4">
+            <h2 className="text-lg sm:text-xl font-bold mb-4">
               {section.heading}
             </h2>
 
@@ -220,7 +221,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
                   <span className="font-mono text-[11px] uppercase tracking-wider font-semibold">{section.code.language}</span>
                   <button
                     onClick={() => handleCopyCode(section.code!.code, sectionIdx)}
-                    className="flex items-center gap-1 text-slate-500 hover:text-slate-900 transition-colors cursor-pointer text-[11px] font-medium"
+                    className="flex items-center gap-1 text-slate-600 hover:text-slate-900 transition-colors cursor-pointer text-[11px] font-medium"
                   >
                     {copiedCodeIndex === sectionIdx ? (
                       <>
@@ -274,7 +275,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
         {/* FAQ Section */}
         {guide.faqs && guide.faqs.length > 0 && (
           <section id="faqs" className="scroll-mt-24 pt-6 border-t border-slate-200">
-            <h2 className="text-lg sm:text-xl font-bold text-slate-900 mb-6">
+            <h2 className="text-lg sm:text-xl font-bold mb-6">
               Frequently Asked Questions
             </h2>
             <div className="space-y-3">
@@ -331,7 +332,7 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
       {/* Related Guides */}
       {relatedGuides.length > 0 && (
         <div className="pt-8 border-t border-slate-200">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900 mb-4">
+          <h3 className="text-sm font-bold uppercase tracking-wider mb-4">
             Related Technical Guides
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -360,5 +361,6 @@ export const GuideDetail = ({ slug }: GuideDetailProps) => {
         </div>
       )}
     </article>
+    </div>
   );
 };

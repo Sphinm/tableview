@@ -323,7 +323,7 @@ export function calculateRentalProperty(input: RentalPropertyInput): RentalPrope
     status = 'fair';
     title = 'Modest Cash Flow Asset';
     summary = 'The property produces positive cash flow, though cash-on-cash yield is conservative.';
-    pros.push(`Positive Monthly Cash Flow: $${Math.round(netCashFlowMonthly).toLocaleString()}/mo`);
+    pros.push(`Positive Monthly Cash Flow: $${Math.round(netCashFlowMonthly).toLocaleString('en-US')}/mo`);
   } else if (cashOnCashReturn === 0) {
     status = 'caution';
     title = 'Break-Even Asset';
@@ -333,7 +333,7 @@ export function calculateRentalProperty(input: RentalPropertyInput): RentalPrope
     status = 'negative';
     title = 'Negative Cash Flow Warning';
     summary = 'Operating expenses and debt service exceed rental revenue. The investor must subsidize the asset out-of-pocket.';
-    risks.push(`Monthly Deficit: -$${Math.abs(Math.round(netCashFlowMonthly)).toLocaleString()}/mo`);
+    risks.push(`Monthly Deficit: -$${Math.abs(Math.round(netCashFlowMonthly)).toLocaleString('en-US')}/mo`);
   }
 
   if (meets1PercentRule) {

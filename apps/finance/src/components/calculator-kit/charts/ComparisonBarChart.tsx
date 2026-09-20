@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { BarChart3 } from 'lucide-react';
 
+import { chartAriaLabel } from '@tableview/shared';
+
 export interface ComparisonLoanMetric {
   name: string;
   actualMonthlyPayment: number;
@@ -132,6 +134,18 @@ export const ComparisonBarChart: React.FC<ComparisonBarChartProps> = ({
       {/* SVG Clustered Comparison Bar Chart */}
       <div className="w-full overflow-hidden">
         <svg
+          /*
+           * Complex image: name it and state both compared values so the
+           * comparison is available without sight of the bars.
+           */
+          role="img"
+          aria-label={chartAriaLabel(
+            `${title} — ${currentMetric.label}`,
+            [
+              { label: loanA.name, value: currentMetric.format(valA) },
+              { label: loanB.name, value: currentMetric.format(valB) },
+            ]
+          )}
           viewBox={`0 0 ${width} ${height}`}
           className="w-full h-auto select-none"
         >
@@ -322,12 +336,12 @@ export const ComparisonBarChart: React.FC<ComparisonBarChartProps> = ({
                   : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-slate-300'
               }`}
             >
-              <span className="block text-[11px] font-medium text-slate-500 truncate">{m.label}</span>
+              <span className="block text-[11px] font-medium text-slate-600 truncate">{m.label}</span>
               <div className="flex items-baseline justify-between mt-1">
                 <span className="font-mono font-bold text-slate-900 text-xs">
                   {m.format(Math.min(vA, vB))}
                 </span>
-                <span className={`text-[10px] font-bold ${winner === 'Tie' ? 'text-slate-500' : 'text-emerald-600'}`}>
+                <span className={`text-[10px] font-bold ${winner === 'Tie' ? 'text-slate-500' : 'text-emerald-700'}`}>
                   {winner === 'Tie' ? 'Tie' : `✓ ${winner.slice(0, 8)}`}
                 </span>
               </div>

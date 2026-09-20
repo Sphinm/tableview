@@ -20,10 +20,6 @@ const ROUTE_LOADERS: Record<string, ComponentLoader> = {
   '/compress-image': () => import('../pages/ImageCompressor'),
   '/media-tools': () => import('../pages/MediaToolsHub'),
 
-  // Technical Guides
-  '/guides': () => import('../pages/GuidesHub'),
-  '/guides/:slug': () => import('../pages/GuideDetail'),
-
   // Legal & Platform Pages
   '/about': () => import('../pages/About'),
   '/contact': () => import('../pages/Contact'),
@@ -131,12 +127,12 @@ export function schedulePopularCalculatorsPreload(delayMs = 2500): void {
   if (typeof window === 'undefined') return;
   setTimeout(() => {
     idlePreloadRoutes([
-      '/mortgage-calculator',
-      '/refinance-calculator',
-      '/dscr-loan-calculator',
-      '/loan-comparison-calculator',
-      '/commercial-loan-calculator',
-      '/hard-money-calculator',
+      '/video-compressor',
+      '/compress-mp4',
+      '/image-compressor',
+      '/compress-png',
+      '/compress-jpg',
+      '/compress-webp',
     ]);
   }, delayMs);
 }

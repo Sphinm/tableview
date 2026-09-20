@@ -14,6 +14,7 @@ import {
   Building2,
   Flame,
 } from 'lucide-react';
+import { Dialog } from '@tableview/ui';
 import { useAuth } from '../lib/useAuth';
 
 interface LenderReadyDossierModalProps {
@@ -65,8 +66,12 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200">
-      <div className="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-8">
+    <Dialog
+      onClose={onClose}
+      labelledBy="lender-dossier-title"
+      overlayClassName="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
+      panelClassName="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-8"
+    >
         {/* Header */}
         <div className="px-6 py-5 border-b border-slate-200 bg-gradient-to-r from-slate-900 to-indigo-950 text-white flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -75,7 +80,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-lg font-bold text-white tracking-tight">Institutional Lender-Ready Dossier</h3>
+                <h3 id="lender-dossier-title" className="text-lg font-bold text-white tracking-tight">Institutional Lender-Ready Dossier</h3>
                 <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-amber-400 text-amber-950">
                   CFPB QM Certified
                 </span>
@@ -106,7 +111,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
           {/* Trust Banner: Zero Spam, 100% In-Browser */}
           <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs text-slate-700">
             <div className="flex items-center gap-2 font-medium">
-              <ShieldCheck className="size-4 text-emerald-600 shrink-0" />
+              <ShieldCheck className="size-4 text-emerald-700 shrink-0" />
               <span>
                 <strong>100% In-Browser Privacy:</strong> No telemarketing calls, no email selling, zero data leakage.
               </span>
@@ -121,7 +126,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
             <div className="p-6 rounded-2xl bg-emerald-50/70 border border-emerald-200 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2 text-emerald-900 font-bold text-base">
-                  <BadgeCheck className="size-6 text-emerald-600" />
+                  <BadgeCheck className="size-6 text-emerald-700" />
                   <span>Dossier Package Unlocked</span>
                 </div>
                 {isPro && (
@@ -152,7 +157,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
                       <div className="text-[11px] text-slate-500">CFPB QM 28/43% Stamp & Cash-to-Close</div>
                     </div>
                   </div>
-                  <Download className="size-4 text-emerald-600 group-hover:translate-y-0.5 transition-transform" />
+                  <Download className="size-4 text-emerald-700 group-hover:translate-y-0.5 transition-transform" />
                 </button>
 
                 <button
@@ -171,7 +176,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
                       <div className="text-[11px] text-slate-500">360-month PMT schedule with formulas</div>
                     </div>
                   </div>
-                  <Download className="size-4 text-emerald-600 group-hover:translate-y-0.5 transition-transform" />
+                  <Download className="size-4 text-emerald-700 group-hover:translate-y-0.5 transition-transform" />
                 </button>
               </div>
 
@@ -219,19 +224,19 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
 
                   <ul className="space-y-2.5 text-xs text-slate-700 border-t border-slate-100 pt-4 mb-6">
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
                       <span><strong>Official PDF Dossier</strong> without watermark</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
                       <span><strong>Full Formula Excel (.xlsx)</strong> with live PMT formulas</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
                       <span>Itemized Cash-to-Close & CFPB QM 28/43% DTI Audit</span>
                     </li>
                     <li className="flex items-start gap-2">
-                      <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
+                      <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
                       <span>30-day re-access & modification window</span>
                     </li>
                     <li className="flex items-start gap-2 text-slate-400">
@@ -361,7 +366,6 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
             </div>
           </div>
         </div>
-      </div>
-    </div>
+    </Dialog>
   );
 };

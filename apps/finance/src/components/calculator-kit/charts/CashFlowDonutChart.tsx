@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { PieChart } from 'lucide-react';
+import { chartAriaLabel, formatUsd } from '@tableview/shared';
 
 export interface DonutSegment {
   id: string;
@@ -70,7 +71,7 @@ export const CashFlowDonutChart: React.FC<CashFlowDonutChartProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
         <div>
           <div className="flex items-center gap-2">
-            <span className="p-1 rounded-md bg-emerald-50 text-emerald-600 border border-emerald-100">
+            <span className="p-1 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-100">
               <PieChart className="size-4" />
             </span>
             <h3 className="text-sm sm:text-base font-bold text-slate-900">{title}</h3>
@@ -83,6 +84,20 @@ export const CashFlowDonutChart: React.FC<CashFlowDonutChartProps> = ({
         {/* SVG Donut */}
         <div className="relative flex items-center justify-center shrink-0">
           <svg
+            /*
+             * A chart is a complex image: it needs a role and a text
+             * alternative or a screen reader sees an unlabelled graphic. The
+             * summary is built from the same slices the arcs are drawn from.
+             */
+            role="img"
+            aria-label={chartAriaLabel(
+              title,
+              slices.map((s) => ({
+                label: s.label,
+                value: formatUsd(s.amount),
+                share: `${(s.percent * 100).toFixed(1)}%`,
+              }))
+            )}
             width={size}
             height={size}
             viewBox={`0 0 ${size} ${size}`}
@@ -128,9 +143,9 @@ export const CashFlowDonutChart: React.FC<CashFlowDonutChartProps> = ({
                   {activeSegment.label}
                 </span>
                 <span className="text-sm font-bold font-mono text-slate-900 mt-0.5">
-                  ${Math.round(activeSegment.amount).toLocaleString()}
+                  ${Math.round(activeSegment.amount).toLocaleString('en-US')}
                 </span>
-                <span className="text-[10px] font-semibold text-emerald-600">
+                <span className="text-[10px] font-semibold text-emerald-700">
                   {(activeSegment.percent * 100).toFixed(1)}%
                 </span>
               </>
@@ -140,7 +155,7 @@ export const CashFlowDonutChart: React.FC<CashFlowDonutChartProps> = ({
                   {centerTitle}
                 </span>
                 <span className="text-base font-extrabold font-mono text-slate-900 mt-0.5">
-                  {centerValue || `$${Math.round(totalAmount).toLocaleString()}`}
+                  {centerValue || `$${Math.round(totalAmount).toLocaleString('en-US')}`}
                 </span>
                 <span className="text-[10px] text-slate-500">100% Outflow</span>
               </>
@@ -176,7 +191,7 @@ export const CashFlowDonutChart: React.FC<CashFlowDonutChartProps> = ({
 
                 <div className="text-right font-mono">
                   <span className="text-xs font-bold text-slate-900 block">
-                    ${Math.round(slice.amount).toLocaleString()}
+                    ${Math.round(slice.amount).toLocaleString('en-US')}
                   </span>
                   <span className="text-[10px] text-slate-500 block">
                     {(slice.percent * 100).toFixed(1)}%

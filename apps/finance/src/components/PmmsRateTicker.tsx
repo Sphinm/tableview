@@ -29,7 +29,7 @@ export const PmmsRateTicker: React.FC<PmmsRateTickerProps> = ({
           </span>
           <span className="whitespace-nowrap text-slate-800 font-bold">US National Benchmarks</span>
           {!compact && (
-            <span className="text-[10px] text-slate-400 font-normal whitespace-nowrap">
+            <span className="text-[10px] text-slate-500 font-normal whitespace-nowrap">
               ({asOfDate})
             </span>
           )}
@@ -68,13 +68,22 @@ export const PmmsRateTicker: React.FC<PmmsRateTickerProps> = ({
             <span className="text-[10px] text-slate-500 font-sans">PMMS 30Y:</span>
             <span className="text-indigo-600 font-extrabold">{fixed30.rate}%</span>
             {fixed30.weekChange !== undefined && (
-              <span className="text-[10px] text-rose-500 font-sans flex items-center">
+              <span
+                className={`text-[10px] font-sans flex items-center ${
+                  fixed30.weekChange > 0 ? 'text-rose-700' : 'text-emerald-700'
+                }`}
+                title={`${fixed30.weekChange > 0 ? 'Up' : 'Down'} ${Math.abs(
+                  fixed30.weekChange
+                ).toFixed(2)} percentage points versus the prior PMMS week`}
+              >
                 {fixed30.weekChange > 0 ? (
-                  <TrendingUp className="size-2.5 text-rose-500" />
+                  <TrendingUp className="size-2.5" />
                 ) : (
-                  <TrendingDown className="size-2.5 text-emerald-500" />
+                  <TrendingDown className="size-2.5" />
                 )}
-                +{fixed30.weekChange}%
+                {/* A rate move must carry the correct sign: a fall cannot print as "+". */}
+                {fixed30.weekChange > 0 ? '+' : '\u2212'}
+                {Math.abs(fixed30.weekChange).toFixed(2)}%
               </span>
             )}
             <ArrowUpRight className="size-2.5 opacity-60 ml-0.5" />

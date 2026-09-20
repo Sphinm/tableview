@@ -4,8 +4,6 @@ import {
   Hammer,
   Home,
   ArrowRightLeft,
-  Server,
-  PiggyBank,
   Sparkles,
   Scale,
   DollarSign,
@@ -14,7 +12,7 @@ import {
 import { navigateTo } from '../lib/router';
 import { preloadRoute } from '../lib/routePreload';
 
-export type CalculatorCategory = 'real-estate' | 'cloud-finops' | 'consumer' | 'payroll';
+export type CalculatorCategory = 'real-estate' | 'consumer' | 'payroll';
 
 interface RelatedCalculatorsProps {
   currentSlug: string;
@@ -112,24 +110,6 @@ const ALL_CALCULATORS: CalcItem[] = [
     badge: 'Refinance',
     icon: ArrowRightLeft,
     category: 'real-estate'
-  },
-  {
-    slug: 'snowflake-cost-calculator',
-    path: '/snowflake-cost-calculator',
-    title: 'Snowflake Warehouse FinOps',
-    description: 'Model virtual warehouse credit consumption, auto-suspend & sizing cuts.',
-    badge: 'Cloud FinOps',
-    icon: Server,
-    category: 'cloud-finops'
-  },
-  {
-    slug: 'parquet-storage-calculator',
-    path: '/parquet-storage-calculator',
-    title: 'Parquet Storage & Query Savings',
-    description: 'Estimate AWS S3 storage reductions and Athena/BigQuery scan savings.',
-    badge: 'Data Savings',
-    icon: PiggyBank,
-    category: 'cloud-finops'
   }
 ];
 
@@ -156,7 +136,7 @@ export const RelatedCalculators = ({ currentSlug, category = 'real-estate' }: Re
         <div>
           <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-200/80 mb-1.5">
             <Sparkles className="size-3" />
-            <span>More Financial & FinOps Modeling Tools</span>
+            <span>More Real Estate & Lending Underwriting Tools</span>
           </div>
           <h3 className="text-lg sm:text-xl font-bold text-slate-900 tracking-tight">
             Explore Related Calculators
@@ -169,7 +149,7 @@ export const RelatedCalculators = ({ currentSlug, category = 'real-estate' }: Re
           onClick={(e) => handleNav(e, '/finance-calculator')}
           className="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-600 hover:text-indigo-700 transition-colors"
         >
-          <span>View All 10+ Calculators</span>
+          <span>View All Underwriting Calculators</span>
           <ArrowRight className="size-3.5" />
         </a>
       </div>

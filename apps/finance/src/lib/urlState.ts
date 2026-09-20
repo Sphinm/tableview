@@ -14,6 +14,22 @@ export function getUrlParams(): Record<string, string> {
   return result;
 }
 
+/**
+ * Reads a positive numeric query parameter, falling back when it is absent,
+ * non-numeric, or non-positive. Calculators use this to restore shareable
+ * scenarios from a URL.
+ */
+export function getNumQuery(name: string, fallback: number): number {
+  if (typeof window === 'undefined') return fallback;
+  try {
+    const raw = new URLSearchParams(window.location.search).get(name);
+    if (raw !== null && !isNaN(Number(raw)) && Number(raw) > 0) return Number(raw);
+  } catch {
+    // Ignore malformed query strings.
+  }
+  return fallback;
+}
+
 export function updateUrlQuery(newParams: Record<string, string | number | boolean | undefined | null>) {
   if (typeof window === 'undefined') return;
 

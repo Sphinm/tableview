@@ -57,7 +57,7 @@ export const Contact = () => {
           Contact & Support
         </h1>
         <p className="text-sm sm:text-base text-slate-800 leading-relaxed max-w-2xl">
-          Have feedback, found an unsupported Parquet schema, or interested in partnership opportunities? Reach out via the form below or send directly to our team.
+          Have feedback, found a calculation discrepancy, or interested in partnership opportunities? Reach out via the form below or send directly to our underwriting team.
         </p>
       </div>
 
@@ -89,7 +89,7 @@ export const Contact = () => {
                 className="text-[11px] text-slate-600 hover:text-slate-900 flex items-center gap-1 cursor-pointer font-medium"
                 title="Copy email address"
               >
-                {copiedEmail ? <Check className="size-3 text-emerald-600" /> : <Copy className="size-3" />}
+                {copiedEmail ? <Check className="size-3 text-emerald-700" /> : <Copy className="size-3" />}
                 <span>{copiedEmail ? 'Copied' : 'Copy'}</span>
               </button>
             </div>
@@ -136,7 +136,7 @@ export const Contact = () => {
         <div className="md:col-span-2 p-6 sm:p-8 rounded-2xl bg-white border border-slate-200 shadow-2xs">
           {submitted ? (
             <div className="py-10 text-center space-y-4">
-              <div className="size-12 rounded-full bg-emerald-50 text-emerald-600 border border-emerald-200 flex items-center justify-center mx-auto">
+              <div className="size-12 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 flex items-center justify-center mx-auto">
                 <CheckCircle2 className="size-6" />
               </div>
               <h3 className="text-lg font-bold text-slate-900">Message Dispatched to feedback@tableview.dev!</h3>
@@ -159,7 +159,7 @@ export const Contact = () => {
                   onClick={handleCopyEmail}
                   className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 text-xs font-semibold border border-slate-300 inline-flex items-center gap-2 transition-colors cursor-pointer"
                 >
-                  {copiedEmail ? <Check className="size-3.5 text-emerald-600" /> : <Copy className="size-3.5" />}
+                  {copiedEmail ? <Check className="size-3.5 text-emerald-700" /> : <Copy className="size-3.5" />}
                   <span>{copiedEmail ? 'Copied: feedback@tableview.dev' : 'Copy feedback@tableview.dev'}</span>
                 </button>
               </div>
@@ -234,7 +234,7 @@ export const Contact = () => {
                   className="w-full px-3.5 py-2.5 rounded-xl bg-white border border-slate-300 text-slate-900 text-xs focus:outline-none focus:border-indigo-600 focus:ring-1 focus:ring-indigo-600 transition-colors"
                 >
                   <option value="General Inquiry">General Inquiry</option>
-                  <option value="Bug Report">Bug Report / Unsupported Schema</option>
+                  <option value="Bug Report">Bug Report / Calculation Discrepancy</option>
                   <option value="Feature Suggestion">Feature Suggestion</option>
                   <option value="Partnership / Sponsorship">Partnership / Advertising</option>
                 </select>

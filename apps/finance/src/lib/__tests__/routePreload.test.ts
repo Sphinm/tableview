@@ -31,13 +31,11 @@ describe('Route Preloading Engine', () => {
   it('preloads valid calculator routes without throwing', () => {
     expect(() => preloadRoute('/mortgage-calculator')).not.toThrow();
     expect(() => preloadRoute('/dscr-loan-calculator')).not.toThrow();
-    expect(() => preloadRoute('/video-compressor')).not.toThrow();
   });
 
   it('preloads aliased routes via resolveRoutePath resolution', () => {
     expect(() => preloadRoute('/tools/mortgage-calculator')).not.toThrow();
     expect(() => preloadRoute('/dscr')).not.toThrow();
-    expect(() => preloadRoute('/compress-mp4')).not.toThrow();
   });
 
   it('preloads batch routes with preloadRoutes', () => {

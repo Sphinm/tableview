@@ -7,6 +7,9 @@
     "apps/*",
     "packages/*"
   ],
+  "engines": {
+    "node": "^22.0.0"
+  },
   "scripts": {
     "dev:finance": "bun --filter @tableview/finance dev",
     "dev:tools": "bun --filter @tableview/tools dev",
@@ -18,35 +21,8 @@
     "test": "bun test",
     "lint": "oxlint"
   },
-  "dependencies": {
-    "@duckdb/duckdb-wasm": "^1.33.1-dev57.0",
-    "@ffmpeg/ffmpeg": "^0.12.15",
-    "@ffmpeg/util": "^0.12.2",
-    "@sentry/react": "^10.73.0",
-    "@sentry/replay": "^10.73.0",
-    "clsx": "^2.1.1",
-    "jszip": "^3.10.2",
-    "lucide-react": "^1.41.0",
-    "prismjs": "^1.30.0",
-    "react": "^19.2.8",
-    "react-dom": "^19.2.8",
-    "sql-formatter": "^15.8.2",
-    "tailwind-merge": "^3.6.0",
-    "xlsx": "^0.18.5"
-  },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20260915.1",
-    "@tailwindcss/vite": "^4.3.3",
-    "@types/jszip": "^3.4.1",
-    "@types/node": "^24.13.3",
-    "@types/prismjs": "^1.26.6",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
-    "@vitejs/plugin-react": "^6.1.0",
     "oxlint": "^1.79.0",
-    "tailwindcss": "^4.3.3",
-    "typescript": "~6.0.2",
-    "vite": "^8.2.2",
     "wrangler": "^4.132.0"
   }
 }

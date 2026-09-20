@@ -129,12 +129,12 @@ export function schedulePopularCalculatorsPreload(delayMs = 2500): void {
   if (typeof window === 'undefined') return;
   setTimeout(() => {
     idlePreloadRoutes([
-      '/mortgage-calculator',
-      '/refinance-calculator',
-      '/dscr-loan-calculator',
-      '/loan-comparison-calculator',
-      '/commercial-loan-calculator',
-      '/hard-money-calculator',
+      '/parquet-viewer',
+      '/sql-workbench',
+      '/data-converter',
+      '/snowflake-cost-calculator',
+      '/parquet-storage-calculator',
+      '/csv-to-excel',
     ]);
   }, delayMs);
 }
