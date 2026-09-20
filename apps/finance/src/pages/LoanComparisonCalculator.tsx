@@ -537,8 +537,8 @@ export const LoanComparisonCalculator = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Loan Term (Years)</label>
-                  <select
+                  <label htmlFor="loancomparison-loan-term-years" className="block text-xs font-medium text-slate-700 mb-1.5">Loan Term (Years)</label>
+                  <select id="loancomparison-loan-term-years"
                     value={loanA.termYears}
                     onChange={(e) => setLoanA({ ...loanA, termYears: Number(e.target.value) })}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:border-indigo-500 focus:outline-none"
@@ -667,8 +667,8 @@ export const LoanComparisonCalculator = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 mb-1.5">Loan Term (Years)</label>
-                  <select
+                  <label htmlFor="loancomparison-loan-term-years-2" className="block text-xs font-medium text-slate-700 mb-1.5">Loan Term (Years)</label>
+                  <select id="loancomparison-loan-term-years-2"
                     value={loanB.termYears}
                     onChange={(e) => setLoanB({ ...loanB, termYears: Number(e.target.value) })}
                     className="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-xl text-sm font-semibold text-slate-900 focus:border-emerald-500 focus:outline-none"

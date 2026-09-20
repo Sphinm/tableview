@@ -606,10 +606,10 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
               {/* Project Timeline & Holding */}
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                  <label htmlFor="hardmoney-holding-period-months" className="block text-xs font-semibold text-slate-700 mb-1.5">
                     Holding Period (Months)
                   </label>
-                  <select
+                  <select id="hardmoney-holding-period-months"
                     value={projectDurationMonths}
                     onChange={(e) => setProjectDurationMonths(Number(e.target.value))}
                     className="w-full px-3 py-2 rounded-xl bg-white border border-slate-200 text-base sm:text-sm text-slate-900 font-mono focus:outline-none focus:border-amber-500 transition-colors cursor-pointer"

@@ -216,10 +216,10 @@ export const Contact = () => {
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-900 mb-1.5">
+                <label htmlFor="contact-subject" className="block text-xs font-bold text-slate-900 mb-1.5">
                   Subject
                 </label>
-                <select
+                <select id="contact-subject"
                   value={formData.subject}
                   onChange={(e) => {
                     const nextSubject = e.target.value;

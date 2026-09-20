@@ -517,10 +517,10 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="refinance-original-loan-term" className="block text-xs font-semibold text-slate-700 mb-1">
                   Original Loan Term
                 </label>
-                <select
+                <select id="refinance-original-loan-term"
                   value={originalTermYears}
                   onChange={(e) => setOriginalTermYears(Number(e.target.value))}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:border-indigo-500 focus:outline-none cursor-pointer"
@@ -667,10 +667,10 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label htmlFor="refinance-new-loan-term" className="block text-xs font-semibold text-slate-700 mb-1">
                   New Loan Term
                 </label>
-                <select
+                <select id="refinance-new-loan-term"
                   value={newTermYears}
                   onChange={(e) => setNewTermYears(Number(e.target.value))}
                   className="w-full bg-slate-50 border border-slate-300 rounded-xl px-3 py-2 text-xs text-slate-900 focus:border-emerald-500 focus:outline-none cursor-pointer"
