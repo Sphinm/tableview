@@ -41,15 +41,15 @@
 | **加拿大 GST/HST** | 对"特定加拿大接收方"的特定供应超过 **C$30,000** 须简化注册 | MoR 承担 |
 | **美国州销售税** | 逐州**经济关联**（如 SD >$100,000 或 200 笔；CA >$500,000），数字商品可税性逐州不同 | MoR 作为卖方承担 |
 | **新加坡/新西兰 GST** | SG：全球营业额 >S$1M 且对 SG 远程服务 >S$100k；NZ：>NZ$60,000 | MoR 承担 |
-| **EU/UK 14 天撤回权 + 数字内容弃权** | **你有义务**在交付前取得"明示同意 + 知悉丧失撤回权" | **仍是你的义务**（MoR 不会替你满足信息与同意要件） |
-| **美国自动续订/负面选项** | FTC Act §5 + ROSCA + 各州 ARL（如加州） | **仍是你的义务**（披露、同意、click-to-cancel） |
+| **EU/UK 14 天撤回权 + 数字内容弃权** | **你有义务**在交付前取得"明示同意 + 知悉丧失撤回权" | **主要由 MoR 作为卖方承担**（它是消费者的合同相对方，可实现弃权流程）；但**不可放弃的符合性救济**（DCD Art.22）与产品符合性责任仍可能追到你 |
+| **美国自动续订/负面选项** | FTC Act §5 + ROSCA + 各州 ARL（如加州） | **卖方为 MoR 时主要由 MoR 承担**（披露、同意、click-to-cancel）；但**不可放弃的消费者权利**与品牌层面的监管/拒付风险仍在 |
 | **隐私/GDPR** | 你自己是控制者：Art 13/14 告知、Art 27 欧盟代表、cookies 同意、DPA | 仅**后端收款数据**部分转移；**你的站点分析/广告仍是你** |
 | **PSD2/SCA、PCI DSS** | 必须由你的 PSP/网关落实 SCA 与 3DS；架构**绝不落卡数据** | MoR/PSP 承担 |
 | **你本国的所得税** | **你的义务** | **仍是你的义务** |
 
 ### 1.2 三条最重要的可执行判断
 
-1. **MoR 买的是"间接税 + 卖方身份 + 卡合规"，不是"全部合规"。** 消费者法（撤回权弃权、自动续订披露与取消、退款）与 GDPR 告知义务附着于**面向消费者的销售体验**，即使法律卖方变成 MoR，你的落地页/结账页/条款仍是监管机关与消费者主张的抓手。
+1. **MoR 买的不止"间接税 + 卖方身份 + 卡合规"，还包括面向消费者的合同义务；但它不是"全部合规"。** 因为 MoR 成为法律上的卖方，法定消费者法义务（撤回权信息与弃权流程、退款、自动续订披露与取消）**主要落在 MoR 头上**——这是真正的转移。但有三样跑不掉：**(a)** 不可由合同排除的消费者法定救济（DCD Art.22；ACL s.64）对消费者始终有效；**(b)** **产品本身的符合性/质量责任**（数字内容不符合描述、功能缺陷）仍会沿供应链追到作为供应方的你；**(c)** 你的自有网站、落地页与品牌仍是监管与拒付争议的抓手。此外，GDPR 下你自己数据的告知义务完全是你的。
 2. **不要自建结账收卡。** 只要卡数据经过你的服务器，你就从 **SAQ A** 掉进 **SAQ A-EP / SAQ D** 的沉重范围。用托管结账（MoR/PSP 托管页或 iframe）把卡数据完全隔离。
 3. **欧盟"从第一笔起"是关键。** 欧盟 €10,000 门槛**明确不适用于非欧盟设立者**（欧委会《Explanatory Notes》原文，见 §2.2）。这意味着在欧盟没有"小卖家豁免"，想合规只有 MoR 或自行 OSS 两条路。
 
@@ -138,7 +138,7 @@
 ### 3.2 MoR 明确**不**接管的义务
 
 1. **你本国的所得税与常设机构判定**。三家 MoR 的自我限定都只覆盖**间接税**（sales tax/VAT/GST）。同时它们仍会收集你的税务身份信息（FastSpring："The IRS requires FastSpring to collect tax information from sellers earning revenue on our platform"；Lemon Squeezy：非美国商户须填 **W-8**）。**没有任何一家声明替你缴纳居住国所得税**——**UNVERIFIED**，见 §8。
-2. **产品责任与消费者法义务**。MoR 的责任被明确限定在支付、销售税、退款/拒付、PCI。FastSpring 甚至要求：交易相关条款必须是 **FastSpring 的条款**，但"we recommend you still apply your own **EULA** for using the product"——即**产品本身的 EULA/责任仍归你**。
+2. **产品责任与产品符合性**。MoR 的责任被限定在支付、销售税、退款/拒付、PCI，以及（作为卖方）面向消费者的合同义务。FastSpring 甚至要求：交易相关条款必须是 **FastSpring 的条款**，但"we recommend you still apply your own **EULA** for using the product"——即**产品本身的 EULA 与符合性/质量责任仍归你**。消费者不可放弃的法定救济（DCD Art.22；ACL s.64）不会因为换了卖方而消失。
 3. **你自有网站的隐私控制者身份**（见 §6）。Paddle 的数据共享附录是 **controller-to-controller**："one Controller (the Data Discloser) discloses Personal Data to another Controller (the Data Receiver)"；"Each party shall bear responsibility for **its own compliance obligations** under applicable Data Protection Legislation…"。FastSpring 明言："your company may have **additional obligations under GDPR**, for which FastSpring cannot provide legal advice."
 4. **拒付/退款的处理成本仍落在你的结算款上**。MoR 出面处理流程，但：Lemon Squeezy 可"issue refunds within 60 days"并收取 "**$15 dispute fee**"，均从你的 payout 扣除；FastSpring 的争议结果"determined solely by the buyer's bank"，争议款从你 payout 扣。
 5. **不在 MoR 体系内的销售**：若你另开自营结账或另一渠道，那部分间接税仍是你的事。
@@ -164,6 +164,7 @@
 - **Art.9(1)**（**MIRROR** 逐字核对）："Save where the exceptions provided for in Article 16 apply, the consumer shall have a period of **14 days** to withdraw from a distance or off-premises contract, without giving any reason …"
 - **Art.16(m)**（**MIRROR** 逐字核对）："the supply of **digital content which is not supplied on a tangible medium** if the performance has begun with the consumer's **prior express consent** and his **acknowledgment that he thereby loses his right of withdrawal**."
 - **信息义务 Art.6(1)**：须在缔约前以清晰易懂方式告知，包括 **(h)** 撤回权的条件、期限与程序（撤回模板见 Annex I(B)）；**(k)** 若不享有撤回权（依 Art.16），须告知 "the consumer will not benefit from a right of withdrawal or … the circumstances under which the consumer loses his right of withdrawal"；**(o)** 合同期限、自动续约时的终止条件；**(r)/(s)** 数字内容的功能性与互操作性。
+- **Art.8(7)**（**MIRROR**）：在耐久介质上提供的确认须包含 "the confirmation of the consumer's prior express consent and acknowledgment in accordance with point (m) of Article 16"。
 - **后果**：若未履行 Art.6(1)(h) 的撤回权信息义务，**撤回期延长**至 12 个月（Art.10）。
 - 来源：**MIRROR**（EUR-Lex 32011L0083 经镜像渲染后逐字核对），原始 URL：[EUR-Lex 32011L0083](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32011L0083)。
 
@@ -176,23 +177,31 @@
 **欧盟数字内容指令（Directive (EU) 2019/770）**：
 - **Art.14**（救济）：数字内容/服务不符合时，消费者有权要求**修复、减价、终止合同并退款**等；若国内法要求不合规须在一定期间内显现，则该期间"**shall not be less than two years** from the time of supply"。
 - **Art.11**：持续供应的合同，责任覆盖"the period of time during which the digital content or digital service is to be supplied"。
-- 来源：**MIRROR**（EUR-Lex 32019L0770 渲染核对），[EUR-Lex 32019L0770](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32019L0770)。**注意**：2019/770 的终止与退款条文（Art.16–18）本轮因渲染截断未逐字取回，见 §8。
+- **Art.3(1)**（适用范围）：消费者支付价款的数字内容/服务合同适用本指令——**订阅与 US$9.99 一次性购买均在范围内**。
+- **Art.16(1)**："the trader shall **reimburse the consumer for all sums paid under the contract**"（时间型合同按比例）。**Art.18(1)**：退款须 "**within 14 days** of the date on which the trader is informed"（原支付方式、不得收费）。
+- **Art.22(1)（强制性质）**："any contractual term which, to the detriment of the consumer, excludes the application of the national measures … **shall not be binding on the consumer**"——即符合性救济**不可由合同排除**。
+- 与撤回权的关系：两者**互补**——CRD Art.16(m) 管 14 天撤回权的弃权；2019/770 管符合性救济，且**在缺陷被通知前不得预先放弃**（Art.22）。
+- 来源：**MIRROR**（legislation.gov.uk 的 eudr 副本经镜像渲染后逐字核对），原始 URL：[EUR-Lex 32019L0770](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32019L0770)；条款镜像 [Art.3](https://www.legislation.gov.uk/eudr/2019/770/article/3)、[Art.14](https://www.legislation.gov.uk/eudr/2019/770/article/14)、[Art.16](https://www.legislation.gov.uk/eudr/2019/770/article/16)、[Art.18](https://www.legislation.gov.uk/eudr/2019/770/article/18)、[Art.22](https://www.legislation.gov.uk/eudr/2019/770/article/22)。
 
 **英国 CRA 2015（数字内容）**：消费者数字内容合同另有法定救济（ss.33–47 体系）。本轮**未逐字取回**（见 §8）。
 
 ### 4.2 美国：自动续订 / 负面选项（negative option）
 
 **FTC "click-to-cancel" 规则的当前状态（关键，且近期发生重大变化）**：
-- FTC 2024-11-15 发布的《Rule Concerning Recurring Subscriptions and Other Negative Option Programs》（16 CFR part 425 修订版）**已被法院撤销**。第八巡回上诉法院认定 FTC 未发布 preliminary regulatory analysis，"procedurally insufficient"，遂 **vacated** 该 2024 规则（*Custom Commc'ns, Inc. v. FTC*, 142 F.4th 1060 (8th Cir. 2025)）。
-- FTC 于 **2026-02-12** 在《Federal Register》发布 **final rule**，把 16 CFR part 425 **恢复到 2024 规则生效前的文本**，即 **"Use of Prenotification Negative Option Plans"**（回归 1973 年原规则框架），同时撤回 CARS Rule、移除 Non-Compete Rule。
-- 来源（**PRIMARY**）：[Federal Register Vol. 91, No. 29 (2026-02-12), 91 FR 6507](https://www.govinfo.gov/content/pkg/FR-2026-02-12/html/2026-02866.htm)；判决 *Custom Commc'ns, Inc. v. FTC*, 142 F.4th 1060 (8th Cir. 2025)。
+- FTC 2024-11-15 发布的《Rule Concerning Recurring Subscriptions and Other Negative Option Programs》（16 CFR part 425 修订版，89 FR 90476，原定 2025-01-14 生效）**已被法院撤销**。第八巡回上诉法院（*Custom Commc'ns, Inc. v. FTC*, 142 F.4th 1060 (8th Cir. 2025)，案号 **24-3137** 等，2025-07-08 判决）认定 FTC 未依 FTC Act §22（15 U.S.C. §57b-3(b)(1)）履行 preliminary regulatory analysis，故 "we grant the petitions for review and **vacate the Rule**"。
+- FTC 于 **2026-02-12** 在《Federal Register》发布 **final rule**（91 FR 6507），把 16 CFR part 425 **恢复到 2024 规则生效前的文本**，即 **"Use of Prenotification Negative Option Plans"**（回归 1973 年原规则框架），同时撤回 CARS Rule、移除 Non-Compete Rule。
+- FTC 并于 **2026-03-13** 发布 **NPRM**（91 FR 12318）拟重新制定负面选项规则；其现阶段执法依据为 **FTC Act §5、ROSCA、Telemarketing Sales Rule（16 CFR pt.310）、39 U.S.C. §3009、EFTA**。注意："**ROSCA is the only Federal law primarily designed to regulate negative option marketing, but it is limited to seller transactions effected on the internet.**"
+- **ROSCA §8403**（**PRIMARY**）禁止未满足以下即通过负面选项扣款：**"(1)** provides text that clearly and conspicuously **discloses all material terms** … before obtaining the consumer's billing information; **(2)** obtains a consumer's **express informed consent** …; and **(3)** provides **simple mechanisms** for a consumer to **stop recurring charges**."
+- 来源（**PRIMARY**）：[91 FR 6507 (2026-02-12)](https://www.govinfo.gov/content/pkg/FR-2026-02-12/html/2026-02866.htm)；[91 FR 12318 (2026-03-13) NPRM](https://www.govinfo.gov/content/pkg/FR-2026-03-13/html/2026-04952.htm)；[ROSCA 15 U.S.C. ch.110](https://www.govinfo.gov/content/pkg/USCODE-2023-title15/html/USCODE-2023-title15-chap110.htm)；判决 *Custom Commc'ns, Inc. v. FTC*, 142 F.4th 1060 (8th Cir. 2025)（[判决 PDF](https://storage.courtlistener.com/recap/gov.uscourts.ca8.110200/gov.uscourts.ca8.110200.00805299737.3.pdf)）。
 - **实务含义**：即使没有统一的联邦 "click-to-cancel" 规则，FTC 仍可依 **FTC Act §5**（unfair/deceptive acts）与 **ROSCA（Restore Online Shoppers' Confidence Act, 15 U.S.C. §§ 8401–8405）** 执法，要求清晰披露续订条款、取得明示同意、提供简便取消；**各州法**亦独立适用。
 
-**加州自动续订法（ARL, Cal. Bus. & Prof. Code §§ 17600–17606；AB 2863 修订，2023-07-01 生效）**：
+**加州自动续订法（ARL, Cal. Bus. & Prof. Code §§ 17600–17606；2024 年 Ch. 515 / AB 2863 修订）**：
 - **§17602(a)**（**PRIMARY**，leginfo 打印视图逐字核对）禁止：**(1)** 未在履行前以 "clear and conspicuous manner" 且"在视觉上紧邻于请求同意处"呈现自动续订条款；若含免费赠品/试用，须在收费前披露试用结束后的费用及价格变动方式；**(2)** 未先取得 **affirmative consent** 即扣款；**(3)** 未提供可留存的确认（含续订条款、取消政策、如何取消）；**(4)** 未取得对续订条款的 **express affirmative consent**。
+- **§17602(d)(1)（"click to cancel"）**：须让消费者能够 "**terminate … exclusively online, at will, and without engaging any further steps that obstruct or delay**"。
 - **§17603**：未先取得同意即发货/提供服务，视为 "**unconditional gift**"，消费者无义务。
+- **生效时间**：2024 年修订（Stats. 2024, Ch. 515）自 **2025-01-01** 起生效，且依 §17602(j) 仅适用于 **2025-07-01 及之后**订立/变更/续期的合同（**修正本文初稿中"2022 年、2023-07-01"的表述**）。
 - 来源：加州立法官网打印视图 [BPC §17602](https://leginfo.legislature.ca.gov/faces/printCodeSectionWindow.xhtml?lawCode=BPC&article=9.&sectionNum=17602.&op_statues=2024&op_chapter=515&op_section=2)（**PRIMARY**）；镜像交叉核对 [california.public.law §17602](https://california.public.law/codes/business_and_professions_code_section_17602)（**MIRROR**）。
-- **其他州**：多个州有各自 ARL（结构类似：披露、同意、取消）。本文**未逐一取得**各州一手条文，见 §8。
+- **其他州**：**弗吉尼亚 §59.1-207.46**（**PRIMARY**）：禁止在 "without first obtaining the consumer's **affirmative consent** to the agreement containing the automatic renewal offer terms" 的情况下扣款；§59.1-207.47 规定未获同意的续订商品视为赠与。科罗拉多 §6-1-732、佛蒙特 9 V.S.A. §2454a 见 FTC NPRM 引用，条文未独立核对（见 §8）。
 
 **必须做到的（合称）**：
 1. 收费前**清晰且显著**地披露：会自动续订、周期、金额、如何取消。
@@ -205,18 +214,18 @@
 
 | 市场 | 退款/救济结构 | 来源状态 |
 | :--- | :--- | :--- |
-| **欧盟** | 撤回权内退货退款（Art.13 CRD）；数字内容不符合时依 2019/770 Art.14 取得修复/减价/终止退款 | CRD 条文 **PRIMARY/MIRROR**；2019/770 部分条文待补（§8） |
-| **英国** | 14 天取消费用返还（CCR 2013）；CRA 2015 下数字内容不符合时的修复/退款 | CCR 条文 **MIRROR**；CRA 2015 待补（§8） |
-| **澳大利亚** | **Australian Consumer Law** 消费者保障（consumer guarantees）；不符合保障时可要求补救，且**不得以合同排除**（ACL 的保障不可排除条款） | 法条 URL 已知（[Competition and Consumer Act 2010 Sch 2](https://www.legislation.gov.au/C2004A04426/latest/text)），但本轮抓取失败，**UNVERIFIED**（§8） |
-| **加拿大** | 联邦层面对数字商品无统一"退款权"；主要落在**省级消费者保护法** | 本轮未验证（§8） |
-| **美国** | **无一般联邦退款权**；以商家自定政策 + FTC Act §5 + 各州 ARL 约束 | 结构性结论；具体州待核 |
+| **欧盟** | 撤回权内退货退款（Art.13 CRD）；数字内容不符合时依 2019/770 Art.14 取得"修复/减价/终止退款"，退款 **14 天内**（Art.16/18），**不可由合同排除**（Art.22） | CRD 与 DCD 条文均 **MIRROR 逐字核对** |
+| **英国** | 14 天取消费用返还（CCR 2013）；CRA 2015 下数字内容不符合时的修复/更换/减价/退款，**退款须在 14 天内**（s.45(3)） | CCR 条文 **MIRROR**；CRA 2015 ss.42–46 **MIRROR** |
+| **澳大利亚** | **ACL** 消费者保障：s.60（"services will be rendered with due care and skill"）；排除保障的条款 "**void**"（s.64(1)）；重大失败时消费者可终止合同或索赔（s.267(3)） | **PRIMARY/MIRROR**（[CCA 2010 Sch 2](https://www.legislation.gov.au/C2004A00109/latest/text)） |
+| **加拿大** | 无一般"后悔权"退款；取消权与缺陷/未披露挂钩。**安省 CPA**：互联网协议披露（s.38）、副本（s.39）、未披露时可取消至收到副本后 7 天（s.40）；**魁省 CPA** ss.54.4–54.6（缔约前披露/明示接受） | **MIRROR**（[Ontario](https://www.ontario.ca/laws/statute/02c30)、[Quebec](https://www.legisquebec.gouv.qc.ca/en/document/cs/P-40.1)） |
+| **美国** | **无一般联邦退款权**；以商家自定政策 + FTC Act §5 + 各州 ARL 约束 | 结构性结论；弗吉尼亚已核，科罗拉多/佛蒙特待核（§8） |
 
 > **给本产品的直白建议**：金融测算工具最容易触发的是"**消费者主张不符合描述/未达预期**"。即便 MoR 处理了支付退款，**退款资格判断与产品描述准确性**仍应由你控制，否则会成为争议与差评来源。
 
 ### 4.4 服务条款与隐私政策是否强制
 
 **是。** 至少有三条独立的法律理由：
-1. **GDPR Art.12(1) + Art.13/14** 要求以 "concise, transparent, intelligible and easily accessible form" 向数据主体提供处理信息 → 必须有隐私政策（见 §6）。
+1. **GDPR Art.12(1) + Art.13/14** 要求以 "concise, transparent, intelligible and easily accessible form" 向数据主体提供处理信息 → 必须有隐私政策（见 §6）。**加州 CCPA** 亦要求企业在收集时告知（§1798.100(a)），并在 "if the business has an online privacy policy" 时于其中披露（§1798.130(a)(5)(A)）——不过 CCPA 仅适用于达到法定门槛的企业，**小规模个人卖家通常不适用**。
 2. **CRD Art.6(1)** 的缔约前信息义务（含撤回权、合同期限、自动续约终止条件）需要可呈现的条款载体 → 服务条款。
 3. **ePrivacy Art.5(3)** 的 cookies 告知与同意（见 §6）。
 
@@ -341,12 +350,12 @@
 ## 8. 未能核实 (UNVERIFIED)
 
 1. **Directive 2006/112/EC 逐条文本**：EUR-Lex 直接抓取返回 202 JS 挑战，本文引用为 **MIRROR**；Art.58 / Art.59c / Art.97 的**逐字条款**未从官方直接取回（Art.97 的"≥15%"经欧委会 VAT rates 页确认为 "no less than 15%"）。
-2. **欧盟 2019/770 的 Art.16–18（终止与退款）**：EUR-Lex 渲染截断，未逐字取回；Art.11（持续供应）与 Art.14（救济、"不低于 2 年"）已见。
-3. **英国 CRA 2015 数字内容条款（ss.33–47）**：未逐字取回。
-4. **澳大利亚 ACL 文本**：`legislation.gov.au` 抓取失败；consumer guarantees 与"保障不可排除"（s.64）的**具体条文未逐字核对**。ATO GST 门槛/税率取自 **Wayback 存档的 ATO 页**（MIRROR）。
+2. **欧盟 2019/770 的 Art.3/14/16/18/22**：**已核对**（经 legislation.gov.uk 的 eudr 副本逐字读取，**MIRROR**），包括 14 天退款与"不可排除"（Art.22）；Art.11"持续供应"责任期为另见条文。
+3. **英国 CRA 2015 ss.33–47**：**已核对**（立法镜像，MIRROR）：ss.34–37 质量/适用性/描述/缔约前信息，ss.42–44 救济，**s.45(3) 退款 14 天**，s.46 设备损害。
+4. **澳大利亚 ACL**：**已核对** CCA 2010 Sch 2 **s.60**（以应有注意与技能提供服务）、**s.64(1)**（排除保障的条款 "void"）、**s.267(3)**（重大失败可终止或索赔）。ATO GST 门槛/税率仍取自 **Wayback 存档的 ATO 页**（MIRROR）。
 5. **加拿大魁北克 QST 9.975% 与"指定制度"注册门槛**：Revenu Québec 页面多次 404/被拒，**未取得一手确认**；省 PST（如 BC）对非居民数字服务的适用亦未验证。
 6. **美国各州数字商品/订阅的可税性与税基定义**：未取得逐州一手裁定；本文只确认了**经济关联门槛**（SD、CA）与 Wayfair 判决。
-7. **其他州自动续订法（CA 以外）**：未逐一取得条文。
+7. **其他州自动续订法**：**弗吉尼亚 §59.1-207.46 已核对**（须先取得 affirmative consent）；科罗拉多 §6-1-732、佛蒙特 9 V.S.A. §2454a 仅见 FTC NPRM 引用，**条文未独立核对**。
 8. **PCI DSS SAQ A / SAQ A-EP 的具体适用条件**：以 PCI SSC 最新文件为准；本文对 iframe/redirect 的差异只作一般性描述。
 9. **3-D Secure / EMV 3DS 2.x 的官方逐字规格**：未取回完整规格，属 SECONDARY（EMVCo 概述页为 PRIMARY）。
 10. **PSD2 Art.97 逐字条款**：渲染截断未取回；其存在与"义务在 PSP"由 RTS 2018/389 Art.1 交叉引用确证，Art.97(1) 引文为 **SECONDARY**。
@@ -357,6 +366,9 @@
 15. **"税务居民身份"回传字段**：三家 MoR 文档均未承诺，只有 country/address。
 16. **中国居民个人/企业的所得税与常设机构影响、PIPL Art.38 官方英文文本**：需本地专业人士；官方中文原文已核对。
 17. **GDPR 条文引用**：均经 gdpr-info.eu（MIRROR）核对；ePrivacy Art.5(3) 经镜像渲染的 EUR-Lex 页核对。
+18. **第八巡回案号**：正确主案号为 **24-3137** 等（*Custom Commc'ns, Inc. v. FTC*, 142 F.4th 1060 (8th Cir. 2025)，2025-07-08）；如见 24-2270 应更正。
+19. **FTC 程序现状**：FTC 于 2026-03-13 发布 NPRM（91 FR 12318）拟重新制定负面选项规则；**新规则尚未生效**，现阶段执法依赖 FTC Act §5、ROSCA、TSR、39 U.S.C. §3009、EFTA。
+20. **中国 PIPL Art.17（隐私告知）**：npc.gov.cn TLS 抓取失败，未核对。
 
 ---
 
@@ -369,7 +381,7 @@
 - European Commission — [OSS Guidelines, revised 1 Jan 2027](https://vat-one-stop-shop.ec.europa.eu/document/download/55f4ec9d-83e6-4942-9e8d-11d44c243087_en?filename=OSS%20Guidelines_revised_1Jan2027_0.pdf)（PRIMARY PDF）
 - Directive 2006/112/EC — [EUR-Lex 32006L0112](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32006L0112)（**MIRROR** 核对）
 - Directive 2011/83/EU（CRD）— [EUR-Lex 32011L0083](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32011L0083)（**MIRROR**：Art.6/9/10/16(m) 逐字核对）
-- Directive (EU) 2019/770 — [EUR-Lex 32019L0770](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32019L0770)（**MIRROR**）
+- Directive (EU) 2019/770 — [EUR-Lex 32019L0770](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32019L0770)（**MIRROR**）：[Art.3](https://www.legislation.gov.uk/eudr/2019/770/article/3)/[Art.14](https://www.legislation.gov.uk/eudr/2019/770/article/14)/[Art.16](https://www.legislation.gov.uk/eudr/2019/770/article/16)/[Art.18](https://www.legislation.gov.uk/eudr/2019/770/article/18)/[Art.22](https://www.legislation.gov.uk/eudr/2019/770/article/22) 逐字核对
 - Directive (EU) 2015/2366（PSD2）— [EUR-Lex 32015L2366](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32015L2366)（**MIRROR/SECONDARY**）
 - Commission Delegated Regulation (EU) 2018/389（RTS）— [EUR-Lex 32018R0389](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX%3A32018R0389)（**MIRROR**：Art.1/2 逐字核对）
 - Commission / EBA — SCA 相关意见（[EC 2019 statement PDF](https://finance.ec.europa.eu/system/files/2019-06/190621-eba-opinion-strong-customer-authentication-statement_en.pdf)；[EBA-Op-2018-04](https://www.eba.europa.eu/sites/default/files/documents/10180/2137845/0f525dc7-0f97-4be7-9ad7-800723365b8e/Opinion%20on%20the%20implementation%20of%20the%20RTS%20on%20SCA%20and%20CSC%20(EBA-2018-Op-04).pdf)）
@@ -380,11 +392,12 @@
 - [HMRC — VATREG37200](https://www.gov.uk/hmrc-internal-manuals/vat-registration-manual/vatreg37200)（PRIMARY）
 - [GOV.UK — VAT rules for supplies of digital services to consumers](https://www.gov.uk/guidance/the-vat-rules-if-you-supply-digital-services-to-private-consumers)（PRIMARY）
 - [SI 2013/3134 reg.30](https://www.legislation.gov.uk/uksi/2013/3134/regulation/30) / [reg.37](https://www.legislation.gov.uk/uksi/2013/3134/regulation/37)（**MIRROR**，逐字核对）
+- [Consumer Rights Act 2015, Part 1 Ch.3（数字内容 ss.33–47）](https://www.legislation.gov.uk/ukpga/2015/15/part/1/chapter/3)（**MIRROR**，s.45(3) 退款 14 天）
 
 **澳大利亚**
 - [ATO — How Australian GST works](https://www.ato.gov.au/businesses-and-organisations/international-tax-for-business/gst-for-non-resident-businesses/how-australian-gst-works)（原始页 403；引文取自 **Wayback 存档页**，MIRROR）
 - [A New Tax System (Goods and Services Tax) Act 1999](https://www.legislation.gov.au/C2004A00446/latest/text)（法条本体；本轮未逐条抓取）
-- [Competition and Consumer Act 2010, Sch 2 (ACL)](https://www.legislation.gov.au/C2004A04426/latest/text)（UNVERIFIED）
+- [Competition and Consumer Act 2010, Sch 2 (ACL)](https://www.legislation.gov.au/C2004A00109/latest/text)（**MIRROR**，s.60 / s.64 / s.267 逐字核对）
 
 **加拿大**
 - [CRA — GST/HST for digital-economy businesses: Overview](https://www.canada.ca/en/revenue-agency/services/tax/businesses/topics/gst-hst-businesses/digital-economy.html)（PRIMARY）
@@ -398,7 +411,12 @@
 - [SDCL 10-64-2](https://sdlegislature.gov/Statutes/10-64-2)（PRIMARY）
 - [CDTFA — Wayfair use tax collection requirements](https://cdtfa.ca.gov/industry/wayfair/general-information.htm)（PRIMARY）
 - [Federal Register 91 FR 6507 (2026-02-12) — Revision of the Negative Option Rule](https://www.govinfo.gov/content/pkg/FR-2026-02-12/html/2026-02866.htm)（PRIMARY）
-- *Custom Commc'ns, Inc. v. FTC*, 142 F.4th 1060 (8th Cir. 2025)
+- *Custom Commc'ns, Inc. v. FTC*, 142 F.4th 1060 (8th Cir. 2025)（案号 24-3137 等；[判决 PDF](https://storage.courtlistener.com/recap/gov.uscourts.ca8.110200/gov.uscourts.ca8.110200.00805299737.3.pdf)）
+- [FTC NPRM, 91 FR 12318 (2026-03-13)](https://www.govinfo.gov/content/pkg/FR-2026-03-13/html/2026-04952.htm)；[FTC 2024 final rule, 89 FR 90476](https://www.federalregister.gov/documents/2024/11/15/2024-25534/negative-option-rule)（被撤销）
+- [ROSCA, 15 U.S.C. ch.110](https://www.govinfo.gov/content/pkg/USCODE-2023-title15/html/USCODE-2023-title15-chap110.htm)
+- [Va. Code §59.1-207.46](https://law.lis.virginia.gov/vacode/title59.1/chapter43/section59.1-207.46/)
+- [Australian Consumer Law, CCA 2010 Sch 2](https://www.legislation.gov.au/C2004A00109/latest/text)（s.60 / s.64 / s.267）
+- [CCPA §1798.100](https://leginfo.legislature.ca.gov/faces/codes_displaySection.xhtml?lawCode=CIV&sectionNum=1798.100)
 - [Cal. Bus. & Prof. Code §17602](https://leginfo.legislature.ca.gov/faces/printCodeSectionWindow.xhtml?lawCode=BPC&article=9.&sectionNum=17602.&op_statues=2024&op_chapter=515&op_section=2)（PRIMARY）/[§17603](https://leginfo.legislature.ca.gov/faces/printCodeSectionWindow.xhtml?lawCode=BPC&article=9.&sectionNum=17603.)
 
 **新加坡 / 新西兰**
