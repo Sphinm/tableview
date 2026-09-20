@@ -146,4 +146,32 @@ describe('Design surfaces', () => {
     // The panel must be positioned, not left in normal flow.
     expect(source).toMatch(/position:\s*'(absolute|fixed)'/);
   });
+
+  /**
+   * Utilities used only by the shared UI package must actually be generated.
+   *
+   * Automatic source detection starts from each app, so a class that appears
+   * nowhere else is silently dropped from the stylesheet. The floating feedback
+   * button shipped as a bare icon instead of a circle (no `size-11`) and its
+   * hover hint never left `opacity-0` (no `group-hover:opacity-100`) — while
+   * tests, typecheck and build all stayed green, because the markup was correct
+   * the whole time. The defect lives entirely in the generated CSS.
+   */
+  it('names the shared UI package as a Tailwind source, with a path that resolves', () => {
+    const offenders: string[] = [];
+    for (const app of ['finance', 'tools', 'compressor']) {
+      const cssPath = path.join(repoRoot, 'apps', app, 'src', 'index.css');
+      const css = fs.readFileSync(cssPath, 'utf8');
+      const sources = [...css.matchAll(/@source\s+["']([^"']+)["']/g)].map((m) => m[1]);
+      // A typo'd relative path fails silently, so resolve each entry and require
+      // one that lands on the shared package and finds JSX there.
+      const sharedUi = path.join(repoRoot, 'packages', 'ui', 'src');
+      const resolves = sources.some((rel) => {
+        const dir = path.resolve(path.dirname(cssPath), rel);
+        return dir === sharedUi && fs.readdirSync(dir).some((f) => f.endsWith('.tsx'));
+      });
+      if (!resolves) offenders.push(app);
+    }
+    expect(offenders).toEqual([]);
+  });
 });

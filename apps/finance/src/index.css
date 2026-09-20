@@ -1,6 +1,17 @@
 @import "tailwindcss";
 
 /*
+ * Scan the shared UI package explicitly.
+ *
+ * Automatic source detection starts from this app, so utilities that appear
+ * *only* inside packages/ui were never generated: the floating feedback button
+ * lost its `size-11` (rendering as a bare icon instead of a circle) and its
+ * hover hint stayed pinned at `opacity-0` because `group-hover:opacity-100` was
+ * missing. The markup was always correct — the CSS behind it was not.
+ */
+@source "../../../packages/ui/src";
+
+/*
  * Self-hosted fonts.
  *
  * Previously these came from fonts.googleapis.com. Self-hosting removes two
