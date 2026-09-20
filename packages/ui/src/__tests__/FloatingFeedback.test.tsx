@@ -1,16 +1,24 @@
 import { describe, it, expect } from 'bun:test';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { FloatingFeedback, FeedbackFallback } from '../FloatingFeedback';
+import { FloatingFeedback } from '../FloatingFeedback';
 
 const url = () => 'mailto:x@y.co';
 
 describe('FloatingFeedback', () => {
-  it('renders an accessible link to the feedback address', () => {
+  it('is a plain mailto link, so activating it reaches the mail client directly', () => {
     const html = renderToStaticMarkup(
       <FloatingFeedback getEmailUrl={() => 'mailto:feedback@tableview.dev'} />,
     );
     expect(html).toContain('href="mailto:feedback@tableview.dev"');
     expect(html).toContain('aria-label="Send feedback"');
+  });
+
+  it('offers no second step, since the link already opens the draft', () => {
+    // A popover here would restate what the browser's own "copy link address"
+    // already does on a real anchor.
+    const html = renderToStaticMarkup(<FloatingFeedback getEmailUrl={url} />);
+    expect(html).not.toContain('Open in Gmail');
+    expect(html).not.toContain('Click to expand');
   });
 
   it('renders safely where there is no DOM to observe, resting in the corner', () => {
@@ -26,21 +34,5 @@ describe('FloatingFeedback', () => {
     const html = renderToStaticMarkup(<FloatingFeedback getEmailUrl={url} label="Send feedback" />);
     expect(html).toContain('Send feedback');
     expect(html).toContain('hidden sm:inline');
-  });
-});
-
-describe('FeedbackFallback', () => {
-  it('offers the Gmail web composer and the plain address', () => {
-    const html = renderToStaticMarkup(
-      <FeedbackFallback gmailUrl="https://mail.google.com/compose" email="feedback@tableview.dev" />,
-    );
-    expect(html).toContain('https://mail.google.com/compose');
-    expect(html).toContain('feedback@tableview.dev');
-  });
-
-  it('opens the Gmail fallback in a new tab so the draft does not replace the app', () => {
-    const html = renderToStaticMarkup(<FeedbackFallback gmailUrl="https://mail.google.com/compose" />);
-    expect(html).toContain('target="_blank"');
-    expect(html).toContain('rel="noreferrer"');
   });
 });

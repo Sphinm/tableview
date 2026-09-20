@@ -4,7 +4,7 @@ import { ToolsHeader } from './components/ToolsHeader';
 import { CookieBanner } from './components/CookieBanner';
 import { GlobalLoading } from './components/GlobalLoading';
 import { useRouter, updatePageMeta } from './lib/router';
-import { FEEDBACK_EMAIL, getBugReportGmailUrl, getBugReportMailto } from './lib/feedback';
+import { getBugReportMailto } from './lib/feedback';
 import { applyTheme } from './lib/theme';
 import { FileQuestion, ArrowLeft } from 'lucide-react';
 import { DATA_TOOLS_META, STATIC_PAGE_META } from './data/routeMeta';
@@ -145,11 +145,7 @@ export function App() {
       </main>
 
       <CookieBanner />
-      <FloatingFeedback
-        getEmailUrl={() => getBugReportMailto()}
-        getGmailUrl={() => getBugReportGmailUrl()}
-        email={FEEDBACK_EMAIL}
-            />
+      <FloatingFeedback getEmailUrl={() => getBugReportMailto()} />
     </div>
   );
 }

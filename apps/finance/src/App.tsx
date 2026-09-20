@@ -7,7 +7,7 @@ import { GlobalLoading } from './components/GlobalLoading';
 import { AuthProvider } from './lib/authContext';
 import { AuthModal } from './components/AuthModal';
 import { GoogleOneTap } from './components/GoogleOneTap';
-import { FEEDBACK_EMAIL, getBugReportGmailUrl, getBugReportMailto } from './lib/feedback';
+import { getBugReportMailto } from './lib/feedback';
 import { useRouter, updatePageMeta } from './lib/router';
 import { applyTheme } from './lib/theme';
 import { ArrowLeft, FileQuestion } from 'lucide-react';
@@ -196,11 +196,7 @@ export function App() {
         <AuthModal />
         <GoogleOneTap />
         <CookieBanner />
-        <FloatingFeedback
-          getEmailUrl={() => getBugReportMailto()}
-          getGmailUrl={() => getBugReportGmailUrl()}
-          email={FEEDBACK_EMAIL}
-                />
+        <FloatingFeedback getEmailUrl={() => getBugReportMailto()} />
       </div>
     </AuthProvider>
   );
