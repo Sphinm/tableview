@@ -437,15 +437,38 @@ export async function openBillingPortal(): Promise<void>;
 
 ## 8. 合规清单
 
-> 详细版见 `docs/research/digital-sales-tax-and-consumer-law.md`（研究中）。以下为本方案的**设计要求**。
+> 逐条一手来源的完整研究见 `docs/research/digital-sales-tax-and-consumer-law.md`（研究中）。以下是本方案的设计要求，其中**标 ✅ 的已由本仓库复核者亲自核实一手来源**。
 
-- **间接税**：走 MoR 则不自行注册 VAT/GST；**必须**在定价展示上遵守含税/不含税偏好（§5.3）
+### 8.1 间接税
+
+- 走 MoR 则不自行注册 VAT/GST；**必须**在定价展示上遵守含税/不含税偏好（§5.3，偏好数据可直接取自渠道 ✅）
+- 面向**欧盟消费者**销售数字服务，VAT 由**消费者所在国**征收；**非欧盟卖家不存在起征点豁免**（€10,000 一档仅适用于欧盟境内卖家）→ 这正是「从第一笔欧盟订单起就有义务」的原因，也是选 MoR 的决定性理由。❓ 精确门槛机制建议由渠道/税务顾问确认（走 MoR 时由渠道承担，无需你实现）
+
+### 8.2 自动续订与取消（**本节有一处重要更正**）
+
+✅ **已核实（一手来源：Federal Register）**：FTC 于 **2026-02-12 生效**的终局规则，明确将 2024 年修正后的 Negative Option Rule（即广为流传的 “click-to-cancel”）**恢复为 2024 年前的文本**，因为法院已将其撤销。
+
+原文（Federal Register, 16 CFR Parts 425/463/910, RIN 3084-AB60，2026-02-12）：
+> “the Commission is revising its recently amended ‘Rule Concerning Recurring Subscriptions and Other Negative Option Programs’ (‘Negative Option Rule’) to **recodify the text of the Negative Option Rule as it existed before the effective date of the Commission's 2024 final rule amending it**”
+
+**因此不要照抄「FTC 强制 click-to-cancel」这一（已过期的）说法。** 当前真实情况：
+
+| 层级 | 现状 | 对本方案的要求 |
+| :--- | :--- | :--- |
+| 美国联邦（FTC Negative Option Rule） | **2024 修正案已撤销；规则退回 2024 前文本** ✅ | 不按「联邦 click-to-cancel」设计 |
+| 美国州法（如加州 ARL 等） | **仍然有效** ❓（逐州清单待研究确认） | 自动续订需披露续订条款与价格；取消不得难于订阅 |
+| FTC Section 5 | 仍可对欺骗性/不公平行为执法 | 披露必须真实（**这正是 §7 必须删掉「Secure checkout powered by Stripe」的原因**） |
+| 欧盟/英国 | 续订前信息披露、取消便利 | 需自助取消入口 |
+
+**设计结论（不变）**：仍要提供**自助取消门户**——它同时满足州法、欧盟要求与良好体验，且成本极低。但**不要**在文案里声称「依 FTC 规则提供 click-to-cancel」。
+
+### 8.3 其余要求
+
 - **欧盟/英国 14 天撤回权**：数字内容需**明示同意 + 确认知悉放弃撤回权**方可即时交付 → 结账页条款必须含此声明
-- **自动续订披露**：美国（FTC / 各州如加州 ARL）与欧盟要求续订前披露、且取消必须与订阅同样简单（"click to cancel"）→ 必须提供**自助门户**
 - **退款政策**：需在 ToS 明示
-- **PCI DSS**：采用**托管结账**（hosted checkout），卡数据**永不**经过我方服务器 → 目标为 SAQ A（最低负担）；**禁止**在服务器存储任何卡号/CVV
+- **PCI DSS**：采用**托管结账**（hosted checkout），卡数据**永不**经过我方服务器 → 目标为 **SAQ A**（最低负担）；**禁止**在服务器存储任何卡号/CVV
 - **PSD2/SCA（EEA）**：由渠道实现 3DS；我方不自行处理
-- **隐私/GDPR**：会处理买家姓名、邮箱、国家、订阅状态 → 需与渠道签 **DPA**；更新隐私政策；与现有 consent banner 协调（**注意**：结账属履约所必需，不能因未同意分析 cookie 而拒绝）
+- **隐私/GDPR**：会处理买家姓名、邮箱、国家、订阅状态 → 需与渠道签 **DPA**；更新隐私政策；与现有 consent banner 协调（**注意**：结账属**履约所必需**，不能因未同意分析 cookie 而拒绝）
 - **经营者信息**：EU/UK 要求展示**卖家名称与地址**（MoR 场景下通常由渠道展示其自身信息）
 
 ---
