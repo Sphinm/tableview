@@ -17,6 +17,13 @@
 -- 3. Guest checkout is supported. A buyer need not have an account before paying, so
 --    `user_id` is nullable and is resolved from `email` when the webhook lands. This
 --    matters for a $9.99 one-off, where forcing signup first loses the sale.
+--
+-- 4. Webhook delivery is assumed to be at-least-once AND out-of-order, because that is
+--    what every provider actually guarantees. Correctness therefore rests on two
+--    separate mechanisms: the `billing_webhook_events` primary key makes processing
+--    idempotent, and `last_event_at` makes it order-independent. Relying on either
+--    alone produces a known class of bug (double-extended subscriptions, or a
+--    cancelled subscription coming back to life).
 
 -- One row per (provider customer <-> our user).
 CREATE TABLE IF NOT EXISTS billing_customers (
@@ -37,6 +44,11 @@ CREATE INDEX IF NOT EXISTS idx_billing_customers_email ON billing_customers(emai
 -- Recurring subscriptions. Status is stored RAW as the provider sent it; the
 -- normalisation to our own states happens in code (worker/entitlements.ts) so that a
 -- provider's new or renamed status cannot require a data migration.
+--
+-- `last_event_at` is the ordering guard. Providers do NOT guarantee webhook delivery
+-- order, so a stale "active" event arriving after a newer "canceled" one would
+-- otherwise resurrect a cancelled subscription. Every upsert is conditional on the
+-- incoming event being at least as new as the stored one.
 CREATE TABLE IF NOT EXISTS billing_subscriptions (
   id                        TEXT PRIMARY KEY,
   customer_id               TEXT NOT NULL REFERENCES billing_customers(id) ON DELETE CASCADE,
@@ -47,6 +59,7 @@ CREATE TABLE IF NOT EXISTS billing_subscriptions (
   current_period_end        INTEGER,
   cancel_at_period_end      INTEGER NOT NULL DEFAULT 0,
   canceled_at               INTEGER,
+  last_event_at             INTEGER NOT NULL DEFAULT 0,  -- ordering guard
   created_at                INTEGER NOT NULL,
   updated_at                INTEGER NOT NULL,
   UNIQUE (provider, provider_subscription_id)
@@ -66,6 +79,7 @@ CREATE TABLE IF NOT EXISTS billing_purchases (
   amount_minor       INTEGER,              -- integer minor units; never a float
   currency           TEXT,                 -- ISO 4217
   refunded_at        INTEGER,              -- a refunded purchase grants nothing
+  last_event_at      INTEGER NOT NULL DEFAULT 0,  -- ordering guard, as above
   created_at         INTEGER NOT NULL,
   UNIQUE (provider, provider_order_id)
 );

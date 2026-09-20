@@ -86,6 +86,20 @@ function collectSource(dir: string, out: string[] = []): string[] {
   return out;
 }
 
+/**
+ * Removes comments before the import scan.
+ *
+ * Without this the regex matches prose. A doc comment reading
+ * `Distinguish "finished" from "a previous attempt died".` looks exactly like
+ * `from "a previous attempt died"` and was reported as an undeclared dependency —
+ * a false positive that would train everyone to ignore this guard.
+ */
+function stripComments(source: string): string {
+  return source
+    .replace(/\/\*[\s\S]*?\*\//g, ' ')   // block comments
+    .replace(/(^|[^:])\/\/[^\n]*/g, '$1 '); // line comments (keep "https://")
+}
+
 const barePackageName = (spec: string): string => {
   const parts = spec.split('/');
   return spec.startsWith('@') ? parts.slice(0, 2).join('/') : parts[0];
@@ -129,10 +143,13 @@ describe('Workspace dependency declarations', () => {
 
       const used = new Map<string, string>();
       for (const file of collectSource(path.join(repoRoot, ws, 'src'))) {
-        const source = fs.readFileSync(file, 'utf8');
+        const source = stripComments(fs.readFileSync(file, 'utf8'));
         for (const match of source.matchAll(/(?:from\s+|import\s*\(|require\()\s*['"]([^'"]+)['"]/g)) {
           const spec = match[1];
-          if (spec.startsWith('.') || spec.startsWith('/') || spec.startsWith('node:')) continue;
+          if (spec.startsWith('.') || spec.startsWith('/')) continue;
+          // Runtime builtins: `node:*` for Node and `bun:*` for Bun. Neither is an
+          // installable package, so neither belongs in package.json.
+          if (spec.startsWith('node:') || spec.startsWith('bun:')) continue;
           const name = barePackageName(spec);
           // Workspace packages are linked by the package manager, not declared
           // as third-party dependencies here.
