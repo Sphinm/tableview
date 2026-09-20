@@ -105,6 +105,11 @@
     "packages/ui": {
       "name": "@tableview/ui",
       "version": "1.0.0",
+      "devDependencies": {
+        "@types/react": "^19.2.18",
+        "@types/react-dom": "^19.2.4",
+        "typescript": "~6.0.2",
+      },
       "peerDependencies": {
         "clsx": "^2.1.1",
         "lucide-react": "^1.41.0",
