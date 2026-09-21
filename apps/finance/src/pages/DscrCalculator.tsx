@@ -286,6 +286,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
     }
   });
   const [monthlyRent, setMonthlyRent] = useState<number>(() => getNumQuery('rent', 3800));
+  const [prepaymentPenaltyStructure, setPrepaymentPenaltyStructure] = useState<'5-4-3-2-1' | '3-2-1' | 'none'>('5-4-3-2-1');
 
   const [isPrefilledFromCopilot, setIsPrefilledFromCopilot] = useState<boolean>(() => {
     try {
@@ -389,7 +390,8 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
       vacancyRate,
       managementFeeRate,
       annualMaintenanceReserve,
-      targetDscr
+      targetDscr,
+      prepaymentPenaltyStructure
     }),
     [
       propertyValue,
@@ -405,7 +407,8 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
       vacancyRate,
       managementFeeRate,
       annualMaintenanceReserve,
-      targetDscr
+      targetDscr,
+      prepaymentPenaltyStructure
     ]
   );
 
@@ -996,6 +999,54 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                   />
                 </div>
               </div>
+
+              {/* Prepayment Penalty (PPP) Selection */}
+              <div className="pt-2 border-t border-slate-100">
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                    <span>Prepayment Penalty (PPP)</span>
+                  </label>
+                  <InfoTooltip
+                    title="Prepayment Penalty (PPP)"
+                    content="Most non-QM DSCR loans include a 5-year (5-4-3-2-1) or 3-year (3-2-1) stepdown penalty. Waiving the penalty usually increases the interest rate by 0.25%–0.50%."
+                  />
+                </div>
+                <div className="grid grid-cols-3 gap-1.5">
+                  <button
+                    type="button"
+                    onClick={() => setPrepaymentPenaltyStructure('5-4-3-2-1')}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-semibold cursor-pointer border transition-colors ${
+                      prepaymentPenaltyStructure === '5-4-3-2-1'
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
+                        : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    5-4-3-2-1
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPrepaymentPenaltyStructure('3-2-1')}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-semibold cursor-pointer border transition-colors ${
+                      prepaymentPenaltyStructure === '3-2-1'
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
+                        : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    3-2-1
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPrepaymentPenaltyStructure('none')}
+                    className={`py-1.5 px-2 rounded-lg text-xs font-semibold cursor-pointer border transition-colors ${
+                      prepaymentPenaltyStructure === 'none'
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-2xs'
+                        : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+                    }`}
+                  >
+                    No Penalty
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -1075,6 +1126,117 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                 </div>
               </div>
             </div>
+
+            {/* Reverse DSCR: Minimum Qualifying Rent Sizing Table */}
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 border-b border-slate-100 pb-3">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                    <TrendingUp className="size-4 text-indigo-600" />
+                    <span>Minimum Qualifying Rent (Reverse DSCR Sizing)</span>
+                  </h3>
+                  <p className="text-2xs text-slate-500 mt-0.5">
+                    Monthly gross rent required to unlock specific lender underwriting tiers based on PITIA ({currencyDecFmt(result.monthlyPitia)}/mo).
+                  </p>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-500 font-semibold text-2xs">
+                      <th className="py-2 px-3">Underwriting Tier</th>
+                      <th className="py-2 px-3">Target DSCR</th>
+                      <th className="py-2 px-3">Required Gross Rent</th>
+                      <th className="py-2 px-3">Variance vs Actual</th>
+                      <th className="py-2 px-3 text-right">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {result.rentThresholds.map((tier) => {
+                      const isPrime = tier.targetDscr === 1.25;
+                      return (
+                        <tr key={tier.targetDscr} className={`hover:bg-slate-50/80 ${isPrime ? 'bg-indigo-50/40 font-medium' : ''}`}>
+                          <td className="py-2.5 px-3">
+                            <span className="font-semibold text-slate-900">{tier.tierName}</span>
+                            <span className="block text-2xs text-slate-500">{tier.description}</span>
+                          </td>
+                          <td className="py-2.5 px-3 font-mono text-slate-700">{tier.badge}</td>
+                          <td className="py-2.5 px-3 font-mono font-bold text-slate-900">
+                            {currencyDecFmt(tier.requiredMonthlyRent)}
+                          </td>
+                          <td className="py-2.5 px-3 font-mono text-xs">
+                            {tier.variance >= 0 ? (
+                              <span className="text-emerald-700">+{currencyDecFmt(tier.variance)}/mo surplus</span>
+                            ) : (
+                              <span className="text-rose-700">{currencyDecFmt(tier.variance)}/mo deficit</span>
+                            )}
+                          </td>
+                          <td className="py-2.5 px-3 text-right">
+                            {tier.isMet ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                <CheckCircle2 className="size-3 text-emerald-600" />
+                                Qualified
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-2xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
+                                Need {currencyFmt(Math.abs(tier.variance))} more
+                              </span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* Prepayment Penalty (PPP) Schedule Table */}
+            {result.prepaymentSchedule.length > 0 && (
+              <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+                <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                  <div>
+                    <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+                      <ShieldCheck className="size-4 text-indigo-600" />
+                      <span>Prepayment Penalty (PPP) Stepdown Schedule</span>
+                    </h3>
+                    <p className="text-2xs text-slate-500 mt-0.5">
+                      Cost to refinance or sell before maturity under a {result.prepaymentPenaltyStructure} stepdown agreement.
+                    </p>
+                  </div>
+                  <span className="px-2.5 py-1 rounded-lg text-2xs font-mono font-semibold bg-slate-100 text-slate-700 border border-slate-200">
+                    {result.prepaymentPenaltyStructure} Structure
+                  </span>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs border-collapse">
+                    <thead>
+                      <tr className="border-b border-slate-200 text-slate-500 font-semibold text-2xs">
+                        <th className="py-2 px-3">Exit Year</th>
+                        <th className="py-2 px-3">Penalty Rate</th>
+                        <th className="py-2 px-3">Remaining Balance</th>
+                        <th className="py-2 px-3 text-right">Penalty Due at Payoff</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-mono">
+                      {result.prepaymentSchedule.map((p) => (
+                        <tr key={p.year} className="hover:bg-slate-50/80">
+                          <td className="py-2 px-3 font-sans font-medium text-slate-900">Year {p.year}</td>
+                          <td className="py-2 px-3 text-indigo-600 font-semibold">{p.penaltyRatePercent}%</td>
+                          <td className="py-2 px-3 text-slate-700">{currencyFmt(p.estimatedLoanBalance)}</td>
+                          <td className="py-2 px-3 text-right font-bold text-rose-700">{currencyDecFmt(p.penaltyAmount)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-2xs text-slate-500 italic mt-1">
+                  * Note: Prepayment penalties are assessed on remaining principal. Selecting No-Penalty eliminates lock-in but typically increases the note rate (+0.25% to +0.50%).
+                </p>
+              </div>
+            )}
 
             {/* Investor Action Card */}
             <div className="p-4 rounded-2xl bg-indigo-50/70 border border-indigo-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

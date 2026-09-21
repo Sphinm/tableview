@@ -199,7 +199,7 @@ const hardMoneySchemas = [
         name: 'How do hard money points and interest work?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Points are upfront lender origination fees expressed as a percentage of the total loan amount (e.g., 2 points on a $200,000 loan = $4,000). Interest rates typically range from 9.5% to 13.5% annualized, serviced monthly as interest-only payments throughout the 6 to 12 month project duration.'
+          text: 'Points are upfront lender origination fees expressed as a percentage of the loan amount (e.g., 2 points on a $200,000 loan = $4,000). While typical bridge and hard money interest rates often range from 9.5% to 13.5%+ annualized, terms vary significantly by lender, property type, borrower track record, market conditions, and deal structure. Loans are commonly serviced monthly as interest-only payments throughout the 6 to 18 month project duration.'
         }
       },
       {
@@ -223,7 +223,7 @@ const hardMoneySchemas = [
         name: 'What credit score and down payment are needed for a hard money loan?',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'Most hard money lenders require a minimum credit score of 620 to 660. Down payments typically range from 10% to 20% of the purchase price (80% to 90% Purchase LTV), while 100% of verified renovation costs are financed in the escrow facility.'
+          text: 'Typical underwriting requirements vary by lender, property condition, and borrower experience. Most asset-based bridge lenders look for credit scores around 620 to 660+, while down payments commonly range from 10% to 25% of purchase price (75% to 90% Purchase LTV), with eligible renovation costs escrowed in draw facilities.'
         }
       }
     ]
@@ -256,6 +256,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
   const [purchasePrice, setPurchasePrice] = useState<number>(() => getNumQuery('purchase', 240000));
   const [rehabBudget, setRehabBudget] = useState<number>(() => getNumQuery('rehab', 65000));
   const [afterRepairValue, setAfterRepairValue] = useState<number>(() => getNumQuery('arv', 390000)); // ARV
+  const [wholesalerAssignmentFee, setWholesalerAssignmentFee] = useState<number>(() => getNumQuery('wholesale', 0));
   const [ltvPercent, setLtvPercent] = useState<number>(85);
   const [rehabFinancedPercent, setRehabFinancedPercent] = useState<number>(100);
   const [interestRate, setInterestRate] = useState<number>(() => getNumQuery('rate', 11.0));
@@ -276,6 +277,8 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
     if (v.purchasePrice !== undefined) setPurchasePrice(v.purchasePrice);
     if (v.rehabBudget !== undefined) setRehabBudget(v.rehabBudget);
     if (v.afterRepairValue !== undefined) setAfterRepairValue(v.afterRepairValue);
+    if (v.wholesalerAssignmentFee !== undefined) setWholesalerAssignmentFee(v.wholesalerAssignmentFee);
+    else setWholesalerAssignmentFee(0);
     if (v.ltvPercent !== undefined) setLtvPercent(v.ltvPercent);
     if (v.rehabFinancedPercent !== undefined) setRehabFinancedPercent(v.rehabFinancedPercent);
     if (v.interestRate !== undefined) setInterestRate(v.interestRate);
@@ -292,6 +295,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
       purchasePrice,
       rehabBudget,
       afterRepairValue,
+      wholesalerAssignmentFee,
       ltvPercent,
       rehabFinancedPercent,
       interestRate,
@@ -306,6 +310,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
       purchasePrice,
       rehabBudget,
       afterRepairValue,
+      wholesalerAssignmentFee,
       ltvPercent,
       rehabFinancedPercent,
       interestRate,
@@ -342,6 +347,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
       { Parameter: 'Purchase Price', Value: purchasePrice },
       { Parameter: 'Rehab / Renovation Budget', Value: rehabBudget },
       { Parameter: 'After Repair Value (ARV)', Value: afterRepairValue },
+      ...(wholesalerAssignmentFee > 0 ? [{ Parameter: 'Wholesaler Assignment Fee', Value: wholesalerAssignmentFee }] : []),
       { Parameter: 'Total Loan Amount', Value: result.totalLoanAmount },
       { Parameter: 'Purchase Loan', Value: result.purchaseLoanAmount },
       { Parameter: 'Rehab Loan Financed', Value: result.rehabLoanAmount },
@@ -368,6 +374,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
       `Purchase Price,${purchasePrice}\n` +
       `Rehab Budget,${rehabBudget}\n` +
       `After Repair Value,${afterRepairValue}\n` +
+      (wholesalerAssignmentFee > 0 ? `Wholesaler Assignment Fee,${wholesalerAssignmentFee}\n` : '') +
       `Total Loan Amount,${result.totalLoanAmount}\n` +
       `Initial Cash Required,${result.initialCashRequired}\n` +
       `Monthly Interest,${result.monthlyInterestPayment}\n` +
@@ -399,6 +406,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
       params.set('purchase', String(purchasePrice));
       params.set('rehab', String(rehabBudget));
       params.set('arv', String(afterRepairValue));
+      if (wholesalerAssignmentFee > 0) params.set('wholesale', String(wholesalerAssignmentFee));
       params.set('rate', String(interestRate));
       params.set('points', String(originationPoints));
       params.set('duration', String(projectDurationMonths));
@@ -518,6 +526,28 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                     className="py-2 text-base sm:text-sm font-mono font-bold text-amber-700 focus:border-amber-500"
                   />
                 </div>
+              </div>
+
+              {/* Wholesaler Assignment Fee */}
+              <div>
+                <div className="flex items-center gap-1 mb-1.5">
+                  <label htmlFor="hardmoney-wholesale-fee" className="block text-xs font-semibold text-slate-700">
+                    Wholesaler Assignment Fee ($)
+                  </label>
+                  <InfoTooltip
+                    title="Wholesaler Assignment Fee"
+                    content="Contract assignment fee paid to a wholesaler or deal finder. Assignment fees increase your all-in cash outlay and reduce your Maximum Allowable Offer (MAO)."
+                  />
+                </div>
+                <CurrencyInput
+                  id="hardmoney-wholesale-fee"
+                  value={wholesalerAssignmentFee}
+                  onChange={(v) => setWholesalerAssignmentFee(Math.max(0, v))}
+                  className="py-2 text-base sm:text-sm font-mono focus:border-amber-500"
+                />
+                <span className="block text-[11px] text-slate-500 mt-1">
+                  Optional finder/assignment fee paid at acquisition closing (enter $0 if buying direct)
+                </span>
               </div>
 
               {/* Financing Terms */}
@@ -831,6 +861,12 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <span className="text-slate-600">2. Rehab & Construction Budget</span>
                   <span className="text-slate-900">{currencyFmt(rehabBudget)}</span>
                 </div>
+                {wholesalerAssignmentFee > 0 && (
+                  <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
+                    <span className="text-slate-600">Wholesaler / Finder Assignment Fee</span>
+                    <span className="text-slate-900">{currencyFmt(wholesalerAssignmentFee)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between items-center py-1.5 border-b border-slate-100">
                   <span className="text-slate-600">
                     3. Lender Origination Points ({originationPoints} pts) & Fees
@@ -859,6 +895,71 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   <span className="text-emerald-700">Gross Sale Price (ARV)</span>
                   <span className="text-emerald-700">{currencyFmt(afterRepairValue)}</span>
                 </div>
+              </div>
+            </div>
+
+            {/* Timeline Delay Sensitivity Matrix */}
+            <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-3">
+              <div>
+                <h3 className="text-sm font-bold text-slate-900">
+                  Timeline Delay Sensitivity (Holding Cost Slippage)
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  How permit delays, material lead times, and contractor overruns erode cash-on-cash returns.
+                </p>
+              </div>
+
+              <div className="overflow-x-auto -mx-1">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="border-b border-slate-200 text-slate-500 font-semibold">
+                      <th className="py-2 pr-3">Scenario</th>
+                      <th className="py-2 px-2.5 text-right">Hold Time</th>
+                      <th className="py-2 px-2.5 text-right">Carrying Cost</th>
+                      <th className="py-2 px-2.5 text-right">Extra Drag</th>
+                      <th className="py-2 px-2.5 text-right">Net Profit</th>
+                      <th className="py-2 px-2.5 text-right">Cash ROI</th>
+                      <th className="py-2 pl-3 text-right">Viability</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-mono">
+                    {result.timelineSensitivity.map((sc) => (
+                      <tr key={sc.label} className="hover:bg-slate-50/75 transition-colors">
+                        <td className="py-2.5 pr-3 font-sans font-medium text-slate-900">
+                          {sc.label}
+                        </td>
+                        <td className="py-2.5 px-2.5 text-right text-slate-600">
+                          {sc.durationMonths} mos
+                        </td>
+                        <td className="py-2.5 px-2.5 text-right text-slate-900">
+                          {currencyFmt(sc.totalCarryingCost)}
+                        </td>
+                        <td className="py-2.5 px-2.5 text-right text-amber-700">
+                          {sc.additionalCostVsBase > 0 ? `+${currencyFmt(sc.additionalCostVsBase)}` : '—'}
+                        </td>
+                        <td className={`py-2.5 px-2.5 text-right font-bold ${
+                          sc.netProfit >= 0 ? 'text-emerald-700' : 'text-red-600'
+                        }`}>
+                          {sc.netProfit >= 0 ? '+' : ''}{currencyFmt(sc.netProfit)}
+                        </td>
+                        <td className="py-2.5 px-2.5 text-right text-slate-900">
+                          {sc.roiPercent}%
+                        </td>
+                        <td className="py-2.5 pl-3 text-right">
+                          <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-sans font-semibold border ${
+                            sc.verdict === 'profitable'
+                              ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                              : sc.verdict === 'marginal'
+                              ? 'bg-amber-50 text-amber-800 border-amber-200'
+                              : 'bg-red-50 text-red-700 border-red-200'
+                          }`}>
+                            {sc.verdict.toUpperCase()}
+                          </span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             </div>
 
@@ -1033,6 +1134,9 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
                   </tr>
                 </tbody>
               </table>
+              <div className="px-4 py-2.5 bg-slate-50 border-t border-slate-200 text-2xs text-slate-500 italic">
+                * Note: Typical terms, rates, and LTV limits vary by lender, property type, borrower track record, market conditions, and deal structure. All underwriting benchmarks are provided for educational and estimation purposes.
+              </div>
             </div>
           </div>
 

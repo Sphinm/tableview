@@ -1,0 +1,30 @@
+# Legacy cross-domain 301 redirects for TableView tools and compressor
+/data-tools* https://tools.tableview.dev/data-tools 301
+/data-workbench* https://tools.tableview.dev/data-tools 301
+/workbench* https://tools.tableview.dev/data-tools 301
+/tools* https://tools.tableview.dev/data-tools 301
+/csv-viewer* https://tools.tableview.dev/csv-viewer 301
+/open-csv* https://tools.tableview.dev/csv-viewer 301
+/excel-viewer* https://tools.tableview.dev/excel-viewer 301
+/open-excel* https://tools.tableview.dev/excel-viewer 301
+/parquet-viewer* https://tools.tableview.dev/parquet-viewer 301
+/open-parquet* https://tools.tableview.dev/parquet-viewer 301
+/sql-workbench* https://tools.tableview.dev/sql-workbench 301
+/duckdb* https://tools.tableview.dev/sql-workbench 301
+/data-converter* https://tools.tableview.dev/data-converter 301
+/converter* https://tools.tableview.dev/data-converter 301
+/json-formatter* https://tools.tableview.dev/json-formatter 301
+/sql-formatter* https://tools.tableview.dev/sql-formatter 301
+/snowflake-cost-calculator* https://tools.tableview.dev/snowflake-cost-calculator 301
+/parquet-storage-calculator* https://tools.tableview.dev/parquet-storage-calculator 301
+/is-it-down* https://tools.tableview.dev/is-it-down 301
+
+# Media compressor
+/media-tools* https://compress.tableview.dev/media-tools 301
+/video-compressor* https://compress.tableview.dev/video-compressor 301
+/image-compressor* https://compress.tableview.dev/image-compressor 301
+/compress-mp4* https://compress.tableview.dev/compress-mp4 301
+/compress-png* https://compress.tableview.dev/compress-png 301
+/compress-jpg* https://compress.tableview.dev/compress-jpg 301
+/compress-webp* https://compress.tableview.dev/compress-webp 301
+/compress-video-for-discord* https://compress.tableview.dev/compress-video-for-discord 301

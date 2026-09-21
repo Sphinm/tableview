@@ -55,6 +55,8 @@ export interface Section1031Inputs {
   salePrice: number;
   /** Total selling costs (commission + title + transfer tax) as % of sale price. */
   sellingCostsPercent: number;
+  /** Qualified Intermediary (QI) and exchange escrow fee ($). Typically $1,000 – $2,500. */
+  qualifiedIntermediaryFee?: number;
   /**
    * Adjusted basis = original purchase price + capital improvements
    * - depreciation already taken. This is NOT the purchase price.
@@ -99,6 +101,7 @@ export type IdentificationRule = '3-property' | '200-percent' | '95-percent' | '
 export interface Section1031Result {
   // Relinquished side
   sellingCosts: number;
+  qualifiedIntermediaryFee: number;
   netSaleProceeds: number;
   realizedGain: number;
   /** Cash the investor actually walks away with before reinvesting. */
@@ -236,8 +239,10 @@ export function calculateSection1031(
   const accumulatedDepreciation = Math.max(0, inputs.accumulatedDepreciation);
 
   // ---- Relinquished side ----
-  const sellingCosts = (salePrice * clampPercent(inputs.sellingCostsPercent)) / 100;
-  const netSaleProceeds = salePrice - sellingCosts;
+  const qiFee = Math.max(0, inputs.qualifiedIntermediaryFee || 0);
+  const percentageSellingCosts = (salePrice * clampPercent(inputs.sellingCostsPercent)) / 100;
+  const sellingCosts = percentageSellingCosts + qiFee;
+  const netSaleProceeds = Math.max(0, salePrice - sellingCosts);
   const realizedGain = Math.max(0, netSaleProceeds - adjustedBasis);
   const mortgagePayoff = Math.max(0, inputs.existingMortgagePayoff);
   const cashFromSale = netSaleProceeds - mortgagePayoff;
@@ -362,6 +367,7 @@ export function calculateSection1031(
 
   return {
     sellingCosts: round2(sellingCosts),
+    qualifiedIntermediaryFee: round2(qiFee),
     netSaleProceeds: round2(netSaleProceeds),
     realizedGain: round2(realizedGain),
     cashFromSale: round2(cashFromSale),

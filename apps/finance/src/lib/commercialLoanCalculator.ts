@@ -25,6 +25,11 @@ export interface CommercialLoanInputs {
   prepaymentPayoffMonth?: number; // e.g. 36 (early exit at month 36)
   stepdownSchedule?: number[]; // e.g. [5, 4, 3, 2, 1] percentage penalty per year
   treasuryRateAtPayoff?: number; // e.g. 4.25 (%) for yield maintenance comparison
+
+  // Institutional Underwriting: Debt Yield & Dual-Constraint Sizing
+  annualNoi?: number; // e.g. $125,000 annual net operating income
+  minDscrHurdle?: number; // e.g. 1.25 minimum lender debt coverage ratio
+  maxLtvHurdle?: number; // e.g. 75 (%) maximum allowable LTV
 }
 
 export interface CommercialAmortizationMonth {
@@ -84,6 +89,16 @@ export interface CommercialLoanSummary {
   // Risk & Refinance Assessment
   refinanceRiskLevel: 'Low' | 'Moderate' | 'High';
   refinanceAnalysis: string;
+
+  // Institutional Underwriting: Debt Yield & Dual-Constraint Sizing
+  annualNoi: number;
+  debtYieldPercent: number;
+  debtYieldHealth: 'prime' | 'moderate' | 'elevated';
+  debtYieldLabel: string;
+  maxLoanByLtv: number;
+  maxLoanByDscr: number;
+  bindingConstraint: 'LTV' | 'DSCR';
+  underwrittenMaxLoan: number;
 
   // Schedule Preview
   yearlySchedule: CommercialAmortizationYear[];
@@ -263,6 +278,48 @@ export function calculateCommercialLoan(inputs: CommercialLoanInputs): Commercia
     refinanceAnalysis = `Low refinancing risk: By Year ${balloonTermYears}, more than half of the loan principal will be amortized. You will hold substantial property equity making refinancing straightforward.`;
   }
 
+  // Institutional Debt Yield Analysis
+  const annualNoi = inputs.annualNoi ?? Math.round(propertyPrice * 0.07);
+  const debtYieldPercent =
+    loanAmount > 0 && annualNoi > 0 ? Number(((annualNoi / loanAmount) * 100).toFixed(2)) : 0;
+
+  let debtYieldHealth: 'prime' | 'moderate' | 'elevated' = 'moderate';
+  let debtYieldLabel = 'Standard Regional Bank (8.0%–9.9%)';
+  if (debtYieldPercent >= 10.0) {
+    debtYieldHealth = 'prime';
+    debtYieldLabel = 'Prime Institutional (≥10%) — CMBS & Agency Hurdle Met';
+  } else if (debtYieldPercent >= 8.0) {
+    debtYieldHealth = 'moderate';
+    debtYieldLabel = 'Standard Regional Bank (8.0%–9.9%)';
+  } else {
+    debtYieldHealth = 'elevated';
+    debtYieldLabel = 'Elevated Risk (<8.0%) — Sizing Adjustment Needed';
+  }
+
+  // Dual-Constraint Maximum Debt Sizing
+  const maxLtvHurdle = inputs.maxLtvHurdle ?? Math.max(50, 100 - downPaymentPercent);
+  const maxLoanByLtv = Math.round(propertyPrice * (maxLtvHurdle / 100));
+
+  const minDscrHurdle = inputs.minDscrHurdle ?? 1.25;
+  const maxAllowableAnnualDebtService = annualNoi > 0 ? annualNoi / minDscrHurdle : 0;
+  const maxAllowableMonthlyDebtService = maxAllowableAnnualDebtService / 12;
+
+  let maxLoanByDscr = 0;
+  if (maxAllowableMonthlyDebtService > 0 && monthlyRate > 0) {
+    const totalAmortMonths = amortizationYears * 12;
+    if (interestOnlyMonths >= balloonTermYears * 12) {
+      maxLoanByDscr = maxAllowableMonthlyDebtService / monthlyRate;
+    } else {
+      maxLoanByDscr =
+        (maxAllowableMonthlyDebtService * (Math.pow(1 + monthlyRate, totalAmortMonths) - 1)) /
+        (monthlyRate * Math.pow(1 + monthlyRate, totalAmortMonths));
+    }
+  }
+  maxLoanByDscr = Math.round(maxLoanByDscr);
+
+  const underwrittenMaxLoan = Math.min(maxLoanByLtv, maxLoanByDscr);
+  const bindingConstraint: 'LTV' | 'DSCR' = maxLoanByDscr < maxLoanByLtv ? 'DSCR' : 'LTV';
+
   return {
     propertyPrice: Math.round(propertyPrice),
     downPaymentAmount: Math.round(downPaymentAmount),
@@ -292,6 +349,14 @@ export function calculateCommercialLoan(inputs: CommercialLoanInputs): Commercia
     totalPayoffWithPenalty,
     refinanceRiskLevel,
     refinanceAnalysis,
+    annualNoi,
+    debtYieldPercent,
+    debtYieldHealth,
+    debtYieldLabel,
+    maxLoanByLtv,
+    maxLoanByDscr,
+    bindingConstraint,
+    underwrittenMaxLoan,
     yearlySchedule
   };
 }

@@ -87,4 +87,34 @@ describe('DSCR Loan Calculator Engine', () => {
     // Net cash flow should decrease by 425
     expect(withExtraExpenses.monthlyNetCashFlow).toBeCloseTo(withoutExtra.monthlyNetCashFlow - 425, 1);
   });
+
+  it('calculates reverse DSCR rent sizing thresholds accurately', () => {
+    const res = calculateDscr(sampleInputs);
+    expect(res.rentThresholds.length).toBe(5);
+
+    // 1.00x tier: required rent equals PITIA
+    const breakeven = res.rentThresholds.find((t) => t.targetDscr === 1.0);
+    expect(breakeven).toBeDefined();
+    expect(breakeven!.requiredMonthlyRent).toBeCloseTo(res.monthlyPitia, 1);
+    expect(breakeven!.isMet).toBe(true);
+
+    // 1.25x tier: required rent = PITIA * 1.25
+    const primeTier = res.rentThresholds.find((t) => t.targetDscr === 1.25);
+    expect(primeTier).toBeDefined();
+    expect(primeTier!.requiredMonthlyRent).toBeCloseTo(res.monthlyPitia * 1.25, 1);
+  });
+
+  it('generates 5-4-3-2-1 prepayment penalty schedule properly', () => {
+    const res = calculateDscr({ ...sampleInputs, prepaymentPenaltyStructure: '5-4-3-2-1' });
+    expect(res.prepaymentSchedule.length).toBe(5);
+    expect(res.prepaymentSchedule[0].year).toBe(1);
+    expect(res.prepaymentSchedule[0].penaltyRatePercent).toBe(5);
+    expect(res.prepaymentSchedule[0].penaltyAmount).toBeGreaterThan(0);
+    expect(res.prepaymentSchedule[4].year).toBe(5);
+    expect(res.prepaymentSchedule[4].penaltyRatePercent).toBe(1);
+
+    // Test 'none' structure
+    const noPpp = calculateDscr({ ...sampleInputs, prepaymentPenaltyStructure: 'none' });
+    expect(noPpp.prepaymentSchedule.length).toBe(0);
+  });
 });

@@ -196,7 +196,7 @@ export const CALCULATOR_FAQS: Record<string, CalcFaq[]> = {
     },
     {
       q: 'How do hard money points and interest work?',
-      a: 'Points are upfront lender origination fees expressed as a percentage of the total loan amount (e.g., 2 points on a $200,000 loan = $4,000). Interest rates typically range from 9.5% to 13.5% annualized, serviced monthly as interest-only payments throughout the 6 to 12 month project duration.',
+      a: 'Points are upfront lender origination fees expressed as a percentage of the loan amount (e.g., 2 points on a $200,000 loan = $4,000). While typical bridge and hard money interest rates often range from 9.5% to 13.5%+ annualized, terms vary significantly by lender, property type, borrower track record, market conditions, and deal structure. Loans are commonly serviced monthly as interest-only payments throughout the 6 to 18 month project duration.',
     },
     {
       q: 'How does the rehab escrow draw process work?',
@@ -208,7 +208,7 @@ export const CALCULATOR_FAQS: Record<string, CalcFaq[]> = {
     },
     {
       q: 'What credit score and down payment are needed for a hard money loan?',
-      a: 'Most hard money lenders require a minimum credit score of 620 to 660. Down payments typically range from 10% to 20% of the purchase price (80% to 90% Purchase LTV), while 100% of verified renovation costs are financed in the escrow facility.',
+      a: 'Typical underwriting requirements vary by lender, property condition, and borrower experience. Most asset-based bridge lenders look for credit scores around 620 to 660+, while down payments commonly range from 10% to 25% of purchase price (75% to 90% Purchase LTV), with eligible renovation costs escrowed in draw facilities.',
     },
   ],
 

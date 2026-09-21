@@ -142,6 +142,17 @@ describe('1031 exchange — gain and boot arithmetic', () => {
     expect(r.deferredGain).toBe(0);
     expect(r.verdict).toBe('taxable');
   });
+
+  it('deducts Qualified Intermediary (QI) fee as transactional exchange expense', () => {
+    const withoutQi = calculateSection1031(baseInputs());
+    const withQi = calculateSection1031(baseInputs({ qualifiedIntermediaryFee: 2000 }));
+
+    expect(withQi.qualifiedIntermediaryFee).toBe(2000);
+    expect(withQi.sellingCosts).toBe(withoutQi.sellingCosts + 2000);
+    expect(withQi.netSaleProceeds).toBe(withoutQi.netSaleProceeds - 2000);
+    expect(withQi.realizedGain).toBe(withoutQi.realizedGain - 2000);
+    expect(withQi.cashFromSale).toBe(withoutQi.cashFromSale - 2000);
+  });
 });
 
 describe('1031 exchange — taxation of boot', () => {

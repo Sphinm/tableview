@@ -209,6 +209,9 @@ export const Section1031Calculator = () => {
   const [existingMortgagePayoff, setExistingMortgagePayoff] = useState(() =>
     getNumQuery('debt', 150_000)
   );
+  const [qualifiedIntermediaryFee, setQualifiedIntermediaryFee] = useState(() =>
+    getNumQuery('qi', 0)
+  );
 
   // ---- Replacement property ----
   const [replacementPurchasePrice, setReplacementPurchasePrice] = useState(() =>
@@ -250,6 +253,7 @@ export const Section1031Calculator = () => {
     () => ({
       salePrice,
       sellingCostsPercent,
+      qualifiedIntermediaryFee,
       adjustedBasis,
       accumulatedDepreciation,
       existingMortgagePayoff,
@@ -269,6 +273,7 @@ export const Section1031Calculator = () => {
     [
       salePrice,
       sellingCostsPercent,
+      qualifiedIntermediaryFee,
       adjustedBasis,
       accumulatedDepreciation,
       existingMortgagePayoff,
@@ -319,12 +324,13 @@ export const Section1031Calculator = () => {
     setCandidates((prev) => (prev.length <= 2 ? prev : prev.filter((c) => c.id !== id)));
   };
 
-  const shareParams = {
+  const shareParams: Record<string, string | number> = {
     sale: salePrice,
     costs: sellingCostsPercent,
     basis: adjustedBasis,
     dep: accumulatedDepreciation,
     debt: existingMortgagePayoff,
+    ...(qualifiedIntermediaryFee > 0 ? { qi: qualifiedIntermediaryFee } : {}),
     replacement: replacementPurchasePrice,
     acq: acquisitionCosts,
     newdebt: newMortgage,
@@ -342,7 +348,11 @@ export const Section1031Calculator = () => {
   const handleExportExcel = async () => {
     const summary = [
       { Parameter: 'Sale Price (Relinquished)', Value: salePrice },
-      { Parameter: 'Selling Costs', Value: result.sellingCosts },
+      { Parameter: 'Selling Costs (Percentage)', Value: result.sellingCosts - result.qualifiedIntermediaryFee },
+      ...(result.qualifiedIntermediaryFee > 0
+        ? [{ Parameter: 'Qualified Intermediary (QI) Fee', Value: result.qualifiedIntermediaryFee }]
+        : []),
+      { Parameter: 'Total Relinquished Closing Costs', Value: result.sellingCosts },
       { Parameter: 'Net Sale Proceeds', Value: result.netSaleProceeds },
       { Parameter: 'Adjusted Basis', Value: adjustedBasis },
       { Parameter: 'Realized Gain', Value: result.realizedGain },
@@ -540,6 +550,18 @@ export const Section1031Calculator = () => {
                 tooltip={{
                   title: "Mortgage / Debt Relief Boot",
                   content: "Debt relief occurs if your new mortgage is smaller than your old payoff. You must bring new cash to the table to offset the difference, or it triggers taxable mortgage boot."
+                }}
+              />
+              <Field
+                label="Qualified Intermediary (QI) Fee"
+                value={qualifiedIntermediaryFee}
+                onChange={setQualifiedIntermediaryFee}
+                prefix="$"
+                step={100}
+                hint="Fixed exchange escrow fee (typically $1,000 – $2,500)"
+                tooltip={{
+                  title: "Qualified Intermediary (QI) Fee",
+                  content: "Treasury Reg. §1.1031(k)-1 requires an independent QI to hold exchange escrow. Routine QI and exchange escrow fees are allowable transaction costs that reduce realized gain."
                 }}
               />
             </div>
@@ -884,14 +906,39 @@ export const Section1031Calculator = () => {
                     step={1}
                     hint="Up to 25% federal"
                   />
-                  <Field
-                    label="State Income Tax"
-                    value={stateTaxRatePercent}
-                    onChange={setStateTaxRatePercent}
-                    suffix="%"
-                    step={0.1}
-                    hint="Enter 0 if your state does not tax the gain"
-                  />
+                  <div>
+                    <Field
+                      label="State Income Tax"
+                      value={stateTaxRatePercent}
+                      onChange={setStateTaxRatePercent}
+                      suffix="%"
+                      step={0.1}
+                      hint="Enter 0 if your state does not tax the gain"
+                    />
+                    <div className="flex flex-wrap items-center gap-1.5 mt-2">
+                      <span className="text-[11px] font-medium text-slate-500 mr-0.5">Presets:</span>
+                      {[
+                        { label: 'CA (13.3%)', rate: 13.3 },
+                        { label: 'NY (10.9%)', rate: 10.9 },
+                        { label: 'NJ (10.75%)', rate: 10.75 },
+                        { label: 'TX / FL (0%)', rate: 0 },
+                        { label: 'US Avg (5.0%)', rate: 5.0 },
+                      ].map((preset) => (
+                        <button
+                          key={preset.label}
+                          type="button"
+                          onClick={() => setStateTaxRatePercent(preset.rate)}
+                          className={`px-2 py-0.5 rounded-md text-[11px] font-mono transition-colors border cursor-pointer ${
+                            stateTaxRatePercent === preset.rate
+                              ? 'bg-indigo-50 text-indigo-700 border-indigo-300 font-semibold'
+                              : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100 hover:text-slate-900'
+                          }`}
+                        >
+                          {preset.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
                   <label className="flex items-start gap-2.5 p-3 rounded-xl bg-slate-50 border border-slate-200 cursor-pointer self-start">
                     <input
                       type="checkbox"
@@ -1149,6 +1196,10 @@ export const Section1031Calculator = () => {
           <tbody>
             {[
               ['Sale price (relinquished)', fmt2(salePrice)],
+              ['Selling costs (broker/transfer)', fmt2(result.sellingCosts - result.qualifiedIntermediaryFee)],
+              ...(result.qualifiedIntermediaryFee > 0
+                ? ([['Qualified Intermediary (QI) fee', fmt2(result.qualifiedIntermediaryFee)]] as [string, string][])
+                : []),
               ['Net sale proceeds', fmt2(result.netSaleProceeds)],
               ['Adjusted basis', fmt2(adjustedBasis)],
               ['Realized gain', fmt2(result.realizedGain)],

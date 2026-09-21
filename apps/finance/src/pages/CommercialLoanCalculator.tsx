@@ -8,7 +8,8 @@ import {
   ChevronDown,
   Share2,
   Check,
-  ArrowRight
+  ArrowRight,
+  TrendingUp
 } from 'lucide-react';
 import {
   calculateCommercialLoan,
@@ -140,7 +141,10 @@ export const CommercialLoanCalculator = () => {
         balloonTermYears: p.has('balloon') ? Number(p.get('balloon')) : 5,
         interestOnlyMonths: p.has('io') ? Number(p.get('io')) : 0,
         originationPoints: p.has('points') ? Number(p.get('points')) : 1.0,
-        closingFees: p.has('fees') ? Number(p.get('fees')) : 8500
+        closingFees: p.has('fees') ? Number(p.get('fees')) : 8500,
+        annualNoi: p.has('noi') ? Number(p.get('noi')) : 125000,
+        minDscrHurdle: p.has('dscr') ? Number(p.get('dscr')) : 1.25,
+        maxLtvHurdle: p.has('maxltv') ? Number(p.get('maxltv')) : 75
       };
     }
     return {
@@ -151,7 +155,10 @@ export const CommercialLoanCalculator = () => {
       balloonTermYears: 5,
       interestOnlyMonths: 0,
       originationPoints: 1.0,
-      closingFees: 8500
+      closingFees: 8500,
+      annualNoi: 125000,
+      minDscrHurdle: 1.25,
+      maxLtvHurdle: 75
     };
   });
 
@@ -488,6 +495,50 @@ export const CommercialLoanCalculator = () => {
               />
             </div>
           </div>
+
+          {/* Institutional Underwriting Inputs (Debt Yield & Sizing) */}
+          <div className="pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between mb-3">
+              <h4 className="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-1.5">
+                <span>Institutional Sizing & Underwriting Hurdles</span>
+              </h4>
+              <InfoTooltip
+                title="Commercial Debt Sizing"
+                content="Lenders evaluate loan size using both property NOI (Debt Yield and DSCR) and property appraised value (Max LTV). The lower of the two determines your actual loan approval."
+              />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label htmlFor="commercialloan-annual-noi" className="block text-xs font-medium text-slate-700 mb-1.5">Annual NOI ($)</label>
+                <CurrencyInput id="commercialloan-annual-noi"
+                  value={inputs.annualNoi ?? 125000}
+                  onChange={(val) => setInputs({ ...inputs, annualNoi: val })}
+                  className="focus:border-cyan-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="commercialloan-min-dscr" className="block text-xs font-medium text-slate-700 mb-1.5">Min DSCR Hurdle</label>
+                <NumericInput id="commercialloan-min-dscr"
+                  value={inputs.minDscrHurdle ?? 1.25}
+                  onChange={(val) => setInputs({ ...inputs, minDscrHurdle: val })}
+                  suffix="x"
+                  className="focus:border-cyan-500"
+                />
+              </div>
+
+              <div>
+                <label htmlFor="commercialloan-max-ltv" className="block text-xs font-medium text-slate-700 mb-1.5">Max LTV Limit (%)</label>
+                <NumericInput id="commercialloan-max-ltv"
+                  value={inputs.maxLtvHurdle ?? 75}
+                  onChange={(val) => setInputs({ ...inputs, maxLtvHurdle: val })}
+                  suffix="%"
+                  className="focus:border-cyan-500"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Right Financial Metrics (5 cols) */}
@@ -547,6 +598,24 @@ export const CommercialLoanCalculator = () => {
                 </span>
               </div>
 
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+                <div>
+                  <span className="text-xs text-slate-500 block">Debt Yield (NOI / Debt)</span>
+                  <span className="text-2xs text-slate-400">Target ≥10.0% for Agency/CMBS</span>
+                </div>
+                <div className="text-right">
+                  <span className={`text-sm font-mono font-bold ${
+                    summary.debtYieldHealth === 'prime' ? 'text-emerald-700' :
+                    summary.debtYieldHealth === 'moderate' ? 'text-indigo-600' : 'text-amber-700'
+                  }`}>
+                    {summary.debtYieldPercent}%
+                  </span>
+                  <span className="block text-2xs font-sans text-slate-500">
+                    {summary.debtYieldHealth === 'prime' ? 'Prime Tier' : summary.debtYieldHealth === 'moderate' ? 'Standard Bank' : 'Elevated Risk'}
+                  </span>
+                </div>
+              </div>
+
               <div className="flex items-center justify-between font-bold pt-1">
                 <span className="text-xs text-slate-900">Balloon Maturity Lump Sum</span>
                 <span className="text-base font-mono text-amber-700">
@@ -562,6 +631,59 @@ export const CommercialLoanCalculator = () => {
               <span>Institutional CRE Underwriting</span>
             </div>
             <p>Calculates standard US 30/360 commercial bank amortization with full transparency on balloon debt expiration.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Dual-Constraint Maximum Debt Sizing (LTV vs DSCR) */}
+      <div className="mb-8 p-6 rounded-2xl bg-white border border-slate-200 shadow-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4 mb-5">
+          <div>
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <TrendingUp className="size-5 text-cyan-600" />
+              <span>Dual-Constraint Maximum Debt Sizing (LTV vs DSCR)</span>
+            </h3>
+            <p className="text-xs text-slate-500 mt-0.5">
+              Commercial lenders determine approval size by the lesser of collateral equity and net cash flow coverage.
+            </p>
+          </div>
+          <div className="shrink-0">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200">
+              <span>Binding Constraint:</span>
+              <span className="underline decoration-amber-500">{summary.bindingConstraint} Limit</span>
+            </span>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className={`p-4 rounded-xl border ${summary.bindingConstraint === 'LTV' ? 'bg-indigo-50/50 border-indigo-200' : 'bg-slate-50 border-slate-200'}`}>
+            <span className="text-xs text-slate-500 font-medium block">Max Loan by LTV ({inputs.maxLtvHurdle ?? 75}%)</span>
+            <span className="text-xl font-bold font-mono text-slate-900 mt-1 block">
+              ${summary.maxLoanByLtv.toLocaleString('en-US')}
+            </span>
+            <span className="text-2xs text-slate-500 mt-1 block">
+              Valuation limit based on ${inputs.propertyPrice.toLocaleString('en-US')} appraised value.
+            </span>
+          </div>
+
+          <div className={`p-4 rounded-xl border ${summary.bindingConstraint === 'DSCR' ? 'bg-indigo-50/50 border-indigo-200' : 'bg-slate-50 border-slate-200'}`}>
+            <span className="text-xs text-slate-500 font-medium block">Max Loan by DSCR ({inputs.minDscrHurdle ?? 1.25}x)</span>
+            <span className="text-xl font-bold font-mono text-slate-900 mt-1 block">
+              ${summary.maxLoanByDscr.toLocaleString('en-US')}
+            </span>
+            <span className="text-2xs text-slate-500 mt-1 block">
+              Supported by ${inputs.annualNoi?.toLocaleString('en-US') ?? '125,000'} NOI at {inputs.minDscrHurdle ?? 1.25}x debt coverage.
+            </span>
+          </div>
+
+          <div className="p-4 rounded-xl bg-cyan-50/60 border border-cyan-200">
+            <span className="text-xs text-cyan-900 font-medium block">Underwritten Max Loan (Approved)</span>
+            <span className="text-xl font-bold font-mono text-cyan-800 mt-1 block">
+              ${summary.underwrittenMaxLoan.toLocaleString('en-US')}
+            </span>
+            <span className="text-2xs text-cyan-950 mt-1 block font-medium">
+              Lender maximum proceeds constrained by {summary.bindingConstraint}.
+            </span>
           </div>
         </div>
       </div>

@@ -17,6 +17,7 @@ export interface DscrInputs {
   monthlyCapexReserve?: number; // e.g. $100 (roof, HVAC capital expenditures reserve)
   monthlyOtherExpenses?: number; // e.g. $50 (landscaping, pest control, accounting)
   targetDscr: number; // e.g. 1.25
+  prepaymentPenaltyStructure?: '5-4-3-2-1' | '3-2-1' | 'none'; // default: '5-4-3-2-1'
 }
 
 export interface DscrResult {
@@ -58,6 +59,30 @@ export interface DscrResult {
   
   // Max loan amount supported at Target DSCR (e.g. 1.25)
   maxLoanAmountAtTargetDscr: number;
+
+  // Reverse DSCR Rent Sizing Thresholds
+  rentThresholds: DscrRentThreshold[];
+
+  // Prepayment Penalty (PPP) Analysis
+  prepaymentPenaltyStructure: '5-4-3-2-1' | '3-2-1' | 'none';
+  prepaymentSchedule: DscrPppYear[];
+}
+
+export interface DscrRentThreshold {
+  targetDscr: number;
+  tierName: string;
+  badge: string;
+  description: string;
+  requiredMonthlyRent: number;
+  variance: number;
+  isMet: boolean;
+}
+
+export interface DscrPppYear {
+  year: number;
+  penaltyRatePercent: number;
+  estimatedLoanBalance: number;
+  penaltyAmount: number;
 }
 
 export interface DscrAmortizationRow {
@@ -201,6 +226,86 @@ export function calculateDscr(inputs: DscrInputs): DscrResult {
         (monthlyRate * Math.pow(1 + monthlyRate, totalMonths));
     }
   }
+
+  // Reverse DSCR Rent Thresholds
+  const thresholdTiers = [
+    {
+      targetDscr: 1.00,
+      tierName: 'Break-Even Floor',
+      badge: '1.00x DSCR',
+      description: 'Breakeven threshold where gross rental receipts cover 100% of PITIA carrying cost.',
+    },
+    {
+      targetDscr: 1.15,
+      tierName: 'Standard Non-QM',
+      badge: '1.15x DSCR',
+      description: 'Typical secondary market qualifying floor for standard DSCR mortgage programs.',
+    },
+    {
+      targetDscr: 1.20,
+      tierName: 'Preferred Agency Tier',
+      badge: '1.20x DSCR',
+      description: 'Standard institutional hurdle rate for competitive rates and lower reserve requirements.',
+    },
+    {
+      targetDscr: 1.25,
+      tierName: 'Prime Investor Tier',
+      badge: '1.25x DSCR',
+      description: 'Unlocks top-tier pricing, lowest note interest rates, and maximum 80% LTV leverage.',
+    },
+    {
+      targetDscr: 1.35,
+      tierName: 'Conservative / Cash-Rich',
+      badge: '1.35x DSCR',
+      description: 'Substantial cash-flow cushion against market rent declines or prolonged tenant vacancy.',
+    },
+  ];
+
+  const rentThresholds: DscrRentThreshold[] = thresholdTiers.map((t) => {
+    const requiredRent = monthlyPitia * t.targetDscr;
+    const variance = grossMonthlyRent - requiredRent;
+    return {
+      targetDscr: t.targetDscr,
+      tierName: t.tierName,
+      badge: t.badge,
+      description: t.description,
+      requiredMonthlyRent: Math.round(requiredRent * 100) / 100,
+      variance: Math.round(variance * 100) / 100,
+      isMet: grossMonthlyRent >= requiredRent - 0.01,
+    };
+  });
+
+  // Prepayment Penalty (PPP) Analysis
+  const pppStructure: '5-4-3-2-1' | '3-2-1' | 'none' = inputs.prepaymentPenaltyStructure || '5-4-3-2-1';
+  let penaltyRates: number[] = [];
+  if (pppStructure === '5-4-3-2-1') {
+    penaltyRates = [5, 4, 3, 2, 1];
+  } else if (pppStructure === '3-2-1') {
+    penaltyRates = [3, 2, 1];
+  }
+
+  const prepaymentSchedule: DscrPppYear[] = [];
+  if (penaltyRates.length > 0 && loanAmount > 0) {
+    for (let yr = 1; yr <= penaltyRates.length; yr++) {
+      const rate = penaltyRates[yr - 1];
+      let yrBalance = loanAmount;
+      if (inputs.isInterestOnly && (inputs.interestOnlyYears ?? inputs.loanTermYears) >= yr) {
+        yrBalance = loanAmount;
+      } else if (monthlyRate > 0) {
+        const mElapsed = yr * 12;
+        const factorTotal = Math.pow(1 + monthlyRate, totalMonths);
+        const factorElapsed = Math.pow(1 + monthlyRate, mElapsed);
+        yrBalance = (loanAmount * (factorTotal - factorElapsed)) / (factorTotal - 1);
+      }
+      yrBalance = Math.max(0, yrBalance);
+      prepaymentSchedule.push({
+        year: yr,
+        penaltyRatePercent: rate,
+        estimatedLoanBalance: Math.round(yrBalance),
+        penaltyAmount: Math.round((yrBalance * (rate / 100)) * 100) / 100,
+      });
+    }
+  }
   
   return {
     loanAmount: Math.round(loanAmount),
@@ -230,7 +335,10 @@ export function calculateDscr(inputs: DscrInputs): DscrResult {
     statusLabel,
     statusColor,
     statusDescription,
-    maxLoanAmountAtTargetDscr: Math.round(Math.max(0, maxLoanAmountAtTargetDscr))
+    maxLoanAmountAtTargetDscr: Math.round(Math.max(0, maxLoanAmountAtTargetDscr)),
+    rentThresholds,
+    prepaymentPenaltyStructure: pppStructure,
+    prepaymentSchedule
   };
 }
 

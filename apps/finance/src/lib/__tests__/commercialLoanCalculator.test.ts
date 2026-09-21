@@ -131,4 +131,62 @@ describe('Commercial Real Estate Loan & Balloon Calculator Engine', () => {
     expect(res.prepaymentPenaltyAmount).toBeCloseTo(res.prepaymentPayoffBalance * 0.05, 0);
     expect(res.totalPayoffWithPenalty).toBe(res.prepaymentPayoffBalance + res.prepaymentPenaltyAmount);
   });
+
+  it('accurately calculates Debt Yield and categorizes health tier', () => {
+    // 750k loan with 90k NOI -> Debt Yield = 90k / 750k = 12.0% (Prime)
+    const primeRes = calculateCommercialLoan({
+      ...standardInputs,
+      annualNoi: 90000
+    });
+    expect(primeRes.debtYieldPercent).toBe(12.0);
+    expect(primeRes.debtYieldHealth).toBe('prime');
+
+    // 750k loan with 65k NOI -> Debt Yield = 65k / 750k = 8.67% (Moderate)
+    const modRes = calculateCommercialLoan({
+      ...standardInputs,
+      annualNoi: 65000
+    });
+    expect(modRes.debtYieldPercent).toBeCloseTo(8.67, 1);
+    expect(modRes.debtYieldHealth).toBe('moderate');
+
+    // 750k loan with 50k NOI -> Debt Yield = 50k / 750k = 6.67% (Elevated)
+    const lowRes = calculateCommercialLoan({
+      ...standardInputs,
+      annualNoi: 50000
+    });
+    expect(lowRes.debtYieldPercent).toBeCloseTo(6.67, 1);
+    expect(lowRes.debtYieldHealth).toBe('elevated');
+  });
+
+  it('evaluates Dual-Constraint Debt Sizing (LTV vs DSCR)', () => {
+    // 1M property, 75% max LTV = 750k LTV max loan.
+    // At 95k NOI and 1.25 DSCR hurdle:
+    // Max annual debt service = 95,000 / 1.25 = 76,000/yr = 6,333.33/mo
+    // At 7% 25yr, supported loan is ~$896k.
+    // Therefore, LTV is the binding constraint!
+    const ltvBinding = calculateCommercialLoan({
+      ...standardInputs,
+      annualNoi: 95000,
+      minDscrHurdle: 1.25,
+      maxLtvHurdle: 75
+    });
+    expect(ltvBinding.maxLoanByLtv).toBe(750000);
+    expect(ltvBinding.maxLoanByDscr).toBeGreaterThan(850000);
+    expect(ltvBinding.bindingConstraint).toBe('LTV');
+    expect(ltvBinding.underwrittenMaxLoan).toBe(750000);
+
+    // If NOI is lower: 60k NOI at 1.25 DSCR:
+    // Max debt service = 60k / 1.25 = 48,000/yr = 4,000/mo
+    // At 7% 25yr, supported loan is ~$565k (< 750k).
+    // Therefore, DSCR is the binding constraint!
+    const dscrBinding = calculateCommercialLoan({
+      ...standardInputs,
+      annualNoi: 60000,
+      minDscrHurdle: 1.25,
+      maxLtvHurdle: 75
+    });
+    expect(dscrBinding.maxLoanByDscr).toBeLessThan(600000);
+    expect(dscrBinding.bindingConstraint).toBe('DSCR');
+    expect(dscrBinding.underwrittenMaxLoan).toBe(dscrBinding.maxLoanByDscr);
+  });
 });

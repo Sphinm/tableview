@@ -13,6 +13,7 @@ import { applyTheme } from './lib/theme';
 import { ArrowLeft, FileQuestion } from 'lucide-react';
 import { HOME_META, GUIDES_HUB_META, STATIC_PAGE_META } from './data/routeMeta';
 import { SALARY_LONG_TAIL_SLUG_MAP } from './data/salaryLongTail';
+import { getLegacyCrossDomainRedirect } from './lib/legacyRedirects';
 
 // Lazy-loaded financial pages
 const FinanceCalculatorHub = lazy(() => import('./pages/FinanceCalculatorHub').then(m => ({ default: m.FinanceCalculatorHub })));
@@ -54,7 +55,36 @@ export function App() {
     }
   }, [path]);
 
+  // Handle legacy cross-domain routes client-side if loaded via SPA fallback
+  useEffect(() => {
+    const redirectUrl = getLegacyCrossDomainRedirect(path);
+    if (redirectUrl && typeof window !== 'undefined') {
+      window.location.replace(redirectUrl);
+    }
+  }, [path]);
+
   const renderContent = () => {
+    const crossDomainTarget = getLegacyCrossDomainRedirect(path);
+    if (crossDomainTarget) {
+      return (
+        <div className="flex flex-col items-center justify-center py-20 px-4 text-center">
+          <div className="size-14 rounded-2xl bg-indigo-50 border border-indigo-200 flex items-center justify-center mb-4 shadow-xs">
+            <ArrowLeft className="size-7 text-indigo-700 rotate-180" />
+          </div>
+          <h2 className="text-xl font-bold text-slate-900 mb-2">Redirecting to TableView Tools...</h2>
+          <p className="text-slate-600 text-sm max-w-md mb-6 leading-relaxed">
+            This tool has moved to our dedicated workspace. If you are not redirected automatically, click below:
+          </p>
+          <a
+            href={crossDomainTarget}
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-xs hover:bg-indigo-700 transition shadow-xs"
+          >
+            Open in Tools Suite
+          </a>
+        </div>
+      );
+    }
+
     if (path === '/' || path === '/calculators' || path === '/finance-calculator') {
       return <FinanceCalculatorHub />;
     }

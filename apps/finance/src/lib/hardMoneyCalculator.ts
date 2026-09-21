@@ -17,6 +17,9 @@ export interface HardMoneyInputs {
   // Draw schedule (rehab escrow)
   numberOfDraws?: number; // e.g. 4 draws for rehab disbursements
   drawInspectionFee?: number; // e.g. $250 per draw inspection
+
+  // Wholesaling & deal acquisition
+  wholesalerAssignmentFee?: number; // e.g. $10,000 finder/assignment fee
   
   // Exit selling costs
   realtorCommissionPercent: number; // e.g. 5.0%
@@ -64,6 +67,22 @@ export interface HardMoneyResult {
   verdictLabel: string;
   verdictColor: string;
   verdictDescription: string;
+
+  // Wholesale & Timeline Sensitivity
+  wholesalerAssignmentFee: number;
+  timelineSensitivity: HardMoneySensitivityScenario[];
+}
+
+export interface HardMoneySensitivityScenario {
+  label: string;
+  durationMonths: number;
+  additionalMonths: number;
+  totalCarryingCost: number;
+  additionalCostVsBase: number;
+  netProfit: number;
+  roiPercent: number;
+  annualizedRoiPercent: number;
+  verdict: 'profitable' | 'marginal' | 'unprofitable';
 }
 
 export function calculateHardMoney(inputs: HardMoneyInputs): HardMoneyResult {
@@ -103,30 +122,77 @@ export function calculateHardMoney(inputs: HardMoneyInputs): HardMoneyResult {
   const exitClosingCosts = (arv * Math.max(0, inputs.exitClosingCostsPercent)) / 100;
   const totalExitCosts = realtorCommission + exitClosingCosts;
   
+  const wholesalerAssignmentFee = Math.max(0, inputs.wholesalerAssignmentFee || 0);
+
   // Total cost of the flip project
   const totalProjectCost =
     purchasePrice +
     rehabBudget +
     originationPointsCost +
     underwritingFees +
+    wholesalerAssignmentFee +
     totalInterestPaid +
     totalHoldingCosts +
     totalDrawFees +
     totalExitCosts;
     
-  // 70% Rule of House Flipping
-  const maxAllowableOffer70Rule = arv * 0.7 - rehabBudget;
+  // 70% Rule of House Flipping (incorporating wholesaler assignment fee)
+  const maxAllowableOffer70Rule = arv * 0.7 - rehabBudget - wholesalerAssignmentFee;
   const maoDifference = maxAllowableOffer70Rule - purchasePrice;
   const is70RuleCompliant = purchasePrice <= maxAllowableOffer70Rule;
   
   // Total cash invested over the entire flip
-  const totalCashInvested = initialCashRequired + totalInterestPaid + totalHoldingCosts + totalDrawFees;
+  const totalCashInvested = initialCashRequired + wholesalerAssignmentFee + totalInterestPaid + totalHoldingCosts + totalDrawFees;
   
   // Bottom line profit
   const netProfit = arv - totalProjectCost;
   const roiPercent = totalCashInvested > 0 ? (netProfit / totalCashInvested) * 100 : 0;
   const annualizedRoiPercent = duration > 0 ? roiPercent * (12 / duration) : 0;
   const profitMarginPercent = arv > 0 ? (netProfit / arv) * 100 : 0;
+
+  // Timeline Delay Sensitivity Analysis (Base Case, +3 Months, +6 Months)
+  const delayScenarios = [
+    { label: 'On Schedule (Base Case)', additionalMonths: 0 },
+    { label: '+3 Months Delay (Permit / Contractor)', additionalMonths: 3 },
+    { label: '+6 Months Delay (Substantial Overrun)', additionalMonths: 6 },
+  ];
+
+  const baseCarryingCost = totalInterestPaid + totalHoldingCosts + totalDrawFees;
+
+  const timelineSensitivity: HardMoneySensitivityScenario[] = delayScenarios.map((sc) => {
+    const scDuration = duration + sc.additionalMonths;
+    const scInterest = monthlyInterestPayment * scDuration;
+    const scHolding = Math.max(0, inputs.monthlyHoldingCosts) * scDuration;
+    const scCarryingCost = scInterest + scHolding + totalDrawFees;
+    const additionalCost = scCarryingCost - baseCarryingCost;
+
+    const scTotalProjectCost = totalProjectCost + additionalCost;
+    const scNetProfit = arv - scTotalProjectCost;
+    const scTotalCashInvested = initialCashRequired + wholesalerAssignmentFee + scCarryingCost;
+    const scRoi = scTotalCashInvested > 0 ? (scNetProfit / scTotalCashInvested) * 100 : 0;
+    const scAnnualizedRoi = scDuration > 0 ? scRoi * (12 / scDuration) : 0;
+
+    let scVerdict: 'profitable' | 'marginal' | 'unprofitable' = 'profitable';
+    if (scNetProfit >= 20000 && scRoi >= 15) {
+      scVerdict = 'profitable';
+    } else if (scNetProfit > 0) {
+      scVerdict = 'marginal';
+    } else {
+      scVerdict = 'unprofitable';
+    }
+
+    return {
+      label: sc.label,
+      durationMonths: scDuration,
+      additionalMonths: sc.additionalMonths,
+      totalCarryingCost: Math.round(scCarryingCost),
+      additionalCostVsBase: Math.round(additionalCost),
+      netProfit: Math.round(scNetProfit),
+      roiPercent: Number(scRoi.toFixed(2)),
+      annualizedRoiPercent: Number(scAnnualizedRoi.toFixed(2)),
+      verdict: scVerdict,
+    };
+  });
   
   // Deal Verdict
   let dealVerdict: 'excellent' | 'profitable' | 'marginal' | 'unprofitable' = 'profitable';
@@ -183,6 +249,8 @@ export function calculateHardMoney(inputs: HardMoneyInputs): HardMoneyResult {
     dealVerdict,
     verdictLabel,
     verdictColor,
-    verdictDescription
+    verdictDescription,
+    wholesalerAssignmentFee,
+    timelineSensitivity
   };
 }

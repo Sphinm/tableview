@@ -11,6 +11,7 @@
  */
 
 import { handleTelemetryTrack } from './telemetryTrack';
+import { getLegacyCrossDomainRedirect } from '../lib/legacyRedirects';
 
 export interface Env {
   DB?: D1Database;
@@ -332,6 +333,18 @@ export default {
 
     // Route static assets or non-API paths
     if (!url.pathname.startsWith('/api/')) {
+      const legacyTarget = getLegacyCrossDomainRedirect(url.pathname);
+      if (legacyTarget) {
+        const destination = `${legacyTarget}${url.search}`;
+        return new Response(null, {
+          status: 301,
+          headers: {
+            Location: destination,
+            'Cache-Control': 'public, max-age=86400',
+          },
+        });
+      }
+
       if (env.ASSETS) {
         return env.ASSETS.fetch(request);
       }

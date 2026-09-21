@@ -67,4 +67,38 @@ describe('Hard Money Loan Calculator Engine', () => {
     expect(withDraws.totalProjectCost).toBe(withoutDraws.totalProjectCost + 1000);
     expect(withDraws.netProfit).toBe(withoutDraws.netProfit - 1000);
   });
+
+  it('adjusts MAO and total project cost for wholesaler assignment fee', () => {
+    const withoutWholesale = calculateHardMoney(sampleInputs);
+    const withWholesale = calculateHardMoney({
+      ...sampleInputs,
+      wholesalerAssignmentFee: 15000
+    });
+
+    // MAO under 70% rule decreases dollar-for-dollar by assignment fee
+    expect(withWholesale.maxAllowableOffer70Rule).toBe(withoutWholesale.maxAllowableOffer70Rule - 15000);
+    expect(withWholesale.totalProjectCost).toBe(withoutWholesale.totalProjectCost + 15000);
+    expect(withWholesale.netProfit).toBe(withoutWholesale.netProfit - 15000);
+    expect(withWholesale.wholesalerAssignmentFee).toBe(15000);
+  });
+
+  it('generates 3 timeline delay sensitivity scenarios (Base, +3mo, +6mo)', () => {
+    const res = calculateHardMoney(sampleInputs);
+    expect(res.timelineSensitivity).toHaveLength(3);
+
+    const [baseCase, delay3mo, delay6mo] = res.timelineSensitivity;
+    expect(baseCase.durationMonths).toBe(sampleInputs.projectDurationMonths);
+    expect(baseCase.additionalMonths).toBe(0);
+    expect(baseCase.additionalCostVsBase).toBe(0);
+
+    expect(delay3mo.durationMonths).toBe(sampleInputs.projectDurationMonths + 3);
+    expect(delay3mo.additionalMonths).toBe(3);
+    expect(delay3mo.totalCarryingCost).toBeGreaterThan(baseCase.totalCarryingCost);
+    expect(delay3mo.netProfit).toBeLessThan(baseCase.netProfit);
+
+    expect(delay6mo.durationMonths).toBe(sampleInputs.projectDurationMonths + 6);
+    expect(delay6mo.additionalMonths).toBe(6);
+    expect(delay6mo.totalCarryingCost).toBeGreaterThan(delay3mo.totalCarryingCost);
+    expect(delay6mo.netProfit).toBeLessThan(delay3mo.netProfit);
+  });
 });
