@@ -586,13 +586,13 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                         type="button"
                         onClick={() => {
                           trackUserClick('header_user_menu_upgrade_pro');
-                          setShowUpgradeModal(true);
+                          handleNav('/pricing');
                           setUserMenuOpen(false);
                         }}
                         className="w-full text-left px-3 py-1.5 text-indigo-700 hover:bg-indigo-50 rounded-xl flex items-center gap-1.5 font-bold transition-colors cursor-pointer text-xs"
                       >
                         <Sparkles className="size-3 text-amber-500" />
-                        <span>Upgrade to Pro ($149/yr)</span>
+                        <span>Upgrade to Pro</span>
                       </button>
                     )}
                   </div>

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   X,
   ShieldCheck,
@@ -36,9 +36,15 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
 }) => {
   const { user, openAuthModal, startCheckout, upgradePlan, purchaseSinglePass, isPro, hasDealPass } = useAuth();
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>(initialInterval);
+  const [prevInterval, setPrevInterval] = useState(initialInterval);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showMatrix, setShowMatrix] = useState(false);
   const [successNotice, setSuccessNotice] = useState<string | null>(null);
+
+  if (initialInterval !== prevInterval) {
+    setPrevInterval(initialInterval);
+    setBillingCycle(initialInterval);
+  }
 
   if (!isOpen) return null;
 
@@ -87,12 +93,12 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
     if (BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS) {
       if (!user) {
         openAuthModal({
-          reason: 'Please sign in with Google to activate free TableView Pro access during public beta.',
+          reason: `Please sign in with Google to activate your free TableView Pro (${billingCycle === 'month' ? 'Monthly' : 'Annual'}) access during public beta.`,
           onSuccess: async () => {
             setIsProcessing(true);
             await upgradePlan('pro');
             setIsProcessing(false);
-            setSuccessNotice('🎉 TableView Pro membership activated free during public beta!');
+            setSuccessNotice(`🎉 TableView Pro (${billingCycle === 'month' ? 'Monthly' : 'Annual'}) activated free during public beta!`);
           },
         });
         return;
@@ -100,13 +106,13 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
       setIsProcessing(true);
       await upgradePlan('pro');
       setIsProcessing(false);
-      setSuccessNotice('🎉 TableView Pro membership activated free during public beta!');
+      setSuccessNotice(`🎉 TableView Pro (${billingCycle === 'month' ? 'Monthly' : 'Annual'}) activated free during public beta!`);
       return;
     }
 
     if (!user) {
       openAuthModal({
-        reason: 'Please sign in with Google to upgrade to TableView Pro.',
+        reason: `Please sign in with Google to upgrade to TableView Pro (${billingCycle === 'month' ? 'Monthly' : 'Annual'}).`,
         onSuccess: async () => {
           setIsProcessing(true);
           await startCheckout({ productKey: 'pro_membership', interval: billingCycle });

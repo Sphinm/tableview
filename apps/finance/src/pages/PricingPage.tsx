@@ -15,14 +15,12 @@ import { useAuth } from '../lib/useAuth';
 import { trackUserClick } from '../lib/sentry';
 import { updatePageMeta } from '../lib/router';
 import { STATIC_PAGE_META } from '../data/routeMeta';
-import { PricingUpgradeModal } from '../components/PricingUpgradeModal';
 import { BILLING_CONFIG } from '../config/billing';
 
 export const PricingPage: React.FC = () => {
-  const { user, openAuthModal, startCheckout, upgradePlan, isPro } = useAuth();
+  const { user, openAuthModal, startCheckout, upgradePlan, purchaseSinglePass, isPro } = useAuth();
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>('year');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showModal, setShowModal] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
 
@@ -36,18 +34,57 @@ export const PricingPage: React.FC = () => {
     updatePageMeta(meta.title, meta.description, `https://tableview.dev/pricing`);
   }, []);
 
+  const handleCheckoutSinglePass = async () => {
+    trackUserClick('pricing_page_single_pass_click', { logged_in: Boolean(user) });
+
+    if (BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS) {
+      if (!user) {
+        openAuthModal({
+          reason: 'Please sign in with Google to claim your free Single Deal Pass during public beta.',
+          onSuccess: async () => {
+            setIsProcessing(true);
+            await purchaseSinglePass('general_deal');
+            setIsProcessing(false);
+            setSuccessBanner('🎉 Single Deal Pass unlocked free during public beta!');
+          },
+        });
+        return;
+      }
+      setIsProcessing(true);
+      await purchaseSinglePass('general_deal');
+      setIsProcessing(false);
+      setSuccessBanner('🎉 Single Deal Pass unlocked free during public beta!');
+      return;
+    }
+
+    if (!user) {
+      openAuthModal({
+        reason: 'Please sign in with Google to purchase a Single Deal Pass.',
+        onSuccess: async () => {
+          setIsProcessing(true);
+          await startCheckout({ productKey: 'deal_pass', dealId: 'general_deal' });
+          setIsProcessing(false);
+        },
+      });
+      return;
+    }
+    setIsProcessing(true);
+    await startCheckout({ productKey: 'deal_pass', dealId: 'general_deal' });
+    setIsProcessing(false);
+  };
+
   const handleCheckoutPro = async () => {
     trackUserClick('pricing_page_upgrade_pro_click', { billingCycle, logged_in: Boolean(user) });
 
     if (BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS) {
       if (!user) {
         openAuthModal({
-          reason: 'Please sign in with Google to activate free TableView Pro access during public beta.',
+          reason: `Please sign in with Google to activate your free TableView Pro (${billingCycle === 'month' ? 'Monthly' : 'Annual'}) access during public beta.`,
           onSuccess: async () => {
             setIsProcessing(true);
             await upgradePlan('pro');
             setIsProcessing(false);
-            setSuccessBanner('🎉 TableView Pro activated free! Full institutional deliverables unlocked during our compliance review period.');
+            setSuccessBanner(`🎉 TableView Pro (${billingCycle === 'month' ? 'Monthly' : 'Annual'}) activated free! Full institutional deliverables unlocked during our compliance review period.`);
           },
         });
         return;
@@ -55,13 +92,13 @@ export const PricingPage: React.FC = () => {
       setIsProcessing(true);
       await upgradePlan('pro');
       setIsProcessing(false);
-      setSuccessBanner('🎉 TableView Pro activated free! Full institutional deliverables unlocked during our compliance review period.');
+      setSuccessBanner(`🎉 TableView Pro (${billingCycle === 'month' ? 'Monthly' : 'Annual'}) activated free! Full institutional deliverables unlocked during our compliance review period.`);
       return;
     }
 
     if (!user) {
       openAuthModal({
-        reason: 'Please sign in with Google to upgrade to TableView Pro.',
+        reason: `Please sign in with Google to upgrade to TableView Pro (${billingCycle === 'month' ? 'Monthly' : 'Annual'}).`,
         onSuccess: async () => {
           setIsProcessing(true);
           await startCheckout({ productKey: 'pro_membership', interval: billingCycle });
@@ -73,11 +110,6 @@ export const PricingPage: React.FC = () => {
     setIsProcessing(true);
     await startCheckout({ productKey: 'pro_membership', interval: billingCycle });
     setIsProcessing(false);
-  };
-
-  const handleOpenSinglePassModal = () => {
-    trackUserClick('pricing_page_single_pass_click', { logged_in: Boolean(user) });
-    setShowModal(true);
   };
 
   const toggleFaq = (index: number) => {
@@ -346,8 +378,9 @@ export const PricingPage: React.FC = () => {
 
             <button
               type="button"
-              onClick={handleOpenSinglePassModal}
-              className="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors text-center inline-flex items-center justify-center gap-2 cursor-pointer"
+              disabled={isProcessing}
+              onClick={handleCheckoutSinglePass}
+              className="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors text-center inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
             >
               <span>{BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? 'Unlock Free Deal Pass ($0 Beta)' : 'Get Single Deal Pass ($9.99)'}</span>
               <ArrowRight className="size-3.5" />
@@ -627,7 +660,7 @@ export const PricingPage: React.FC = () => {
               onClick={handleCheckoutPro}
               className="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-indigo-950 font-black text-xs transition-all shadow-lg active:scale-95 cursor-pointer inline-flex items-center gap-2"
             >
-              <span>{isPro ? 'Pro Active (Beta Access)' : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? 'Activate Free Pro ($0 Beta)' : 'Upgrade to Pro ($12.40/mo)'}</span>
+              <span>{isPro ? 'Pro Active (Beta Access)' : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? 'Activate Free Pro ($0 Beta)' : `Upgrade to Pro (${billingCycle === 'month' ? '$19/mo' : '$12.40/mo'})`}</span>
               <ArrowRight className="size-4 text-indigo-600" />
             </button>
             <div className="text-[11px] text-slate-400 mt-2 font-mono">
@@ -679,13 +712,6 @@ export const PricingPage: React.FC = () => {
           })}
         </div>
       </section>
-
-      {/* Reusable Pricing Modal */}
-      <PricingUpgradeModal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        initialInterval={billingCycle}
-      />
     </div>
   );
 };
