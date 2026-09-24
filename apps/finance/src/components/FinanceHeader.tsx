@@ -532,23 +532,133 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   {user.name || 'Account'}
                 </span>
                 {user.plan === 'pro' ? (
-                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 border border-amber-200 uppercase">
-                    PRO
-                  </span>
+                  user.billingInterval === 'year' ? (
+                    <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300 uppercase tracking-tight flex items-center gap-1 shadow-2xs">
+                      <Sparkles className="size-2.5 text-amber-600 fill-amber-500" />
+                      PRO ANNUAL
+                    </span>
+                  ) : (
+                    <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-indigo-100 text-indigo-800 border border-indigo-200 uppercase tracking-tight flex items-center gap-1">
+                      <Sparkles className="size-2.5 text-indigo-600" />
+                      PRO MONTHLY
+                    </span>
+                  )
                 ) : user.purchasedDossiers && user.purchasedDossiers.length > 0 ? (
-                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-200 uppercase">
-                    PASS
+                  <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-800 border border-emerald-200 uppercase tracking-tight">
+                    DEAL PASS
                   </span>
-                ) : null}
+                ) : (
+                  <span className="text-[9px] font-medium px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 border border-slate-200 uppercase tracking-tight">
+                    FREE
+                  </span>
+                )}
                 <ChevronDown className="size-3 text-slate-400" />
               </button>
 
               {userMenuOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 text-xs animate-in fade-in slide-in-from-top-2 duration-150">
+                <div className="absolute right-0 mt-2 w-64 bg-white border border-slate-200 rounded-2xl shadow-xl p-2 z-50 text-xs animate-in fade-in slide-in-from-top-2 duration-150">
                   <div className="px-3 py-2 border-b border-slate-100">
                     <div className="font-bold text-slate-900 truncate">{user.name}</div>
                     <div className="text-[11px] text-slate-500 truncate">{user.email}</div>
                   </div>
+
+                  {/* Active Membership Status Card */}
+                  <div className="p-2.5 border-b border-slate-100 bg-slate-50/80 rounded-xl my-1.5">
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        Active Membership
+                      </span>
+                      <button
+                        type="button"
+                        title="Sync latest status from server"
+                        onClick={async (e) => {
+                          e.stopPropagation();
+                          setIsSyncing(true);
+                          await syncUserStatus();
+                          setIsSyncing(false);
+                        }}
+                        className="flex items-center gap-1 text-[10px] font-semibold text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer"
+                      >
+                        <RotateCw className={`size-2.5 ${isSyncing ? 'animate-spin text-indigo-600' : ''}`} />
+                        <span>Sync</span>
+                      </button>
+                    </div>
+
+                    <div className="flex items-start gap-2">
+                      <div
+                        className={`size-7 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                          user.plan === 'pro'
+                            ? user.billingInterval === 'year'
+                              ? 'bg-amber-100 text-amber-800 border border-amber-300/80'
+                              : 'bg-indigo-100 text-indigo-700 border border-indigo-200'
+                            : user.purchasedDossiers && user.purchasedDossiers.length > 0
+                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                            : 'bg-slate-200/80 text-slate-700 border border-slate-300/60'
+                        }`}
+                      >
+                        <Sparkles className="size-3.5" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-xs font-bold text-slate-900 truncate">
+                          {user.plan === 'pro'
+                            ? user.billingInterval === 'year'
+                              ? 'TableView Pro (Annual)'
+                              : user.billingInterval === 'month'
+                              ? 'TableView Pro (Monthly)'
+                              : 'TableView Pro'
+                            : user.purchasedDossiers && user.purchasedDossiers.length > 0
+                            ? `Single Deal Pass (${user.purchasedDossiers.length})`
+                            : 'Free Starter Plan'}
+                        </div>
+                        <div className="text-[10px] text-slate-500 truncate mt-0.5">
+                          {user.plan === 'pro' && user.currentPeriodEnd ? (
+                            `Valid thru ${new Date(user.currentPeriodEnd).toLocaleDateString()}`
+                          ) : user.plan === 'pro' ? (
+                            'Unlimited exports & white-label'
+                          ) : user.purchasedDossiers && user.purchasedDossiers.length > 0 ? (
+                            `${user.purchasedDossiers.length} unlocked dossier${user.purchasedDossiers.length > 1 ? 's' : ''}`
+                          ) : (
+                            `${user.credits ?? 30} free credits remaining`
+                          )}
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Pro Monthly -> Upgrade to Annual button */}
+                    {user.plan === 'pro' && user.billingInterval === 'month' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          trackUserClick('header_user_menu_switch_annual');
+                          handleNav('/pricing');
+                          setUserMenuOpen(false);
+                        }}
+                        className="mt-2 w-full py-1.5 px-2.5 rounded-lg bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-200/80 text-[11px] font-bold flex items-center justify-between transition-colors cursor-pointer"
+                      >
+                        <span>Switch to Annual</span>
+                        <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-200/80 text-amber-950 uppercase font-black">
+                          Save 35%
+                        </span>
+                      </button>
+                    )}
+
+                    {/* Free or Deal Pass -> Upgrade to Pro */}
+                    {user.plan !== 'pro' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          trackUserClick('header_user_menu_upgrade_pro');
+                          handleNav('/pricing');
+                          setUserMenuOpen(false);
+                        }}
+                        className="mt-2 w-full py-1.5 px-2.5 rounded-lg bg-indigo-600 hover:bg-indigo-700 text-white text-[11px] font-bold flex items-center justify-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                      >
+                        <Sparkles className="size-3 text-amber-300" />
+                        <span>Upgrade to Pro (Unlimited)</span>
+                      </button>
+                    )}
+                  </div>
+
                   <div className="py-1 border-b border-slate-100">
                     <button
                       type="button"
@@ -580,48 +690,6 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                       <Building2 className="size-3.5 text-indigo-600" />
                       <span>Branding Profile</span>
                     </button>
-                  </div>
-
-                  <div className="py-1 border-b border-slate-100">
-                    <div className="px-3 py-1.5 flex items-center justify-between text-[11px]">
-                      <span className="text-slate-500">Plan Status</span>
-                      <div className="flex items-center gap-1.5">
-                        <span className="font-bold text-indigo-600 uppercase">
-                          {user.plan === 'pro'
-                            ? 'PRO'
-                            : user.purchasedDossiers && user.purchasedDossiers.length > 0
-                            ? `Deal Pass (${user.purchasedDossiers.length})`
-                            : user.plan || 'Free'}
-                        </span>
-                        <button
-                          type="button"
-                          title="Refresh membership status from server"
-                          onClick={async (e) => {
-                            e.stopPropagation();
-                            setIsSyncing(true);
-                            await syncUserStatus();
-                            setIsSyncing(false);
-                          }}
-                          className="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer"
-                        >
-                          <RotateCw className={`size-3 ${isSyncing ? 'animate-spin text-indigo-600' : ''}`} />
-                        </button>
-                      </div>
-                    </div>
-                    {user.plan !== 'pro' && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          trackUserClick('header_user_menu_upgrade_pro');
-                          handleNav('/pricing');
-                          setUserMenuOpen(false);
-                        }}
-                        className="w-full text-left px-3 py-1.5 text-indigo-700 hover:bg-indigo-50 rounded-xl flex items-center gap-1.5 font-bold transition-colors cursor-pointer text-xs"
-                      >
-                        <Sparkles className="size-3 text-amber-500" />
-                        <span>Upgrade to Pro</span>
-                      </button>
-                    )}
                   </div>
                   <button
                     type="button"
@@ -669,6 +737,48 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
       {/* Mobile Menu Drawer */}
       {mobileMenuOpen && (
         <div id="mobile-nav-drawer" className="lg:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-4 max-h-[85vh] overflow-y-auto shadow-lg animate-in fade-in slide-in-from-top-2 duration-150">
+          {/* User Status in Mobile Drawer */}
+          {user && (
+            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="size-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center">
+                  {user.name ? user.name[0].toUpperCase() : 'U'}
+                </div>
+                <div>
+                  <div className="text-xs font-bold text-slate-900 truncate max-w-[140px]">{user.name}</div>
+                  <div className="text-[10px] text-slate-500">
+                    {user.plan === 'pro'
+                      ? user.billingInterval === 'year'
+                        ? 'Pro (Annual)'
+                        : 'Pro (Monthly)'
+                      : user.purchasedDossiers && user.purchasedDossiers.length > 0
+                      ? `Deal Pass (${user.purchasedDossiers.length})`
+                      : 'Free Plan'}
+                  </div>
+                </div>
+              </div>
+              <span
+                className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                  user.plan === 'pro'
+                    ? user.billingInterval === 'year'
+                      ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                      : 'bg-indigo-100 text-indigo-800 border border-indigo-200'
+                    : user.purchasedDossiers && user.purchasedDossiers.length > 0
+                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                    : 'bg-slate-200 text-slate-700'
+                }`}
+              >
+                {user.plan === 'pro'
+                  ? user.billingInterval === 'year'
+                    ? 'Pro Annual'
+                    : 'Pro Monthly'
+                  : user.purchasedDossiers && user.purchasedDossiers.length > 0
+                  ? 'Deal Pass'
+                  : 'Free'}
+              </span>
+            </div>
+          )}
+
           {/* 1. Residential Accordion */}
           <div className="border border-slate-200 rounded-xl overflow-hidden">
             <button

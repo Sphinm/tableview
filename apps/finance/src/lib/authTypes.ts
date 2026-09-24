@@ -19,6 +19,10 @@ export interface User {
   name: string;
   avatarUrl?: string | null;
   plan: 'free' | 'basic' | 'pro';
+  billingInterval?: 'month' | 'year' | 'one_time' | 'none';
+  membershipTitle?: string;
+  currentPeriodEnd?: number | null;
+  cancelAtPeriodEnd?: boolean;
   credits: number;
   branding?: BrandingProfile;
   purchasedDossiers?: string[];

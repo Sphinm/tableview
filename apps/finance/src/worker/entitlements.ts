@@ -95,8 +95,12 @@ export interface PurchaseRecord {
   refundedAt?: number | null;
 }
 
+export type EntitlementInterval = 'month' | 'year' | 'one_time' | 'none';
+
 export interface EntitlementState {
   plan: 'free' | 'pro';
+  interval: EntitlementInterval;
+  membershipTitle: string;
   keys: EntitlementKey[];
   /** Resource ids unlocked by one-off purchases. */
   dealPasses: string[];
@@ -175,8 +179,18 @@ export function resolveEntitlements(input: {
 
   if (hasLiveSubscription || hasProPurchase) {
     const sub = subscription;
+    const isYearly =
+      sub?.priceId === 'pdt_0NoH9OyMm3YOX0ump1AbW' ||
+      Boolean(sub?.priceId && sub.priceId.toLowerCase().includes('year')) ||
+      (typeof sub?.currentPeriodEnd === 'number' && sub.currentPeriodEnd - now > 45 * 24 * 60 * 60 * 1000);
+
+    const interval: EntitlementInterval = isYearly ? 'year' : 'month';
+    const membershipTitle = isYearly ? 'Pro Annual' : 'Pro Monthly';
+
     return {
       plan: 'pro',
+      interval,
+      membershipTitle,
       keys: [...PRO_ENTITLEMENTS],
       dealPasses,
       currentPeriodEnd: sub?.currentPeriodEnd ?? undefined,
@@ -185,10 +199,13 @@ export function resolveEntitlements(input: {
     };
   }
 
+  const hasDealPass = dealPasses.length > 0;
   return {
     plan: 'free',
+    interval: hasDealPass ? 'one_time' : 'none',
+    membershipTitle: hasDealPass ? 'Single Deal Pass' : 'Free Starter',
     keys: [],
     dealPasses,
-    source: dealPasses.length > 0 ? 'purchase' : 'none',
+    source: hasDealPass ? 'purchase' : 'none',
   };
 }

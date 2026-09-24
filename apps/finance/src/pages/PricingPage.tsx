@@ -239,20 +239,52 @@ export const PricingPage: React.FC = () => {
           </div>
         )}
 
-        {/* Active Pro Banner */}
-        {isPro && (
-          <div className="max-w-4xl mx-auto mb-6 p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs sm:text-sm font-bold flex items-center justify-between shadow-xs animate-in fade-in">
+        {/* Active Plan Banner */}
+        {isPro ? (
+          <div className="max-w-4xl mx-auto mb-6 p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs sm:text-sm font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs animate-in fade-in">
             <div className="flex items-center gap-2.5">
               <Sparkles className="size-5 text-amber-500 shrink-0" />
-              <span>
-                <strong>TableView Pro Active</strong> — You have unlocked full institutional access with unlimited watermark-free PDF dossiers, formula Excel spreadsheets, and white-label branding.
+              <div>
+                <span>
+                  <strong>TableView Pro ({user?.billingInterval === 'year' ? 'Annual Plan' : 'Monthly Plan'}) Active</strong>
+                  {' — '}You have unlimited watermark-free PDF dossiers, formula Excel spreadsheets, and custom white-label branding.
+                </span>
+                {user?.currentPeriodEnd && (
+                  <div className="text-[11px] text-slate-500 font-normal mt-0.5">
+                    Current period valid through: {new Date(user.currentPeriodEnd).toLocaleDateString()}
+                    {user.cancelAtPeriodEnd ? ' (cancels at period end)' : ' (auto-renews)'}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <span
+                className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase shrink-0 ${
+                  user?.billingInterval === 'year'
+                    ? 'bg-amber-400 text-amber-950'
+                    : 'bg-indigo-600 text-white'
+                }`}
+              >
+                {user?.billingInterval === 'year' ? 'Pro Annual' : 'Pro Monthly'}
               </span>
             </div>
-            <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-amber-400 text-amber-950 shrink-0">
-              Pro Member
+          </div>
+        ) : user?.purchasedDossiers && user.purchasedDossiers.length > 0 ? (
+          <div className="max-w-4xl mx-auto mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-950 text-xs sm:text-sm font-bold flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs animate-in fade-in">
+            <div className="flex items-center gap-2.5">
+              <CheckCircle2 className="size-5 text-emerald-600 shrink-0" />
+              <div>
+                <span>
+                  <strong>Single Deal Pass Active ({user.purchasedDossiers.length} deal{user.purchasedDossiers.length > 1 ? 's' : ''})</strong>
+                  {' — '}You have lifetime access to official CFPB QM PDFs and dynamic Excel models for your unlocked deals.
+                </span>
+              </div>
+            </div>
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-200 text-emerald-900 border border-emerald-300 shrink-0">
+              Deal Pass ($9.99)
             </span>
           </div>
-        )}
+        ) : null}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           {/* Card 1: Starter / Free */}
@@ -502,38 +534,66 @@ export const PricingPage: React.FC = () => {
               </div>
             </div>
 
-            <button
-              type="button"
-              disabled={isProcessing || isPro}
-              onClick={isPro ? undefined : handleCheckoutPro}
-              className={clsx(
-                "w-full py-3.5 px-4 rounded-xl font-bold text-xs transition-all text-center inline-flex items-center justify-center gap-2",
-                isPro
-                  ? "bg-emerald-600 text-white cursor-default shadow-xs"
-                  : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-indigo-500/25 cursor-pointer disabled:opacity-60"
-              )}
-            >
-              {isProcessing ? (
-                <span>Activating Pro Access...</span>
-              ) : isPro ? (
-                <>
-                  <CheckCircle2 className="size-4" />
-                  <span>Pro Plan Active (Current Plan)</span>
-                </>
-              ) : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
-                <>
-                  <span>Activate Free Pro ($0 Beta)</span>
-                  <Sparkles className="size-4 text-amber-300" />
-                </>
-              ) : (
-                <>
-                  <span>
-                    Upgrade to Pro ({billingCycle === 'year' ? '$149/yr' : '$19/mo'})
-                  </span>
-                  <Sparkles className="size-4 text-amber-300" />
-                </>
-              )}
-            </button>
+            {(() => {
+              const isYearlyPro = isPro && user?.billingInterval === 'year';
+              const isMonthlyPro = isPro && user?.billingInterval === 'month';
+              const canUpgradeToYearly = isMonthlyPro && billingCycle === 'year';
+              const isCurrentPlanActive = isYearlyPro || (isMonthlyPro && billingCycle === 'month') || (isPro && !canUpgradeToYearly);
+
+              return (
+                <button
+                  type="button"
+                  disabled={isProcessing || isCurrentPlanActive}
+                  onClick={isCurrentPlanActive ? undefined : handleCheckoutPro}
+                  className={clsx(
+                    "w-full py-3.5 px-4 rounded-xl font-bold text-xs transition-all text-center inline-flex items-center justify-center gap-2",
+                    isCurrentPlanActive
+                      ? "bg-emerald-600 text-white cursor-default shadow-xs"
+                      : canUpgradeToYearly
+                      ? "bg-amber-500 hover:bg-amber-600 text-white shadow-md hover:shadow-amber-500/25 cursor-pointer disabled:opacity-60"
+                      : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-indigo-500/25 cursor-pointer disabled:opacity-60"
+                  )}
+                >
+                  {isProcessing ? (
+                    <span>Activating Pro Access...</span>
+                  ) : isYearlyPro ? (
+                    <>
+                      <CheckCircle2 className="size-4" />
+                      <span>Pro Annual Active (Current Plan)</span>
+                    </>
+                  ) : isMonthlyPro ? (
+                    billingCycle === 'year' ? (
+                      <>
+                        <span>Switch to Annual ($149/yr · Save 35%)</span>
+                        <Sparkles className="size-4 text-amber-200" />
+                      </>
+                    ) : (
+                      <>
+                        <CheckCircle2 className="size-4" />
+                        <span>Pro Monthly Active (Current Plan)</span>
+                      </>
+                    )
+                  ) : isPro ? (
+                    <>
+                      <CheckCircle2 className="size-4" />
+                      <span>Pro Plan Active (Current Plan)</span>
+                    </>
+                  ) : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                    <>
+                      <span>Activate Free Pro ($0 Beta)</span>
+                      <Sparkles className="size-4 text-amber-300" />
+                    </>
+                  ) : (
+                    <>
+                      <span>
+                        Upgrade to Pro ({billingCycle === 'year' ? '$149/yr' : '$19/mo'})
+                      </span>
+                      <Sparkles className="size-4 text-amber-300" />
+                    </>
+                  )}
+                </button>
+              );
+            })()}
           </div>
         </div>
       </section>

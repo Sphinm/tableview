@@ -554,6 +554,11 @@ export default {
 
         let userCredits = 30;
         let userPlan: 'free' | 'basic' | 'pro' = 'free';
+        let billingInterval: 'month' | 'year' | 'one_time' | 'none' = 'none';
+        let membershipTitle = 'Free Starter';
+        let currentPeriodEnd: number | null = null;
+        let cancelAtPeriodEnd = false;
+        let purchasedDossiers: string[] = [];
 
         if (env.DB) {
           try {
@@ -612,6 +617,12 @@ export default {
                     userPlan = 'pro';
                     userCredits = Math.max(userCredits, 5000);
                   }
+
+                  billingInterval = ent.interval;
+                  membershipTitle = ent.membershipTitle;
+                  currentPeriodEnd = ent.currentPeriodEnd ?? null;
+                  cancelAtPeriodEnd = Boolean(ent.cancelAtPeriodEnd);
+                  purchasedDossiers = ent.dealPasses || [];
                 }
               } catch (entErr) {
                 console.error('[Worker] Error resolving entitlements in Google auth:', entErr);
@@ -655,7 +666,12 @@ export default {
               name,
               avatarUrl,
               plan: userPlan,
+              billingInterval,
+              membershipTitle,
+              currentPeriodEnd,
+              cancelAtPeriodEnd,
               credits: userCredits,
+              purchasedDossiers,
             },
           },
           200,
@@ -684,6 +700,10 @@ export default {
 
           if (dbUser) {
             let userPlan: 'free' | 'basic' | 'pro' = dbUser.plan;
+            let billingInterval: 'month' | 'year' | 'one_time' | 'none' = 'none';
+            let membershipTitle = 'Free Starter';
+            let currentPeriodEnd: number | null = null;
+            let cancelAtPeriodEnd = false;
             let purchasedDossiers: string[] = [];
 
             try {
@@ -739,6 +759,10 @@ export default {
                   }
                 }
 
+                billingInterval = ent.interval;
+                membershipTitle = ent.membershipTitle;
+                currentPeriodEnd = ent.currentPeriodEnd ?? null;
+                cancelAtPeriodEnd = Boolean(ent.cancelAtPeriodEnd);
                 purchasedDossiers = ent.dealPasses || [];
               }
             } catch (entErr) {
@@ -753,6 +777,10 @@ export default {
                   name: dbUser.name || dbUser.email.split('@')[0],
                   avatarUrl: dbUser.avatar_url,
                   plan: userPlan,
+                  billingInterval,
+                  membershipTitle,
+                  currentPeriodEnd,
+                  cancelAtPeriodEnd,
                   credits: userPlan === 'pro' ? Math.max(dbUser.credits, 5000) : dbUser.credits,
                   purchasedDossiers,
                 },
@@ -804,6 +832,10 @@ export default {
           if (dbUser) {
             let userPlan: 'free' | 'basic' | 'pro' = dbUser.plan;
             let purchasedDossiers: string[] = [];
+            let billingInterval: 'month' | 'year' | 'one_time' | 'none' = 'none';
+            let membershipTitle = 'Free Starter';
+            let currentPeriodEnd: number | null = null;
+            let cancelAtPeriodEnd = false;
 
             try {
               const customerRows = await env.DB.prepare(
@@ -858,6 +890,10 @@ export default {
                   }
                 }
 
+                billingInterval = ent.interval;
+                membershipTitle = ent.membershipTitle;
+                currentPeriodEnd = ent.currentPeriodEnd ?? null;
+                cancelAtPeriodEnd = Boolean(ent.cancelAtPeriodEnd);
                 purchasedDossiers = ent.dealPasses || [];
               }
             } catch (entErr) {
@@ -884,6 +920,10 @@ export default {
                   name: dbUser.name || dbUser.email.split('@')[0],
                   avatarUrl: dbUser.avatar_url,
                   plan: userPlan,
+                  billingInterval,
+                  membershipTitle,
+                  currentPeriodEnd,
+                  cancelAtPeriodEnd,
                   credits: userPlan === 'pro' ? Math.max(dbUser.credits, 5000) : dbUser.credits,
                   purchasedDossiers,
                 },
