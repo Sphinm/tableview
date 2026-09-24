@@ -36,6 +36,7 @@ const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ de
 const TermsOfService = lazy(() => import('./pages/TermsOfService').then(m => ({ default: m.TermsOfService })));
 const Disclaimer = lazy(() => import('./pages/Disclaimer').then(m => ({ default: m.Disclaimer })));
 const ClientDealSharePage = lazy(() => import('./pages/ClientDealSharePage').then(m => ({ default: m.ClientDealSharePage })));
+const PricingPage = lazy(() => import('./pages/PricingPage').then(m => ({ default: m.PricingPage })));
 
 export function App() {
   const { path, slug, pathname } = useRouter();
@@ -166,6 +167,9 @@ export function App() {
     }
     if (path === '/disclaimer') {
       return <Disclaimer />;
+    }
+    if (path === '/pricing' || path === '/upgrade' || path === '/plans') {
+      return <PricingPage />;
     }
 
     // Pure Financial 404

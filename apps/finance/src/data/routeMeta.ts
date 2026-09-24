@@ -170,4 +170,16 @@ export const STATIC_PAGE_META: Record<string, PageMeta> = {
       'Legal disclaimers, financial calculation disclosures, and terms of informational use for TableView.dev.',
     canonical: '/disclaimer',
   },
+  '/pricing': {
+    title: 'Pricing & Plans: Free, Single Deal Pass & Pro | TableView',
+    description:
+      'Transparent pricing for financial underwriting. 10+ free calculators with 100% in-browser privacy, $9.99 Single Deal Pass, or TableView Pro ($19/mo) for unlimited white-label deliverables.',
+    canonical: '/pricing',
+  },
+  '/upgrade': {
+    title: 'Upgrade to TableView Pro | Unlimited Institutional Deliverables',
+    description:
+      'Upgrade to TableView Pro for unlimited watermark-free PDF Pre-Approval Dossiers, live formula Excel models, and custom white-label branding.',
+    canonical: '/pricing',
+  },
 };

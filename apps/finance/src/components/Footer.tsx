@@ -240,6 +240,15 @@ export const Footer = ({ onTrySample: _onTrySample, currentPath: _currentPath }:
               </li>
               <li>
                 <a
+                  href="/pricing"
+                  onClick={(e) => handleNav(e, '/pricing')}
+                  className="text-indigo-600 hover:text-indigo-700 font-bold hover:underline transition-colors block"
+                >
+                  Pricing & Plans
+                </a>
+              </li>
+              <li>
+                <a
                   href="/about"
                   onClick={(e) => handleNav(e, '/about')}
                   className="text-slate-800 hover:text-slate-900 font-medium hover:underline transition-colors block"

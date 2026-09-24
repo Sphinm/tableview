@@ -25,7 +25,7 @@ import { getCrossSuiteUrl } from '@tableview/shared';
 import { trackUserClick } from '../lib/sentry';
 import { MySavedDealsModal } from './MySavedDealsModal';
 import { ProBrandingModal } from './ProBrandingModal';
-import { LenderReadyDossierModal } from './LenderReadyDossierModal';
+import { PricingUpgradeModal } from './PricingUpgradeModal';
 import { getTotalSavedDealsCount } from '../lib/savedDealsManager';
 
 interface FinanceHeaderProps {
@@ -495,6 +495,21 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
               <BookOpen className="size-3.5 text-indigo-600" />
               <span>Guides</span>
             </button>
+
+            {/* 5. Pricing */}
+            <button
+              type="button"
+              data-route="/pricing"
+              onClick={() => handleNav('/pricing')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
+                currentPath === '/pricing'
+                  ? 'bg-slate-100 text-indigo-700 font-bold'
+                  : 'text-slate-700 hover:text-slate-900 hover:bg-slate-50'
+              }`}
+            >
+              <DollarSign className="size-3.5 text-indigo-600" />
+              <span>Pricing</span>
+            </button>
           </nav>
         </div>
 
@@ -788,6 +803,20 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
             <ArrowRight className="size-3.5 text-slate-400" />
           </button>
 
+          {/* 5. Pricing & Plans Link */}
+          <button
+            type="button"
+            data-route="/pricing"
+            onClick={() => handleNav('/pricing')}
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 hover:bg-slate-50"
+          >
+            <div className="flex items-center gap-2">
+              <DollarSign className="size-4 text-emerald-600" />
+              <span>Pricing & Plans (Free vs Pro)</span>
+            </div>
+            <ArrowRight className="size-3.5 text-slate-400" />
+          </button>
+
           {/* Client-Side Privacy Callout */}
           <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-[11px] leading-relaxed flex items-center gap-2">
             <ShieldCheck className="size-4 text-emerald-700 shrink-0" />
@@ -816,13 +845,11 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
         }}
       />
 
-      <LenderReadyDossierModal
+      <PricingUpgradeModal
         isOpen={showUpgradeModal}
         onClose={() => setShowUpgradeModal(false)}
         dealId="pro_upgrade_header"
-        dealTitle="TableView Pro Membership"
-        onExportExcel={() => {}}
-        onPrintOfficialPdf={() => {}}
+        dealTitle="TableView Pro Upgrade"
         onOpenBrandingSettings={() => {
           setShowUpgradeModal(false);
           setShowBrandingModal(true);

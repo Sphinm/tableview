@@ -84,6 +84,7 @@ const STATIC_ALIASES: { pattern: RegExp; path: string }[] = [
   { pattern: /^\/(?:terms|terms-of-service|tos)$/, path: '/terms' },
   { pattern: /^\/(?:about|about-us)$/, path: '/about' },
   { pattern: /^\/(?:contact|contact-us|support)$/, path: '/contact' },
+  { pattern: /^\/(?:pricing|upgrade|plans)$/, path: '/pricing' },
 ];
 
 export const GUIDE_ALIASES: Record<string, string> = {
@@ -176,6 +177,7 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/privacy',
   '/terms',
   '/disclaimer',
+  '/pricing',
 ]);
 
 export function isKnownRoute(path: string): boolean {
@@ -310,12 +312,14 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
   }
 
   // Informational
-  for (const path of ['/about', '/contact', '/privacy', '/terms', '/disclaimer']) {
+  for (const path of ['/about', '/contact', '/privacy', '/terms', '/disclaimer', '/pricing']) {
     add(path, path);
   }
   add('/privacy-policy', '/privacy');
   add('/terms-of-service', '/terms');
   add('/about-us', '/about');
+  add('/upgrade', '/pricing');
+  add('/plans', '/pricing');
   add('/contact-us', '/contact');
 
   return [...targets].map(([url, canonical]) => ({ url, canonical }));

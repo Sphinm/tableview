@@ -30,6 +30,7 @@ const APP_ROUTES = new Set([
   '/privacy',
   '/terms',
   '/disclaimer',
+  '/pricing',
 ]);
 
 /** Mirrors the title resolution order in scripts/prerender.ts. */

@@ -429,6 +429,35 @@ function generateStaticPageContentHtml(canonical: string): string {
     `;
   }
 
+  if (canonical === '/pricing') {
+    return `
+      <article style="max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; color: #334155; line-height: 1.8;">
+        <header style="text-align: center; margin-bottom: 3rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 2rem;">
+          <h1 style="font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem;">TableView Pricing &amp; Plans</h1>
+          <p style="font-size: 1.15rem; color: #64748b; line-height: 1.7;">Transparent pricing for financial underwriting. 10+ free calculators with 100% in-browser privacy, $9.99 Single Deal Pass, or TableView Pro ($19/mo or $149/yr) for unlimited white-label deliverables.</p>
+        </header>
+
+        <section style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-bottom: 3rem;">
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 2rem;">
+            <h3 style="font-size: 1.3rem; font-weight: 700; color: #0f172a;">Starter Plan</h3>
+            <p style="font-size: 2rem; font-weight: 800; color: #0f172a; margin: 0.5rem 0;">$0</p>
+            <p style="font-size: 0.85rem; color: #64748b;">10+ free calculators, unlimited parameter adjustments, and 100% in-browser client-side privacy.</p>
+          </div>
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 1rem; padding: 2rem;">
+            <h3 style="font-size: 1.3rem; font-weight: 700; color: #0f172a;">Single Deal Pass</h3>
+            <p style="font-size: 2rem; font-weight: 800; color: #0f172a; margin: 0.5rem 0;">$9.99</p>
+            <p style="font-size: 0.85rem; color: #64748b;">One-time payment for 1 specific deal: official CFPB QM 4-page PDF Dossier and dynamic formula Excel sheet.</p>
+          </div>
+          <div style="background: #eef2ff; border: 2px solid #4f46e5; border-radius: 1rem; padding: 2rem;">
+            <h3 style="font-size: 1.3rem; font-weight: 700; color: #3730a3;">TableView Pro</h3>
+            <p style="font-size: 2rem; font-weight: 800; color: #3730a3; margin: 0.5rem 0;">$19<span style="font-size: 1rem; font-weight: 500;">/mo</span></p>
+            <p style="font-size: 0.85rem; color: #4338ca;">Unlimited watermark-free PDF exports, unlimited Excel models, white-label brokerage branding, and client interactive share links.</p>
+          </div>
+        </section>
+      </article>
+    `;
+  }
+
   return '';
 }
 

@@ -277,7 +277,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
               <div className="relative rounded-2xl border-2 border-indigo-600 bg-gradient-to-b from-indigo-50/50 to-white p-6 flex flex-col justify-between shadow-lg ring-1 ring-indigo-600/20">
                 <div className="absolute -top-3.5 right-6 px-3 py-0.5 rounded-full bg-indigo-600 text-white text-[11px] font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
                   <Flame className="size-3 text-amber-300" />
-                  Most Popular · 71% OFF
+                  Most Popular · Save 35%
                 </div>
 
                 <div>
