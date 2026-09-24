@@ -7,19 +7,15 @@ import {
   Lock,
   ArrowRight,
   Flame,
-  FileSpreadsheet,
-  FileText,
-  Building2,
-  Share2,
   Layers,
   ChevronDown,
   ChevronUp,
-  HelpCircle,
   Zap,
 } from 'lucide-react';
 import { Dialog } from '@tableview/ui';
 import { useAuth } from '../lib/useAuth';
 import { trackUserClick } from '../lib/sentry';
+import { BILLING_CONFIG } from '../config/billing';
 
 interface PricingUpgradeModalProps {
   isOpen: boolean;
@@ -36,17 +32,39 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
   dealId = 'general_deal',
   dealTitle,
   initialInterval = 'year',
-  onOpenBrandingSettings,
+  onOpenBrandingSettings: _onOpenBrandingSettings,
 }) => {
-  const { user, openAuthModal, startCheckout, isPro } = useAuth();
+  const { user, openAuthModal, startCheckout, upgradePlan, purchaseSinglePass, isPro, hasDealPass } = useAuth();
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>(initialInterval);
   const [isProcessing, setIsProcessing] = useState(false);
   const [showMatrix, setShowMatrix] = useState(false);
+  const [successNotice, setSuccessNotice] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
   const handleBuySinglePass = async () => {
     trackUserClick('modal_pricing_buy_single_pass_click', { dealId, logged_in: Boolean(user) });
+
+    if (BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS) {
+      if (!user) {
+        openAuthModal({
+          reason: 'Please sign in with Google to claim your free Single Deal Pass during public beta.',
+          onSuccess: async () => {
+            setIsProcessing(true);
+            await purchaseSinglePass(dealId);
+            setIsProcessing(false);
+            setSuccessNotice('🎉 Deal Pass unlocked free during public beta!');
+          },
+        });
+        return;
+      }
+      setIsProcessing(true);
+      await purchaseSinglePass(dealId);
+      setIsProcessing(false);
+      setSuccessNotice('🎉 Deal Pass unlocked free during public beta!');
+      return;
+    }
+
     if (!user) {
       openAuthModal({
         reason: 'Please sign in with Google to purchase a Single Deal Pass.',
@@ -65,6 +83,27 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
 
   const handleUpgradePro = async () => {
     trackUserClick('modal_pricing_upgrade_pro_click', { billingCycle, logged_in: Boolean(user) });
+
+    if (BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS) {
+      if (!user) {
+        openAuthModal({
+          reason: 'Please sign in with Google to activate free TableView Pro access during public beta.',
+          onSuccess: async () => {
+            setIsProcessing(true);
+            await upgradePlan('pro');
+            setIsProcessing(false);
+            setSuccessNotice('🎉 TableView Pro membership activated free during public beta!');
+          },
+        });
+        return;
+      }
+      setIsProcessing(true);
+      await upgradePlan('pro');
+      setIsProcessing(false);
+      setSuccessNotice('🎉 TableView Pro membership activated free during public beta!');
+      return;
+    }
+
     if (!user) {
       openAuthModal({
         reason: 'Please sign in with Google to upgrade to TableView Pro.',
@@ -120,6 +159,38 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
       </div>
 
       <div className="p-6 md:p-8 space-y-6 max-h-[80vh] overflow-y-auto">
+        {/* Public Beta Banner */}
+        {BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS && (
+          <div className="p-3.5 rounded-xl bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-sm border border-indigo-500/30">
+            <div className="flex items-center gap-2.5">
+              <div className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 shrink-0">
+                <Sparkles className="size-4 text-amber-300" />
+              </div>
+              <div className="text-left">
+                <span className="font-extrabold text-white text-xs block">
+                  🎉 Public Beta: 100% Free Unlocked Access
+                </span>
+                <span className="text-[11px] text-slate-300">
+                  Our merchant gateway is undergoing compliance review. All single passes &amp; Pro deliverables are unlocked free for you!
+                </span>
+              </div>
+            </div>
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-400 text-emerald-950 shrink-0">
+              Free During Beta
+            </span>
+          </div>
+        )}
+
+        {/* Success Toast */}
+        {successNotice && (
+          <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs font-bold flex items-center justify-between animate-in fade-in">
+            <span>{successNotice}</span>
+            <button onClick={() => setSuccessNotice(null)} className="text-emerald-700 hover:text-emerald-900 cursor-pointer">
+              <X className="size-4" />
+            </button>
+          </div>
+        )}
+
         {/* Core Value Notice: What is Free vs Paid */}
         <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs text-slate-700">
           <div className="flex items-start gap-2.5">
@@ -155,10 +226,22 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
                 For home buyers or investors closing on one specific property.
               </p>
 
-              <div className="flex items-baseline gap-1.5 mb-5">
-                <span className="text-3xl font-black font-mono text-slate-900">$9.99</span>
-                <span className="text-xs text-slate-500 font-medium">one-time payment (no recurring fees)</span>
-              </div>
+              {BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                <div className="flex flex-col gap-0.5 mb-5">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-3xl font-black font-mono text-emerald-600">$0</span>
+                    <span className="text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">
+                      Free Beta Pass
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-slate-400 line-through">Standard: $9.99 one-time payment</span>
+                </div>
+              ) : (
+                <div className="flex items-baseline gap-1.5 mb-5">
+                  <span className="text-3xl font-black font-mono text-slate-900">$9.99</span>
+                  <span className="text-xs text-slate-500 font-medium">one-time payment (no recurring fees)</span>
+                </div>
+              )}
 
               <div className="border-t border-slate-100 pt-4 mb-6">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400 mb-2">
@@ -175,11 +258,11 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong>CFPB QM 28/43% DTI Audit</strong> & Itemized Cash-to-Close breakdown</span>
+                    <span><strong>CFPB QM 28/43% DTI Audit</strong> &amp; Itemized Cash-to-Close breakdown</span>
                   </li>
                   <li className="flex items-start gap-2">
                     <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span>Lifetime re-access & download for this deal</span>
+                    <span>Lifetime re-access &amp; download for this deal</span>
                   </li>
                   <li className="flex items-start gap-2 text-slate-400">
                     <Lock className="size-3.5 shrink-0 mt-0.5" />
@@ -196,7 +279,14 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
               className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
             >
               {isProcessing ? (
-                <span>Connecting to Secure Checkout...</span>
+                <span>Activating Free Beta Pass...</span>
+              ) : hasDealPass(dealId) ? (
+                <span>Deal Pass Unlocked (Active)</span>
+              ) : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                <>
+                  <span>Unlock Free Deal Pass ($0 Beta)</span>
+                  <ArrowRight className="size-3.5" />
+                </>
               ) : (
                 <>
                   <span>Get Single Deal Pass ($9.99)</span>
@@ -249,14 +339,28 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
                 For loan officers, real estate agents, and active investors.
               </p>
 
-              <div className="flex items-baseline gap-2 mb-5">
-                <span className="text-3xl font-black font-mono text-indigo-950">
-                  ${billingCycle === 'year' ? '12.40' : '19.00'}
-                </span>
-                <span className="text-xs text-slate-500 font-medium">
-                  / month {billingCycle === 'year' && '(billed $149/year)'}
-                </span>
-              </div>
+              {BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                <div className="flex flex-col gap-0.5 mb-5">
+                  <div className="flex items-baseline gap-1.5">
+                    <span className="text-3xl font-black font-mono text-indigo-950">$0</span>
+                    <span className="text-[10px] font-extrabold uppercase bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded border border-indigo-200">
+                      Free Beta Pro
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-slate-400 line-through">
+                    Standard: ${billingCycle === 'year' ? '12.40/mo ($149/yr)' : '$19.00/mo'}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-baseline gap-2 mb-5">
+                  <span className="text-3xl font-black font-mono text-indigo-950">
+                    ${billingCycle === 'year' ? '12.40' : '19.00'}
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium">
+                    / month {billingCycle === 'year' && '(billed $149/year)'}
+                  </span>
+                </div>
+              )}
 
               <div className="border-t border-indigo-100 pt-4 mb-6">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-indigo-900 mb-2">
@@ -294,12 +398,17 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
               className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all shadow-md hover:shadow-indigo-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
             >
               {isProcessing ? (
-                <span>Connecting to Secure Checkout...</span>
+                <span>Activating Free Pro Access...</span>
+              ) : isPro ? (
+                <span>Pro Active (Beta Access)</span>
+              ) : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                <>
+                  <span>Activate Free Pro ($0 Beta)</span>
+                  <Sparkles className="size-3.5 text-amber-300" />
+                </>
               ) : (
                 <>
-                  <span>
-                    {isPro ? 'Manage Membership' : `Upgrade to Pro (${billingCycle === 'year' ? '$149/yr' : '$19/mo'})`}
-                  </span>
+                  <span>Upgrade to Pro ({billingCycle === 'year' ? '$149/yr' : '$19/mo'})</span>
                   <Sparkles className="size-3.5 text-amber-300" />
                 </>
               )}

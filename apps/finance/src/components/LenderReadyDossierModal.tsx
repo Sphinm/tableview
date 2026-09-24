@@ -17,6 +17,7 @@ import {
 import { Dialog } from '@tableview/ui';
 import { useAuth } from '../lib/useAuth';
 import { trackUserClick } from '../lib/sentry';
+import { BILLING_CONFIG } from '../config/billing';
 
 interface LenderReadyDossierModalProps {
   isOpen: boolean;
@@ -37,7 +38,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
   onPrintOfficialPdf,
   onOpenBrandingSettings,
 }) => {
-  const { user, openAuthModal, startCheckout, isPro, hasDealPass } = useAuth();
+  const { user, openAuthModal, startCheckout, upgradePlan, purchaseSinglePass, isPro, hasDealPass } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>('year');
 
@@ -47,6 +48,25 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
 
   const handleBuySinglePass = async () => {
     trackUserClick('lender_dossier_buy_single_pass_click', { dealId, logged_in: Boolean(user) });
+
+    if (BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS) {
+      if (!user) {
+        openAuthModal({
+          reason: 'Please sign in with Google to claim your free Single Deal Pass during public beta.',
+          onSuccess: async () => {
+            setIsProcessing(true);
+            await purchaseSinglePass(dealId);
+            setIsProcessing(false);
+          },
+        });
+        return;
+      }
+      setIsProcessing(true);
+      await purchaseSinglePass(dealId);
+      setIsProcessing(false);
+      return;
+    }
+
     if (!user) {
       openAuthModal({
         reason: 'Please sign in with Google to purchase a Single Deal Pass.',
@@ -65,6 +85,25 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
 
   const handleUpgradePro = async () => {
     trackUserClick('lender_dossier_upgrade_pro_click', { billingCycle, logged_in: Boolean(user) });
+
+    if (BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS) {
+      if (!user) {
+        openAuthModal({
+          reason: 'Please sign in with Google to activate free TableView Pro access during public beta.',
+          onSuccess: async () => {
+            setIsProcessing(true);
+            await upgradePlan('pro');
+            setIsProcessing(false);
+          },
+        });
+        return;
+      }
+      setIsProcessing(true);
+      await upgradePlan('pro');
+      setIsProcessing(false);
+      return;
+    }
+
     if (!user) {
       openAuthModal({
         reason: 'Please sign in with Google to upgrade to TableView Pro.',
@@ -210,156 +249,216 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
             </div>
           ) : (
             /* Purchase Cards: Single Pass vs Pro */
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Card 1: Single Deal Pass */}
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between hover:border-slate-300 transition-all shadow-xs">
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
-                      One-Time Purchase
-                    </span>
-                    <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
-                      Single Deal
-                    </span>
-                  </div>
-                  <h4 className="text-xl font-black text-slate-900 mb-1">Single Deal Pass</h4>
-                  <p className="text-xs text-slate-600 mb-4">
-                    For home buyers or investors closing on this specific property.
-                  </p>
-
-                  <div className="flex items-baseline gap-1 mb-5">
-                    <span className="text-3xl font-black font-mono text-slate-900">$9.99</span>
-                    <span className="text-xs text-slate-500 font-medium">one-time payment</span>
-                  </div>
-
-                  <ul className="space-y-2.5 text-xs text-slate-700 border-t border-slate-100 pt-4 mb-6">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
-                      <span><strong>Official PDF Dossier</strong> without watermark</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
-                      <span><strong>Full Formula Excel (.xlsx)</strong> with live PMT formulas</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
-                      <span>Itemized Cash-to-Close & CFPB QM 28/43% DTI Audit</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
-                      <span>30-day re-access & modification window</span>
-                    </li>
-                    <li className="flex items-start gap-2 text-slate-400">
-                      <Lock className="size-3.5 shrink-0 mt-0.5" />
-                      <span>Realtor/Broker White-Label Branding (Pro only)</span>
-                    </li>
-                  </ul>
-                </div>
-
-                <button
-                  type="button"
-                  disabled={isProcessing}
-                  onClick={handleBuySinglePass}
-                  className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
-                >
-                  {isProcessing ? (
-                    <span>Processing...</span>
-                  ) : (
-                    <>
-                      <span>Get Single Deal Pass ($9.99)</span>
-                      <ArrowRight className="size-3.5" />
-                    </>
-                  )}
-                </button>
-              </div>
-
-              {/* Card 2: TableView Pro */}
-              <div className="relative rounded-2xl border-2 border-indigo-600 bg-gradient-to-b from-indigo-50/50 to-white p-6 flex flex-col justify-between shadow-lg ring-1 ring-indigo-600/20">
-                <div className="absolute -top-3.5 right-6 px-3 py-0.5 rounded-full bg-indigo-600 text-white text-[11px] font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
-                  <Flame className="size-3 text-amber-300" />
-                  Most Popular · Save 35%
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 font-mono">
-                      Pro Membership
-                    </span>
-                    {/* Billing Toggle */}
-                    <div className="flex items-center p-0.5 rounded-lg bg-indigo-100 text-[10px] font-semibold">
-                      <button
-                        type="button"
-                        onClick={() => setBillingCycle('month')}
-                        className={`px-2 py-0.5 rounded ${billingCycle === 'month' ? 'bg-white text-indigo-900 shadow-2xs' : 'text-indigo-600'}`}
-                      >
-                        Monthly
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setBillingCycle('year')}
-                        className={`px-2 py-0.5 rounded ${billingCycle === 'year' ? 'bg-white text-indigo-900 shadow-2xs' : 'text-indigo-600'}`}
-                      >
-                        Annual (-35%)
-                      </button>
+            <div className="space-y-4">
+              {/* Public Beta Announcement Banner */}
+              {BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS && (
+                <div className="p-3.5 rounded-xl bg-gradient-to-r from-indigo-900 via-slate-900 to-indigo-950 text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-xs border border-indigo-500/30">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 shrink-0">
+                      <Sparkles className="size-4 text-amber-300" />
+                    </div>
+                    <div className="text-left">
+                      <span className="font-extrabold text-white text-xs block">
+                        🎉 Public Beta: 100% Free Unlocked Access
+                      </span>
+                      <span className="text-[11px] text-slate-300">
+                        Merchant gateway under compliance review. Instant 1-click unlock with zero payment required!
+                      </span>
                     </div>
                   </div>
+                  <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-400 text-emerald-950 shrink-0">
+                    Free During Beta
+                  </span>
+                </div>
+              )}
 
-                  <h4 className="text-xl font-black text-indigo-950 mb-1 flex items-center gap-1.5">
-                    <span>TableView Pro</span>
-                    <Sparkles className="size-4 text-indigo-600" />
-                  </h4>
-                  <p className="text-xs text-slate-600 mb-4">
-                    For real estate agents, loan officers, and active investors.
-                  </p>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Card 1: Single Deal Pass */}
+                <div className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between hover:border-slate-300 transition-all shadow-xs">
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
+                        One-Time Purchase
+                      </span>
+                      <span className="text-xs px-2 py-0.5 rounded bg-slate-100 text-slate-700 font-medium">
+                        Single Deal
+                      </span>
+                    </div>
+                    <h4 className="text-xl font-black text-slate-900 mb-1">Single Deal Pass</h4>
+                    <p className="text-xs text-slate-600 mb-4">
+                      For home buyers or investors closing on this specific property.
+                    </p>
 
-                  <div className="flex items-baseline gap-2 mb-5">
-                    <span className="text-3xl font-black font-mono text-indigo-950">
-                      ${billingCycle === 'year' ? '12.40' : '19'}
-                    </span>
-                    <span className="text-xs text-slate-500 font-medium">
-                      / month {billingCycle === 'year' && '(billed $149/yr)'}
-                    </span>
+                    {BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                      <div className="flex flex-col gap-0.5 mb-5">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-3xl font-black font-mono text-emerald-600">$0</span>
+                          <span className="text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded border border-emerald-200">
+                            Free Beta Pass
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-slate-400 line-through">Standard: $9.99 one-time payment</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-baseline gap-1 mb-5">
+                        <span className="text-3xl font-black font-mono text-slate-900">$9.99</span>
+                        <span className="text-xs text-slate-500 font-medium">one-time payment</span>
+                      </div>
+                    )}
+
+                    <ul className="space-y-2.5 text-xs text-slate-700 border-t border-slate-100 pt-4 mb-6">
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
+                        <span><strong>Official PDF Dossier</strong> without watermark</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
+                        <span><strong>Full Formula Excel (.xlsx)</strong> with live PMT formulas</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
+                        <span>Itemized Cash-to-Close & CFPB QM 28/43% DTI Audit</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
+                        <span>30-day re-access & modification window</span>
+                      </li>
+                      <li className="flex items-start gap-2 text-slate-400">
+                        <Lock className="size-3.5 shrink-0 mt-0.5" />
+                        <span>Realtor/Broker White-Label Branding (Pro only)</span>
+                      </li>
+                    </ul>
                   </div>
 
-                  <ul className="space-y-2.5 text-xs text-slate-800 border-t border-indigo-100 pt-4 mb-6">
-                    <li className="flex items-start gap-2 font-medium">
-                      <CheckCircle2 className="size-4 text-indigo-600 shrink-0 mt-0.5" />
-                      <span><strong>Unlimited Exports:</strong> All PDF Dossiers & Excel models</span>
-                    </li>
-                    <li className="flex items-start gap-2 font-medium">
-                      <CheckCircle2 className="size-4 text-indigo-600 shrink-0 mt-0.5" />
-                      <span><strong>Custom White-Label Branding:</strong> Your logo, photo, NMLS #</span>
-                    </li>
-                    <li className="flex items-start gap-2 font-medium">
-                      <CheckCircle2 className="size-4 text-indigo-600 shrink-0 mt-0.5" />
-                      <span><strong>Client Interactive Share Links:</strong> Direct lead conversion</span>
-                    </li>
-                    <li className="flex items-start gap-2 font-medium">
-                      <CheckCircle2 className="size-4 text-indigo-600 shrink-0 mt-0.5" />
-                      <span><strong>Unlimited Saved Scenarios:</strong> Multi-deal comparison</span>
-                    </li>
-                    <li className="flex items-start gap-2 font-medium">
-                      <CheckCircle2 className="size-4 text-indigo-600 shrink-0 mt-0.5" />
-                      <span>Full access to 1031 Exchange & DSCR Pro models</span>
-                    </li>
-                  </ul>
+                  <button
+                    type="button"
+                    disabled={isProcessing}
+                    onClick={handleBuySinglePass}
+                    className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                  >
+                    {isProcessing ? (
+                      <span>Activating Free Beta Pass...</span>
+                    ) : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                      <>
+                        <span>Unlock Free Deal Pass ($0 Beta)</span>
+                        <ArrowRight className="size-3.5" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Get Single Deal Pass ($9.99)</span>
+                        <ArrowRight className="size-3.5" />
+                      </>
+                    )}
+                  </button>
                 </div>
 
-                <button
-                  type="button"
-                  disabled={isProcessing}
-                  onClick={handleUpgradePro}
-                  className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all shadow-md hover:shadow-indigo-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
-                >
-                  {isProcessing ? (
-                    <span>Activating Pro...</span>
-                  ) : (
-                    <>
-                      <span>Upgrade to Pro ({billingCycle === 'year' ? '$149/year' : '$19/mo'})</span>
-                      <Sparkles className="size-3.5 text-amber-300" />
-                    </>
-                  )}
-                </button>
+                {/* Card 2: TableView Pro */}
+                <div className="relative rounded-2xl border-2 border-indigo-600 bg-gradient-to-b from-indigo-50/50 to-white p-6 flex flex-col justify-between shadow-lg ring-1 ring-indigo-600/20">
+                  <div className="absolute -top-3.5 right-6 px-3 py-0.5 rounded-full bg-indigo-600 text-white text-[11px] font-black uppercase tracking-wider flex items-center gap-1 shadow-xs">
+                    <Flame className="size-3 text-amber-300" />
+                    Most Popular · Save 35%
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs font-bold uppercase tracking-wider text-indigo-700 font-mono">
+                        Pro Membership
+                      </span>
+                      {/* Billing Toggle */}
+                      <div className="flex items-center p-0.5 rounded-lg bg-indigo-100 text-[10px] font-semibold">
+                        <button
+                          type="button"
+                          onClick={() => setBillingCycle('month')}
+                          className={`px-2 py-0.5 rounded ${billingCycle === 'month' ? 'bg-white text-indigo-900 shadow-2xs' : 'text-indigo-600'}`}
+                        >
+                          Monthly
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setBillingCycle('year')}
+                          className={`px-2 py-0.5 rounded ${billingCycle === 'year' ? 'bg-white text-indigo-900 shadow-2xs' : 'text-indigo-600'}`}
+                        >
+                          Annual (-35%)
+                        </button>
+                      </div>
+                    </div>
+
+                    <h4 className="text-xl font-black text-indigo-950 mb-1 flex items-center gap-1.5">
+                      <span>TableView Pro</span>
+                      <Sparkles className="size-4 text-indigo-600" />
+                    </h4>
+                    <p className="text-xs text-slate-600 mb-4">
+                      For real estate agents, loan officers, and active investors.
+                    </p>
+
+                    {BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                      <div className="flex flex-col gap-0.5 mb-5">
+                        <div className="flex items-baseline gap-1.5">
+                          <span className="text-3xl font-black font-mono text-indigo-950">$0</span>
+                          <span className="text-[10px] font-extrabold uppercase bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded border border-indigo-200">
+                            Free Beta Pro
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-slate-400 line-through">
+                          Standard: ${billingCycle === 'year' ? '12.40/mo ($149/yr)' : '$19/mo'}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex items-baseline gap-2 mb-5">
+                        <span className="text-3xl font-black font-mono text-indigo-950">
+                          ${billingCycle === 'year' ? '12.40' : '19'}
+                        </span>
+                        <span className="text-xs text-slate-500 font-medium">
+                          / month {billingCycle === 'year' && '(billed $149/yr)'}
+                        </span>
+                      </div>
+                    )}
+
+                    <ul className="space-y-2.5 text-xs text-slate-800 border-t border-indigo-100 pt-4 mb-6">
+                      <li className="flex items-start gap-2 font-medium">
+                        <CheckCircle2 className="size-4 text-indigo-600 shrink-0 mt-0.5" />
+                        <span><strong>Unlimited Exports:</strong> All PDF Dossiers & Excel models</span>
+                      </li>
+                      <li className="flex items-start gap-2 font-medium">
+                        <CheckCircle2 className="size-4 text-indigo-600 shrink-0 mt-0.5" />
+                        <span><strong>Custom White-Label Branding:</strong> Your logo, photo, NMLS #</span>
+                      </li>
+                      <li className="flex items-start gap-2 font-medium">
+                        <CheckCircle2 className="size-4 text-indigo-600 shrink-0 mt-0.5" />
+                        <span><strong>Client Interactive Share Links:</strong> Direct lead conversion</span>
+                      </li>
+                      <li className="flex items-start gap-2 font-medium">
+                        <CheckCircle2 className="size-4 text-indigo-600 shrink-0 mt-0.5" />
+                        <span><strong>Unlimited Saved Scenarios:</strong> Multi-deal comparison</span>
+                      </li>
+                      <li className="flex items-start gap-2 font-medium">
+                        <CheckCircle2 className="size-4 text-indigo-600 shrink-0 mt-0.5" />
+                        <span>Full access to 1031 Exchange & DSCR Pro models</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <button
+                    type="button"
+                    disabled={isProcessing}
+                    onClick={handleUpgradePro}
+                    className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all shadow-md hover:shadow-indigo-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+                  >
+                    {isProcessing ? (
+                      <span>Activating Free Pro Access...</span>
+                    ) : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                      <>
+                        <span>Activate Free Pro ($0 Beta)</span>
+                        <Sparkles className="size-3.5 text-amber-300" />
+                      </>
+                    ) : (
+                      <>
+                        <span>Upgrade to Pro ({billingCycle === 'year' ? '$149/year' : '$19/mo'})</span>
+                        <Sparkles className="size-3.5 text-amber-300" />
+                      </>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
           )}

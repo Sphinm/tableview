@@ -16,13 +16,15 @@ import { trackUserClick } from '../lib/sentry';
 import { updatePageMeta } from '../lib/router';
 import { STATIC_PAGE_META } from '../data/routeMeta';
 import { PricingUpgradeModal } from '../components/PricingUpgradeModal';
+import { BILLING_CONFIG } from '../config/billing';
 
 export const PricingPage: React.FC = () => {
-  const { user, openAuthModal, startCheckout, isPro } = useAuth();
+  const { user, openAuthModal, startCheckout, upgradePlan, isPro } = useAuth();
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>('year');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
+  const [successBanner, setSuccessBanner] = useState<string | null>(null);
 
   useEffect(() => {
     const meta = STATIC_PAGE_META['/pricing'] || {
@@ -36,6 +38,27 @@ export const PricingPage: React.FC = () => {
 
   const handleCheckoutPro = async () => {
     trackUserClick('pricing_page_upgrade_pro_click', { billingCycle, logged_in: Boolean(user) });
+
+    if (BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS) {
+      if (!user) {
+        openAuthModal({
+          reason: 'Please sign in with Google to activate free TableView Pro access during public beta.',
+          onSuccess: async () => {
+            setIsProcessing(true);
+            await upgradePlan('pro');
+            setIsProcessing(false);
+            setSuccessBanner('🎉 TableView Pro activated free! Full institutional deliverables unlocked during our compliance review period.');
+          },
+        });
+        return;
+      }
+      setIsProcessing(true);
+      await upgradePlan('pro');
+      setIsProcessing(false);
+      setSuccessBanner('🎉 TableView Pro activated free! Full institutional deliverables unlocked during our compliance review period.');
+      return;
+    }
+
     if (!user) {
       openAuthModal({
         reason: 'Please sign in with Google to upgrade to TableView Pro.',
@@ -140,11 +163,49 @@ export const PricingPage: React.FC = () => {
               </button>
             </div>
           </div>
+
+          {/* Public Beta Announcement Banner */}
+          {BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS && (
+            <div className="pt-3 max-w-xl mx-auto">
+              <div className="p-3.5 rounded-2xl bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 text-white flex flex-col sm:flex-row items-center justify-between gap-3 shadow-md border border-indigo-500/30">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 shrink-0">
+                    <Sparkles className="size-4 text-amber-300" />
+                  </div>
+                  <div className="text-left">
+                    <span className="font-extrabold text-white text-xs block">
+                      🎁 Public Beta: 100% Free Unlocked Access
+                    </span>
+                    <span className="text-[11px] text-slate-300">
+                      Merchant gateway under compliance review. All single passes &amp; Pro deliverables are free to claim!
+                    </span>
+                  </div>
+                </div>
+                <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-emerald-400 text-emerald-950 shrink-0">
+                  Free During Beta
+                </span>
+              </div>
+            </div>
+          )}
         </div>
       </section>
 
       {/* Main 3-Column Plan Grid */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 sm:-mt-10 relative z-10">
+        {/* Success Alert */}
+        {successBanner && (
+          <div className="max-w-4xl mx-auto mb-6 p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs sm:text-sm font-bold flex items-center justify-between shadow-xs animate-in fade-in">
+            <span>{successBanner}</span>
+            <button
+              onClick={() => setSuccessBanner(null)}
+              className="text-emerald-700 hover:text-emerald-900 cursor-pointer p-1"
+              aria-label="Dismiss banner"
+            >
+              ✕
+            </button>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           {/* Card 1: Starter / Free */}
           <div className="rounded-3xl border border-slate-200 bg-white p-7 sm:p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
@@ -229,10 +290,22 @@ export const PricingPage: React.FC = () => {
                 For home buyers closing on a loan or investors submitting an offer on a single property.
               </p>
 
-              <div className="flex items-baseline gap-1.5 mb-6">
-                <span className="text-4xl font-black font-mono text-slate-950">$9.99</span>
-                <span className="text-xs text-slate-500 font-medium">one-time payment · lifetime access</span>
-              </div>
+              {BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                <div className="flex flex-col gap-0.5 mb-6">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black font-mono text-emerald-600">$0</span>
+                    <span className="text-[11px] font-extrabold uppercase bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      Free During Beta
+                    </span>
+                  </div>
+                  <span className="text-xs text-slate-400 line-through">Standard: $9.99 one-time payment</span>
+                </div>
+              ) : (
+                <div className="flex items-baseline gap-1.5 mb-6">
+                  <span className="text-4xl font-black font-mono text-slate-950">$9.99</span>
+                  <span className="text-xs text-slate-500 font-medium">one-time payment · lifetime access</span>
+                </div>
+              )}
 
               <div className="border-t border-slate-100 pt-5 space-y-3 mb-8">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
@@ -276,7 +349,7 @@ export const PricingPage: React.FC = () => {
               onClick={handleOpenSinglePassModal}
               className="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors text-center inline-flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Get Single Deal Pass ($9.99)</span>
+              <span>{BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? 'Unlock Free Deal Pass ($0 Beta)' : 'Get Single Deal Pass ($9.99)'}</span>
               <ArrowRight className="size-3.5" />
             </button>
           </div>
@@ -305,14 +378,28 @@ export const PricingPage: React.FC = () => {
                 For Mortgage Loan Officers, Real Estate Brokers, Wholesalers, and Active Sponsors.
               </p>
 
-              <div className="flex items-baseline gap-2 mb-6">
-                <span className="text-4xl font-black font-mono text-indigo-950">
-                  ${billingCycle === 'year' ? '12.40' : '19.00'}
-                </span>
-                <span className="text-xs text-slate-500 font-medium">
-                  / month {billingCycle === 'year' ? '(billed $149/year)' : '(billed monthly)'}
-                </span>
-              </div>
+              {BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                <div className="flex flex-col gap-0.5 mb-6">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black font-mono text-indigo-950">$0</span>
+                    <span className="text-[11px] font-extrabold uppercase bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      Free During Beta
+                    </span>
+                  </div>
+                  <span className="text-xs text-slate-400 line-through">
+                    Standard: ${billingCycle === 'year' ? '12.40/mo ($149/yr)' : '$19.00/mo'}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-baseline gap-2 mb-6">
+                  <span className="text-4xl font-black font-mono text-indigo-950">
+                    ${billingCycle === 'year' ? '12.40' : '19.00'}
+                  </span>
+                  <span className="text-xs text-slate-500 font-medium">
+                    / month {billingCycle === 'year' ? '(billed $149/year)' : '(billed monthly)'}
+                  </span>
+                </div>
+              )}
 
               <div className="border-t border-indigo-100 pt-5 space-y-3 mb-8">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-indigo-900">
@@ -354,11 +441,18 @@ export const PricingPage: React.FC = () => {
               className="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all shadow-md hover:shadow-indigo-500/25 text-center inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
             >
               {isProcessing ? (
-                <span>Connecting to Secure Checkout...</span>
+                <span>Activating Free Pro Access...</span>
+              ) : isPro ? (
+                <span>Pro Active (Beta Access)</span>
+              ) : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
+                <>
+                  <span>Activate Free Pro ($0 Beta)</span>
+                  <Sparkles className="size-4 text-amber-300" />
+                </>
               ) : (
                 <>
                   <span>
-                    {isPro ? 'Manage Membership' : `Upgrade to Pro (${billingCycle === 'year' ? '$149/yr' : '$19/mo'})`}
+                    Upgrade to Pro ({billingCycle === 'year' ? '$149/yr' : '$19/mo'})
                   </span>
                   <Sparkles className="size-4 text-amber-300" />
                 </>
@@ -533,7 +627,7 @@ export const PricingPage: React.FC = () => {
               onClick={handleCheckoutPro}
               className="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-indigo-950 font-black text-xs transition-all shadow-lg active:scale-95 cursor-pointer inline-flex items-center gap-2"
             >
-              <span>Upgrade to Pro ($12.40/mo)</span>
+              <span>{isPro ? 'Pro Active (Beta Access)' : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? 'Activate Free Pro ($0 Beta)' : 'Upgrade to Pro ($12.40/mo)'}</span>
               <ArrowRight className="size-4 text-indigo-600" />
             </button>
             <div className="text-[11px] text-slate-400 mt-2 font-mono">
