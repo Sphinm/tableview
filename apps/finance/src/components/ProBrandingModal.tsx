@@ -11,6 +11,7 @@ import {
   Eye,
   ShieldCheck,
   Lock,
+  RotateCcw,
 } from 'lucide-react';
 import { Dialog } from '@tableview/ui';
 import { useAuth } from '../lib/useAuth';
@@ -22,6 +23,20 @@ interface ProBrandingModalProps {
   onUpgradeToPro?: () => void;
 }
 
+const DEFAULT_BRANDING_PROFILE: BrandingProfile = {
+  enabled: true,
+  agentName: 'Sarah Jenkins',
+  companyName: 'Apex Capital & Real Estate Group',
+  nmlsNumber: 'NMLS #219842',
+  phone: '(415) 555-0188',
+  email: 'advisory@apexcapital.example',
+  website: 'www.apexrealtygroup.com',
+  customDisclaimer:
+    'Equal Housing Opportunity. Loan terms, rates, and approval are subject to underwriting guidelines.',
+  avatarUrl: '',
+  logoUrl: '',
+};
+
 export const ProBrandingModal: React.FC<ProBrandingModalProps> = ({
   isOpen,
   onClose,
@@ -30,32 +45,56 @@ export const ProBrandingModal: React.FC<ProBrandingModalProps> = ({
   const { user, updateBranding } = useAuth();
   const isPro = user?.plan === 'pro';
 
-  const [form, setForm] = useState<BrandingProfile>({
-    enabled: true,
-    agentName: user?.branding?.agentName || user?.name || '',
-    companyName: user?.branding?.companyName || 'Apex Capital & Real Estate Group',
-    nmlsNumber: user?.branding?.nmlsNumber || 'NMLS #219842',
-    phone: user?.branding?.phone || '(415) 555-0188',
-    email: user?.branding?.email || user?.email || 'agent@example.com',
-    website: user?.branding?.website || 'www.apexrealtygroup.com',
-    customDisclaimer:
-      user?.branding?.customDisclaimer ||
-      'Equal Housing Opportunity. Loan terms, rates, and approval are subject to underwriting guidelines.',
-    avatarUrl: user?.branding?.avatarUrl || '',
-    logoUrl: user?.branding?.logoUrl || '',
+  const [form, setForm] = useState<BrandingProfile>(() => {
+    const saved = user?.branding;
+    return {
+      enabled: saved?.enabled ?? DEFAULT_BRANDING_PROFILE.enabled,
+      // Strictly avoid falling back to private user account info (Google session name/email)
+      agentName:
+        saved?.agentName && saved.agentName !== user?.name
+          ? saved.agentName
+          : (saved?.agentName || DEFAULT_BRANDING_PROFILE.agentName),
+      companyName: saved?.companyName || DEFAULT_BRANDING_PROFILE.companyName,
+      nmlsNumber: saved?.nmlsNumber || DEFAULT_BRANDING_PROFILE.nmlsNumber,
+      phone: saved?.phone || DEFAULT_BRANDING_PROFILE.phone,
+      email:
+        saved?.email && saved.email !== user?.email
+          ? saved.email
+          : (saved?.email || DEFAULT_BRANDING_PROFILE.email),
+      website: saved?.website || DEFAULT_BRANDING_PROFILE.website,
+      customDisclaimer: saved?.customDisclaimer || DEFAULT_BRANDING_PROFILE.customDisclaimer,
+      avatarUrl: saved?.avatarUrl || '',
+      logoUrl: saved?.logoUrl || '',
+    };
   });
 
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   useEffect(() => {
-    if (user?.branding) {
-      setForm({
-        ...user.branding,
-      });
+    const branding = user?.branding;
+    if (branding) {
+      setForm((prev) => ({
+        ...prev,
+        ...branding,
+        // Prevent leaking personal account credentials into the branding preview
+        agentName:
+          branding.agentName && branding.agentName !== user?.name
+            ? branding.agentName
+            : (prev.agentName || DEFAULT_BRANDING_PROFILE.agentName),
+        email:
+          branding.email && branding.email !== user?.email
+            ? branding.email
+            : (prev.email || DEFAULT_BRANDING_PROFILE.email),
+      }));
     }
-  }, [user?.branding]);
+  }, [user?.branding, user?.name, user?.email]);
 
   if (!isOpen) return null;
+
+  const handleResetDefaults = () => {
+    setForm(DEFAULT_BRANDING_PROFILE);
+    updateBranding(DEFAULT_BRANDING_PROFILE);
+  };
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
@@ -293,6 +332,15 @@ export const ProBrandingModal: React.FC<ProBrandingModalProps> = ({
             </label>
 
             <div className="flex items-center gap-3">
+              <button
+                type="button"
+                onClick={handleResetDefaults}
+                className="px-3 py-2 rounded-lg border border-slate-200 text-xs font-semibold text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors cursor-pointer flex items-center gap-1.5"
+                title="Reset all fields to fictitious sample broker data"
+              >
+                <RotateCcw className="size-3.5" />
+                <span>Reset Sample</span>
+              </button>
               <button
                 type="button"
                 onClick={onClose}

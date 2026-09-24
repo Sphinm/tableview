@@ -10,7 +10,7 @@
  */
 export const BILLING_CONFIG = {
   /** When true, grants free one-click unlock for Pro membership & Deal Passes during beta review */
-  PUBLIC_BETA_FREE_ACCESS: true,
+  PUBLIC_BETA_FREE_ACCESS: false,
 
   /** Dodo Payments Catalog IDs */
   DODO_PRODUCTS: {

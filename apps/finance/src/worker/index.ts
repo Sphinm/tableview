@@ -850,7 +850,7 @@ export default {
         if (env.DODO_PAYMENTS_API_KEY) {
           try {
             const isTest = env.DODO_MODE === 'test' || env.DODO_PAYMENTS_API_KEY.startsWith('test_');
-            const dodoBase = isTest ? 'https://test.dodopayments.com' : 'https://api.dodopayments.com';
+            const dodoBase = isTest ? 'https://test.dodopayments.com' : 'https://live.dodopayments.com';
 
             const productId =
               body.productKey === 'deal_pass'
@@ -859,23 +859,29 @@ export default {
                 ? env.DODO_PRODUCT_PRO_MONTHLY || 'pdt_0NoH8xSY84Q9x8j4N0b0V'
                 : env.DODO_PRODUCT_PRO_YEARLY || 'pdt_0NoH9OyMm3YOX0ump1AbW';
 
+            const metadata: Record<string, string> = {
+              productKey: body.productKey || 'deal_pass',
+            };
+            if (body.dealId) metadata.dealId = body.dealId;
+            if (userEmail) metadata.userEmail = userEmail;
+            if (body.interval) metadata.interval = body.interval;
+
+            const dodoPayload: Record<string, any> = {
+              product_cart: [{ product_id: productId, quantity: 1 }],
+              return_url: successUrl,
+              metadata,
+            };
+            if (userEmail) {
+              dodoPayload.customer = { email: userEmail };
+            }
+
             const dodoRes = await fetch(`${dodoBase}/checkouts`, {
               method: 'POST',
               headers: {
                 Authorization: `Bearer ${env.DODO_PAYMENTS_API_KEY}`,
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({
-                product_cart: [{ product_id: productId, quantity: 1 }],
-                customer: userEmail ? { email: userEmail } : undefined,
-                return_url: successUrl,
-                metadata: {
-                  productKey: body.productKey || 'deal_pass',
-                  dealId: body.dealId || null,
-                  userEmail: userEmail || null,
-                  interval: body.interval || null,
-                },
-              }),
+              body: JSON.stringify(dodoPayload),
             });
 
             if (dodoRes.ok) {
@@ -887,9 +893,26 @@ export default {
             } else {
               const errBody = await dodoRes.text();
               console.error('[Worker] Dodo checkout creation returned error:', dodoRes.status, errBody);
+              return jsonResponse(
+                {
+                  error: 'Dodo checkout failed',
+                  status: dodoRes.status,
+                  details: errBody,
+                },
+                dodoRes.status >= 400 && dodoRes.status < 600 ? dodoRes.status : 502,
+                origin
+              );
             }
-          } catch (err) {
+          } catch (err: any) {
             console.error('[Worker] Dodo checkout error:', err);
+            return jsonResponse(
+              {
+                error: 'Dodo checkout network error',
+                details: err?.message || String(err),
+              },
+              500,
+              origin
+            );
           }
         }
 
