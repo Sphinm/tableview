@@ -203,6 +203,7 @@ function jsonResponse(data: any, status: number = 200, origin: string = '*'): Re
     status,
     headers: {
       'Content-Type': 'application/json',
+      'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
       ...corsHeaders(origin),
     },
   });
@@ -775,6 +776,125 @@ export default {
           200,
           origin
         );
+      }
+
+      // 4b. POST /api/auth/sync-session — sync and refresh user session by email or token
+      if (url.pathname === '/api/auth/sync-session' && request.method === 'POST') {
+        const authHeader = request.headers.get('Authorization');
+        const body = (await request.json().catch(() => ({}))) as { email?: string };
+        let targetEmail: string | null = body.email?.trim().toLowerCase() || null;
+
+        if (!targetEmail && authHeader && authHeader.startsWith('Bearer ')) {
+          const token = authHeader.replace('Bearer ', '').trim();
+          const payload = await verifyJwt(token, secret);
+          if (payload?.email) {
+            targetEmail = payload.email.toLowerCase();
+          }
+        }
+
+        if (!targetEmail) {
+          return jsonResponse({ error: 'Email or active token is required' }, 400, origin);
+        }
+
+        if (env.DB) {
+          const dbUser = await env.DB.prepare('SELECT * FROM users WHERE email = ?')
+            .bind(targetEmail)
+            .first<UserRecord>();
+
+          if (dbUser) {
+            let userPlan: 'free' | 'basic' | 'pro' = dbUser.plan;
+            let purchasedDossiers: string[] = [];
+
+            try {
+              const customerRows = await env.DB.prepare(
+                'SELECT id FROM billing_customers WHERE email = ? OR user_id = ?'
+              ).bind(targetEmail, dbUser.id).all<{ id: string }>();
+              const customerIds = (customerRows.results || []).map((c) => c.id);
+
+              if (customerIds.length > 0) {
+                const placeholders = customerIds.map(() => '?').join(',');
+                const subRow = await env.DB.prepare(
+                  `SELECT status, current_period_end, cancel_at_period_end, provider_price_id FROM billing_subscriptions WHERE customer_id IN (${placeholders}) ORDER BY last_event_at DESC LIMIT 1`
+                ).bind(...customerIds).first<{
+                  status: string;
+                  current_period_end: number;
+                  cancel_at_period_end: number;
+                  provider_price_id?: string;
+                }>();
+
+                const purchaseRows = await env.DB.prepare(
+                  `SELECT product_key, resource_id, refunded_at FROM billing_purchases WHERE customer_id IN (${placeholders})`
+                ).bind(...customerIds).all<{
+                  product_key: string;
+                  resource_id: string | null;
+                  refunded_at: number | null;
+                }>();
+
+                const ent = resolveEntitlements({
+                  subscription: subRow
+                    ? {
+                        status: subRow.status,
+                        currentPeriodEnd: subRow.current_period_end,
+                        cancelAtPeriodEnd: Boolean(subRow.cancel_at_period_end),
+                        priceId: subRow.provider_price_id,
+                      }
+                    : null,
+                  purchases: (purchaseRows.results || []).map((r) => ({
+                    productKey: r.product_key,
+                    resourceId: r.resource_id,
+                    refundedAt: r.refunded_at,
+                  })),
+                  now: Date.now(),
+                });
+
+                if (ent.plan === 'pro') {
+                  userPlan = 'pro';
+                  if (dbUser.plan !== 'pro') {
+                    await env.DB.prepare(
+                      'UPDATE users SET plan = ?, credits = MAX(credits, 5000), updated_at = ? WHERE id = ?'
+                    )
+                      .bind('pro', Date.now(), dbUser.id)
+                      .run();
+                  }
+                }
+
+                purchasedDossiers = ent.dealPasses || [];
+              }
+            } catch (entErr) {
+              console.error('[Worker] Error loading entitlements in /api/auth/sync-session:', entErr);
+            }
+
+            const freshJwtPayload = {
+              sub: dbUser.email,
+              email: dbUser.email,
+              name: dbUser.name || dbUser.email.split('@')[0],
+              avatarUrl: dbUser.avatar_url,
+              plan: userPlan,
+              exp: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60,
+            };
+            const sessionToken = await signJwt(freshJwtPayload, secret);
+
+            return jsonResponse(
+              {
+                success: true,
+                token: sessionToken,
+                user: {
+                  id: dbUser.id,
+                  email: dbUser.email,
+                  name: dbUser.name || dbUser.email.split('@')[0],
+                  avatarUrl: dbUser.avatar_url,
+                  plan: userPlan,
+                  credits: userPlan === 'pro' ? Math.max(dbUser.credits, 5000) : dbUser.credits,
+                  purchasedDossiers,
+                },
+              },
+              200,
+              origin
+            );
+          }
+        }
+
+        return jsonResponse({ error: 'User not found' }, 404, origin);
       }
 
       // 5. POST /api/auth/logout

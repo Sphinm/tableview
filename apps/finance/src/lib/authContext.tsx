@@ -431,6 +431,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return Boolean(user?.purchasedDossiers?.includes(dealId));
   };
 
+  const syncUserStatus = async (): Promise<User | null> => {
+    try {
+      const storedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+      let userEmail: string | undefined = user?.email;
+      if (!userEmail) {
+        try {
+          const raw = localStorage.getItem(MOCK_USER_KEY);
+          if (raw) userEmail = JSON.parse(raw).email;
+        } catch {}
+      }
+
+      const res = await fetch('/api/auth/sync-session', {
+        method: 'POST',
+        cache: 'no-store',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+        },
+        body: JSON.stringify({ email: userEmail }),
+      });
+
+      if (res.ok) {
+        const data = (await res.json()) as any;
+        if (data.token) {
+          localStorage.setItem(TOKEN_STORAGE_KEY, data.token);
+        }
+        if (data.user) {
+          setUser(data.user);
+          setSentryUser(data.user);
+          localStorage.setItem(MOCK_USER_KEY, JSON.stringify(data.user));
+          return data.user;
+        }
+      }
+    } catch (e) {
+      console.warn('[Auth] syncUserStatus error:', e);
+    }
+    return null;
+  };
+
   // Initialize auth state on mount
   useEffect(() => {
     const initAuth = async () => {
@@ -519,17 +558,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const storedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+      const storedMockUser = localStorage.getItem(MOCK_USER_KEY);
+      let parsedMockUser: User | null = null;
+      if (storedMockUser) {
+        try {
+          parsedMockUser = JSON.parse(storedMockUser);
+        } catch {}
+      }
+
       if (storedToken) {
         try {
           // If returning from checkout or syncing status, probe sync
           if (isCheckoutReturn) {
             await fetch('/api/billing/sync-user-status', {
               method: 'POST',
+              cache: 'no-store',
               headers: { Authorization: `Bearer ${storedToken}` },
             }).catch(() => {});
           }
 
           const res = await fetch('/api/auth/me', {
+            cache: 'no-store',
             headers: {
               Authorization: `Bearer ${storedToken}`,
             },
@@ -539,25 +588,45 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (data.user) {
               setUser(data.user);
               setSentryUser(data.user);
+              localStorage.setItem(MOCK_USER_KEY, JSON.stringify(data.user));
               setIsLoading(false);
               return;
             }
           }
-        } catch {
-          // API endpoint unreachable (e.g. static preview or local dev)
+        } catch (e) {
+          console.warn('[Auth] Failed to fetch /api/auth/me:', e);
+        }
+      }
+
+      // Fallback: If storedToken was missing or invalid, sync by user email if previously logged in
+      if (parsedMockUser?.email) {
+        try {
+          const syncRes = await fetch('/api/auth/sync-session', {
+            method: 'POST',
+            cache: 'no-store',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: parsedMockUser.email }),
+          });
+          if (syncRes.ok) {
+            const syncData = (await syncRes.json()) as any;
+            if (syncData.token) localStorage.setItem(TOKEN_STORAGE_KEY, syncData.token);
+            if (syncData.user) {
+              setUser(syncData.user);
+              setSentryUser(syncData.user);
+              localStorage.setItem(MOCK_USER_KEY, JSON.stringify(syncData.user));
+              setIsLoading(false);
+              return;
+            }
+          }
+        } catch (syncErr) {
+          console.warn('[Auth] Session sync fallback failed:', syncErr);
         }
       }
 
       // Check mock user in local development
-      const storedMockUser = localStorage.getItem(MOCK_USER_KEY);
-      if (storedMockUser) {
-        try {
-          const parsed = JSON.parse(storedMockUser);
-          setUser(parsed);
-          setSentryUser(parsed);
-        } catch {
-          localStorage.removeItem(MOCK_USER_KEY);
-        }
+      if (parsedMockUser) {
+        setUser(parsedMockUser);
+        setSentryUser(parsedMockUser);
       }
 
       setIsLoading(false);
@@ -587,6 +656,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         startCheckout,
         isPro,
         hasDealPass,
+        syncUserStatus,
         logout,
       }}
     >

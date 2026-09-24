@@ -239,6 +239,21 @@ export const PricingPage: React.FC = () => {
           </div>
         )}
 
+        {/* Active Pro Banner */}
+        {isPro && (
+          <div className="max-w-4xl mx-auto mb-6 p-4 rounded-2xl bg-indigo-50 border border-indigo-200 text-indigo-950 text-xs sm:text-sm font-bold flex items-center justify-between shadow-xs animate-in fade-in">
+            <div className="flex items-center gap-2.5">
+              <Sparkles className="size-5 text-amber-500 shrink-0" />
+              <span>
+                <strong>TableView Pro Active</strong> — You have unlocked full institutional access with unlimited watermark-free PDF dossiers, formula Excel spreadsheets, and white-label branding.
+              </span>
+            </div>
+            <span className="px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase bg-amber-400 text-amber-950 shrink-0">
+              Pro Member
+            </span>
+          </div>
+        )}
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
           {/* Card 1: Starter / Free */}
           <div className="rounded-3xl border border-slate-200 bg-white p-7 sm:p-8 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">

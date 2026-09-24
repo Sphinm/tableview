@@ -52,6 +52,7 @@ export interface AuthContextType {
   }) => Promise<void>;
   isPro: boolean;
   hasDealPass: (dealId: string) => boolean;
+  syncUserStatus: () => Promise<User | null>;
   logout: () => void;
 }
 

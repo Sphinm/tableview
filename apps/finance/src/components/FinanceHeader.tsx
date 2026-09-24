@@ -15,7 +15,8 @@ import {
   BookOpen,
   Hammer,
   ShieldCheck,
-  FolderKanban
+  FolderKanban,
+  RotateCw,
 } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { useAuth } from '../lib/useAuth';
@@ -33,7 +34,8 @@ interface FinanceHeaderProps {
 }
 
 export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => {
-  const { user, openAuthModal, logout } = useAuth();
+  const { user, openAuthModal, logout, syncUserStatus } = useAuth();
+  const [isSyncing, setIsSyncing] = useState(false);
 
   // Dropdown states
   const [residentialOpen, setResidentialOpen] = useState(false);
@@ -583,13 +585,28 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   <div className="py-1 border-b border-slate-100">
                     <div className="px-3 py-1.5 flex items-center justify-between text-[11px]">
                       <span className="text-slate-500">Plan Status</span>
-                      <span className="font-bold text-indigo-600 uppercase">
-                        {user.plan === 'pro'
-                          ? 'PRO'
-                          : user.purchasedDossiers && user.purchasedDossiers.length > 0
-                          ? `Deal Pass (${user.purchasedDossiers.length})`
-                          : user.plan || 'Free'}
-                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-bold text-indigo-600 uppercase">
+                          {user.plan === 'pro'
+                            ? 'PRO'
+                            : user.purchasedDossiers && user.purchasedDossiers.length > 0
+                            ? `Deal Pass (${user.purchasedDossiers.length})`
+                            : user.plan || 'Free'}
+                        </span>
+                        <button
+                          type="button"
+                          title="Refresh membership status from server"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            setIsSyncing(true);
+                            await syncUserStatus();
+                            setIsSyncing(false);
+                          }}
+                          className="p-1 rounded hover:bg-slate-100 text-slate-400 hover:text-indigo-600 transition-colors cursor-pointer"
+                        >
+                          <RotateCw className={`size-3 ${isSyncing ? 'animate-spin text-indigo-600' : ''}`} />
+                        </button>
+                      </div>
                     </div>
                     {user.plan !== 'pro' && (
                       <button
