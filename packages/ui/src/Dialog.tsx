@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 
 /**
  * Elements that can receive keyboard focus inside a modal. Kept intentionally
@@ -164,7 +165,7 @@ export function Dialog({
     }
   };
 
-  return (
+  const content = (
     <div className={overlayClassName} onMouseDown={handleOverlayMouseDown}>
       <div
         ref={panelRef}
@@ -179,6 +180,12 @@ export function Dialog({
       </div>
     </div>
   );
+
+  if (typeof document === 'undefined') {
+    return null;
+  }
+
+  return createPortal(content, document.body);
 }
 
 export default Dialog;

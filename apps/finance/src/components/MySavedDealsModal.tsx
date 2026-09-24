@@ -107,8 +107,8 @@ export const MySavedDealsModal: React.FC<MySavedDealsModalProps> = ({
     <Dialog
       onClose={onClose}
       labelledBy="saved-deals-title"
-      overlayClassName="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs overflow-y-auto animate-in fade-in duration-200"
-      panelClassName="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-8"
+      overlayClassName="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 bg-slate-900/60 backdrop-blur-xs flex justify-center items-center animate-in fade-in duration-200"
+      panelClassName="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto"
     >
       {/* Header */}
       <div className="px-6 py-5 border-b border-slate-200 bg-slate-900 text-white flex items-center justify-between">
