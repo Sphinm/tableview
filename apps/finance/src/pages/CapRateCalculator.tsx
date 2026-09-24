@@ -40,6 +40,7 @@ import { InfoTooltip } from '../components/InfoTooltip';
 import { ResultAnnouncer } from '../components/ResultAnnouncer';
 import { composeAnnouncement } from '../lib/resultAnnouncement';
 import { formatUsd, formatUsdSigned } from '@tableview/shared';
+import { trackUserClick } from '../lib/sentry';
 
 const currencyFmt = (val: number): string =>
   new Intl.NumberFormat('en-US', {
@@ -89,12 +90,14 @@ export default function CapRateCalculator() {
   };
 
   const handleShareDeal = () => {
+    trackUserClick('cap_rate_share_deal');
     navigator.clipboard.writeText(window.location.href);
     setCopiedLink(true);
     setTimeout(() => setCopiedLink(false), 2000);
   };
 
   const handleExportExcel = async () => {
+    trackUserClick('cap_rate_export_excel');
     const XLSX = await import('xlsx');
     const workbook = XLSX.utils.book_new();
 
@@ -161,6 +164,7 @@ export default function CapRateCalculator() {
   };
 
   const handleExportCsv = () => {
+    trackUserClick('cap_rate_export_csv');
     const headers = 'Year,PropertyValue,LoanBalance,Equity,GrossRent,OperatingExpenses,NOI,DebtService,NetCashFlow,CumulativeCashFlow,TotalReturn,CashOnCash\n';
     const rows = output.projections
       .map(
@@ -177,6 +181,7 @@ export default function CapRateCalculator() {
   };
 
   const handleBridgeToDscr = () => {
+    trackUserClick('cap_rate_bridge_to_dscr');
     navigateTo(`/dscr-loan-calculator?propertyValue=${form.purchasePrice}&monthlyRent=${form.monthlyRent}&tax=${form.propertyTaxAnnual}&insurance=${form.insuranceAnnual}`);
   };
 

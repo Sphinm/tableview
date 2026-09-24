@@ -41,6 +41,7 @@
  * exact thing this product promises never leaves the device.
  * `networkDetailAllowUrls` is empty so request/response bodies are never captured.
  */
+import { trackEvent as trackTelemetryEvent } from '@tableview/shared';
 
 /*
  * Keys that may carry user file names, table names, or file contents.
@@ -113,9 +114,22 @@ type SentryCapture = (error: unknown, context?: Record<string, any>) => void;
 
 type BufferedError = { error: unknown; context?: Record<string, any> };
 
+type Breadcrumb = {
+  category?: string;
+  message: string;
+  data?: Record<string, any>;
+  level?: 'fatal' | 'error' | 'warning' | 'info' | 'debug';
+  timestamp?: number;
+};
+
 const buffer: BufferedError[] = [];
+const breadcrumbBuffer: Breadcrumb[] = [];
+let pendingUser: { id?: string; email?: string; plan?: string } | null | undefined = undefined;
 
 let capture: SentryCapture | null = null;
+let addBreadcrumbFn: ((breadcrumb: any) => void) | null = null;
+let setUserFn: ((user: any) => void) | null = null;
+let captureMessageFn: ((message: string, context?: any) => void) | null = null;
 let sdk: any = null;
 let loadPromise: Promise<void> | null = null;
 let replayStarted = false;
@@ -137,7 +151,7 @@ function loadSentry(): Promise<void> {
     const Sentry = await import('@sentry/react');
     sdk = Sentry;
 
-    const { init, browserTracingIntegration, captureException: sdkCapture } = Sentry;
+    const { init, browserTracingIntegration, captureException: sdkCapture, addBreadcrumb, setUser, captureMessage } = Sentry;
 
     init({
       dsn: 'https://330704be8f7a26daeef5c9df226accc5@o4512049296637952.ingest.us.sentry.io/4512049306730496',
@@ -206,6 +220,29 @@ function loadSentry(): Promise<void> {
     });
 
     capture = (error, context) => sdkCapture(error, context as any);
+    addBreadcrumbFn = addBreadcrumb;
+    setUserFn = setUser;
+    captureMessageFn = captureMessage;
+
+    // Apply pending user if set
+    if (pendingUser !== undefined && setUserFn) {
+      if (pendingUser) {
+        setUserFn({
+          id: pendingUser.id,
+          email: pendingUser.email,
+          plan: pendingUser.plan,
+        });
+      } else {
+        setUserFn(null);
+      }
+    }
+
+    // Flush buffered breadcrumbs
+    for (const crumb of breadcrumbBuffer.splice(0)) {
+      if (addBreadcrumbFn) {
+        addBreadcrumbFn(crumb);
+      }
+    }
 
     // Replay only when the visitor had already opted in before the SDK loaded.
     if (hasAnalyticsConsent()) {
@@ -370,3 +407,72 @@ function onUnhandledRejection(event: PromiseRejectionEvent) {
   buffer.push({ error: event.reason, context: { tags: { source: 'unhandledrejection' } } });
   void loadSentry();
 }
+
+/**
+ * Record a user action or click event in Sentry breadcrumbs and encrypted telemetry.
+ */
+export function trackUserAction(
+  action: string,
+  data?: Record<string, any>,
+  options?: {
+    category?: string;
+    level?: 'fatal' | 'error' | 'warning' | 'info' | 'debug';
+    captureAsEvent?: boolean;
+  }
+) {
+  const category = options?.category || 'ui.click';
+  const level = options?.level || 'info';
+  const scrubbedData = data ? scrub(data) : undefined;
+  const crumb = {
+    category,
+    message: action,
+    data: scrubbedData,
+    level,
+    timestamp: Date.now() / 1000,
+  };
+
+  if (addBreadcrumbFn) {
+    addBreadcrumbFn(crumb);
+  } else {
+    breadcrumbBuffer.push(crumb);
+  }
+
+  if (options?.captureAsEvent && captureMessageFn) {
+    captureMessageFn(action, {
+      level,
+      extra: scrubbedData,
+    });
+  }
+
+  try {
+    trackTelemetryEvent(action, (scrubbedData as any) || {});
+  } catch {
+    // Ignore telemetry delivery errors
+  }
+}
+
+/**
+ * Convenience helper to record button and UI clicks to Sentry.
+ */
+export function trackUserClick(buttonName: string, data?: Record<string, any>) {
+  trackUserAction(buttonName, data, { category: 'ui.click' });
+}
+
+/**
+ * Update Sentry user context (e.g. on login or logout).
+ */
+export function setSentryUser(user: { id?: string; email?: string; plan?: string } | null) {
+  pendingUser = user;
+  if (setUserFn) {
+    if (user) {
+      setUserFn({
+        id: user.id,
+        email: user.email,
+        plan: user.plan,
+      });
+    } else {
+      setUserFn(null);
+    }
+  }
+}
+

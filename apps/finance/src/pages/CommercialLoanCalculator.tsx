@@ -34,6 +34,7 @@ import { SuiteSubNav } from '../components/SuiteSubNav';
 import { ResultAnnouncer } from '../components/ResultAnnouncer';
 import { composeAnnouncement } from '../lib/resultAnnouncement';
 import { formatUsd } from '@tableview/shared';
+import { trackUserClick } from '../lib/sentry';
 
 const COMMERCIAL_PRESETS: CalculatorPreset<CommercialLoanInputs>[] = [
   {
@@ -172,6 +173,7 @@ export const CommercialLoanCalculator = () => {
   };
 
   const handleCopyLink = () => {
+    trackUserClick('commercial_loan_copy_link');
     const params = new URLSearchParams();
     params.set('price', String(inputs.propertyPrice));
     params.set('down', String(inputs.downPaymentPercent));
@@ -193,6 +195,7 @@ export const CommercialLoanCalculator = () => {
   }, [inputs]);
 
   const handleExportExcel = () => {
+    trackUserClick('commercial_loan_export_excel');
     const wb = XLSX.utils.book_new();
 
     const summarySheet = [

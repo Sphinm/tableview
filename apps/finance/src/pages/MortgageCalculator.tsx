@@ -43,6 +43,8 @@ import { getCalculatorFaqs } from '../data/calculatorFaqs';
 import { PaymentDonutChart } from '../components/PaymentDonutChart';
 import { AmortizationChart } from '../components/AmortizationChart';
 import { PrintableMortgageReport } from '../components/PrintableMortgageReport';
+import { useAuth } from '../lib/useAuth';
+import { trackUserClick } from '../lib/sentry';
 import { PmmsRateTicker } from '../components/PmmsRateTicker';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CalculatorPresetsBar, PrintReportButton, PageHeader } from '../components/calculator-kit';
@@ -97,6 +99,7 @@ interface MortgageCalculatorProps {
 }
 
 export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalculatorProps) => {
+  const { user, openAuthModal } = useAuth();
   const [showScenariosModal, setShowScenariosModal] = useState(false);
   const [showDossierModal, setShowDossierModal] = useState(false);
   const [showBrandingModal, setShowBrandingModal] = useState(false);
@@ -397,6 +400,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
 
   // Export handlers
   const handleExportCsv = () => {
+    trackUserClick('mortgage_export_csv_click');
     const csvContent = exportAmortizationToCsv(monthlySchedule);
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -410,6 +414,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
   };
 
   const handleExportExcel = async () => {
+    trackUserClick('mortgage_export_excel_click');
     const data = monthlySchedule.map((row) => ({
       'Month #': row.monthIndex,
       'Year': row.year,
@@ -434,6 +439,7 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
   };
 
   const handleExportPdf = () => {
+    trackUserClick('mortgage_export_pdf_click');
     const prevTitle = document.title;
     const viewSuffix = scheduleView === 'monthly' ? 'monthly_schedule' : 'annual_summary';
     document.title = `mortgage_amortization_statement_${homeValue}_${loanTermYears}yr_${viewSuffix}`;
@@ -464,7 +470,10 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
           <>
             <button
               type="button"
-              onClick={() => navigateTo('/refinance-calculator')}
+              onClick={() => {
+                trackUserClick('mortgage_refinance_nav_click');
+                navigateTo('/refinance-calculator');
+              }}
               className="h-9 px-3.5 rounded-xl text-xs font-semibold bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 border border-slate-200 transition-all cursor-pointer inline-flex items-center gap-1.5 shadow-2xs active:scale-95 shrink-0"
               title="Compare refinancing rates and break-even horizon"
             >
@@ -485,7 +494,17 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             />
             <button
               type="button"
-              onClick={() => setShowScenariosModal(true)}
+              onClick={() => {
+                trackUserClick('mortgage_saved_scenarios_click', { logged_in: Boolean(user) });
+                if (!user) {
+                  openAuthModal({
+                    reason: 'Please sign in with Google to save and compare deal scenarios.',
+                    onSuccess: () => setShowScenariosModal(true),
+                  });
+                  return;
+                }
+                setShowScenariosModal(true);
+              }}
               className="h-9 px-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-semibold border border-slate-200 shadow-2xs transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
               title="Save or compare deal scenarios locally in your browser"
             >
@@ -494,7 +513,17 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             </button>
             <button
               type="button"
-              onClick={() => setShowDossierModal(true)}
+              onClick={() => {
+                trackUserClick('mortgage_lender_dossier_click', { logged_in: Boolean(user) });
+                if (!user) {
+                  openAuthModal({
+                    reason: 'Please sign in with Google to access CFPB QM Lender-Ready Dossier.',
+                    onSuccess: () => setShowDossierModal(true),
+                  });
+                  return;
+                }
+                setShowDossierModal(true);
+              }}
               className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold shadow-xs hover:shadow-amber-500/20 transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
               title="Download official CFPB QM pre-approval PDF & live formulas Excel spreadsheet"
             >
@@ -503,7 +532,17 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
             </button>
             <button
               type="button"
-              onClick={() => setShowBrandingModal(true)}
+              onClick={() => {
+                trackUserClick('mortgage_branding_click', { logged_in: Boolean(user) });
+                if (!user) {
+                  openAuthModal({
+                    reason: 'Please sign in with Google to customize white-label brokerage branding.',
+                    onSuccess: () => setShowBrandingModal(true),
+                  });
+                  return;
+                }
+                setShowBrandingModal(true);
+              }}
               className="h-9 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 shadow-2xs transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
               title="Customize your personal or brokerage white-label branding on reports"
             >

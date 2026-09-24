@@ -38,6 +38,8 @@ import { InfoTooltip } from '../components/InfoTooltip';
 import { formatUsdCents, formatUsd } from '@tableview/shared';
 import { ResultAnnouncer } from '../components/ResultAnnouncer';
 import { composeAnnouncement } from '../lib/resultAnnouncement';
+import { useAuth } from '../lib/useAuth';
+import { trackUserClick } from '../lib/sentry';
 
 const LOAN_PRESETS: CalculatorPreset<{ a: LoanParameters; b: LoanParameters }>[] = [
   {
@@ -168,6 +170,7 @@ export const LoanComparisonCalculator = () => {
   const [mobileTab, setMobileTab] = useState<'both' | 'a' | 'b' | 'verdict'>('both');
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [activePresetId, setActivePresetId] = useState<string | null>('30vs15');
+  const { user, openAuthModal } = useAuth();
   const [showDossierModal, setShowDossierModal] = useState(false);
   const [showBrandingModal, setShowBrandingModal] = useState(false);
 
@@ -178,6 +181,7 @@ export const LoanComparisonCalculator = () => {
   };
 
   const handleCopyLink = () => {
+    trackUserClick('loan_comparison_copy_link');
     const params = new URLSearchParams();
     params.set('aAmt', String(loanA.loanAmount));
     params.set('aRate', String(loanA.interestRate));
@@ -205,6 +209,7 @@ export const LoanComparisonCalculator = () => {
   }, [loanA, loanB]);
 
   const handleExportExcel = () => {
+    trackUserClick('loan_comparison_export_excel');
     const wb = XLSX.utils.book_new();
 
     const summaryData = [
@@ -279,7 +284,17 @@ export const LoanComparisonCalculator = () => {
             <PrintReportButton />
             <button
               type="button"
-              onClick={() => setShowDossierModal(true)}
+              onClick={() => {
+                trackUserClick('loan_comparison_lender_dossier_click', { logged_in: Boolean(user) });
+                if (!user) {
+                  openAuthModal({
+                    reason: 'Please sign in with Google to access CFPB QM Lender-Ready Dossier.',
+                    onSuccess: () => setShowDossierModal(true),
+                  });
+                  return;
+                }
+                setShowDossierModal(true);
+              }}
               className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold shadow-xs hover:shadow-amber-500/20 transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
               title="Download official CFPB QM pre-approval PDF & live formulas Excel spreadsheet"
             >
@@ -288,7 +303,17 @@ export const LoanComparisonCalculator = () => {
             </button>
             <button
               type="button"
-              onClick={() => setShowBrandingModal(true)}
+              onClick={() => {
+                trackUserClick('loan_comparison_branding_click', { logged_in: Boolean(user) });
+                if (!user) {
+                  openAuthModal({
+                    reason: 'Please sign in with Google to customize white-label brokerage branding.',
+                    onSuccess: () => setShowBrandingModal(true),
+                  });
+                  return;
+                }
+                setShowBrandingModal(true);
+              }}
               className="h-9 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 shadow-2xs transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
               title="Customize your personal or brokerage white-label branding on reports"
             >

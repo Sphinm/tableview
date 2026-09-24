@@ -24,12 +24,19 @@ export interface User {
   purchasedDossiers?: string[];
 }
 
+export interface OpenAuthModalOptions {
+  reason?: string;
+  onSuccess?: () => void;
+}
+
 export interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthModalOpen: boolean;
-  openAuthModal: () => void;
+  authModalReason?: string | null;
+  openAuthModal: (options?: OpenAuthModalOptions | string) => void;
   closeAuthModal: () => void;
+  requireAuth: (action: () => void, options?: { reason?: string }) => void;
   sendMagicLink: (email: string) => Promise<{ success: boolean; message?: string; devToken?: string }>;
   verifyMagicLink: (token: string) => Promise<{ success: boolean; message?: string }>;
   loginWithGoogle: (credential: string) => Promise<{ success: boolean; message?: string }>;

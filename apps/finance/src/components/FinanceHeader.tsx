@@ -20,6 +20,7 @@ import { BrandLogo } from './BrandLogo';
 import { useAuth } from '../lib/useAuth';
 import { navigateTo } from '../lib/router';
 import { getCrossSuiteUrl } from '@tableview/shared';
+import { trackUserClick } from '../lib/sentry';
 
 interface FinanceHeaderProps {
   currentPath: string;
@@ -490,6 +491,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   <button
                     type="button"
                     onClick={() => {
+                      trackUserClick('header_sign_out_click');
                       logout();
                       setUserMenuOpen(false);
                     }}
@@ -504,7 +506,10 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
           ) : (
             <button
               type="button"
-              onClick={openAuthModal}
+              onClick={() => {
+                trackUserClick('header_sign_in_click');
+                openAuthModal();
+              }}
               className="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold shadow-xs flex items-center gap-1.5 transition-all active:scale-95 cursor-pointer"
             >
               <Sparkles className="size-3.5 text-amber-300" />

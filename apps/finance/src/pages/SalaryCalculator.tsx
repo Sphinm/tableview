@@ -27,6 +27,7 @@ import { SuiteSubNav } from '../components/SuiteSubNav';
 import { formatUsdCents, formatUsd } from '@tableview/shared';
 import { ResultAnnouncer } from '../components/ResultAnnouncer';
 import { composeAnnouncement } from '../lib/resultAnnouncement';
+import { trackUserClick } from '../lib/sentry';
 
 const salaryCalculatorSchemas = [
   {
@@ -139,6 +140,7 @@ export const SalaryCalculator = ({
   }, [customTitle]);
 
   const handleCopyLink = () => {
+    trackUserClick('salary_copy_link');
     const params = new URLSearchParams();
     params.set('mode', mode);
     if (mode === 'salary-to-hourly') {
@@ -189,6 +191,7 @@ export const SalaryCalculator = ({
   }, [mode, summary]);
 
   const handleExportExcel = () => {
+    trackUserClick('salary_export_excel');
     const wb = XLSX.utils.book_new();
 
     const summaryData = [

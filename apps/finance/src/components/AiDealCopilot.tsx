@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
   Sparkles,
   ArrowRight,
@@ -23,6 +23,8 @@ import {
 } from '../lib/dealExtractor';
 import { navigateTo } from '../lib/router';
 import { preloadRoute } from '../lib/routePreload';
+import { useAuth } from '../lib/useAuth';
+import { trackUserAction, trackUserClick } from '../lib/sentry';
 
 const SAMPLE_PRESETS = [
   {
@@ -47,13 +49,37 @@ const SAMPLE_PRESETS = [
   },
 ];
 
+const PENDING_DEAL_STORAGE_KEY = 'tableview_pending_deal_prompt';
+
 export const AiDealCopilot: React.FC = () => {
+  const { user, openAuthModal } = useAuth();
   const [dealText, setDealText] = useState('');
+  const [restoredNotice, setRestoredNotice] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<DealIntentResult | null>(null);
   const [instantCalc, setInstantCalc] = useState<InstantCalculationResult | null>(null);
   const [tweakDp, setTweakDp] = useState<number | undefined>(undefined);
   const [tweakTerm, setTweakTerm] = useState<number | undefined>(undefined);
+
+  // Restore pending scenario text on mount or after successful sign-in
+  useEffect(() => {
+    try {
+      const saved = sessionStorage.getItem(PENDING_DEAL_STORAGE_KEY);
+      if (saved) {
+        setDealText(saved);
+        sessionStorage.removeItem(PENDING_DEAL_STORAGE_KEY);
+        setRestoredNotice(true);
+        trackUserAction('deal_copilot_prompt_refilled', {
+          prompt_length: saved.length,
+          logged_in: Boolean(user),
+        });
+        const timer = setTimeout(() => setRestoredNotice(false), 8000);
+        return () => clearTimeout(timer);
+      }
+    } catch {
+      // Storage unavailable in private browsing mode
+    }
+  }, [user]);
 
   // Real-time local parameter extraction (0ms client-side preview as you type)
   const livePreview = useMemo(() => {
@@ -77,15 +103,50 @@ export const AiDealCopilot: React.FC = () => {
     const textToAnalyze = textOverride ?? dealText;
     if (!textToAnalyze.trim()) return;
 
+    // 1. Report click to Sentry
+    trackUserClick('deal_copilot_calculate_click', {
+      has_text: Boolean(textToAnalyze.trim()),
+      prompt_length: textToAnalyze.length,
+      logged_in: Boolean(user),
+    });
+
+    // 2. Login verification: If not logged in, prompt Google sign-in and refill text upon return
+    if (!user) {
+      trackUserAction('deal_copilot_login_required', {
+        prompt_length: textToAnalyze.length,
+      });
+
+      try {
+        sessionStorage.setItem(PENDING_DEAL_STORAGE_KEY, textToAnalyze);
+      } catch {}
+
+      openAuthModal({
+        reason: 'Please sign in with Google to continue. Your prompt will be refilled automatically.',
+        onSuccess: () => {
+          setDealText(textToAnalyze);
+          setRestoredNotice(true);
+          trackUserAction('deal_copilot_prompt_refilled_callback', {
+            prompt_length: textToAnalyze.length,
+          });
+        },
+      });
+      return;
+    }
+
+    // 3. User is logged in: directly jump to functional calculator page
     setIsAnalyzing(true);
-    // 1. Instant local calculation & parameter extraction (0ms, client-side)
+    trackUserAction('deal_copilot_navigating_to_calculator', {
+      prompt_length: textToAnalyze.length,
+    });
+
+    // Instant local calculation & parameter extraction (0ms, client-side)
     const calc = extractAndCalculateDeal(textToAnalyze, {
       downPaymentPercent: tweakDp,
       loanTermYears: tweakTerm,
     });
     setInstantCalc(calc);
 
-    // 2. Determine target calculator URL with prefilled query parameters
+    // Determine target calculator URL with prefilled query parameters
     let targetUrl = calc?.prefilledUrl;
     if (!targetUrl) {
       try {
@@ -97,7 +158,7 @@ export const AiDealCopilot: React.FC = () => {
       }
     }
 
-    // 3. Preload and transition immediately to target calculator page
+    // Preload and transition immediately to target calculator page
     preloadRoute(targetUrl);
     await new Promise((r) => setTimeout(r, 180));
     setIsAnalyzing(false);
@@ -105,6 +166,7 @@ export const AiDealCopilot: React.FC = () => {
   };
 
   const handleTweakDp = (dpPercent: number) => {
+    trackUserAction('deal_copilot_tweak_dp', { dpPercent });
     setTweakDp(dpPercent);
     executeCalculation(dealText, {
       downPaymentPercent: dpPercent,
@@ -113,6 +175,7 @@ export const AiDealCopilot: React.FC = () => {
   };
 
   const handleTweakTerm = (years: number) => {
+    trackUserAction('deal_copilot_tweak_term', { years });
     setTweakTerm(years);
     executeCalculation(dealText, {
       downPaymentPercent: tweakDp,
@@ -120,16 +183,61 @@ export const AiDealCopilot: React.FC = () => {
     });
   };
 
-  const handleSelectPreset = (presetText: string) => {
+  const handleSelectPreset = (presetText: string, presetTitle?: string) => {
+    trackUserClick('deal_copilot_preset_click', {
+      preset: presetTitle,
+      length: presetText.length,
+      logged_in: Boolean(user),
+    });
     setDealText(presetText);
     setTweakDp(undefined);
     setTweakTerm(undefined);
+
+    if (!user) {
+      try {
+        sessionStorage.setItem(PENDING_DEAL_STORAGE_KEY, presetText);
+      } catch {}
+
+      openAuthModal({
+        reason: 'Please sign in with Google to evaluate this scenario. Your selection will be refilled.',
+        onSuccess: () => {
+          setDealText(presetText);
+          setRestoredNotice(true);
+        },
+      });
+      return;
+    }
+
     handleAnalyzeAndNavigate(presetText);
   };
 
   const handleLaunchTarget = (targetUrl?: string) => {
     const route = targetUrl || result?.targetRoute;
     if (!route) return;
+
+    trackUserClick('deal_copilot_open_target_click', {
+      target_url: route,
+      logged_in: Boolean(user),
+    });
+
+    if (!user) {
+      if (dealText.trim()) {
+        try {
+          sessionStorage.setItem(PENDING_DEAL_STORAGE_KEY, dealText);
+        } catch {}
+      }
+      openAuthModal({
+        reason: 'Please sign in with Google to open full underwriting model.',
+        onSuccess: () => {
+          if (dealText.trim()) {
+            setDealText(dealText);
+            setRestoredNotice(true);
+          }
+        },
+      });
+      return;
+    }
+
     preloadRoute(route.split('?')[0]);
     navigateTo(route);
   };
@@ -162,7 +270,11 @@ export const AiDealCopilot: React.FC = () => {
             {dealText.trim() && (
               <button
                 type="button"
-                onClick={() => setDealText('')}
+                onClick={() => {
+                  trackUserClick('deal_copilot_clear_click');
+                  setDealText('');
+                  setRestoredNotice(false);
+                }}
                 className="text-slate-500 hover:text-slate-800 text-[11px] flex items-center gap-1 cursor-pointer transition-colors"
               >
                 <X className="size-3" />
@@ -170,6 +282,32 @@ export const AiDealCopilot: React.FC = () => {
               </button>
             )}
           </div>
+
+          {restoredNotice && (
+            <div className="mb-2.5 px-3.5 py-2 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs flex items-center justify-between gap-2 animate-in fade-in duration-200">
+              <div className="flex items-center gap-2 font-medium">
+                <CheckCircle2 className="size-4 text-emerald-600 shrink-0" />
+                <span>Your scenario notes have been refilled from Google sign-in!</span>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => handleAnalyzeAndNavigate()}
+                  className="font-bold text-emerald-700 hover:text-emerald-950 underline text-xs cursor-pointer"
+                >
+                  Calculate Now &rarr;
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setRestoredNotice(false)}
+                  className="text-emerald-600 hover:text-emerald-900 p-0.5 cursor-pointer"
+                  aria-label="Dismiss notice"
+                >
+                  <X className="size-3.5" />
+                </button>
+              </div>
+            </div>
+          )}
 
           <textarea
             value={dealText}
@@ -227,7 +365,7 @@ export const AiDealCopilot: React.FC = () => {
               <button
                 key={idx}
                 type="button"
-                onClick={() => handleSelectPreset(p.text)}
+                onClick={() => handleSelectPreset(p.text, p.title)}
                 className="text-xs px-3 py-1.5 rounded-xl bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 text-slate-700 hover:text-indigo-700 transition-all cursor-pointer flex items-center gap-2 shadow-xs group"
               >
                 <span className="font-medium">{p.title}</span>

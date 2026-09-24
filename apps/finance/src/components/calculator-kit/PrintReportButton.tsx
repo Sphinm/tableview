@@ -1,5 +1,6 @@
 import { Printer } from 'lucide-react';
 import { analytics } from '../../lib/analytics';
+import { trackUserClick } from '../../lib/sentry';
 
 interface PrintReportButtonProps {
   label?: string;
@@ -15,8 +16,10 @@ export const PrintReportButton = ({
   onPrint,
 }: PrintReportButtonProps) => {
   const handlePrint = () => {
+    const calculator = (typeof window !== 'undefined' ? window.location.pathname.replace(/^\//, '') : '') || 'mortgage';
+    trackUserClick('calculator_print_pdf_click', { calculator });
     analytics.calculatorExport({
-      calculator: (typeof window !== 'undefined' ? window.location.pathname.replace(/^\//, '') : '') || 'mortgage',
+      calculator,
       format: 'print_pdf',
     });
 

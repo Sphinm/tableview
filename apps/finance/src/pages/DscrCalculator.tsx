@@ -43,6 +43,8 @@ import { AiUnderwritingCard } from '../components/AiUnderwritingCard';
 import { ResultAnnouncer } from '../components/ResultAnnouncer';
 import { composeAnnouncement } from '../lib/resultAnnouncement';
 import { formatUsdSigned, formatUsd } from '@tableview/shared';
+import { useAuth } from '../lib/useAuth';
+import { trackUserClick } from '../lib/sentry';
 
 interface DscrPresetValues {
   propertyValue: number;
@@ -253,6 +255,7 @@ interface DscrCalculatorProps {
 }
 
 export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProps) => {
+  const { user, openAuthModal } = useAuth();
   const [showScenariosModal, setShowScenariosModal] = useState(false);
 
   useEffect(() => {
@@ -460,6 +463,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
   // Export Amortization Table to Excel (.xlsx)
   const handleExportExcel = async () => {
+    trackUserClick('dscr_export_excel', { propertyValue, targetDscr });
     const rows = fullMonthlySchedule.map((r) => ({
       Year: r.year,
       Month: r.month,
@@ -480,6 +484,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
   // Export to CSV
   const handleExportCsv = () => {
+    trackUserClick('dscr_export_csv', { propertyValue, targetDscr });
     const headers = 'Year,Month,Payment,Principal,Interest,Balance,AccumulatedInterest,AccumulatedPrincipal\n';
     const body = fullMonthlySchedule
       .map(
@@ -496,6 +501,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
   };
 
   const handleExportPdf = () => {
+    trackUserClick('dscr_export_pdf', { propertyValue, scheduleView, targetDscr });
     const prevTitle = document.title;
     const viewSuffix = scheduleView === 'monthly' ? 'monthly_schedule' : 'annual_summary';
     document.title = `dscr_underwriting_statement_${propertyValue}_${viewSuffix}`;
@@ -506,6 +512,7 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
   };
 
   const handleCopyLink = () => {
+    trackUserClick('dscr_share_deal', { propertyValue, targetDscr });
     try {
       const params = new URLSearchParams();
       params.set('price', String(propertyValue));
@@ -1258,7 +1265,17 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                 </button>
                 <button
                   type="button"
-                  onClick={() => setShowScenariosModal(true)}
+                  onClick={() => {
+                    trackUserClick('dscr_saved_scenarios_click', { logged_in: Boolean(user) });
+                    if (!user) {
+                      openAuthModal({
+                        reason: 'Please sign in with Google to save and compare custom DSCR scenarios.',
+                        onSuccess: () => setShowScenariosModal(true),
+                      });
+                      return;
+                    }
+                    setShowScenariosModal(true);
+                  }}
                   className="px-3.5 py-1.5 rounded-xl bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 border border-slate-200 shadow-2xs inline-flex items-center gap-1.5 cursor-pointer transition-colors"
                   title="Save or compare DSCR scenarios locally in your browser"
                 >

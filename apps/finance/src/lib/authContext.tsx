@@ -1,5 +1,6 @@
-import { useState, useEffect, type ReactNode } from 'react';
-import { AuthContext, type User, type BrandingProfile } from './authTypes';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
+import { AuthContext, type User, type BrandingProfile, type OpenAuthModalOptions } from './authTypes';
+import { setSentryUser, trackUserAction } from './sentry';
 
 const TOKEN_STORAGE_KEY = 'tableview_auth_token';
 const MOCK_USER_KEY = 'tableview_mock_user';
@@ -8,9 +9,54 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isAuthModalOpen, setIsAuthModalOpen] = useState<boolean>(false);
+  const [authModalReason, setAuthModalReason] = useState<string | null>(null);
+  const onSuccessRef = useRef<(() => void) | null>(null);
 
-  const openAuthModal = () => setIsAuthModalOpen(true);
-  const closeAuthModal = () => setIsAuthModalOpen(false);
+  const openAuthModal = (options?: OpenAuthModalOptions | string) => {
+    if (typeof options === 'string') {
+      setAuthModalReason(options);
+      onSuccessRef.current = null;
+    } else if (options) {
+      setAuthModalReason(options.reason || null);
+      onSuccessRef.current = options.onSuccess || null;
+    } else {
+      setAuthModalReason(null);
+      onSuccessRef.current = null;
+    }
+    setIsAuthModalOpen(true);
+    trackUserAction('auth_modal_opened', {
+      reason: typeof options === 'string' ? options : options?.reason,
+    });
+  };
+
+  const closeAuthModal = () => {
+    setIsAuthModalOpen(false);
+    setAuthModalReason(null);
+    onSuccessRef.current = null;
+  };
+
+  const triggerPostLoginSuccess = () => {
+    if (onSuccessRef.current) {
+      const cb = onSuccessRef.current;
+      onSuccessRef.current = null;
+      try {
+        cb();
+      } catch (err) {
+        console.error('Post-login callback execution failed:', err);
+      }
+    }
+  };
+
+  const requireAuth = (action: () => void, options?: { reason?: string }) => {
+    if (user) {
+      action();
+    } else {
+      openAuthModal({
+        reason: options?.reason,
+        onSuccess: action,
+      });
+    }
+  };
 
   const verifyMagicLink = async (token: string) => {
     try {
@@ -33,6 +79,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             credits: data.user.credits ?? 30,
           };
           setUser(formattedUser);
+          setSentryUser(formattedUser);
+          triggerPostLoginSuccess();
           localStorage.setItem(MOCK_USER_KEY, JSON.stringify(formattedUser));
         }
         return { success: true };
@@ -48,6 +96,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           credits: 30,
         };
         setUser(mockUser);
+        setSentryUser(mockUser);
+        triggerPostLoginSuccess();
         localStorage.setItem(MOCK_USER_KEY, JSON.stringify(mockUser));
         return { success: true };
       }
@@ -64,6 +114,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         credits: 30,
       };
       setUser(mockUser);
+      setSentryUser(mockUser);
+      triggerPostLoginSuccess();
       localStorage.setItem(MOCK_USER_KEY, JSON.stringify(mockUser));
       return { success: true };
     }
@@ -125,6 +177,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             credits: data.user.credits ?? 30,
           };
           setUser(formattedUser);
+          setSentryUser(formattedUser);
+          triggerPostLoginSuccess();
           localStorage.setItem(MOCK_USER_KEY, JSON.stringify(formattedUser));
         }
         return { success: true };
@@ -161,6 +215,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             credits: 30,
           };
           setUser(fallbackUser);
+          setSentryUser(fallbackUser);
+          triggerPostLoginSuccess();
           localStorage.setItem(MOCK_USER_KEY, JSON.stringify(fallbackUser));
           return { success: true };
         }
@@ -181,6 +237,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       credits: plan === 'pro' ? 5000 : 30,
     };
     setUser(mockUser);
+    setSentryUser(mockUser);
+    triggerPostLoginSuccess();
     localStorage.setItem(MOCK_USER_KEY, JSON.stringify(mockUser));
     closeAuthModal();
   };
@@ -267,6 +325,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null);
+    setSentryUser(null);
+    trackUserAction('auth_logout');
     localStorage.removeItem(TOKEN_STORAGE_KEY);
     localStorage.removeItem(MOCK_USER_KEY);
     fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
@@ -301,6 +361,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             const data = (await res.json()) as any;
             if (data.user) {
               setUser(data.user);
+              setSentryUser(data.user);
               setIsLoading(false);
               return;
             }
@@ -314,7 +375,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const storedMockUser = localStorage.getItem(MOCK_USER_KEY);
       if (storedMockUser) {
         try {
-          setUser(JSON.parse(storedMockUser));
+          const parsed = JSON.parse(storedMockUser);
+          setUser(parsed);
+          setSentryUser(parsed);
         } catch {
           localStorage.removeItem(MOCK_USER_KEY);
         }
@@ -332,8 +395,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isLoading,
         isAuthModalOpen,
+        authModalReason,
         openAuthModal,
         closeAuthModal,
+        requireAuth,
         sendMagicLink,
         verifyMagicLink,
         loginWithGoogle,

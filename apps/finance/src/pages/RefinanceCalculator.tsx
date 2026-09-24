@@ -48,6 +48,8 @@ import { SuiteSubNav } from '../components/SuiteSubNav';
 import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
 import { ProBrandingModal } from '../components/ProBrandingModal';
 import { InfoTooltip } from '../components/InfoTooltip';
+import { useAuth } from '../lib/useAuth';
+import { trackUserClick } from '../lib/sentry';
 import { ResultAnnouncer } from '../components/ResultAnnouncer';
 import { composeAnnouncement } from '../lib/resultAnnouncement';
 import { formatUsd, formatUsdSigned } from '@tableview/shared';
@@ -92,6 +94,7 @@ interface RefinanceCalculatorProps {
 }
 
 export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalculatorProps) => {
+  const { user, openAuthModal } = useAuth();
   const [showScenariosModal, setShowScenariosModal] = useState(false);
   const [showDossierModal, setShowDossierModal] = useState(false);
   const [showBrandingModal, setShowBrandingModal] = useState(false);
@@ -368,10 +371,12 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
     const wsAnnual = XLSX.utils.json_to_sheet(annualRows);
     XLSX.utils.book_append_sheet(wb, wsAnnual, 'Annual Comparison');
 
+    trackUserClick('refinance_export_excel_click');
     XLSX.writeFile(wb, `tableview-refinance-analysis-${summary.horizonYears}yr.xlsx`);
   };
 
   const handleExportPdf = () => {
+    trackUserClick('refinance_export_pdf_click');
     const prevTitle = document.title;
     const viewSuffix = scheduleView === 'monthly' ? 'monthly_schedule' : 'annual_summary';
     document.title = `refinance_statement_${Math.round(summary.newLoanAmount)}_${viewSuffix}`;
@@ -426,7 +431,17 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             />
             <button
               type="button"
-              onClick={() => setShowScenariosModal(true)}
+              onClick={() => {
+                trackUserClick('refinance_saved_scenarios_click', { logged_in: Boolean(user) });
+                if (!user) {
+                  openAuthModal({
+                    reason: 'Please sign in with Google to save and compare refinance scenarios.',
+                    onSuccess: () => setShowScenariosModal(true),
+                  });
+                  return;
+                }
+                setShowScenariosModal(true);
+              }}
               className="h-9 px-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-semibold border border-slate-200 shadow-2xs transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
               title="Save or compare refinance deal scenarios locally in your browser"
             >
@@ -435,7 +450,17 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             </button>
             <button
               type="button"
-              onClick={() => setShowDossierModal(true)}
+              onClick={() => {
+                trackUserClick('refinance_lender_dossier_click', { logged_in: Boolean(user) });
+                if (!user) {
+                  openAuthModal({
+                    reason: 'Please sign in with Google to access CFPB QM Lender-Ready Dossier.',
+                    onSuccess: () => setShowDossierModal(true),
+                  });
+                  return;
+                }
+                setShowDossierModal(true);
+              }}
               className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold shadow-xs hover:shadow-amber-500/20 transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
               title="Download official refinance evaluation PDF dossier & Excel model"
             >
@@ -444,7 +469,17 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
             </button>
             <button
               type="button"
-              onClick={() => setShowBrandingModal(true)}
+              onClick={() => {
+                trackUserClick('refinance_branding_click', { logged_in: Boolean(user) });
+                if (!user) {
+                  openAuthModal({
+                    reason: 'Please sign in with Google to customize white-label brokerage branding.',
+                    onSuccess: () => setShowBrandingModal(true),
+                  });
+                  return;
+                }
+                setShowBrandingModal(true);
+              }}
               className="h-9 px-3 rounded-xl bg-white hover:bg-slate-50 text-slate-700 text-xs font-semibold border border-slate-200 shadow-2xs transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
               title="Customize your personal or brokerage white-label branding on reports"
             >

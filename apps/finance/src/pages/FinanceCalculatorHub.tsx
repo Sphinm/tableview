@@ -18,6 +18,7 @@ import { AiDealCopilot } from '../components/AiDealCopilot';
 import { updatePageMeta, navigateTo } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
 import { preloadRoute } from '../lib/routePreload';
+import { trackUserClick } from '../lib/sentry';
 
 /**
  * Unified calculator card definition. A single template keeps iconography,
@@ -150,6 +151,7 @@ export const FinanceCalculatorHub = () => {
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-1">
               <a
                 href="#calculator-suite"
+                onClick={() => trackUserClick('hub_explore_calculators_click')}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-bold text-sm shadow-lg shadow-amber-500/20 transition-all active:scale-[0.98]"
               >
                 <span>Explore the calculators</span>
@@ -157,6 +159,7 @@ export const FinanceCalculatorHub = () => {
               </a>
               <a
                 href="#deal-copilot"
+                onClick={() => trackUserClick('hub_try_copilot_click')}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 border border-white/20 text-white font-semibold text-sm transition-colors"
               >
                 <Sparkles className="size-4 text-amber-300" />
@@ -248,7 +251,13 @@ export const FinanceCalculatorHub = () => {
                 <button
                   onMouseEnter={() => preloadRoute(card.route)}
                   onFocus={() => preloadRoute(card.route)}
-                  onClick={() => navigateTo(card.route)}
+                  onClick={() => {
+                    trackUserClick('hub_calculator_card_click', {
+                      title: card.title,
+                      route: card.route,
+                    });
+                    navigateTo(card.route);
+                  }}
                   className="btn-primary w-full py-2 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
                 >
                   <span>{card.cta}</span>

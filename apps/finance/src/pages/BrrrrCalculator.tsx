@@ -26,6 +26,7 @@ import { getNumQuery } from '../lib/urlState';
 import { ResultAnnouncer } from '../components/ResultAnnouncer';
 import { composeAnnouncement } from '../lib/resultAnnouncement';
 import { formatUsd, formatUsdSigned } from '@tableview/shared';
+import { trackUserClick } from '../lib/sentry';
 
 interface BrrrrPreset {
   id: string;
@@ -245,6 +246,7 @@ export const BrrrrCalculator = () => {
   };
 
   const handleCopyLink = () => {
+    trackUserClick('brrrr_copy_link');
     const url = new URL(window.location.href);
     url.searchParams.set('price', purchasePrice.toString());
     url.searchParams.set('rehab', rehabCost.toString());
@@ -256,6 +258,7 @@ export const BrrrrCalculator = () => {
   };
 
   const handleExportCsv = () => {
+    trackUserClick('brrrr_export_csv');
     const rows = [
       ['Metric', 'Value'],
       ['Purchase Price', `$${purchasePrice.toLocaleString('en-US')}`],

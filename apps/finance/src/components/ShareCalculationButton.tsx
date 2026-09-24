@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Share2, Check } from 'lucide-react';
 import { trackEvent } from '../lib/analytics';
+import { trackUserClick } from '../lib/sentry';
 
 interface ShareCalculationButtonProps {
   params: Record<string, string | number | boolean | undefined>;
@@ -17,6 +18,7 @@ export const ShareCalculationButton = ({
 
   const handleShare = () => {
     try {
+      trackUserClick('calculator_share_deal_click', { title });
       trackEvent('calculator_shared', {
         title,
         param_count: Object.keys(params).length,

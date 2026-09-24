@@ -40,6 +40,7 @@ import { InfoTooltip } from '../components/InfoTooltip';
 import { ResultAnnouncer } from '../components/ResultAnnouncer';
 import { composeAnnouncement } from '../lib/resultAnnouncement';
 import { formatUsd, formatUsdSigned } from '@tableview/shared';
+import { trackUserClick } from '../lib/sentry';
 
 const HARD_MONEY_PRESETS: CalculatorPreset<HardMoneyInputs>[] = [
   {
@@ -343,6 +344,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
 
   // Export Deal Sheet to Excel
   const handleExportExcel = async () => {
+    trackUserClick('hard_money_export_excel');
     const summaryData = [
       { Parameter: 'Purchase Price', Value: purchasePrice },
       { Parameter: 'Rehab / Renovation Budget', Value: rehabBudget },
@@ -369,6 +371,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
   };
 
   const handleExportCsv = () => {
+    trackUserClick('hard_money_export_csv');
     const csvContent =
       'Parameter,Value\n' +
       `Purchase Price,${purchasePrice}\n` +
@@ -392,6 +395,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
   };
 
   const handleExportPdf = () => {
+    trackUserClick('hard_money_export_pdf');
     const prevTitle = document.title;
     document.title = `hard_money_deal_sheet_${purchasePrice}_arv_${afterRepairValue}`;
     window.print();
@@ -401,6 +405,7 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
   };
 
   const handleCopyLink = () => {
+    trackUserClick('hard_money_copy_link');
     try {
       const params = new URLSearchParams();
       params.set('purchase', String(purchasePrice));

@@ -37,6 +37,7 @@ import { getUrlParams } from '../lib/urlState';
 import { PageHeader, PrintReportButton } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
 import { InfoTooltip } from '../components/InfoTooltip';
+import { trackUserClick } from '../lib/sentry';
 
 const PATH = '/section-1031-exchange-calculator';
 const faqs = getCalculatorFaqs(PATH);
@@ -346,6 +347,7 @@ export const Section1031Calculator = () => {
   };
 
   const handleExportExcel = async () => {
+    trackUserClick('section_1031_export_excel');
     const summary = [
       { Parameter: 'Sale Price (Relinquished)', Value: salePrice },
       { Parameter: 'Selling Costs (Percentage)', Value: result.sellingCosts - result.qualifiedIntermediaryFee },
@@ -384,6 +386,7 @@ export const Section1031Calculator = () => {
   };
 
   const handleExportCsv = () => {
+    trackUserClick('section_1031_export_csv');
     const rows: [string, string | number][] = [
       ['Sale Price', salePrice],
       ['Net Sale Proceeds', result.netSaleProceeds],
@@ -408,6 +411,7 @@ export const Section1031Calculator = () => {
   };
 
   const handleCopySummary = async () => {
+    trackUserClick('section_1031_copy_summary');
     const text = [
       `1031 Exchange Summary`,
       `Sale price: ${fmt(salePrice)}  |  Net proceeds: ${fmt(result.netSaleProceeds)}`,

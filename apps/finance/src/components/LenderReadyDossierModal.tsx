@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { Dialog } from '@tableview/ui';
 import { useAuth } from '../lib/useAuth';
+import { trackUserClick } from '../lib/sentry';
 
 interface LenderReadyDossierModalProps {
   isOpen: boolean;
@@ -36,7 +37,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
   onPrintOfficialPdf,
   onOpenBrandingSettings,
 }) => {
-  const { user, purchaseSinglePass, upgradePlan } = useAuth();
+  const { user, openAuthModal, purchaseSinglePass, upgradePlan } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>('year');
   const [successToast, setSuccessToast] = useState<string | null>(null);
@@ -48,6 +49,21 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
   const isUnlocked = isPro || hasPurchasedDeal;
 
   const handleBuySinglePass = async () => {
+    trackUserClick('lender_dossier_buy_single_pass_click', { dealId, logged_in: Boolean(user) });
+    if (!user) {
+      openAuthModal({
+        reason: 'Please sign in with Google to purchase a Single Deal Pass.',
+        onSuccess: async () => {
+          setIsProcessing(true);
+          await new Promise((r) => setTimeout(r, 600));
+          await purchaseSinglePass(dealId);
+          setIsProcessing(false);
+          setSuccessToast('Single Deal Pass unlocked! You can now download both files.');
+          setTimeout(() => setSuccessToast(null), 3500);
+        },
+      });
+      return;
+    }
     setIsProcessing(true);
     await new Promise((r) => setTimeout(r, 600));
     await purchaseSinglePass(dealId);
@@ -57,6 +73,21 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
   };
 
   const handleUpgradePro = async () => {
+    trackUserClick('lender_dossier_upgrade_pro_click', { billingCycle, logged_in: Boolean(user) });
+    if (!user) {
+      openAuthModal({
+        reason: 'Please sign in with Google to upgrade to TableView Pro.',
+        onSuccess: async () => {
+          setIsProcessing(true);
+          await new Promise((r) => setTimeout(r, 700));
+          await upgradePlan('pro');
+          setIsProcessing(false);
+          setSuccessToast('🎉 Welcome to TableView Pro! Unlimited exports and white-label branding unlocked.');
+          setTimeout(() => setSuccessToast(null), 4000);
+        },
+      });
+      return;
+    }
     setIsProcessing(true);
     await new Promise((r) => setTimeout(r, 700));
     await upgradePlan('pro');
@@ -143,6 +174,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
                 <button
                   onClick={() => {
+                    trackUserClick('lender_dossier_print_pdf_click', { dealId, isPro });
                     onPrintOfficialPdf();
                     onClose();
                   }}
@@ -162,6 +194,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
 
                 <button
                   onClick={() => {
+                    trackUserClick('lender_dossier_export_excel_click', { dealId, isPro });
                     onExportExcel();
                     onClose();
                   }}

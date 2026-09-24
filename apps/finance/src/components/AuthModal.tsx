@@ -2,9 +2,10 @@ import { useState, useEffect, useRef } from 'react';
 import { X, Sparkles, ShieldCheck } from 'lucide-react';
 import { Dialog } from '@tableview/ui';
 import { useAuth } from '../lib/useAuth';
+import { trackUserAction, trackUserClick } from '../lib/sentry';
 
 export function AuthModal() {
-  const { isAuthModalOpen, closeAuthModal, loginWithGoogle } = useAuth();
+  const { isAuthModalOpen, closeAuthModal, loginWithGoogle, loginAsDemo, authModalReason } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
@@ -25,19 +26,23 @@ export function AuthModal() {
             client_id: clientId,
             callback: async (response: { credential?: string }) => {
               if (response.credential) {
+                trackUserAction('auth_google_credential_received');
                 setIsSubmitting(true);
                 setErrorMessage(null);
                 try {
                   const res = await loginWithGoogle(response.credential);
                   if (res.success) {
+                    trackUserAction('auth_google_login_success');
                     closeAuthModal();
                   } else {
+                    trackUserAction('auth_google_login_failed', { error: res.message });
                     if (isMounted) {
                       setErrorMessage(res.message || 'Google sign-in failed');
                       setIsSubmitting(false);
                     }
                   }
                 } catch {
+                  trackUserAction('auth_google_login_error');
                   if (isMounted) {
                     setErrorMessage('Google sign-in encountered an error');
                     setIsSubmitting(false);
@@ -117,6 +122,7 @@ export function AuthModal() {
   if (!isAuthModalOpen) return null;
 
   const handleFallbackClick = () => {
+    trackUserClick('auth_fallback_google_click');
     if (typeof window !== 'undefined' && (window as any).google?.accounts?.id) {
       (window as any).google.accounts.id.prompt();
     } else {
@@ -126,7 +132,10 @@ export function AuthModal() {
 
   return (
     <Dialog
-      onClose={closeAuthModal}
+      onClose={() => {
+        trackUserClick('auth_modal_close_click');
+        closeAuthModal();
+      }}
       labelledBy="auth-modal-title"
       overlayClassName="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs animate-in fade-in duration-200"
       panelClassName="relative w-full max-w-md overflow-hidden bg-white border border-slate-200 rounded-3xl shadow-2xl transition-all"
@@ -136,7 +145,10 @@ export function AuthModal() {
 
         {/* Close Button */}
         <button
-          onClick={closeAuthModal}
+          onClick={() => {
+            trackUserClick('auth_modal_close_click');
+            closeAuthModal();
+          }}
           className="absolute top-4 right-4 p-2 text-slate-400 hover:text-slate-700 rounded-full hover:bg-slate-100 transition-colors cursor-pointer"
           aria-label="Close"
         >
@@ -155,6 +167,12 @@ export function AuthModal() {
             <p className="text-xs sm:text-sm text-slate-600 mt-1.5 leading-relaxed max-w-xs mx-auto">
               Sign in with your Google account to sync your saved scenarios, access history, and use private in-browser tools.
             </p>
+
+            {authModalReason && (
+              <div className="mt-3 px-3 py-2 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-medium text-center">
+                {authModalReason}
+              </div>
+            )}
           </div>
 
           {/* Social Sign-In (Google Only) */}
@@ -214,6 +232,21 @@ export function AuthModal() {
             <ShieldCheck className="w-4 h-4 text-emerald-700 shrink-0" />
             <span>Privacy First: Your files never leave your device</span>
           </div>
+
+          {import.meta.env.DEV && (
+            <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-center">
+              <button
+                type="button"
+                onClick={() => {
+                  trackUserClick('auth_dev_demo_login_click');
+                  loginAsDemo('free');
+                }}
+                className="text-xs text-indigo-600 hover:text-indigo-800 font-medium underline cursor-pointer"
+              >
+                [Dev Mode] Quick Demo Sign-In
+              </button>
+            </div>
+          )}
         </div>
     </Dialog>
   );
