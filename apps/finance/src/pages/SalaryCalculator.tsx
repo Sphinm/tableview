@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect, useRef } from 'react';
-import * as XLSX from 'xlsx';
 import {
   Clock,
   Download,
@@ -190,8 +189,9 @@ export const SalaryCalculator = ({
     return `At ${summary.hoursPerWeek} hours/week, an hourly wage of $${summary.hourlyRate.toFixed(2)} equals an annual salary of $${summary.annualSalary.toLocaleString('en-US')} across ${summary.weeksPerYear} working weeks.`;
   }, [mode, summary]);
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     trackUserClick('salary_export_excel');
+    const XLSX = await import('xlsx');
     const wb = XLSX.utils.book_new();
 
     const summaryData = [

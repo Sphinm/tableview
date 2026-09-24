@@ -127,7 +127,6 @@ export const RelatedCalculators = ({ currentSlug, category = 'real-estate' }: Re
   const handleNav = (e: React.MouseEvent, path: string) => {
     e.preventDefault();
     navigateTo(path);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (

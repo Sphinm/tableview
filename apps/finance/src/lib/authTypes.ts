@@ -45,6 +45,13 @@ export interface AuthContextType {
   updateBranding: (branding: Partial<BrandingProfile>) => void;
   purchaseSinglePass: (dealId: string) => Promise<boolean>;
   upgradePlan: (plan: 'free' | 'basic' | 'pro') => Promise<boolean>;
+  startCheckout: (options: {
+    productKey: 'deal_pass' | 'pro_membership';
+    interval?: 'month' | 'year';
+    dealId?: string;
+  }) => Promise<void>;
+  isPro: boolean;
+  hasDealPass: (dealId: string) => boolean;
   logout: () => void;
 }
 

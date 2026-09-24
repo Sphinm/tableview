@@ -9,6 +9,7 @@ import { AuthModal } from './components/AuthModal';
 import { GoogleOneTap } from './components/GoogleOneTap';
 import { getBugReportMailto } from './lib/feedback';
 import { useRouter, updatePageMeta } from './lib/router';
+import { initGlobalHoverPreloader, schedulePopularCalculatorsPreload } from './lib/routePreload';
 import { applyTheme } from './lib/theme';
 import { ArrowLeft, FileQuestion } from 'lucide-react';
 import { HOME_META, GUIDES_HUB_META, STATIC_PAGE_META } from './data/routeMeta';
@@ -34,6 +35,7 @@ const Contact = lazy(() => import('./pages/Contact').then(m => ({ default: m.Con
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
 const TermsOfService = lazy(() => import('./pages/TermsOfService').then(m => ({ default: m.TermsOfService })));
 const Disclaimer = lazy(() => import('./pages/Disclaimer').then(m => ({ default: m.Disclaimer })));
+const ClientDealSharePage = lazy(() => import('./pages/ClientDealSharePage').then(m => ({ default: m.ClientDealSharePage })));
 
 export function App() {
   const { path, slug, pathname } = useRouter();
@@ -41,6 +43,11 @@ export function App() {
 
   useEffect(() => {
     applyTheme('light');
+    const cleanupHoverPreload = initGlobalHoverPreloader();
+    schedulePopularCalculatorsPreload(1500);
+    return () => {
+      cleanupHoverPreload();
+    };
   }, []);
 
   // Update SEO metadata on client navigation
@@ -83,6 +90,11 @@ export function App() {
           </a>
         </div>
       );
+    }
+
+    if (path === '/share/:dealId' || path.startsWith('/share/')) {
+      const dealId = slug || path.replace('/share/', '');
+      return <ClientDealSharePage dealId={dealId} />;
     }
 
     if (path === '/' || path === '/calculators' || path === '/finance-calculator') {
@@ -203,6 +215,8 @@ export function App() {
     );
   };
 
+  const isShareView = currentNavPath.startsWith('/share');
+
   return (
     <AuthProvider>
       <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col selection:bg-indigo-500/20 selection:text-indigo-900">
@@ -214,7 +228,7 @@ export function App() {
           Skip to calculator
         </a>
 
-        <FinanceHeader currentPath={currentNavPath} />
+        {!isShareView && <FinanceHeader currentPath={currentNavPath} />}
 
         <main id="main-content" tabIndex={-1} className="flex-1 w-full min-w-0 focus:outline-none">
           <Suspense fallback={<GlobalLoading message="Loading underwriting engine..." />}>
@@ -222,7 +236,7 @@ export function App() {
           </Suspense>
         </main>
 
-        <Footer currentPath={currentNavPath} />
+        {!isShareView && <Footer currentPath={currentNavPath} />}
         <AuthModal />
         <GoogleOneTap />
         <CookieBanner />

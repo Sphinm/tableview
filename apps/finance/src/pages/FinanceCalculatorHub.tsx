@@ -249,6 +249,7 @@ export const FinanceCalculatorHub = () => {
                   </div>
                 </div>
                 <button
+                  data-route={card.route}
                   onMouseEnter={() => preloadRoute(card.route)}
                   onFocus={() => preloadRoute(card.route)}
                   onClick={() => {

@@ -12,6 +12,11 @@
 
 import { handleTelemetryTrack } from './telemetryTrack';
 import { getLegacyCrossDomainRedirect } from '../lib/legacyRedirects';
+import { handleWebhookRequest } from './billingWebhookRoute';
+import { creemAdapter } from './adapters/creem';
+import { stripeAdapter } from './adapters/stripe';
+import { dodoAdapter } from './adapters/dodo';
+import { resolveEntitlements, type SubscriptionRecord, type PurchaseRecord } from './entitlements';
 
 export interface Env {
   DB?: D1Database;
@@ -23,6 +28,16 @@ export interface Env {
   GOOGLE_CLIENT_ID?: string;
   GEMINI_API_KEY?: string;
   ASSETS?: Fetcher;
+  BILLING_WEBHOOK_SECRET?: string;
+  CREEM_API_KEY?: string;
+  CREEM_CHECKOUT_URL?: string;
+  STRIPE_SECRET_KEY?: string;
+  DODO_PAYMENTS_API_KEY?: string;
+  DODO_PAYMENTS_WEBHOOK_SECRET?: string;
+  DODO_MODE?: 'test' | 'live';
+  DODO_PRODUCT_DEAL_PASS?: string;
+  DODO_PRODUCT_PRO_MONTHLY?: string;
+  DODO_PRODUCT_PRO_YEARLY?: string;
 }
 
 
@@ -781,7 +796,221 @@ export default {
         );
       }
 
-      // 8. GET /api/tools/is-it-down?url=... (Website Status & Edge Latency Probe)
+      // 8. POST /api/billing/webhook/:provider (Dodo, Creem, Stripe)
+      if (url.pathname.startsWith('/api/billing/webhook/') && request.method === 'POST') {
+        const provider = url.pathname.replace('/api/billing/webhook/', '').trim().toLowerCase();
+        const adapter =
+          provider === 'dodo'
+            ? dodoAdapter
+            : provider === 'creem'
+            ? creemAdapter
+            : provider === 'stripe'
+            ? stripeAdapter
+            : null;
+        if (!adapter) {
+          return jsonResponse({ error: `Unknown billing provider: ${provider}` }, 404, origin);
+        }
+
+        const webhookSecret =
+          provider === 'dodo'
+            ? env.DODO_PAYMENTS_WEBHOOK_SECRET || env.BILLING_WEBHOOK_SECRET || 'dev_billing_secret'
+            : env.BILLING_WEBHOOK_SECRET || 'dev_billing_secret';
+
+        return await handleWebhookRequest(
+          request,
+          { BILLING_WEBHOOK_SECRET: webhookSecret },
+          adapter,
+          { db: env.DB }
+        );
+      }
+
+      // 9. POST /api/billing/create-checkout-session
+      if (url.pathname === '/api/billing/create-checkout-session' && request.method === 'POST') {
+        const body = (await request.json().catch(() => ({}))) as {
+          productKey?: 'deal_pass' | 'pro_membership';
+          interval?: 'month' | 'year';
+          dealId?: string;
+          successUrl?: string;
+          cancelUrl?: string;
+        };
+
+        let userEmail: string | null = null;
+        const authHeader = request.headers.get('Authorization');
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const token = authHeader.replace('Bearer ', '').trim();
+          const payload = await verifyJwt(token, secret);
+          if (payload?.email) {
+            userEmail = payload.email;
+          }
+        }
+
+        const successUrl = body.successUrl || `${url.origin}/?checkout_success=true`;
+
+        // A. If Dodo Payments integration configured (Prioritized when key provided)
+        if (env.DODO_PAYMENTS_API_KEY) {
+          try {
+            const isTest = env.DODO_MODE === 'test' || env.DODO_PAYMENTS_API_KEY.startsWith('test_');
+            const dodoBase = isTest ? 'https://test.dodopayments.com' : 'https://api.dodopayments.com';
+
+            const productId =
+              body.productKey === 'deal_pass'
+                ? env.DODO_PRODUCT_DEAL_PASS || 'pdt_0NoH8a1OCj6WLZs1X4QEp'
+                : body.interval === 'month'
+                ? env.DODO_PRODUCT_PRO_MONTHLY || 'pdt_0NoH8xSY84Q9x8j4N0b0V'
+                : env.DODO_PRODUCT_PRO_YEARLY || 'pdt_0NoH9OyMm3YOX0ump1AbW';
+
+            const dodoRes = await fetch(`${dodoBase}/checkouts`, {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${env.DODO_PAYMENTS_API_KEY}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                product_cart: [{ product_id: productId, quantity: 1 }],
+                customer: userEmail ? { email: userEmail } : undefined,
+                return_url: successUrl,
+                metadata: {
+                  productKey: body.productKey || 'deal_pass',
+                  dealId: body.dealId || null,
+                  userEmail: userEmail || null,
+                  interval: body.interval || null,
+                },
+              }),
+            });
+
+            if (dodoRes.ok) {
+              const dodoData = (await dodoRes.json()) as any;
+              const checkoutUrl = dodoData.checkout_url || dodoData.payment_link || dodoData.url;
+              if (checkoutUrl) {
+                return jsonResponse({ checkoutUrl }, 200, origin);
+              }
+            } else {
+              const errBody = await dodoRes.text();
+              console.error('[Worker] Dodo checkout creation returned error:', dodoRes.status, errBody);
+            }
+          } catch (err) {
+            console.error('[Worker] Dodo checkout error:', err);
+          }
+        }
+
+        // B. If Creem live integration configured
+        if (env.CREEM_API_KEY && env.CREEM_CHECKOUT_URL) {
+          try {
+            const creemRes = await fetch('https://api.creem.io/v1/checkouts', {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${env.CREEM_API_KEY}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                product_id: body.productKey === 'deal_pass' ? 'prod_deal_pass' : body.interval === 'month' ? 'prod_pro_monthly' : 'prod_pro_yearly',
+                customer_email: userEmail,
+                success_url: successUrl,
+                cancel_url: body.cancelUrl || `${url.origin}/?checkout_canceled=true`,
+                metadata: {
+                  productKey: body.productKey,
+                  dealId: body.dealId || null,
+                  userEmail,
+                },
+              }),
+            });
+            if (creemRes.ok) {
+              const creemData = (await creemRes.json()) as any;
+              return jsonResponse({ checkoutUrl: creemData.checkout_url || creemData.url }, 200, origin);
+            }
+          } catch (err) {
+            console.error('[Worker] Creem checkout creation failed:', err);
+          }
+        }
+
+        // Standard / Fallback Instant Checkout URL
+        const simulatedSessionId = `sess_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+        const target = new URL(successUrl);
+        target.searchParams.set('checkout_success', 'true');
+        target.searchParams.set('product_key', body.productKey || 'deal_pass');
+        if (body.dealId) target.searchParams.set('unlocked_deal_id', body.dealId);
+        if (body.interval) target.searchParams.set('interval', body.interval);
+        target.searchParams.set('session_id', simulatedSessionId);
+
+        return jsonResponse(
+          {
+            checkoutUrl: target.toString(),
+            isSimulated: true,
+          },
+          200,
+          origin
+        );
+      }
+
+      // 10. GET /api/billing/entitlements
+      if (url.pathname === '/api/billing/entitlements' && request.method === 'GET') {
+        const authHeader = request.headers.get('Authorization');
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          return jsonResponse(resolveEntitlements({ now: Date.now() }), 200, origin);
+        }
+        const token = authHeader.replace('Bearer ', '').trim();
+        const payload = await verifyJwt(token, secret);
+        if (!payload?.email) {
+          return jsonResponse(resolveEntitlements({ now: Date.now() }), 200, origin);
+        }
+
+        let subscription: SubscriptionRecord | null = null;
+        let purchases: PurchaseRecord[] = [];
+
+        if (env.DB) {
+          try {
+            const customer = await env.DB.prepare(
+              'SELECT id FROM billing_customers WHERE email = ? LIMIT 1'
+            ).bind(payload.email).first<{ id: string }>();
+
+            if (customer) {
+              const subRow = await env.DB.prepare(
+                'SELECT status, current_period_end, cancel_at_period_end, provider_price_id FROM billing_subscriptions WHERE customer_id = ? ORDER BY last_event_at DESC LIMIT 1'
+              ).bind(customer.id).first<{
+                status: string;
+                current_period_end: number;
+                cancel_at_period_end: number;
+                provider_price_id?: string;
+              }>();
+
+              if (subRow) {
+                subscription = {
+                  status: subRow.status,
+                  currentPeriodEnd: subRow.current_period_end,
+                  cancelAtPeriodEnd: Boolean(subRow.cancel_at_period_end),
+                  priceId: subRow.provider_price_id,
+                };
+              }
+
+              const purchaseRows = await env.DB.prepare(
+                'SELECT product_key, resource_id, refunded_at FROM billing_purchases WHERE customer_id = ?'
+              ).bind(customer.id).all<{
+                product_key: string;
+                resource_id: string | null;
+                refunded_at: number | null;
+              }>();
+
+              purchases = (purchaseRows.results || []).map((r) => ({
+                productKey: r.product_key,
+                resourceId: r.resource_id,
+                refundedAt: r.refunded_at,
+              }));
+            }
+          } catch (err) {
+            console.error('[Worker] Error loading entitlements from D1:', err);
+          }
+        }
+
+        const state = resolveEntitlements({
+          subscription,
+          purchases,
+          now: Date.now(),
+        });
+
+        return jsonResponse(state, 200, origin);
+      }
+
+      // 11. GET /api/tools/is-it-down?url=... (Website Status & Edge Latency Probe)
       if (url.pathname === '/api/tools/is-it-down' && request.method === 'GET') {
         const rawTarget = url.searchParams.get('url');
         if (!rawTarget) {

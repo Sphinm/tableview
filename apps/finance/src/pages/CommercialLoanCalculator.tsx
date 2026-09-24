@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import * as XLSX from 'xlsx';
 import {
   Building2,
   Download,
@@ -9,7 +8,9 @@ import {
   Share2,
   Check,
   ArrowRight,
-  TrendingUp
+  TrendingUp,
+  Bookmark,
+  Sparkles
 } from 'lucide-react';
 import {
   calculateCommercialLoan,
@@ -22,6 +23,9 @@ import { InfoTooltip } from '../components/InfoTooltip';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { AdSlot } from '../components/AdSlot';
+import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
+import { ProBrandingModal } from '../components/ProBrandingModal';
+import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import {
   CalculatorPresetsBar,
   type CalculatorPreset,
@@ -166,6 +170,9 @@ export const CommercialLoanCalculator = () => {
   const [copied, setCopied] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [activePresetId, setActivePresetId] = useState<string | null>('multifamily-5-25');
+  const [showDossierModal, setShowDossierModal] = useState(false);
+  const [showScenariosModal, setShowScenariosModal] = useState(false);
+  const [showBrandingModal, setShowBrandingModal] = useState(false);
 
   const handleSelectPreset = (preset: CalculatorPreset<CommercialLoanInputs>) => {
     setActivePresetId(preset.id);
@@ -194,8 +201,9 @@ export const CommercialLoanCalculator = () => {
     return calculateCommercialLoan(inputs);
   }, [inputs]);
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     trackUserClick('commercial_loan_export_excel');
+    const XLSX = await import('xlsx');
     const wb = XLSX.utils.book_new();
 
     const summarySheet = [
@@ -279,6 +287,28 @@ export const CommercialLoanCalculator = () => {
         actions={
           <>
             <PrintReportButton />
+            <button
+              type="button"
+              onClick={() => {
+                trackUserClick('commercial_saved_scenarios_click');
+                setShowScenariosModal(true);
+              }}
+              className="h-9 px-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 inline-flex items-center gap-2 shadow-2xs cursor-pointer transition-all active:scale-95"
+            >
+              <Bookmark className="size-4 text-cyan-700" />
+              <span>Saved Scenarios</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                trackUserClick('commercial_lender_dossier_click');
+                setShowDossierModal(true);
+              }}
+              className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-slate-900 to-cyan-950 hover:from-slate-800 hover:to-cyan-900 text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs cursor-pointer transition-all active:scale-95"
+            >
+              <Sparkles className="size-4 text-amber-300" />
+              <span>Lender Dossier</span>
+            </button>
             <button
               type="button"
               onClick={handleCopyLink}
@@ -545,7 +575,7 @@ export const CommercialLoanCalculator = () => {
         </div>
 
         {/* Right Financial Metrics (5 cols) */}
-        <div className="lg:col-span-5 p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between">
+        <div id="results-section" className="lg:col-span-5 p-6 rounded-2xl bg-white border border-slate-200 shadow-xs flex flex-col justify-between scroll-mt-20">
           <div>
             {/* Announce the recomputed debt service and balloon exposure. */}
             <ResultAnnouncer
@@ -779,6 +809,81 @@ export const CommercialLoanCalculator = () => {
 
       <MethodologyDisclosure type="commercial" />
       <AdSlot className="mt-8" />
+
+      {/* Mobile Sticky Summary Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            {summary.hasBalloonPayment ? `Yr ${summary.balloonTermYears} Balloon Due` : 'Monthly Payment'}
+          </div>
+          <div className="text-lg font-black text-slate-900 font-mono leading-tight">
+            <span className="text-cyan-700">${summary.regularMonthlyPayment.toLocaleString('en-US')}</span>
+            <span className="text-xs font-normal text-slate-500 font-sans ml-0.5">/mo</span>
+            {summary.hasBalloonPayment && (
+              <>
+                <span className="text-xs text-slate-400 font-sans mx-1.5">|</span>
+                <span className="text-sm text-slate-700 font-bold">${summary.balloonDueAmount.toLocaleString('en-US')}</span>
+              </>
+            )}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            const el = document.getElementById('results-section');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+          className="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 shadow-md active:scale-95 transition-transform cursor-pointer"
+        >
+          <span>View Details</span>
+          <ArrowRight className="size-3.5" />
+        </button>
+      </div>
+
+      {/* Modals */}
+      <SavedScenariosModal
+        isOpen={showScenariosModal}
+        onClose={() => setShowScenariosModal(false)}
+        calculatorId="commercial"
+        currentData={inputs}
+        currentMetrics={{
+          headline: `Payment: $${summary.regularMonthlyPayment.toLocaleString('en-US')}/mo · ${inputs.amortizationYears}Y Amort`,
+          subline: summary.hasBalloonPayment
+            ? `Yr ${summary.balloonTermYears} Balloon Due: $${summary.balloonDueAmount.toLocaleString('en-US')} (${summary.refinanceRiskLevel} Risk)`
+            : `Fully Amortizing 0 Balloon`,
+        }}
+        onLoadScenario={(loaded) => {
+          setInputs(loaded);
+        }}
+        onUpgradePro={() => {
+          setShowScenariosModal(false);
+          setShowDossierModal(true);
+        }}
+      />
+
+      <LenderReadyDossierModal
+        isOpen={showDossierModal}
+        onClose={() => setShowDossierModal(false)}
+        dealId={`cre_${Math.round(summary.loanAmount)}_${inputs.balloonTermYears}yr`}
+        dealTitle={`Commercial Loan · $${summary.loanAmount.toLocaleString('en-US')} (${inputs.balloonTermYears}Y Balloon)`}
+        onExportExcel={handleExportExcel}
+        onPrintOfficialPdf={() => window.print()}
+        onOpenBrandingSettings={() => {
+          setShowDossierModal(false);
+          setShowBrandingModal(true);
+        }}
+      />
+
+      <ProBrandingModal
+        isOpen={showBrandingModal}
+        onClose={() => setShowBrandingModal(false)}
+        onUpgradeToPro={() => {
+          setShowBrandingModal(false);
+          setShowDossierModal(true);
+        }}
+      />
     </div>
   );
 };

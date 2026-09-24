@@ -1,4 +1,4 @@
-import { useState, useEffect, startTransition } from 'react';
+import { useState, useEffect } from 'react';
 import { resolveRoutePath, type RouteState } from './resolveRoute';
 import { preloadRoute } from './routePreload';
 
@@ -155,7 +155,10 @@ export function navigateTo(to: string) {
 }
 
 export function useRouter() {
-  const [route, setRoute] = useState<RouteState>(() => parseCurrentLocation());
+  const [route, setRoute] = useState(() => ({
+    ...parseCurrentLocation(),
+    pathname: typeof window !== 'undefined' ? window.location.pathname : '/',
+  }));
 
   useEffect(() => {
     let lastPath = window.location.pathname;
@@ -172,10 +175,11 @@ export function useRouter() {
 
     const handleLocationChange = () => {
       const currentPath = window.location.pathname;
-      const newRoute = parseCurrentLocation();
-      startTransition(() => {
-        setRoute(newRoute);
-      });
+      const newRoute = {
+        ...parseCurrentLocation(),
+        pathname: currentPath,
+      };
+      setRoute(newRoute);
 
       if (currentPath !== lastPath) {
         lastPath = currentPath;
@@ -210,7 +214,7 @@ export function useRouter() {
 
   return {
     ...route,
-    pathname: typeof window !== 'undefined' ? window.location.pathname : '/',
+    pathname: route.pathname || route.path,
     navigate: navigateTo
   };
 }

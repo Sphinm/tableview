@@ -323,6 +323,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return true;
   };
 
+  const startCheckout = async (options: {
+    productKey: 'deal_pass' | 'pro_membership';
+    interval?: 'month' | 'year';
+    dealId?: string;
+  }): Promise<void> => {
+    trackUserAction('checkout_initiated', {
+      productKey: options.productKey,
+      interval: options.interval,
+      dealId: options.dealId,
+    });
+
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+    };
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    try {
+      const res = await fetch('/api/billing/create-checkout-session', {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          productKey: options.productKey,
+          interval: options.interval,
+          dealId: options.dealId,
+          successUrl: window.location.href,
+          cancelUrl: window.location.href,
+        }),
+      });
+
+      if (res.ok) {
+        const data = (await res.json()) as { checkoutUrl?: string; isSimulated?: boolean };
+        if (data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Checkout API request failed, applying local fallback:', err);
+    }
+
+    // Direct fallback if server endpoint is unreachable in client-only demo
+    if (options.productKey === 'pro_membership') {
+      await upgradePlan('pro');
+    } else if (options.productKey === 'deal_pass' && options.dealId) {
+      await purchaseSinglePass(options.dealId);
+    }
+  };
+
   const logout = () => {
     setUser(null);
     setSentryUser(null);
@@ -330,6 +381,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(TOKEN_STORAGE_KEY);
     localStorage.removeItem(MOCK_USER_KEY);
     fetch('/api/auth/logout', { method: 'POST' }).catch(() => {});
+  };
+
+  const isPro = user?.plan === 'pro';
+  const hasDealPass = (dealId: string): boolean => {
+    if (isPro) return true;
+    return Boolean(user?.purchasedDossiers?.includes(dealId));
   };
 
   // Initialize auth state on mount
@@ -346,6 +403,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           await verifyMagicLink(authToken);
           setIsLoading(false);
           return;
+        }
+
+        // 2. Check if returning from checkout (?checkout_success=true)
+        const checkoutSuccess = urlParams.get('checkout_success');
+        if (checkoutSuccess === 'true') {
+          const productKey = urlParams.get('product_key');
+          const unlockedDealId = urlParams.get('unlocked_deal_id');
+
+          urlParams.delete('checkout_success');
+          urlParams.delete('product_key');
+          urlParams.delete('unlocked_deal_id');
+          urlParams.delete('interval');
+          urlParams.delete('session_id');
+          const cleanSearch = urlParams.toString() ? `?${urlParams.toString()}` : '';
+          window.history.replaceState({}, '', `${window.location.pathname}${cleanSearch}`);
+
+          if (productKey === 'pro_membership') {
+            await upgradePlan('pro');
+          } else if (unlockedDealId) {
+            await purchaseSinglePass(unlockedDealId);
+          }
+          trackUserAction('checkout_completed', { productKey, unlockedDealId });
         }
       }
 
@@ -407,6 +486,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         updateBranding,
         purchaseSinglePass,
         upgradePlan,
+        startCheckout,
+        isPro,
+        hasDealPass,
         logout,
       }}
     >

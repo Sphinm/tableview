@@ -16,6 +16,8 @@ import {
   Building,
   Landmark,
   RefreshCw,
+  Bookmark,
+  Sparkles,
 } from 'lucide-react';
 import {
   calculateSection1031,
@@ -37,6 +39,9 @@ import { getUrlParams } from '../lib/urlState';
 import { PageHeader, PrintReportButton } from '../components/calculator-kit';
 import { SuiteSubNav } from '../components/SuiteSubNav';
 import { InfoTooltip } from '../components/InfoTooltip';
+import { SavedScenariosModal } from '../components/SavedScenariosModal';
+import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
+import { ProBrandingModal } from '../components/ProBrandingModal';
 import { trackUserClick } from '../lib/sentry';
 
 const PATH = '/section-1031-exchange-calculator';
@@ -249,6 +254,9 @@ export const Section1031Calculator = () => {
   const [showRates, setShowRates] = useState(false);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const [copiedNotice, setCopiedNotice] = useState(false);
+  const [showDossierModal, setShowDossierModal] = useState<boolean>(false);
+  const [showScenariosModal, setShowScenariosModal] = useState<boolean>(false);
+  const [showBrandingModal, setShowBrandingModal] = useState<boolean>(false);
 
   const inputs: Section1031Inputs = useMemo(
     () => ({
@@ -479,6 +487,28 @@ export const Section1031Calculator = () => {
         description="Compute realized gain, cash and mortgage boot, and net tax liability under IRC §1031. Tracks 45-day identification and 180-day exchange closing deadlines with 100% private in-browser math."
         actions={
           <>
+            <button
+              type="button"
+              onClick={() => {
+                trackUserClick('1031_saved_scenarios_click');
+                setShowScenariosModal(true);
+              }}
+              className="h-9 px-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 inline-flex items-center gap-2 shadow-2xs cursor-pointer transition-all active:scale-95"
+            >
+              <Bookmark className="size-4 text-indigo-600" />
+              <span>Saved Scenarios</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                trackUserClick('1031_dossier_click');
+                setShowDossierModal(true);
+              }}
+              className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-slate-900 to-indigo-950 hover:from-slate-800 hover:to-indigo-900 text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs cursor-pointer transition-all active:scale-95"
+            >
+              <Sparkles className="size-4 text-amber-300" />
+              <span>Official 1031 Dossier</span>
+            </button>
             <PrintReportButton label="Print Deal Summary" />
             <ShareCalculationButton
               params={shareParams}
@@ -1228,6 +1258,63 @@ export const Section1031Calculator = () => {
           </tbody>
         </table>
       </div>
+
+      {/* Modals */}
+      <SavedScenariosModal
+        isOpen={showScenariosModal}
+        onClose={() => setShowScenariosModal(false)}
+        calculatorId="1031"
+        currentData={inputs}
+        currentMetrics={{
+          headline: `Tax Deferred: ${fmt(result.taxSavedByExchanging)} · Realized Gain: ${fmt(result.realizedGain)}`,
+          subline: `Relinquished: ${fmt(salePrice)} → Replacement: ${fmt(replacementPurchasePrice)}`,
+        }}
+        onLoadScenario={(loaded) => {
+          if (loaded.salePrice !== undefined) setSalePrice(loaded.salePrice);
+          if (loaded.sellingCostsPercent !== undefined) setSellingCostsPercent(loaded.sellingCostsPercent);
+          if (loaded.qualifiedIntermediaryFee !== undefined) setQualifiedIntermediaryFee(loaded.qualifiedIntermediaryFee);
+          if (loaded.adjustedBasis !== undefined) setAdjustedBasis(loaded.adjustedBasis);
+          if (loaded.accumulatedDepreciation !== undefined) setAccumulatedDepreciation(loaded.accumulatedDepreciation);
+          if (loaded.existingMortgagePayoff !== undefined) setExistingMortgagePayoff(loaded.existingMortgagePayoff);
+          if (loaded.replacementPurchasePrice !== undefined) setReplacementPurchasePrice(loaded.replacementPurchasePrice);
+          if (loaded.acquisitionCosts !== undefined) setAcquisitionCosts(loaded.acquisitionCosts);
+          if (loaded.newMortgage !== undefined) setNewMortgage(loaded.newMortgage);
+          if (loaded.closingDate !== undefined) setClosingDate(loaded.closingDate);
+          if (loaded.filingExtension !== undefined) setFilingExtension(loaded.filingExtension);
+          if (loaded.propertiesIdentified !== undefined) setPropertiesIdentified(loaded.propertiesIdentified);
+          if (loaded.identifiedTotalFmv !== undefined) setIdentifiedTotalFmv(loaded.identifiedTotalFmv);
+          if (loaded.federalLtcgRatePercent !== undefined) setFederalLtcgRatePercent(loaded.federalLtcgRatePercent);
+          if (loaded.depreciationRecaptureRatePercent !== undefined) setDepreciationRecaptureRatePercent(loaded.depreciationRecaptureRatePercent);
+          if (loaded.stateTaxRatePercent !== undefined) setStateTaxRatePercent(loaded.stateTaxRatePercent);
+          if (loaded.applyNiit !== undefined) setApplyNiit(loaded.applyNiit);
+        }}
+        onUpgradePro={() => {
+          setShowScenariosModal(false);
+          setShowDossierModal(true);
+        }}
+      />
+
+      <LenderReadyDossierModal
+        isOpen={showDossierModal}
+        onClose={() => setShowDossierModal(false)}
+        dealId={`1031_${Math.round(salePrice)}_${Math.round(replacementPurchasePrice)}`}
+        dealTitle={`IRC §1031 Exchange · ${fmt(salePrice)} to ${fmt(replacementPurchasePrice)} (${fmt(result.taxSavedByExchanging)} Deferred)`}
+        onExportExcel={handleExportExcel}
+        onPrintOfficialPdf={() => window.print()}
+        onOpenBrandingSettings={() => {
+          setShowDossierModal(false);
+          setShowBrandingModal(true);
+        }}
+      />
+
+      <ProBrandingModal
+        isOpen={showBrandingModal}
+        onClose={() => setShowBrandingModal(false)}
+        onUpgradeToPro={() => {
+          setShowBrandingModal(false);
+          setShowDossierModal(true);
+        }}
+      />
 
       {copiedNotice && (
         <div className="fixed bottom-6 right-6 z-50 px-3.5 py-2 rounded-xl bg-indigo-600 text-white text-xs font-semibold shadow-2xl no-print">

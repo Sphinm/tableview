@@ -18,7 +18,8 @@ import {
   Bookmark,
   PiggyBank,
   HelpCircle,
-  Building2
+  Building2,
+  ArrowRight
 } from 'lucide-react';
 import {
   type RefinanceInputs,
@@ -976,7 +977,7 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
           />
 
           {/* Executive Verdict Card (High-Contrast Hero) */}
-          <div className="relative rounded-2xl border border-slate-800 bg-slate-900 text-white p-6 sm:p-8 shadow-lg overflow-hidden">
+          <div id="results-section" className="relative rounded-2xl border border-slate-800 bg-slate-900 text-white p-6 sm:p-8 shadow-lg overflow-hidden scroll-mt-20">
             <div className="absolute top-0 right-0 -mt-8 -mr-8 size-48 bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
 
             <div className="relative space-y-5 z-10">
@@ -1780,6 +1781,40 @@ export const RefinanceCalculator = ({ onTrySample: _onTrySample }: RefinanceCalc
       {/* Related Calculators Cross-Sell */}
       <div className="mb-8">
         <RelatedCalculators currentSlug="refinance-calculator" category="real-estate" />
+      </div>
+
+      {/* Mobile Sticky Summary Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-4 py-3 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500">
+            {summary.monthlyPaymentSavings >= 0 ? 'Monthly Savings' : 'Monthly Difference'}
+          </div>
+          <div className="text-lg font-black text-slate-900 font-mono leading-tight">
+            <span className={summary.monthlyPaymentSavings >= 0 ? 'text-emerald-700' : 'text-amber-700'}>
+              {summary.monthlyPaymentSavings >= 0 ? `+${fmt(summary.monthlyPaymentSavings)}` : `-${fmt(Math.abs(summary.monthlyPaymentSavings))}`}
+            </span>
+            <span className="text-xs font-normal text-slate-500 font-sans ml-0.5">/mo</span>
+            {summary.breakEvenMonths !== null && (
+              <>
+                <span className="text-xs text-slate-400 font-sans mx-1.5">|</span>
+                <span className="text-xs text-slate-600 font-sans font-medium">{summary.breakEvenMonths} mo break-even</span>
+              </>
+            )}
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            const el = document.getElementById('results-section');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+          className="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 shadow-md active:scale-95 transition-transform cursor-pointer"
+        >
+          <span>View Details</span>
+          <ArrowRight className="size-3.5" />
+        </button>
       </div>
     </div>
 

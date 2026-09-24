@@ -12,7 +12,8 @@ import {
   Sparkles,
   Printer,
   Share2,
-  Check
+  Check,
+  Bookmark
 } from 'lucide-react';
 import {
   calculateHardMoney,
@@ -21,6 +22,9 @@ import {
 } from '../lib/hardMoneyCalculator';
 import { updatePageMeta } from '../lib/router';
 import { CALCULATOR_META } from '../data/routeMeta';
+import { SavedScenariosModal } from '../components/SavedScenariosModal';
+import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
+import { ProBrandingModal } from '../components/ProBrandingModal';
 import { MethodologyDisclosure } from '../components/MethodologyDisclosure';
 import { AdSlot } from '../components/AdSlot';
 import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
@@ -268,6 +272,9 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
   const [realtorCommissionPercent, setRealtorCommissionPercent] = useState<number>(5.0);
   const [exitClosingCostsPercent, setExitClosingCostsPercent] = useState<number>(1.5);
   const [copiedLink, setCopiedLink] = useState<boolean>(false);
+  const [showDossierModal, setShowDossierModal] = useState<boolean>(false);
+  const [showScenariosModal, setShowScenariosModal] = useState<boolean>(false);
+  const [showBrandingModal, setShowBrandingModal] = useState<boolean>(false);
 
   const [activePresetId, setActivePresetId] = useState<string | null>('standard-flip');
 
@@ -446,6 +453,28 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
           description="Analyze short-term bridge financing, upfront points, monthly interest-only payments, and rehab budget draws. Accurately verify the 70% Rule of House Flipping and net cash-on-cash ROI with 100% private in-browser math."
           actions={
             <>
+              <button
+                type="button"
+                onClick={() => {
+                  trackUserClick('hardmoney_saved_scenarios_click');
+                  setShowScenariosModal(true);
+                }}
+                className="h-9 px-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 inline-flex items-center gap-2 shadow-2xs cursor-pointer transition-all active:scale-95"
+              >
+                <Bookmark className="size-4 text-amber-600" />
+                <span>Saved Scenarios</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  trackUserClick('hardmoney_lender_dossier_click');
+                  setShowDossierModal(true);
+                }}
+                className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-slate-900 to-amber-950 hover:from-slate-800 hover:to-amber-900 text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs cursor-pointer transition-all active:scale-95"
+              >
+                <Sparkles className="size-4 text-amber-300" />
+                <span>Lender Dossier</span>
+              </button>
               <PrintReportButton onPrint={handleExportPdf} label="Print Deal Sheet" />
               <button
                 type="button"
@@ -1299,6 +1328,59 @@ export const HardMoneyCalculator = ({ onTrySample: _onTrySample }: HardMoneyCalc
           <ArrowRight className="size-3.5" />
         </button>
       </div>
+
+      {/* Modals */}
+      <SavedScenariosModal
+        isOpen={showScenariosModal}
+        onClose={() => setShowScenariosModal(false)}
+        calculatorId="hardmoney"
+        currentData={inputs}
+        currentMetrics={{
+          headline: `Net Flip Profit: ${currencyFmt(result.netProfit)} (${result.roiPercent.toFixed(1)}% ROI)`,
+          subline: `Loan: ${currencyFmt(result.totalLoanAmount)} · Cash Required: ${currencyFmt(result.initialCashRequired)}`,
+        }}
+        onLoadScenario={(loaded) => {
+          if (loaded.purchasePrice !== undefined) setPurchasePrice(loaded.purchasePrice);
+          if (loaded.rehabBudget !== undefined) setRehabBudget(loaded.rehabBudget);
+          if (loaded.afterRepairValue !== undefined) setAfterRepairValue(loaded.afterRepairValue);
+          if (loaded.wholesalerAssignmentFee !== undefined) setWholesalerAssignmentFee(loaded.wholesalerAssignmentFee);
+          if (loaded.ltvPercent !== undefined) setLtvPercent(loaded.ltvPercent);
+          if (loaded.rehabFinancedPercent !== undefined) setRehabFinancedPercent(loaded.rehabFinancedPercent);
+          if (loaded.interestRate !== undefined) setInterestRate(loaded.interestRate);
+          if (loaded.originationPoints !== undefined) setOriginationPoints(loaded.originationPoints);
+          if (loaded.lenderUnderwritingFees !== undefined) setLenderUnderwritingFees(loaded.lenderUnderwritingFees);
+          if (loaded.projectDurationMonths !== undefined) setProjectDurationMonths(loaded.projectDurationMonths);
+          if (loaded.monthlyHoldingCosts !== undefined) setMonthlyHoldingCosts(loaded.monthlyHoldingCosts);
+          if (loaded.realtorCommissionPercent !== undefined) setRealtorCommissionPercent(loaded.realtorCommissionPercent);
+          if (loaded.exitClosingCostsPercent !== undefined) setExitClosingCostsPercent(loaded.exitClosingCostsPercent);
+        }}
+        onUpgradePro={() => {
+          setShowScenariosModal(false);
+          setShowDossierModal(true);
+        }}
+      />
+
+      <LenderReadyDossierModal
+        isOpen={showDossierModal}
+        onClose={() => setShowDossierModal(false)}
+        dealId={`hardmoney_${Math.round(purchasePrice)}_${Math.round(rehabBudget)}`}
+        dealTitle={`Fix & Flip Underwriting · ${currencyFmt(purchasePrice)} (ARV ${currencyFmt(afterRepairValue)})`}
+        onExportExcel={handleExportExcel}
+        onPrintOfficialPdf={handleExportPdf}
+        onOpenBrandingSettings={() => {
+          setShowDossierModal(false);
+          setShowBrandingModal(true);
+        }}
+      />
+
+      <ProBrandingModal
+        isOpen={showBrandingModal}
+        onClose={() => setShowBrandingModal(false)}
+        onUpgradeToPro={() => {
+          setShowBrandingModal(false);
+          setShowDossierModal(true);
+        }}
+      />
     </div>
 
     {/* Closing unit at the end of the editorial content. */}

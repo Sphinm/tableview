@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useDeferredValue } from 'react';
 import {
   Sparkles,
   ArrowRight,
@@ -12,6 +12,8 @@ import {
   SlidersHorizontal,
   Info,
   X,
+  Copy,
+  Check,
 } from 'lucide-react';
 import {
   analyzeDealIntent,
@@ -30,22 +32,27 @@ const SAMPLE_PRESETS = [
   {
     title: 'Dallas 4-Plex (DSCR)',
     text: 'Looking at a 4-plex in Dallas for $850k with $7,200/mo rental income. Borrower has 740 FICO, putting 25% down, evaluating a 30-yr DSCR loan at 7.5% rate.',
-    badge: 'DSCR Loan',
+    badge: 'DSCR Rental',
   },
   {
-    title: 'Seattle SFR ($650k, Missing Info)',
-    text: 'Looking to buy a $650,000 single family home in Seattle with 10% down. What is my estimated monthly mortgage payment?',
+    title: 'Austin Fix & Flip (Bridge)',
+    text: 'Fix and flip opportunity in Austin TX: $280k purchase price, $65k rehab budget, $420k projected ARV. 12-month bridge note with 2 points upfront.',
+    badge: 'Hard Money',
+  },
+  {
+    title: 'Seattle SFR ($650k Conforming)',
+    text: 'Looking to buy a $650,000 single family home in Seattle with 10% down. What is my estimated monthly mortgage payment with property taxes?',
     badge: 'Mortgage',
   },
   {
-    title: 'Sunnyvale Townhome ($1.2M)',
-    text: 'Contract on a $1,200,000 townhouse in Sunnyvale CA with 20% down payment and 6.625% 30-year fixed rate.',
-    badge: 'Conventional',
+    title: 'Denver Strip Center (CRE)',
+    text: 'Commercial retail strip center in Denver asking $2,400,000, 25% down payment, 5-year balloon note with 25-year amortization schedule at 7.125% rate.',
+    badge: 'CRE Balloon',
   },
   {
-    title: 'Cleveland Triplex (Cash Flow)',
-    text: 'Turnkey 3-unit rental property in Cleveland listed at $360,000, fully leased for $3,600/mo. Planning 25% down at 7.25%.',
-    badge: 'DSCR',
+    title: 'Florida 1031 (Tax Deferral)',
+    text: 'Selling a Florida rental property for $1,200,000 with $500k existing debt. Exploring Section 1031 like-kind exchange into replacement properties.',
+    badge: '1031 Tax',
   },
 ];
 
@@ -53,15 +60,40 @@ const PENDING_DEAL_STORAGE_KEY = 'tableview_pending_deal_prompt';
 
 export const AiDealCopilot: React.FC = () => {
   const { user, openAuthModal } = useAuth();
-  const [dealText, setDealText] = useState('');
-  const [restoredNotice, setRestoredNotice] = useState(false);
+  const [dealText, setDealText] = useState<string>(() => {
+    try {
+      const saved = sessionStorage.getItem(PENDING_DEAL_STORAGE_KEY);
+      if (saved) {
+        sessionStorage.removeItem(PENDING_DEAL_STORAGE_KEY);
+        return saved;
+      }
+    } catch {}
+    return '';
+  });
+  const [restoredNotice, setRestoredNotice] = useState<boolean>(() => {
+    // If dealText was initialized from session storage, show restored notice
+    try {
+      return Boolean(sessionStorage.getItem(PENDING_DEAL_STORAGE_KEY));
+    } catch {
+      return false;
+    }
+  });
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState<DealIntentResult | null>(null);
   const [instantCalc, setInstantCalc] = useState<InstantCalculationResult | null>(null);
   const [tweakDp, setTweakDp] = useState<number | undefined>(undefined);
   const [tweakTerm, setTweakTerm] = useState<number | undefined>(undefined);
+  const [copiedMemo, setCopiedMemo] = useState(false);
 
-  // Restore pending scenario text on mount or after successful sign-in
+  // Auto-dismiss restored notice after 8 seconds
+  useEffect(() => {
+    if (restoredNotice) {
+      const timer = setTimeout(() => setRestoredNotice(false), 8000);
+      return () => clearTimeout(timer);
+    }
+  }, [restoredNotice]);
+
+  // Restore pending scenario text after successful sign-in
   useEffect(() => {
     try {
       const saved = sessionStorage.getItem(PENDING_DEAL_STORAGE_KEY);
@@ -73,22 +105,21 @@ export const AiDealCopilot: React.FC = () => {
           prompt_length: saved.length,
           logged_in: Boolean(user),
         });
-        const timer = setTimeout(() => setRestoredNotice(false), 8000);
-        return () => clearTimeout(timer);
       }
     } catch {
       // Storage unavailable in private browsing mode
     }
   }, [user]);
 
-  // Real-time local parameter extraction (0ms client-side preview as you type)
+  // Real-time local parameter extraction (non-blocking deferred preview as you type)
+  const deferredDealText = useDeferredValue(dealText);
   const livePreview = useMemo(() => {
-    if (!dealText.trim()) return null;
-    return extractAndCalculateDeal(dealText, {
+    if (!deferredDealText.trim()) return null;
+    return extractAndCalculateDeal(deferredDealText, {
       downPaymentPercent: tweakDp,
       loanTermYears: tweakTerm,
     });
-  }, [dealText, tweakDp, tweakTerm]);
+  }, [deferredDealText, tweakDp, tweakTerm]);
 
   const executeCalculation = (
     textToAnalyze: string,
@@ -160,7 +191,6 @@ export const AiDealCopilot: React.FC = () => {
 
     // Preload and transition immediately to target calculator page
     preloadRoute(targetUrl);
-    await new Promise((r) => setTimeout(r, 180));
     setIsAnalyzing(false);
     navigateTo(targetUrl);
   };
@@ -240,6 +270,31 @@ export const AiDealCopilot: React.FC = () => {
 
     preloadRoute(route.split('?')[0]);
     navigateTo(route);
+  };
+
+  const handleCopyMemo = () => {
+    if (!instantCalc) return;
+    trackUserClick('deal_copilot_copy_memo_click');
+    const paramLines = instantCalc.params
+      .map((p) => `• ${p.label}: ${p.formattedValue}${p.isAssumed ? ' (Assumed benchmark)' : ''}`)
+      .join('\n');
+    const memo = [
+      `📊 Underwriting Memo · ${instantCalc.targetTitle}`,
+      `━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`,
+      `• ${instantCalc.primaryMetricLabel}: ${instantCalc.primaryMetricValue}`,
+      `• ${instantCalc.secondaryMetricLabel}: ${instantCalc.secondaryMetricValue}`,
+      `• Verdict: ${instantCalc.verdictLabel} (${instantCalc.verdictDescription})`,
+      ``,
+      `Key Underwriting Parameters:`,
+      paramLines,
+      ``,
+      `Full Interactive Model: https://tableview.dev${instantCalc.prefilledUrl}`,
+      `Calculated 100% in-browser on TableView Underwriting Suite`,
+    ].join('\n');
+
+    navigator.clipboard.writeText(memo);
+    setCopiedMemo(true);
+    setTimeout(() => setCopiedMemo(false), 2500);
   };
 
   return (
@@ -423,14 +478,34 @@ export const AiDealCopilot: React.FC = () => {
                 </div>
               </div>
 
-              <button
-                type="button"
-                onClick={() => handleLaunchTarget(instantCalc.prefilledUrl)}
-                className="btn-primary px-3.5 py-1.5 rounded-lg font-semibold text-xs flex items-center gap-1.5 cursor-pointer"
-              >
-                <span>Open Pre-filled in Calculator</span>
-                <ExternalLink className="size-3.5" />
-              </button>
+              <div className="flex flex-wrap items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleCopyMemo}
+                  className="px-3 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs flex items-center gap-1.5 transition-colors cursor-pointer shadow-2xs"
+                  title="Copy formatted deal summary to clipboard"
+                >
+                  {copiedMemo ? (
+                    <>
+                      <Check className="size-3.5 text-emerald-600" />
+                      <span className="text-emerald-700 font-bold">Memo Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="size-3.5 text-slate-500" />
+                      <span>Copy Memo</span>
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleLaunchTarget(instantCalc.prefilledUrl)}
+                  className="btn-primary px-3.5 py-1.5 rounded-lg font-semibold text-xs flex items-center gap-1.5 cursor-pointer"
+                >
+                  <span>Open Pre-filled in Calculator</span>
+                  <ExternalLink className="size-3.5" />
+                </button>
+              </div>
             </div>
 
             {/* Core Calculated Numbers Display */}

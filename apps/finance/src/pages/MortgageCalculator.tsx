@@ -155,6 +155,14 @@ export const MortgageCalculator = ({ onTrySample: _onTrySample }: MortgageCalcul
 
   useEffect(() => {
     const handleUrlSync = () => {
+      if (
+        typeof window !== 'undefined' &&
+        !window.location.pathname.startsWith('/mortgage-calculator') &&
+        !window.location.pathname.startsWith('/amortization-schedule-calculator') &&
+        !window.location.pathname.startsWith('/mortgage-payoff-calculator')
+      ) {
+        return;
+      }
       const search = window.location.search;
       if (!search) return;
       const params = new URLSearchParams(search);

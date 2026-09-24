@@ -27,6 +27,8 @@ import { AdSlot } from '../components/AdSlot';
 import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { PrintableDscrReport } from '../components/PrintableDscrReport';
 import { SavedScenariosModal } from '../components/SavedScenariosModal';
+import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
+import { ProBrandingModal } from '../components/ProBrandingModal';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
@@ -257,6 +259,8 @@ interface DscrCalculatorProps {
 export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProps) => {
   const { user, openAuthModal } = useAuth();
   const [showScenariosModal, setShowScenariosModal] = useState(false);
+  const [showDossierModal, setShowDossierModal] = useState(false);
+  const [showBrandingModal, setShowBrandingModal] = useState(false);
 
   useEffect(() => {
     updatePageMeta(
@@ -301,6 +305,9 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
 
   useEffect(() => {
     const handleUrlSync = () => {
+      if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/dscr-loan-calculator')) {
+        return;
+      }
       const search = window.location.search;
       if (!search) return;
       const params = new URLSearchParams(search);
@@ -592,6 +599,44 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
                     <span>Share Deal</span>
                   </>
                 )}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  trackUserClick('dscr_saved_scenarios_click', { logged_in: Boolean(user) });
+                  if (!user) {
+                    openAuthModal({
+                      reason: 'Please sign in with Google to save and compare deal scenarios.',
+                      onSuccess: () => setShowScenariosModal(true),
+                    });
+                    return;
+                  }
+                  setShowScenariosModal(true);
+                }}
+                className="h-9 px-3.5 rounded-xl bg-white hover:bg-slate-50 text-slate-700 hover:text-slate-900 text-xs font-semibold border border-slate-200 shadow-2xs transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+                title="Save or compare deal scenarios locally in your browser"
+              >
+                <Bookmark className="size-3.5 text-indigo-500" />
+                <span>Saved Scenarios</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  trackUserClick('dscr_lender_dossier_click', { logged_in: Boolean(user) });
+                  if (!user) {
+                    openAuthModal({
+                      reason: 'Please sign in with Google to access Institutional DSCR Lender Dossier.',
+                      onSuccess: () => setShowDossierModal(true),
+                    });
+                    return;
+                  }
+                  setShowDossierModal(true);
+                }}
+                className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold shadow-xs hover:shadow-amber-500/20 transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
+                title="Download official DSCR pre-approval PDF & live formulas Excel spreadsheet"
+              >
+                <Sparkles className="size-3.5 text-amber-100" />
+                <span>Lender Dossier</span>
               </button>
               <button
                 type="button"
@@ -1782,6 +1827,25 @@ export const DscrCalculator = ({ onTrySample: _onTrySample }: DscrCalculatorProp
         if (data.annualPropertyTax !== undefined) setAnnualPropertyTax(data.annualPropertyTax);
         if (data.annualInsurance !== undefined) setAnnualInsurance(data.annualInsurance);
         if (data.monthlyHoa !== undefined) setMonthlyHoa(data.monthlyHoa);
+      }}
+    />
+
+    <LenderReadyDossierModal
+      isOpen={showDossierModal}
+      onClose={() => setShowDossierModal(false)}
+      dealTitle={`DSCR Investor Loan · $${propertyValue.toLocaleString('en-US')} (${result.grossDscr.toFixed(2)}x DSCR)`}
+      dealId={`dscr_${propertyValue}_${Math.round(result.loanAmount)}_${interestRate}_${loanTermYears}`}
+      onExportExcel={handleExportExcel}
+      onPrintOfficialPdf={handleExportPdf}
+      onOpenBrandingSettings={() => setShowBrandingModal(true)}
+    />
+
+    <ProBrandingModal
+      isOpen={showBrandingModal}
+      onClose={() => setShowBrandingModal(false)}
+      onUpgradeToPro={() => {
+        setShowBrandingModal(false);
+        setShowDossierModal(true);
       }}
     />
 

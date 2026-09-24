@@ -24,6 +24,9 @@
 	],
 	"vars": {
 		"GOOGLE_CLIENT_ID": "31608768589-eiqse3nup8fffuhf17utrvjnt5085gg1.apps.googleusercontent.com",
-		"APP_URL": "https://tableview.dev"
+		"APP_URL": "https://tableview.dev",
+		"DODO_PRODUCT_DEAL_PASS": "pdt_0NoH8a1OCj6WLZs1X4QEp",
+		"DODO_PRODUCT_PRO_MONTHLY": "pdt_0NoH8xSY84Q9x8j4N0b0V",
+		"DODO_PRODUCT_PRO_YEARLY": "pdt_0NoH9OyMm3YOX0ump1AbW"
 	}
 }

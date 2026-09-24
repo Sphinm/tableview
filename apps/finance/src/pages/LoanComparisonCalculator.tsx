@@ -1,5 +1,4 @@
 import { useState, useMemo, useEffect } from 'react';
-import * as XLSX from 'xlsx';
 import {
   Scale,
   Download,
@@ -208,8 +207,9 @@ export const LoanComparisonCalculator = () => {
     return compareLoans(loanA, loanB);
   }, [loanA, loanB]);
 
-  const handleExportExcel = () => {
+  const handleExportExcel = async () => {
     trackUserClick('loan_comparison_export_excel');
+    const XLSX = await import('xlsx');
     const wb = XLSX.utils.book_new();
 
     const summaryData = [

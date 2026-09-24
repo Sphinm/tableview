@@ -37,16 +37,13 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
   onPrintOfficialPdf,
   onOpenBrandingSettings,
 }) => {
-  const { user, openAuthModal, purchaseSinglePass, upgradePlan } = useAuth();
+  const { user, openAuthModal, startCheckout, isPro, hasDealPass } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>('year');
-  const [successToast, setSuccessToast] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
-  const isPro = user?.plan === 'pro';
-  const hasPurchasedDeal = user?.purchasedDossiers?.includes(dealId);
-  const isUnlocked = isPro || hasPurchasedDeal;
+  const isUnlocked = isPro || hasDealPass(dealId);
 
   const handleBuySinglePass = async () => {
     trackUserClick('lender_dossier_buy_single_pass_click', { dealId, logged_in: Boolean(user) });
@@ -55,21 +52,15 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
         reason: 'Please sign in with Google to purchase a Single Deal Pass.',
         onSuccess: async () => {
           setIsProcessing(true);
-          await new Promise((r) => setTimeout(r, 600));
-          await purchaseSinglePass(dealId);
+          await startCheckout({ productKey: 'deal_pass', dealId });
           setIsProcessing(false);
-          setSuccessToast('Single Deal Pass unlocked! You can now download both files.');
-          setTimeout(() => setSuccessToast(null), 3500);
         },
       });
       return;
     }
     setIsProcessing(true);
-    await new Promise((r) => setTimeout(r, 600));
-    await purchaseSinglePass(dealId);
+    await startCheckout({ productKey: 'deal_pass', dealId });
     setIsProcessing(false);
-    setSuccessToast('Single Deal Pass unlocked! You can now download both files.');
-    setTimeout(() => setSuccessToast(null), 3500);
   };
 
   const handleUpgradePro = async () => {
@@ -79,21 +70,15 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
         reason: 'Please sign in with Google to upgrade to TableView Pro.',
         onSuccess: async () => {
           setIsProcessing(true);
-          await new Promise((r) => setTimeout(r, 700));
-          await upgradePlan('pro');
+          await startCheckout({ productKey: 'pro_membership', interval: billingCycle });
           setIsProcessing(false);
-          setSuccessToast('🎉 Welcome to TableView Pro! Unlimited exports and white-label branding unlocked.');
-          setTimeout(() => setSuccessToast(null), 4000);
         },
       });
       return;
     }
     setIsProcessing(true);
-    await new Promise((r) => setTimeout(r, 700));
-    await upgradePlan('pro');
+    await startCheckout({ productKey: 'pro_membership', interval: billingCycle });
     setIsProcessing(false);
-    setSuccessToast('🎉 Welcome to TableView Pro! Unlimited exports and white-label branding unlocked.');
-    setTimeout(() => setSuccessToast(null), 4000);
   };
 
   return (
@@ -129,14 +114,6 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
             <X className="size-5" />
           </button>
         </div>
-
-        {/* Success Toast */}
-        {successToast && (
-          <div className="p-3 bg-emerald-500 text-white text-xs font-semibold text-center flex items-center justify-center gap-2 animate-in fade-in">
-            <CheckCircle2 className="size-4" />
-            <span>{successToast}</span>
-          </div>
-        )}
 
         <div className="p-6 md:p-8 space-y-6">
           {/* Trust Banner: Zero Spam, 100% In-Browser */}
@@ -389,7 +366,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
 
           {/* Footer Guarantee */}
           <div className="pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-500">
-            <span>🔒 Secure checkout powered by Stripe. Cancel anytime.</span>
+            <span>🔒 Bank-grade 256-bit encrypted checkout. Instant activation. Cancel anytime.</span>
             <div className="flex items-center gap-3">
               <span>Instant Download</span>
               <span>•</span>

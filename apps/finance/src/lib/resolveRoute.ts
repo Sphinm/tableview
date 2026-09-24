@@ -111,6 +111,11 @@ export function resolveRoutePath(cleanPath: string): RouteState {
     if (pattern.test(raw)) return { path };
   }
 
+  const shareMatch = raw.match(/^\/share\/([a-zA-Z0-9_-]+)$/);
+  if (shareMatch) {
+    return { path: '/share/:dealId', slug: shareMatch[1] };
+  }
+
   if (SALARY_LONG_TAIL_MAP[raw]) {
     return { path: '/salary-to-hourly-calculator', slug: SALARY_LONG_TAIL_MAP[raw].slug };
   }

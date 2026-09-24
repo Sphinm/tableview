@@ -14,7 +14,8 @@ import {
   PieChart,
   Layers,
   Sparkles,
-  Info
+  Info,
+  Bookmark
 } from 'lucide-react';
 import {
   calculateRentalProperty,
@@ -30,6 +31,9 @@ import { CalculatorFaqSection } from '../components/CalculatorFaqSection';
 import { RelatedCalculators } from '../components/RelatedCalculators';
 import { CurrencyInput } from '../components/CurrencyInput';
 import { NumericInput } from '../components/NumericInput';
+import { LenderReadyDossierModal } from '../components/LenderReadyDossierModal';
+import { ProBrandingModal } from '../components/ProBrandingModal';
+import { SavedScenariosModal } from '../components/SavedScenariosModal';
 import {
   CalculatorPresetsBar,
   type CalculatorPreset,
@@ -65,6 +69,9 @@ export default function CapRateCalculator() {
   const [form, setForm] = useState<RentalPropertyInput>(RENTAL_PRESETS[0].input);
   const [copiedLink, setCopiedLink] = useState(false);
   const [activeTab, setActiveTab] = useState<'summary' | 'cashflow' | 'projections'>('summary');
+  const [showDossierModal, setShowDossierModal] = useState(false);
+  const [showScenariosModal, setShowScenariosModal] = useState(false);
+  const [showBrandingModal, setShowBrandingModal] = useState(false);
 
   useEffect(() => {
     const meta = CALCULATOR_META['/cap-rate-calculator'];
@@ -200,6 +207,28 @@ export default function CapRateCalculator() {
             <>
               <button
                 type="button"
+                onClick={() => {
+                  trackUserClick('caprate_saved_scenarios_click');
+                  setShowScenariosModal(true);
+                }}
+                className="h-9 px-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 inline-flex items-center gap-2 shadow-2xs cursor-pointer transition-all active:scale-95"
+              >
+                <Bookmark className="size-4 text-indigo-600" />
+                <span>Saved Scenarios</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  trackUserClick('caprate_lender_dossier_click');
+                  setShowDossierModal(true);
+                }}
+                className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-slate-900 to-indigo-950 hover:from-slate-800 hover:to-indigo-900 text-white text-xs font-bold inline-flex items-center gap-2 shadow-xs cursor-pointer transition-all active:scale-95"
+              >
+                <Sparkles className="size-4 text-amber-300" />
+                <span>Lender Dossier</span>
+              </button>
+              <button
+                type="button"
                 onClick={handleShareDeal}
                 className="h-9 px-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-xs font-semibold text-slate-700 inline-flex items-center gap-2 shadow-2xs cursor-pointer transition-all active:scale-95"
               >
@@ -238,7 +267,7 @@ export default function CapRateCalculator() {
         <SuiteSubNav suite="commercial" />
 
         {/* Primary KPI Header Cards */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div id="results-section" className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 scroll-mt-20">
           {/* NOI Card */}
           <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-xs relative overflow-hidden">
             <div className="flex items-center justify-between text-slate-500 mb-1.5">
@@ -1025,6 +1054,75 @@ export default function CapRateCalculator() {
         {/* Related Calculators Cross-Promotion */}
         <RelatedCalculators currentSlug="cap-rate-calculator" category="real-estate" />
       </div>
+
+      {/* Mobile Sticky Summary Bottom Bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-4 py-2.5 shadow-lg flex items-center justify-between gap-3">
+        <div>
+          <span className="text-[10px] uppercase font-semibold text-slate-500 block leading-tight">
+            Cap Rate · Cash Flow
+          </span>
+          <div className="text-lg font-black text-slate-900 font-mono leading-tight">
+            <span className="text-emerald-700">{percentFmt(output.capRate)}</span>
+            <span className="text-xs text-slate-400 font-sans mx-1.5">|</span>
+            <span>{currencyFmt(output.netCashFlowMonthly)}</span>
+            <span className="text-xs font-normal text-slate-500 font-sans ml-0.5">/mo</span>
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            const el = document.getElementById('results-section');
+            if (el) {
+              el.scrollIntoView({ behavior: 'smooth' });
+            }
+          }}
+          className="btn-primary px-3.5 py-1.5 rounded-xl text-xs font-bold inline-flex items-center gap-1.5 shadow-md active:scale-95 transition-transform cursor-pointer"
+        >
+          <span>View Details</span>
+          <ArrowRight className="size-3.5" />
+        </button>
+      </div>
+
+      {/* Modals */}
+      <SavedScenariosModal
+        isOpen={showScenariosModal}
+        onClose={() => setShowScenariosModal(false)}
+        calculatorId="caprate"
+        currentData={form}
+        currentMetrics={{
+          headline: `Cap Rate: ${percentFmt(output.capRate)} · Net Cash Flow: ${currencyFmt(output.netCashFlowMonthly)}/mo`,
+          subline: `NOI: ${currencyFmt(output.noiAnnual)}/yr · Cash-on-Cash: ${percentFmt(output.cashOnCashReturn)}`,
+        }}
+        onLoadScenario={(loaded) => {
+          setForm(loaded);
+        }}
+        onUpgradePro={() => {
+          setShowScenariosModal(false);
+          setShowDossierModal(true);
+        }}
+      />
+
+      <LenderReadyDossierModal
+        isOpen={showDossierModal}
+        onClose={() => setShowDossierModal(false)}
+        dealId={`caprate_${Math.round(form.purchasePrice)}_${Math.round(output.noiAnnual)}`}
+        dealTitle={`Rental Evaluation · ${currencyFmt(form.purchasePrice)} (${percentFmt(output.capRate)} Cap Rate)`}
+        onExportExcel={handleExportExcel}
+        onPrintOfficialPdf={() => window.print()}
+        onOpenBrandingSettings={() => {
+          setShowDossierModal(false);
+          setShowBrandingModal(true);
+        }}
+      />
+
+      <ProBrandingModal
+        isOpen={showBrandingModal}
+        onClose={() => setShowBrandingModal(false)}
+        onUpgradeToPro={() => {
+          setShowBrandingModal(false);
+          setShowDossierModal(true);
+        }}
+      />
     </div>
   );
 }

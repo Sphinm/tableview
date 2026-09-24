@@ -14,13 +14,19 @@ import {
   LogOut,
   BookOpen,
   Hammer,
-  ShieldCheck
+  ShieldCheck,
+  FolderKanban
 } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { useAuth } from '../lib/useAuth';
 import { navigateTo } from '../lib/router';
+import { preloadRoutes } from '../lib/routePreload';
 import { getCrossSuiteUrl } from '@tableview/shared';
 import { trackUserClick } from '../lib/sentry';
+import { MySavedDealsModal } from './MySavedDealsModal';
+import { ProBrandingModal } from './ProBrandingModal';
+import { LenderReadyDossierModal } from './LenderReadyDossierModal';
+import { getTotalSavedDealsCount } from '../lib/savedDealsManager';
 
 interface FinanceHeaderProps {
   currentPath: string;
@@ -46,6 +52,12 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
   const commRef = useRef<HTMLDivElement>(null);
   const taxRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // User modal states
+  const [showSavedDealsModal, setShowSavedDealsModal] = useState(false);
+  const [showBrandingModal, setShowBrandingModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const savedDealsCount = userMenuOpen || mobileMenuOpen ? getTotalSavedDealsCount() : 0;
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -156,9 +168,16 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
               <button
                 type="button"
                 onClick={() => {
-                  setResidentialOpen(!residentialOpen);
+                  const next = !residentialOpen;
+                  setResidentialOpen(next);
                   setCommercialOpen(false);
                   setTaxOpen(false);
+                  if (next) {
+                    preloadRoutes(['/mortgage-calculator', '/refinance-calculator', '/loan-comparison-calculator']);
+                  }
+                }}
+                onMouseEnter={() => {
+                  preloadRoutes(['/mortgage-calculator', '/refinance-calculator', '/loan-comparison-calculator']);
                 }}
                 aria-expanded={residentialOpen}
                 aria-haspopup="true"
@@ -183,6 +202,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   </div>
                   <button
                     type="button"
+                    data-route="/mortgage-calculator"
                     onClick={() => handleNav('/mortgage-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
@@ -199,6 +219,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
 
                   <button
                     type="button"
+                    data-route="/refinance-calculator"
                     onClick={() => handleNav('/refinance-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
@@ -215,6 +236,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
 
                   <button
                     type="button"
+                    data-route="/loan-comparison-calculator"
                     onClick={() => handleNav('/loan-comparison-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
@@ -237,9 +259,16 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
               <button
                 type="button"
                 onClick={() => {
-                  setCommercialOpen(!commercialOpen);
+                  const next = !commercialOpen;
+                  setCommercialOpen(next);
                   setResidentialOpen(false);
                   setTaxOpen(false);
+                  if (next) {
+                    preloadRoutes(['/cap-rate-calculator', '/dscr-loan-calculator', '/hard-money-calculator', '/commercial-loan-calculator']);
+                  }
+                }}
+                onMouseEnter={() => {
+                  preloadRoutes(['/cap-rate-calculator', '/dscr-loan-calculator', '/hard-money-calculator', '/commercial-loan-calculator']);
                 }}
                 aria-expanded={commercialOpen}
                 aria-haspopup="true"
@@ -264,6 +293,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   </div>
                   <button
                     type="button"
+                    data-route="/cap-rate-calculator"
                     onClick={() => handleNav('/cap-rate-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
@@ -285,6 +315,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
 
                   <button
                     type="button"
+                    data-route="/dscr-loan-calculator"
                     onClick={() => handleNav('/dscr-loan-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
@@ -306,6 +337,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
 
                   <button
                     type="button"
+                    data-route="/hard-money-calculator"
                     onClick={() => handleNav('/hard-money-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
@@ -327,6 +359,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
 
                   <button
                     type="button"
+                    data-route="/commercial-loan-calculator"
                     onClick={() => handleNav('/commercial-loan-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
@@ -349,9 +382,16 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
               <button
                 type="button"
                 onClick={() => {
-                  setTaxOpen(!taxOpen);
+                  const next = !taxOpen;
+                  setTaxOpen(next);
                   setResidentialOpen(false);
                   setCommercialOpen(false);
+                  if (next) {
+                    preloadRoutes(['/section-1031-exchange-calculator', '/1031-exchange-timeline-calculator', '/salary-to-hourly-calculator', '/calculators']);
+                  }
+                }}
+                onMouseEnter={() => {
+                  preloadRoutes(['/section-1031-exchange-calculator', '/1031-exchange-timeline-calculator', '/salary-to-hourly-calculator', '/calculators']);
                 }}
                 aria-expanded={taxOpen}
                 aria-haspopup="true"
@@ -376,6 +416,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   </div>
                   <button
                     type="button"
+                    data-route="/section-1031-exchange-calculator"
                     onClick={() => handleNav('/section-1031-exchange-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
@@ -392,6 +433,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
 
                   <button
                     type="button"
+                    data-route="/1031-exchange-timeline-calculator"
                     onClick={() => handleNav('/1031-exchange-timeline-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
@@ -408,6 +450,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
 
                   <button
                     type="button"
+                    data-route="/salary-to-hourly-calculator"
                     onClick={() => handleNav('/salary-to-hourly-calculator')}
                     className="w-full text-left p-2.5 rounded-xl hover:bg-slate-50 flex items-start gap-2.5 transition-colors cursor-pointer"
                   >
@@ -425,6 +468,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   <div className="pt-2 border-t border-slate-100 mt-1">
                     <button
                       type="button"
+                      data-route="/calculators"
                       onClick={() => handleNav('/calculators')}
                       className="w-full py-1.5 px-3 rounded-lg text-xs font-bold text-indigo-600 hover:bg-indigo-50 flex items-center justify-between transition-colors cursor-pointer"
                     >
@@ -439,6 +483,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
             {/* 4. Guides Hub */}
             <button
               type="button"
+              data-route="/guides"
               onClick={() => handleNav('/guides')}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-colors cursor-pointer ${
                 isGuidesActive
@@ -482,11 +527,58 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                     <div className="font-bold text-slate-900 truncate">{user.name}</div>
                     <div className="text-[11px] text-slate-500 truncate">{user.email}</div>
                   </div>
-                  <div className="py-1">
+                  <div className="py-1 border-b border-slate-100">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        trackUserClick('header_user_menu_saved_deals');
+                        setShowSavedDealsModal(true);
+                        setUserMenuOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 text-slate-800 hover:bg-slate-50 rounded-xl flex items-center justify-between font-semibold transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <FolderKanban className="size-3.5 text-indigo-600" />
+                        <span>My Saved Deals</span>
+                      </div>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 font-mono text-slate-600">
+                        {savedDealsCount}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        trackUserClick('header_user_menu_branding_profile');
+                        setShowBrandingModal(true);
+                        setUserMenuOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 text-slate-800 hover:bg-slate-50 rounded-xl flex items-center gap-2 font-semibold transition-colors cursor-pointer"
+                    >
+                      <Building2 className="size-3.5 text-indigo-600" />
+                      <span>Branding Profile</span>
+                    </button>
+                  </div>
+
+                  <div className="py-1 border-b border-slate-100">
                     <div className="px-3 py-1.5 flex items-center justify-between text-[11px]">
                       <span className="text-slate-500">Plan Status</span>
                       <span className="font-bold text-indigo-600 uppercase">{user.plan || 'Free'}</span>
                     </div>
+                    {user.plan !== 'pro' && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          trackUserClick('header_user_menu_upgrade_pro');
+                          setShowUpgradeModal(true);
+                          setUserMenuOpen(false);
+                        }}
+                        className="w-full text-left px-3 py-1.5 text-indigo-700 hover:bg-indigo-50 rounded-xl flex items-center gap-1.5 font-bold transition-colors cursor-pointer text-xs"
+                      >
+                        <Sparkles className="size-3 text-amber-500" />
+                        <span>Upgrade to Pro ($149/yr)</span>
+                      </button>
+                    )}
                   </div>
                   <button
                     type="button"
@@ -551,6 +643,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
               <div className="p-1 space-y-0.5 bg-white">
                 <button
                   type="button"
+                  data-route="/mortgage-calculator"
                   onClick={() => handleNav('/mortgage-calculator')}
                   className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-between"
                 >
@@ -559,6 +652,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                 </button>
                 <button
                   type="button"
+                  data-route="/refinance-calculator"
                   onClick={() => handleNav('/refinance-calculator')}
                   className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-between"
                 >
@@ -567,6 +661,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                 </button>
                 <button
                   type="button"
+                  data-route="/loan-comparison-calculator"
                   onClick={() => handleNav('/loan-comparison-calculator')}
                   className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-between"
                 >
@@ -594,6 +689,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
               <div className="p-1 space-y-0.5 bg-white">
                 <button
                   type="button"
+                  data-route="/cap-rate-calculator"
                   onClick={() => handleNav('/cap-rate-calculator')}
                   className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-between"
                 >
@@ -602,6 +698,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                 </button>
                 <button
                   type="button"
+                  data-route="/dscr-loan-calculator"
                   onClick={() => handleNav('/dscr-loan-calculator')}
                   className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-between"
                 >
@@ -610,6 +707,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                 </button>
                 <button
                   type="button"
+                  data-route="/hard-money-calculator"
                   onClick={() => handleNav('/hard-money-calculator')}
                   className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-between"
                 >
@@ -618,6 +716,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                 </button>
                 <button
                   type="button"
+                  data-route="/commercial-loan-calculator"
                   onClick={() => handleNav('/commercial-loan-calculator')}
                   className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-between"
                 >
@@ -645,6 +744,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
               <div className="p-1 space-y-0.5 bg-white">
                 <button
                   type="button"
+                  data-route="/section-1031-exchange-calculator"
                   onClick={() => handleNav('/section-1031-exchange-calculator')}
                   className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-between"
                 >
@@ -653,6 +753,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                 </button>
                 <button
                   type="button"
+                  data-route="/salary-to-hourly-calculator"
                   onClick={() => handleNav('/salary-to-hourly-calculator')}
                   className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-between"
                 >
@@ -661,6 +762,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                 </button>
                 <button
                   type="button"
+                  data-route="/calculators"
                   onClick={() => handleNav('/calculators')}
                   className="w-full text-left px-3 py-2 text-xs text-slate-800 hover:bg-slate-50 rounded-lg flex items-center justify-between"
                 >
@@ -674,6 +776,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
           {/* 4. Guides Hub Link */}
           <button
             type="button"
+            data-route="/guides"
             onClick={() => handleNav('/guides')}
             className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-900 hover:bg-slate-50"
           >
@@ -691,6 +794,37 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
           </div>
         </div>
       )}
+
+      <MySavedDealsModal
+        isOpen={showSavedDealsModal}
+        onClose={() => setShowSavedDealsModal(false)}
+        onUpgradePro={() => {
+          setShowSavedDealsModal(false);
+          setShowUpgradeModal(true);
+        }}
+      />
+
+      <ProBrandingModal
+        isOpen={showBrandingModal}
+        onClose={() => setShowBrandingModal(false)}
+        onUpgradeToPro={() => {
+          setShowBrandingModal(false);
+          setShowUpgradeModal(true);
+        }}
+      />
+
+      <LenderReadyDossierModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        dealId="pro_upgrade_header"
+        dealTitle="TableView Pro Membership"
+        onExportExcel={() => {}}
+        onPrintOfficialPdf={() => {}}
+        onOpenBrandingSettings={() => {
+          setShowUpgradeModal(false);
+          setShowBrandingModal(true);
+        }}
+      />
     </header>
   );
 };
