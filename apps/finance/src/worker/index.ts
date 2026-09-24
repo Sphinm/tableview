@@ -564,10 +564,62 @@ export default {
             if (existingUser) {
               userCredits = existingUser.credits;
               userPlan = existingUser.plan;
+
+              try {
+                const customerRows = await env.DB.prepare(
+                  'SELECT id FROM billing_customers WHERE email = ? OR user_id = ?'
+                ).bind(email, existingUser.id).all<{ id: string }>();
+                const customerIds = (customerRows.results || []).map((c) => c.id);
+
+                if (customerIds.length > 0) {
+                  const placeholders = customerIds.map(() => '?').join(',');
+                  const subRow = await env.DB.prepare(
+                    `SELECT status, current_period_end, cancel_at_period_end, provider_price_id FROM billing_subscriptions WHERE customer_id IN (${placeholders}) ORDER BY last_event_at DESC LIMIT 1`
+                  ).bind(...customerIds).first<{
+                    status: string;
+                    current_period_end: number;
+                    cancel_at_period_end: number;
+                    provider_price_id?: string;
+                  }>();
+
+                  const purchaseRows = await env.DB.prepare(
+                    `SELECT product_key, resource_id, refunded_at FROM billing_purchases WHERE customer_id IN (${placeholders})`
+                  ).bind(...customerIds).all<{
+                    product_key: string;
+                    resource_id: string | null;
+                    refunded_at: number | null;
+                  }>();
+
+                  const ent = resolveEntitlements({
+                    subscription: subRow
+                      ? {
+                          status: subRow.status,
+                          currentPeriodEnd: subRow.current_period_end,
+                          cancelAtPeriodEnd: Boolean(subRow.cancel_at_period_end),
+                          priceId: subRow.provider_price_id,
+                        }
+                      : null,
+                    purchases: (purchaseRows.results || []).map((r) => ({
+                      productKey: r.product_key,
+                      resourceId: r.resource_id,
+                      refundedAt: r.refunded_at,
+                    })),
+                    now,
+                  });
+
+                  if (ent.plan === 'pro') {
+                    userPlan = 'pro';
+                    userCredits = Math.max(userCredits, 5000);
+                  }
+                }
+              } catch (entErr) {
+                console.error('[Worker] Error resolving entitlements in Google auth:', entErr);
+              }
+
               await env.DB.prepare(
-                'UPDATE users SET name = ?, avatar_url = ?, updated_at = ? WHERE email = ?'
+                'UPDATE users SET name = ?, avatar_url = ?, plan = ?, credits = ?, updated_at = ? WHERE email = ?'
               )
-                .bind(name, avatarUrl, now, email)
+                .bind(name, avatarUrl, userPlan, userCredits, now, email)
                 .run();
             } else {
               const userId = crypto.randomUUID();
@@ -630,6 +682,68 @@ export default {
             .first<UserRecord>();
 
           if (dbUser) {
+            let userPlan: 'free' | 'basic' | 'pro' = dbUser.plan;
+            let purchasedDossiers: string[] = [];
+
+            try {
+              const customerRows = await env.DB.prepare(
+                'SELECT id FROM billing_customers WHERE email = ? OR user_id = ?'
+              ).bind(payload.email, dbUser.id).all<{ id: string }>();
+              const customerIds = (customerRows.results || []).map((c) => c.id);
+
+              if (customerIds.length > 0) {
+                const placeholders = customerIds.map(() => '?').join(',');
+                const subRow = await env.DB.prepare(
+                  `SELECT status, current_period_end, cancel_at_period_end, provider_price_id FROM billing_subscriptions WHERE customer_id IN (${placeholders}) ORDER BY last_event_at DESC LIMIT 1`
+                ).bind(...customerIds).first<{
+                  status: string;
+                  current_period_end: number;
+                  cancel_at_period_end: number;
+                  provider_price_id?: string;
+                }>();
+
+                const purchaseRows = await env.DB.prepare(
+                  `SELECT product_key, resource_id, refunded_at FROM billing_purchases WHERE customer_id IN (${placeholders})`
+                ).bind(...customerIds).all<{
+                  product_key: string;
+                  resource_id: string | null;
+                  refunded_at: number | null;
+                }>();
+
+                const ent = resolveEntitlements({
+                  subscription: subRow
+                    ? {
+                        status: subRow.status,
+                        currentPeriodEnd: subRow.current_period_end,
+                        cancelAtPeriodEnd: Boolean(subRow.cancel_at_period_end),
+                        priceId: subRow.provider_price_id,
+                      }
+                    : null,
+                  purchases: (purchaseRows.results || []).map((r) => ({
+                    productKey: r.product_key,
+                    resourceId: r.resource_id,
+                    refundedAt: r.refunded_at,
+                  })),
+                  now: Date.now(),
+                });
+
+                if (ent.plan === 'pro') {
+                  userPlan = 'pro';
+                  if (dbUser.plan !== 'pro') {
+                    await env.DB.prepare(
+                      'UPDATE users SET plan = ?, credits = MAX(credits, 5000), updated_at = ? WHERE id = ?'
+                    )
+                      .bind('pro', Date.now(), dbUser.id)
+                      .run();
+                  }
+                }
+
+                purchasedDossiers = ent.dealPasses || [];
+              }
+            } catch (entErr) {
+              console.error('[Worker] Error loading entitlements in /api/auth/me:', entErr);
+            }
+
             return jsonResponse(
               {
                 user: {
@@ -637,8 +751,9 @@ export default {
                   email: dbUser.email,
                   name: dbUser.name || dbUser.email.split('@')[0],
                   avatarUrl: dbUser.avatar_url,
-                  plan: dbUser.plan,
-                  credits: dbUser.credits,
+                  plan: userPlan,
+                  credits: userPlan === 'pro' ? Math.max(dbUser.credits, 5000) : dbUser.credits,
+                  purchasedDossiers,
                 },
               },
               200,
@@ -866,9 +981,15 @@ export default {
             if (userEmail) metadata.userEmail = userEmail;
             if (body.interval) metadata.interval = body.interval;
 
+            const returnUrl = new URL(successUrl);
+            returnUrl.searchParams.set('checkout_success', 'true');
+            returnUrl.searchParams.set('product_key', body.productKey || 'deal_pass');
+            if (body.dealId) returnUrl.searchParams.set('unlocked_deal_id', body.dealId);
+            if (body.interval) returnUrl.searchParams.set('interval', body.interval);
+
             const dodoPayload: Record<string, any> = {
               product_cart: [{ product_id: productId, quantity: 1 }],
-              return_url: successUrl,
+              return_url: returnUrl.toString(),
               metadata,
             };
             if (userEmail) {
@@ -965,7 +1086,157 @@ export default {
         );
       }
 
-      // 10. GET /api/billing/entitlements
+      // 10. POST /api/billing/confirm-checkout
+      if (url.pathname === '/api/billing/confirm-checkout' && request.method === 'POST') {
+        const authHeader = request.headers.get('Authorization');
+        const body = (await request.json().catch(() => ({}))) as {
+          productKey?: 'deal_pass' | 'pro_membership';
+          interval?: 'month' | 'year';
+          dealId?: string;
+          paymentId?: string;
+          status?: string;
+        };
+
+        let userEmail: string | null = null;
+        if (authHeader && authHeader.startsWith('Bearer ')) {
+          const token = authHeader.replace('Bearer ', '').trim();
+          const payload = await verifyJwt(token, secret);
+          if (payload?.email) {
+            userEmail = payload.email;
+          }
+        }
+
+        let isVerified = false;
+        let dodoCustomerEmail: string | null = null;
+        if (body.paymentId && env.DODO_PAYMENTS_API_KEY) {
+          try {
+            const isTest = env.DODO_MODE === 'test' || env.DODO_PAYMENTS_API_KEY.startsWith('test_');
+            const dodoBase = isTest ? 'https://test.dodopayments.com' : 'https://live.dodopayments.com';
+            const payRes = await fetch(`${dodoBase}/payments/${body.paymentId}`, {
+              headers: { Authorization: `Bearer ${env.DODO_PAYMENTS_API_KEY}` },
+            });
+            if (payRes.ok) {
+              const payData = (await payRes.json()) as any;
+              if (payData.status === 'succeeded') {
+                isVerified = true;
+                dodoCustomerEmail = payData.customer?.email || payData.customer_email || payData.email || null;
+              }
+            }
+          } catch (e) {
+            console.error('[Worker] Error verifying payment with Dodo:', e);
+          }
+        } else if (body.status === 'succeeded' || body.status === 'completed') {
+          isVerified = true;
+        }
+
+        const effectiveEmail = userEmail || dodoCustomerEmail;
+
+        if (env.DB && effectiveEmail) {
+          try {
+            const now = Date.now();
+            let userId: string | null = null;
+            const dbUser = await env.DB.prepare('SELECT id, plan, credits FROM users WHERE email = ?')
+              .bind(effectiveEmail)
+              .first<{ id: string; plan: string; credits: number }>();
+
+            if (dbUser) {
+              userId = dbUser.id;
+            }
+
+            let customerId: string = crypto.randomUUID();
+            const existingCustomer = await env.DB.prepare(
+              'SELECT id FROM billing_customers WHERE email = ? LIMIT 1'
+            ).bind(effectiveEmail).first<{ id: string }>();
+
+            if (existingCustomer) {
+              customerId = existingCustomer.id;
+              if (userId) {
+                await env.DB.prepare('UPDATE billing_customers SET user_id = ?, updated_at = ? WHERE id = ?')
+                  .bind(userId, now, customerId).run();
+              }
+            } else {
+              await env.DB.prepare(
+                'INSERT INTO billing_customers (id, user_id, provider, provider_customer_id, email, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)'
+              ).bind(customerId, userId, 'dodo', `cust_${Date.now()}`, effectiveEmail, now, now).run();
+            }
+
+            // Pro Membership
+            if (body.productKey === 'pro_membership' || !body.dealId) {
+              if (userId) {
+                await env.DB.prepare('UPDATE users SET plan = ?, credits = MAX(credits, 5000), updated_at = ? WHERE id = ?')
+                  .bind('pro', now, userId).run();
+              }
+
+              const periodEnd = now + (body.interval === 'year' ? 365 : 30) * 24 * 60 * 60 * 1000;
+              await env.DB.prepare(
+                'INSERT INTO billing_subscriptions (id, customer_id, provider, provider_subscription_id, status, current_period_end, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (provider, provider_subscription_id) DO UPDATE SET status = excluded.status, updated_at = excluded.updated_at'
+              ).bind(crypto.randomUUID(), customerId, 'dodo', body.paymentId || `sub_${now}`, 'active', periodEnd, now, now).run();
+            }
+
+            // Single Deal Pass
+            if (body.dealId) {
+              await env.DB.prepare(
+                'INSERT INTO billing_purchases (id, customer_id, provider, provider_order_id, product_key, resource_id, amount_minor, currency, last_event_at, created_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) ON CONFLICT (provider, provider_order_id) DO NOTHING'
+              ).bind(crypto.randomUUID(), customerId, 'dodo', body.paymentId || `ord_${now}`, 'deal_pass', body.dealId, 999, 'USD', now, now).run();
+            }
+          } catch (dbErr) {
+            console.error('[Worker] Error confirming checkout in D1:', dbErr);
+          }
+        }
+
+        return jsonResponse({ success: true, verified: isVerified }, 200, origin);
+      }
+
+      // 11. POST /api/billing/sync-user-status
+      if (url.pathname === '/api/billing/sync-user-status' && request.method === 'POST') {
+        const authHeader = request.headers.get('Authorization');
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+          return jsonResponse({ error: 'Unauthorized' }, 401, origin);
+        }
+        const token = authHeader.replace('Bearer ', '').trim();
+        const payload = await verifyJwt(token, secret);
+        if (!payload?.email) {
+          return jsonResponse({ error: 'Invalid token' }, 401, origin);
+        }
+
+        const userEmail = payload.email.toLowerCase();
+        let synced = false;
+        let matchedPayment: any = null;
+
+        if (env.DODO_PAYMENTS_API_KEY) {
+          try {
+            const isTest = env.DODO_MODE === 'test' || env.DODO_PAYMENTS_API_KEY.startsWith('test_');
+            const dodoBase = isTest ? 'https://test.dodopayments.com' : 'https://live.dodopayments.com';
+            const payRes = await fetch(`${dodoBase}/payments`, {
+              headers: { Authorization: `Bearer ${env.DODO_PAYMENTS_API_KEY}` },
+            });
+            if (payRes.ok) {
+              const payList = (await payRes.json()) as any;
+              const items = Array.isArray(payList) ? payList : payList.items || [];
+              for (const item of items) {
+                const itemEmail = (item.customer?.email || item.customer_email || item.email || item.metadata?.userEmail || '').toLowerCase();
+                if (item.status === 'succeeded' && (!itemEmail || itemEmail === userEmail)) {
+                  matchedPayment = item;
+                  synced = true;
+                  break;
+                }
+              }
+            }
+          } catch (err) {
+            console.error('[Worker] Error querying Dodo payments in sync:', err);
+          }
+        }
+
+        if (env.DB && (synced || matchedPayment)) {
+          const now = Date.now();
+          await env.DB.prepare('UPDATE users SET plan = ?, credits = MAX(credits, 5000), updated_at = ? WHERE email = ?')
+            .bind('pro', now, payload.email).run();
+        }
+
+        return jsonResponse({ success: true, synced, payment: matchedPayment }, 200, origin);
+      }
+
+      // 12. GET /api/billing/entitlements
       if (url.pathname === '/api/billing/entitlements' && request.method === 'GET') {
         const authHeader = request.headers.get('Authorization');
         if (!authHeader || !authHeader.startsWith('Bearer ')) {

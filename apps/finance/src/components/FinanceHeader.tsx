@@ -529,11 +529,15 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                 <span className="text-xs font-semibold text-slate-800 hidden sm:inline max-w-[100px] truncate">
                   {user.name || 'Account'}
                 </span>
-                {user.plan === 'pro' && (
+                {user.plan === 'pro' ? (
                   <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-amber-100 text-amber-800 border border-amber-200 uppercase">
                     PRO
                   </span>
-                )}
+                ) : user.purchasedDossiers && user.purchasedDossiers.length > 0 ? (
+                  <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800 border border-emerald-200 uppercase">
+                    PASS
+                  </span>
+                ) : null}
                 <ChevronDown className="size-3 text-slate-400" />
               </button>
 
@@ -579,7 +583,13 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   <div className="py-1 border-b border-slate-100">
                     <div className="px-3 py-1.5 flex items-center justify-between text-[11px]">
                       <span className="text-slate-500">Plan Status</span>
-                      <span className="font-bold text-indigo-600 uppercase">{user.plan || 'Free'}</span>
+                      <span className="font-bold text-indigo-600 uppercase">
+                        {user.plan === 'pro'
+                          ? 'PRO'
+                          : user.purchasedDossiers && user.purchasedDossiers.length > 0
+                          ? `Deal Pass (${user.purchasedDossiers.length})`
+                          : user.plan || 'Free'}
+                      </span>
                     </div>
                     {user.plan !== 'pro' && (
                       <button

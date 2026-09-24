@@ -88,8 +88,8 @@ export interface PaymentProviderAdapter {
  */
 export const SQL = {
   selectCustomer: 'SELECT id FROM billing_customers WHERE provider = ? AND provider_customer_id = ?',
-  touchCustomer: 'UPDATE billing_customers SET email = COALESCE(?, email), updated_at = ? WHERE id = ?',
-  insertCustomer: 'INSERT INTO billing_customers (id, provider, provider_customer_id, email, country, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?) ON CONFLICT (provider, provider_customer_id) DO NOTHING',
+  touchCustomer: 'UPDATE billing_customers SET email = COALESCE(?, email), user_id = COALESCE(user_id, (SELECT id FROM users WHERE email = ? LIMIT 1)), updated_at = ? WHERE id = ?',
+  insertCustomer: 'INSERT INTO billing_customers (id, user_id, provider, provider_customer_id, email, country, created_at, updated_at) VALUES (?, (SELECT id FROM users WHERE email = ? LIMIT 1), ?, ?, ?, ?, ?, ?) ON CONFLICT (provider, provider_customer_id) DO NOTHING',
   claimEvent: 'INSERT INTO billing_webhook_events (id, provider, event_type, received_at) VALUES (?, ?, ?, ?) ON CONFLICT (id) DO NOTHING',
   selectProcessed: 'SELECT processed_at FROM billing_webhook_events WHERE id = ?',
   markProcessed: 'UPDATE billing_webhook_events SET processed_at = ? WHERE id = ?',
@@ -143,7 +143,7 @@ async function upsertCustomer(
   if (existing?.id) {
     await db
       .prepare(SQL.touchCustomer)
-      .bind(email ?? null, now, existing.id)
+      .bind(email ?? null, email ?? null, now, existing.id)
       .run();
     return existing.id;
   }
@@ -151,7 +151,7 @@ async function upsertCustomer(
   const id = UUID();
   await db
     .prepare(SQL.insertCustomer)
-    .bind(id, provider, providerCustomerId, email ?? null, country, now, now)
+    .bind(id, email ?? null, provider, providerCustomerId, email ?? null, country, now, now)
     .run();
   return id;
 }
@@ -228,6 +228,16 @@ export async function processWebhookEvent(
           now
         )
         .run();
+
+      if (s.email) {
+        if (s.status === 'active' || s.status === 'trialing') {
+          await db.prepare('UPDATE users SET plan = ?, credits = MAX(credits, 5000), updated_at = ? WHERE email = ?')
+            .bind('pro', now, s.email).run().catch(() => {});
+        } else if (s.status === 'canceled' || s.status === 'expired') {
+          await db.prepare('UPDATE users SET plan = ?, updated_at = ? WHERE email = ?')
+            .bind('free', now, s.email).run().catch(() => {});
+        }
+      }
     } else if (event.type === 'purchase_upsert') {
       const p = event.purchase;
       const customerId = p.providerCustomerId
@@ -249,6 +259,11 @@ export async function processWebhookEvent(
           now
         )
         .run();
+
+      if (p.productKey === 'pro_membership' && p.email) {
+        await db.prepare('UPDATE users SET plan = ?, credits = MAX(credits, 5000), updated_at = ? WHERE email = ?')
+          .bind('pro', now, p.email).run().catch(() => {});
+      }
     } else if (event.type === 'purchase_refund') {
       // A refund revokes access, guarded so a stale refund cannot re-stamp a newer one.
       await db

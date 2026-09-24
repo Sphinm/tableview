@@ -283,6 +283,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const purchaseSinglePass = async (dealId: string): Promise<boolean> => {
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+    if (token) {
+      fetch('/api/billing/confirm-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productKey: 'deal_pass',
+          dealId,
+          status: 'succeeded',
+        }),
+      }).catch(() => {});
+    }
+
     setUser((prev) => {
       const current: User = prev || {
         id: 'user_' + Date.now(),
@@ -304,6 +320,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const upgradePlan = async (newPlan: 'free' | 'basic' | 'pro'): Promise<boolean> => {
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY);
+    if (token && newPlan === 'pro') {
+      fetch('/api/billing/confirm-checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          productKey: 'pro_membership',
+          status: 'succeeded',
+        }),
+      }).catch(() => {});
+    }
+
     setUser((prev) => {
       const current: User = prev || {
         id: 'user_' + Date.now(),
@@ -333,6 +364,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       interval: options.interval,
       dealId: options.dealId,
     });
+
+    try {
+      sessionStorage.setItem(
+        'tableview_pending_checkout',
+        JSON.stringify({
+          productKey: options.productKey,
+          interval: options.interval,
+          dealId: options.dealId,
+        })
+      );
+    } catch {}
 
     const token = localStorage.getItem(TOKEN_STORAGE_KEY);
     const headers: Record<string, string> = {
@@ -392,6 +434,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // Initialize auth state on mount
   useEffect(() => {
     const initAuth = async () => {
+      let isCheckoutReturn = false;
+
       // 1. Check if returning from a magic link callback (?auth_token=...)
       if (typeof window !== 'undefined') {
         const urlParams = new URLSearchParams(window.location.search);
@@ -405,19 +449,65 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        // 2. Check if returning from checkout (?checkout_success=true)
+        // 2. Check if returning from checkout (?checkout_success=true OR ?status=succeeded OR ?payment_id=...)
         const checkoutSuccess = urlParams.get('checkout_success');
-        if (checkoutSuccess === 'true') {
-          const productKey = urlParams.get('product_key');
-          const unlockedDealId = urlParams.get('unlocked_deal_id');
+        const paymentStatus = urlParams.get('status');
+        const paymentId = urlParams.get('payment_id');
+
+        let pendingCheckout: { productKey?: string; interval?: string; dealId?: string } = {};
+        try {
+          const raw = sessionStorage.getItem('tableview_pending_checkout');
+          if (raw) pendingCheckout = JSON.parse(raw);
+        } catch {}
+
+        if (
+          checkoutSuccess === 'true' ||
+          paymentStatus === 'succeeded' ||
+          paymentStatus === 'completed' ||
+          Boolean(paymentId)
+        ) {
+          isCheckoutReturn = true;
+          const productKey =
+            urlParams.get('product_key') || pendingCheckout.productKey || 'pro_membership';
+          const unlockedDealId =
+            urlParams.get('unlocked_deal_id') || pendingCheckout.dealId;
+          const interval =
+            urlParams.get('interval') || pendingCheckout.interval || 'month';
+
+          try {
+            sessionStorage.removeItem('tableview_pending_checkout');
+          } catch {}
 
           urlParams.delete('checkout_success');
           urlParams.delete('product_key');
           urlParams.delete('unlocked_deal_id');
           urlParams.delete('interval');
           urlParams.delete('session_id');
+          urlParams.delete('status');
+          urlParams.delete('payment_id');
+          urlParams.delete('email');
           const cleanSearch = urlParams.toString() ? `?${urlParams.toString()}` : '';
           window.history.replaceState({}, '', `${window.location.pathname}${cleanSearch}`);
+
+          const storedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
+          try {
+            await fetch('/api/billing/confirm-checkout', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                ...(storedToken ? { Authorization: `Bearer ${storedToken}` } : {}),
+              },
+              body: JSON.stringify({
+                productKey,
+                interval,
+                dealId: unlockedDealId,
+                paymentId,
+                status: paymentStatus || 'succeeded',
+              }),
+            });
+          } catch (e) {
+            console.warn('[Auth] Error confirming checkout:', e);
+          }
 
           if (productKey === 'pro_membership') {
             await upgradePlan('pro');
@@ -431,6 +521,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const storedToken = localStorage.getItem(TOKEN_STORAGE_KEY);
       if (storedToken) {
         try {
+          // If returning from checkout or syncing status, probe sync
+          if (isCheckoutReturn) {
+            await fetch('/api/billing/sync-user-status', {
+              method: 'POST',
+              headers: { Authorization: `Bearer ${storedToken}` },
+            }).catch(() => {});
+          }
+
           const res = await fetch('/api/auth/me', {
             headers: {
               Authorization: `Bearer ${storedToken}`,

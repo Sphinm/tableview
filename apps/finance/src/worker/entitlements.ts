@@ -169,16 +169,19 @@ export function resolveEntitlements(input: {
   ].sort();
 
   const hasLiveSubscription = Boolean(subscription) && isSubscriptionEntitled(subscription!, now);
+  const hasProPurchase = (purchases ?? []).some(
+    (p) => p.productKey === 'pro_membership' && !p.refundedAt
+  );
 
-  if (hasLiveSubscription) {
-    const sub = subscription!;
+  if (hasLiveSubscription || hasProPurchase) {
+    const sub = subscription;
     return {
       plan: 'pro',
       keys: [...PRO_ENTITLEMENTS],
       dealPasses,
-      currentPeriodEnd: sub.currentPeriodEnd,
-      cancelAtPeriodEnd: Boolean(sub.cancelAtPeriodEnd),
-      source: 'subscription',
+      currentPeriodEnd: sub?.currentPeriodEnd ?? undefined,
+      cancelAtPeriodEnd: Boolean(sub?.cancelAtPeriodEnd),
+      source: hasLiveSubscription ? 'subscription' : 'purchase',
     };
   }
 

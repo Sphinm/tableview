@@ -136,6 +136,15 @@ describe('resolveEntitlements', () => {
     expect(state.dealPasses).toEqual(['deal_123']);
   });
 
+  it('grants Pro plan when a pro_membership purchase exists', () => {
+    const state = resolveEntitlements({
+      purchases: [{ productKey: 'pro_membership', resourceId: null, refundedAt: null }],
+      now: NOW,
+    });
+    expect(state.plan).toBe('pro');
+    expect(state.keys).toContain('unlimited_exports');
+  });
+
   it('is deterministic for the same inputs and clock', () => {
     const input = { subscription: sub(), purchases: [pass()], now: NOW };
     expect(resolveEntitlements(input).keys).toEqual(resolveEntitlements(input).keys);

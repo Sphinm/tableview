@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { clsx } from 'clsx';
 import {
   CheckCircle2,
   Sparkles,
@@ -18,7 +19,7 @@ import { STATIC_PAGE_META } from '../data/routeMeta';
 import { BILLING_CONFIG } from '../config/billing';
 
 export const PricingPage: React.FC = () => {
-  const { user, openAuthModal, startCheckout, upgradePlan, purchaseSinglePass, isPro } = useAuth();
+  const { user, openAuthModal, startCheckout, upgradePlan, purchaseSinglePass, isPro, hasDealPass } = useAuth();
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>('year');
   const [isProcessing, setIsProcessing] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
@@ -376,15 +377,34 @@ export const PricingPage: React.FC = () => {
               </div>
             </div>
 
-            <button
-              type="button"
-              disabled={isProcessing}
-              onClick={handleCheckoutSinglePass}
-              className="w-full py-3.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-colors text-center inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
-            >
-              <span>{BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? 'Unlock Free Deal Pass ($0 Beta)' : 'Get Single Deal Pass ($9.99)'}</span>
-              <ArrowRight className="size-3.5" />
-            </button>
+            {(() => {
+              const hasGeneralDealPass = hasDealPass('general_deal') || Boolean(user?.purchasedDossiers && user.purchasedDossiers.length > 0);
+              const isLocked = isPro || hasGeneralDealPass;
+              return (
+                <button
+                  type="button"
+                  disabled={isProcessing || isLocked}
+                  onClick={isLocked ? undefined : handleCheckoutSinglePass}
+                  className={clsx(
+                    "w-full py-3.5 px-4 rounded-xl font-bold text-xs transition-colors text-center inline-flex items-center justify-center gap-2",
+                    isLocked
+                      ? "bg-slate-100 text-slate-500 border border-slate-200 cursor-default"
+                      : "bg-slate-900 hover:bg-slate-800 text-white cursor-pointer disabled:opacity-60"
+                  )}
+                >
+                  <span>
+                    {isPro
+                      ? 'Included in Pro (Unlimited)'
+                      : hasGeneralDealPass
+                      ? 'Deal Pass Active (Unlocked)'
+                      : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS
+                      ? 'Unlock Free Deal Pass ($0 Beta)'
+                      : 'Get Single Deal Pass ($9.99)'}
+                  </span>
+                  {!isLocked && <ArrowRight className="size-3.5" />}
+                </button>
+              );
+            })()}
           </div>
 
           {/* Card 3: TableView Pro */}
@@ -469,14 +489,22 @@ export const PricingPage: React.FC = () => {
 
             <button
               type="button"
-              disabled={isProcessing}
-              onClick={handleCheckoutPro}
-              className="w-full py-3.5 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all shadow-md hover:shadow-indigo-500/25 text-center inline-flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+              disabled={isProcessing || isPro}
+              onClick={isPro ? undefined : handleCheckoutPro}
+              className={clsx(
+                "w-full py-3.5 px-4 rounded-xl font-bold text-xs transition-all text-center inline-flex items-center justify-center gap-2",
+                isPro
+                  ? "bg-emerald-600 text-white cursor-default shadow-xs"
+                  : "bg-indigo-600 hover:bg-indigo-700 text-white shadow-md hover:shadow-indigo-500/25 cursor-pointer disabled:opacity-60"
+              )}
             >
               {isProcessing ? (
-                <span>Activating Free Pro Access...</span>
+                <span>Activating Pro Access...</span>
               ) : isPro ? (
-                <span>Pro Active (Beta Access)</span>
+                <>
+                  <CheckCircle2 className="size-4" />
+                  <span>Pro Plan Active (Current Plan)</span>
+                </>
               ) : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
                 <>
                   <span>Activate Free Pro ($0 Beta)</span>
@@ -657,11 +685,17 @@ export const PricingPage: React.FC = () => {
           <div className="shrink-0 text-center sm:text-right">
             <button
               type="button"
-              onClick={handleCheckoutPro}
-              className="px-6 py-3.5 rounded-xl bg-white hover:bg-slate-100 text-indigo-950 font-black text-xs transition-all shadow-lg active:scale-95 cursor-pointer inline-flex items-center gap-2"
+              disabled={isProcessing || isPro}
+              onClick={isPro ? undefined : handleCheckoutPro}
+              className={clsx(
+                "px-6 py-3.5 rounded-xl font-black text-xs transition-all inline-flex items-center gap-2",
+                isPro
+                  ? "bg-emerald-600 text-white cursor-default shadow-xs"
+                  : "bg-white hover:bg-slate-100 text-indigo-950 shadow-lg active:scale-95 cursor-pointer disabled:opacity-60"
+              )}
             >
-              <span>{isPro ? 'Pro Active (Beta Access)' : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? 'Activate Free Pro ($0 Beta)' : `Upgrade to Pro (${billingCycle === 'month' ? '$19/mo' : '$12.40/mo'})`}</span>
-              <ArrowRight className="size-4 text-indigo-600" />
+              <span>{isPro ? 'Pro Plan Active (Current Plan)' : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? 'Activate Free Pro ($0 Beta)' : `Upgrade to Pro (${billingCycle === 'month' ? '$19/mo' : '$12.40/mo'})`}</span>
+              {!isPro && <ArrowRight className="size-4 text-indigo-600" />}
             </button>
             <div className="text-[11px] text-slate-400 mt-2 font-mono">
               Cancel anytime with 1 click

@@ -280,14 +280,22 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
 
             <button
               type="button"
-              disabled={isProcessing}
+              disabled={isProcessing || isPro || hasDealPass(dealId)}
               onClick={handleBuySinglePass}
-              className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+              className="w-full py-3 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isProcessing ? (
-                <span>Activating Free Beta Pass...</span>
+                <span>Processing...</span>
+              ) : isPro ? (
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="size-4 text-emerald-400" />
+                  Included in Pro (Unlimited)
+                </span>
               ) : hasDealPass(dealId) ? (
-                <span>Deal Pass Unlocked (Active)</span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="size-4 text-emerald-400" />
+                  Deal Pass Active (Unlocked)
+                </span>
               ) : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
                 <>
                   <span>Unlock Free Deal Pass ($0 Beta)</span>
@@ -399,14 +407,17 @@ export const PricingUpgradeModal: React.FC<PricingUpgradeModalProps> = ({
 
             <button
               type="button"
-              disabled={isProcessing}
+              disabled={isProcessing || isPro}
               onClick={handleUpgradePro}
-              className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all shadow-md hover:shadow-indigo-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60"
+              className="w-full py-3 px-4 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs transition-all shadow-md hover:shadow-indigo-500/20 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
             >
               {isProcessing ? (
-                <span>Activating Free Pro Access...</span>
+                <span>Processing...</span>
               ) : isPro ? (
-                <span>Pro Active (Beta Access)</span>
+                <span className="flex items-center gap-1.5">
+                  <CheckCircle2 className="size-4 text-white" />
+                  Pro Plan Active (Current Plan)
+                </span>
               ) : BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
                 <>
                   <span>Activate Free Pro ($0 Beta)</span>
