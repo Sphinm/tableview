@@ -114,6 +114,14 @@ type SentryCapture = (error: unknown, context?: Record<string, any>) => void;
 
 type BufferedError = { error: unknown; context?: Record<string, any> };
 
+type BufferedMessage = {
+  message: string;
+  context?: {
+    level?: 'fatal' | 'error' | 'warning' | 'info' | 'debug';
+    extra?: Record<string, any>;
+  };
+};
+
 type Breadcrumb = {
   category?: string;
   message: string;
@@ -123,6 +131,7 @@ type Breadcrumb = {
 };
 
 const buffer: BufferedError[] = [];
+const messageBuffer: BufferedMessage[] = [];
 const breadcrumbBuffer: Breadcrumb[] = [];
 let pendingUser: { id?: string; email?: string; plan?: string } | null | undefined = undefined;
 
@@ -182,15 +191,29 @@ function loadSentry(): Promise<void> {
       // Privacy: never attach IP address, cookies, or request bodies to an event.
       sendDefaultPii: false,
 
-      // Defense in depth — scrub anything that slipped through at a call site.
+      // Defense in depth — scrub anything that slipped through at a call site,
+      // but preserve explicitly unscrubbed diagnostic data (e.g. AI Copilot test verification).
       beforeSend(event: any) {
-        if (event.extra) event.extra = scrub(event.extra);
+        if (event.extra) {
+          if (event.extra.__skipScrub) {
+            delete event.extra.__skipScrub;
+          } else {
+            event.extra = scrub(event.extra);
+          }
+        }
         if (event.contexts) event.contexts = scrub(event.contexts);
         if (event.breadcrumbs) {
-          event.breadcrumbs = event.breadcrumbs.map((crumb: any) => ({
-            ...crumb,
-            data: crumb.data ? scrub(crumb.data) : crumb.data,
-          }));
+          event.breadcrumbs = event.breadcrumbs.map((crumb: any) => {
+            const data = crumb.data;
+            if (data && data.__skipScrub) {
+              delete data.__skipScrub;
+              return crumb;
+            }
+            return {
+              ...crumb,
+              data: data ? scrub(data) : data,
+            };
+          });
         }
         return event;
       },
@@ -241,6 +264,13 @@ function loadSentry(): Promise<void> {
     for (const crumb of breadcrumbBuffer.splice(0)) {
       if (addBreadcrumbFn) {
         addBreadcrumbFn(crumb);
+      }
+    }
+
+    // Flush buffered instant event messages
+    for (const msg of messageBuffer.splice(0)) {
+      if (captureMessageFn) {
+        captureMessageFn(msg.message, msg.context);
       }
     }
 
@@ -409,7 +439,52 @@ function onUnhandledRejection(event: PromiseRejectionEvent) {
 }
 
 /**
+ * High-value key action patterns that automatically trigger instant Sentry events
+ * (rather than waiting for an error to attach as breadcrumbs).
+ */
+export const HIGH_VALUE_ACTION_PATTERNS = [
+  /calculate_click$/,
+  /export_(excel|pdf|csv)/,
+  /share_deal/,
+  /copy_(link|summary|memo)/,
+  /buy_single_pass/,
+  /upgrade_pro/,
+  /checkout_(initiated|completed)/,
+  /login_(success|failed)/,
+  /dossier_(buy|upgrade|print|export)/,
+  /open_target_click$/,
+  /copilot_/,
+];
+
+/**
+ * Determine if an action name qualifies as a high-value key action.
+ */
+export function isHighValueAction(action: string): boolean {
+  return HIGH_VALUE_ACTION_PATTERNS.some((pattern) => pattern.test(action));
+}
+
+/**
+ * Immediately report an informational or high-value event message to Sentry.
+ * Triggers SDK load if not yet initialized, buffering the message until ready.
+ */
+export function captureMessage(
+  message: string,
+  context?: {
+    level?: 'fatal' | 'error' | 'warning' | 'info' | 'debug';
+    extra?: Record<string, any>;
+  }
+) {
+  if (captureMessageFn) {
+    captureMessageFn(message, context);
+    return;
+  }
+  messageBuffer.push({ message, context });
+  void loadSentry();
+}
+
+/**
  * Record a user action or click event in Sentry breadcrumbs and encrypted telemetry.
+ * Automatically captures high-value actions as immediate Sentry events if not opted out.
  */
 export function trackUserAction(
   action: string,
@@ -418,15 +493,22 @@ export function trackUserAction(
     category?: string;
     level?: 'fatal' | 'error' | 'warning' | 'info' | 'debug';
     captureAsEvent?: boolean;
+    skipScrub?: boolean;
   }
 ) {
   const category = options?.category || 'ui.click';
   const level = options?.level || 'info';
-  const scrubbedData = data ? scrub(data) : undefined;
+  const skipScrub = options?.skipScrub ?? false;
+  const processedData = data
+    ? skipScrub
+      ? { ...data, __skipScrub: true }
+      : scrub(data)
+    : undefined;
+
   const crumb = {
     category,
     message: action,
-    data: scrubbedData,
+    data: processedData,
     level,
     timestamp: Date.now() / 1000,
   };
@@ -437,15 +519,20 @@ export function trackUserAction(
     breadcrumbBuffer.push(crumb);
   }
 
-  if (options?.captureAsEvent && captureMessageFn) {
-    captureMessageFn(action, {
+  // Auto-upgrade high-value actions to immediate Sentry events if not explicitly opted out
+  const shouldCaptureAsEvent =
+    options?.captureAsEvent ?? isHighValueAction(action);
+
+  if (shouldCaptureAsEvent) {
+    captureMessage(action, {
       level,
-      extra: scrubbedData,
+      extra: processedData,
     });
   }
 
   try {
-    trackTelemetryEvent(action, (scrubbedData as any) || {});
+    const telemetryPayload = data ? (skipScrub ? data : scrub(data)) : {};
+    trackTelemetryEvent(action, telemetryPayload as any);
   } catch {
     // Ignore telemetry delivery errors
   }
@@ -454,8 +541,22 @@ export function trackUserAction(
 /**
  * Convenience helper to record button and UI clicks to Sentry.
  */
-export function trackUserClick(buttonName: string, data?: Record<string, any>) {
-  trackUserAction(buttonName, data, { category: 'ui.click' });
+export function trackUserClick(
+  buttonName: string,
+  data?: Record<string, any>,
+  options?: {
+    category?: string;
+    level?: 'fatal' | 'error' | 'warning' | 'info' | 'debug';
+    captureAsEvent?: boolean;
+    skipScrub?: boolean;
+  }
+) {
+  trackUserAction(buttonName, data, {
+    category: options?.category || 'ui.click',
+    level: options?.level || 'info',
+    captureAsEvent: options?.captureAsEvent,
+    skipScrub: options?.skipScrub,
+  });
 }
 
 /**

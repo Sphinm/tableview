@@ -102,9 +102,10 @@ export const AiDealCopilot: React.FC = () => {
         sessionStorage.removeItem(PENDING_DEAL_STORAGE_KEY);
         setRestoredNotice(true);
         trackUserAction('deal_copilot_prompt_refilled', {
+          prompt_text: saved,
           prompt_length: saved.length,
           logged_in: Boolean(user),
-        });
+        }, { captureAsEvent: true, skipScrub: true });
       }
     } catch {
       // Storage unavailable in private browsing mode
@@ -134,18 +135,34 @@ export const AiDealCopilot: React.FC = () => {
     const textToAnalyze = textOverride ?? dealText;
     if (!textToAnalyze.trim()) return;
 
-    // 1. Report click to Sentry
-    trackUserClick('deal_copilot_calculate_click', {
-      has_text: Boolean(textToAnalyze.trim()),
-      prompt_length: textToAnalyze.length,
-      logged_in: Boolean(user),
+    // Instant local calculation & parameter extraction (0ms, client-side)
+    const calc = extractAndCalculateDeal(textToAnalyze, {
+      downPaymentPercent: tweakDp,
+      loanTermYears: tweakTerm,
     });
+    setInstantCalc(calc);
+
+    // 1. Report click and unscrubbed prompt input with extracted metrics to Sentry
+    trackUserClick('deal_copilot_calculate_click', {
+      prompt_text: textToAnalyze,
+      prompt_length: textToAnalyze.length,
+      has_text: Boolean(textToAnalyze.trim()),
+      logged_in: Boolean(user),
+      target_calculator: calc?.targetCalculator,
+      target_title: calc?.targetTitle,
+      target_route: calc?.targetRoute,
+      can_calculate: calc?.canCalculate,
+      primary_metric: calc ? `${calc.primaryMetricLabel}: ${calc.primaryMetricValue}` : undefined,
+      down_payment_pct: tweakDp,
+      loan_term_years: tweakTerm,
+    }, { captureAsEvent: true, skipScrub: true });
 
     // 2. Login verification: If not logged in, prompt Google sign-in and refill text upon return
     if (!user) {
       trackUserAction('deal_copilot_login_required', {
+        prompt_text: textToAnalyze,
         prompt_length: textToAnalyze.length,
-      });
+      }, { captureAsEvent: true, skipScrub: true });
 
       try {
         sessionStorage.setItem(PENDING_DEAL_STORAGE_KEY, textToAnalyze);
@@ -157,8 +174,9 @@ export const AiDealCopilot: React.FC = () => {
           setDealText(textToAnalyze);
           setRestoredNotice(true);
           trackUserAction('deal_copilot_prompt_refilled_callback', {
+            prompt_text: textToAnalyze,
             prompt_length: textToAnalyze.length,
-          });
+          }, { captureAsEvent: true, skipScrub: true });
         },
       });
       return;
@@ -167,15 +185,10 @@ export const AiDealCopilot: React.FC = () => {
     // 3. User is logged in: directly jump to functional calculator page
     setIsAnalyzing(true);
     trackUserAction('deal_copilot_navigating_to_calculator', {
+      prompt_text: textToAnalyze,
       prompt_length: textToAnalyze.length,
-    });
-
-    // Instant local calculation & parameter extraction (0ms, client-side)
-    const calc = extractAndCalculateDeal(textToAnalyze, {
-      downPaymentPercent: tweakDp,
-      loanTermYears: tweakTerm,
-    });
-    setInstantCalc(calc);
+      target_route: calc?.targetRoute || '/mortgage-calculator',
+    }, { captureAsEvent: true, skipScrub: true });
 
     // Determine target calculator URL with prefilled query parameters
     let targetUrl = calc?.prefilledUrl;
@@ -196,7 +209,7 @@ export const AiDealCopilot: React.FC = () => {
   };
 
   const handleTweakDp = (dpPercent: number) => {
-    trackUserAction('deal_copilot_tweak_dp', { dpPercent });
+    trackUserAction('deal_copilot_tweak_dp', { dpPercent, prompt_text: dealText }, { captureAsEvent: true, skipScrub: true });
     setTweakDp(dpPercent);
     executeCalculation(dealText, {
       downPaymentPercent: dpPercent,
@@ -205,7 +218,7 @@ export const AiDealCopilot: React.FC = () => {
   };
 
   const handleTweakTerm = (years: number) => {
-    trackUserAction('deal_copilot_tweak_term', { years });
+    trackUserAction('deal_copilot_tweak_term', { years, prompt_text: dealText }, { captureAsEvent: true, skipScrub: true });
     setTweakTerm(years);
     executeCalculation(dealText, {
       downPaymentPercent: tweakDp,
@@ -215,10 +228,11 @@ export const AiDealCopilot: React.FC = () => {
 
   const handleSelectPreset = (presetText: string, presetTitle?: string) => {
     trackUserClick('deal_copilot_preset_click', {
-      preset: presetTitle,
+      preset_title: presetTitle,
+      prompt_text: presetText,
       length: presetText.length,
       logged_in: Boolean(user),
-    });
+    }, { captureAsEvent: true, skipScrub: true });
     setDealText(presetText);
     setTweakDp(undefined);
     setTweakTerm(undefined);
@@ -247,8 +261,10 @@ export const AiDealCopilot: React.FC = () => {
 
     trackUserClick('deal_copilot_open_target_click', {
       target_url: route,
+      prompt_text: dealText,
+      target_calculator: instantCalc?.targetCalculator,
       logged_in: Boolean(user),
-    });
+    }, { captureAsEvent: true, skipScrub: true });
 
     if (!user) {
       if (dealText.trim()) {
@@ -274,7 +290,11 @@ export const AiDealCopilot: React.FC = () => {
 
   const handleCopyMemo = () => {
     if (!instantCalc) return;
-    trackUserClick('deal_copilot_copy_memo_click');
+    trackUserClick('deal_copilot_copy_memo_click', {
+      prompt_text: dealText,
+      target_calculator: instantCalc.targetCalculator,
+      target_title: instantCalc.targetTitle,
+    }, { captureAsEvent: true, skipScrub: true });
     const paramLines = instantCalc.params
       .map((p) => `• ${p.label}: ${p.formattedValue}${p.isAssumed ? ' (Assumed benchmark)' : ''}`)
       .join('\n');
@@ -326,7 +346,10 @@ export const AiDealCopilot: React.FC = () => {
               <button
                 type="button"
                 onClick={() => {
-                  trackUserClick('deal_copilot_clear_click');
+                  trackUserClick('deal_copilot_clear_click', {
+                    cleared_prompt: dealText,
+                    cleared_length: dealText.length,
+                  }, { captureAsEvent: true, skipScrub: true });
                   setDealText('');
                   setRestoredNotice(false);
                 }}
@@ -367,6 +390,15 @@ export const AiDealCopilot: React.FC = () => {
           <textarea
             value={dealText}
             onChange={(e) => setDealText(e.target.value)}
+            onBlur={() => {
+              if (dealText.trim()) {
+                trackUserAction('deal_copilot_prompt_blur', {
+                  prompt_text: dealText,
+                  prompt_length: dealText.length,
+                  word_count: dealText.trim().split(/\s+/).length,
+                }, { captureAsEvent: true, skipScrub: true });
+              }
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
