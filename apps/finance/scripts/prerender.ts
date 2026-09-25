@@ -458,6 +458,17 @@ function generateStaticPageContentHtml(canonical: string): string {
     `;
   }
 
+  if (canonical === '/account') {
+    return `
+      <article style="max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem; color: #334155; line-height: 1.8;">
+        <header style="text-align: center; margin-bottom: 3rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 2rem;">
+          <h1 style="font-size: 2.5rem; font-weight: 800; color: #0f172a; margin-bottom: 1rem;">My Account &amp; Subscriptions</h1>
+          <p style="font-size: 1.15rem; color: #64748b; line-height: 1.7;">Manage your TableView membership, billing, unlocked deal passes, saved calculation models, and broker white-label branding profile.</p>
+        </header>
+      </article>
+    `;
+  }
+
   return '';
 }
 

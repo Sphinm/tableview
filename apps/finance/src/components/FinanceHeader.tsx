@@ -17,6 +17,9 @@ import {
   ShieldCheck,
   FolderKanban,
   RotateCw,
+  User as UserIcon,
+  CreditCard,
+  ChevronRight,
 } from 'lucide-react';
 import { BrandLogo } from './BrandLogo';
 import { useAuth } from '../lib/useAuth';
@@ -659,12 +662,28 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                     )}
                   </div>
 
-                  <div className="py-1 border-b border-slate-100">
+                  <div className="py-1 border-b border-slate-100 space-y-0.5">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        trackUserClick('header_user_menu_account_hub');
+                        handleNav('/account');
+                        setUserMenuOpen(false);
+                      }}
+                      className="w-full text-left px-3 py-2 text-indigo-700 bg-indigo-50/70 hover:bg-indigo-100/70 rounded-xl flex items-center justify-between font-bold transition-colors cursor-pointer"
+                    >
+                      <div className="flex items-center gap-2">
+                        <UserIcon className="size-3.5 text-indigo-600" />
+                        <span>Account &amp; Subscriptions</span>
+                      </div>
+                      <ChevronRight className="size-3 text-indigo-500" />
+                    </button>
+
                     <button
                       type="button"
                       onClick={() => {
                         trackUserClick('header_user_menu_saved_deals');
-                        setShowSavedDealsModal(true);
+                        handleNav('/account#deals');
                         setUserMenuOpen(false);
                       }}
                       className="w-full text-left px-3 py-2 text-slate-800 hover:bg-slate-50 rounded-xl flex items-center justify-between font-semibold transition-colors cursor-pointer"
@@ -682,7 +701,7 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                       type="button"
                       onClick={() => {
                         trackUserClick('header_user_menu_branding_profile');
-                        setShowBrandingModal(true);
+                        handleNav('/account#branding');
                         setUserMenuOpen(false);
                       }}
                       className="w-full text-left px-3 py-2 text-slate-800 hover:bg-slate-50 rounded-xl flex items-center gap-2 font-semibold transition-colors cursor-pointer"
@@ -739,7 +758,11 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
         <div id="mobile-nav-drawer" className="lg:hidden border-t border-slate-200 bg-white px-4 py-4 space-y-4 max-h-[85vh] overflow-y-auto shadow-lg animate-in fade-in slide-in-from-top-2 duration-150">
           {/* User Status in Mobile Drawer */}
           {user && (
-            <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+            <button
+              type="button"
+              onClick={() => handleNav('/account')}
+              className="w-full p-3 bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-between text-left transition-colors cursor-pointer"
+            >
               <div className="flex items-center gap-2.5">
                 <div className="size-8 rounded-lg bg-indigo-100 text-indigo-700 font-bold text-xs flex items-center justify-center">
                   {user.name ? user.name[0].toUpperCase() : 'U'}
@@ -757,26 +780,29 @@ export const FinanceHeader: React.FC<FinanceHeaderProps> = ({ currentPath }) => 
                   </div>
                 </div>
               </div>
-              <span
-                className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
-                  user.plan === 'pro'
+              <div className="flex items-center gap-1.5">
+                <span
+                  className={`text-[10px] font-bold px-2 py-0.5 rounded uppercase ${
+                    user.plan === 'pro'
+                      ? user.billingInterval === 'year'
+                        ? 'bg-amber-100 text-amber-900 border border-amber-300'
+                        : 'bg-indigo-100 text-indigo-800 border border-indigo-200'
+                      : user.purchasedDossiers && user.purchasedDossiers.length > 0
+                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                      : 'bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  {user.plan === 'pro'
                     ? user.billingInterval === 'year'
-                      ? 'bg-amber-100 text-amber-900 border border-amber-300'
-                      : 'bg-indigo-100 text-indigo-800 border border-indigo-200'
+                      ? 'Pro Annual'
+                      : 'Pro Monthly'
                     : user.purchasedDossiers && user.purchasedDossiers.length > 0
-                    ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                    : 'bg-slate-200 text-slate-700'
-                }`}
-              >
-                {user.plan === 'pro'
-                  ? user.billingInterval === 'year'
-                    ? 'Pro Annual'
-                    : 'Pro Monthly'
-                  : user.purchasedDossiers && user.purchasedDossiers.length > 0
-                  ? 'Deal Pass'
-                  : 'Free'}
-              </span>
-            </div>
+                    ? 'Deal Pass'
+                    : 'Free'}
+                </span>
+                <ChevronRight className="size-3.5 text-slate-400" />
+              </div>
+            </button>
           )}
 
           {/* 1. Residential Accordion */}

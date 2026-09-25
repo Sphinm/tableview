@@ -182,4 +182,16 @@ export const STATIC_PAGE_META: Record<string, PageMeta> = {
       'Upgrade to TableView Pro for unlimited watermark-free PDF Pre-Approval Dossiers, live formula Excel models, and custom white-label branding.',
     canonical: '/pricing',
   },
+  '/account': {
+    title: 'My Account & Subscriptions | TableView.dev',
+    description:
+      'Manage your TableView membership, billing, unlocked single deal passes, saved calculation models, and broker white-label branding profile.',
+    canonical: '/account',
+  },
+  '/profile': {
+    title: 'My Account & Subscriptions | TableView.dev',
+    description:
+      'Manage your TableView membership, billing, unlocked single deal passes, saved calculation models, and broker white-label branding profile.',
+    canonical: '/account',
+  },
 };

@@ -140,6 +140,8 @@ describe('Route resolution used by both runtime and prerenderer', () => {
     expect(resolveRoutePath('/calculators/should-i-refinance.php').path).toBe('/refinance-calculator');
     expect(resolveRoutePath('/fix-and-flip-calculator').path).toBe('/hard-money-calculator');
     expect(resolveRoutePath('/brrrr').path).toBe('/brrrr-calculator');
+    expect(resolveRoutePath('/account').path).toBe('/account');
+    expect(resolveRoutePath('/profile').path).toBe('/account');
   });
 
   it('no longer claims data-tool or compressor URLs for the finance suite', () => {

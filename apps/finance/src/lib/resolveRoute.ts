@@ -85,6 +85,7 @@ const STATIC_ALIASES: { pattern: RegExp; path: string }[] = [
   { pattern: /^\/(?:about|about-us)$/, path: '/about' },
   { pattern: /^\/(?:contact|contact-us|support)$/, path: '/contact' },
   { pattern: /^\/(?:pricing|upgrade|plans)$/, path: '/pricing' },
+  { pattern: /^\/(?:account|profile)$/, path: '/account' },
 ];
 
 export const GUIDE_ALIASES: Record<string, string> = {
@@ -178,6 +179,7 @@ export const KNOWN_ROUTES: ReadonlySet<string> = new Set([
   '/terms',
   '/disclaimer',
   '/pricing',
+  '/account',
 ]);
 
 export function isKnownRoute(path: string): boolean {
