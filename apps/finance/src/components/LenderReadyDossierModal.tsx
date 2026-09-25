@@ -18,6 +18,7 @@ import { Dialog } from '@tableview/ui';
 import { useAuth } from '../lib/useAuth';
 import { trackUserClick } from '../lib/sentry';
 import { BILLING_CONFIG } from '../config/billing';
+import { DossierSamplePreviewModal } from './DossierSamplePreviewModal';
 
 interface LenderReadyDossierModalProps {
   isOpen: boolean;
@@ -41,6 +42,7 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
   const { user, openAuthModal, startCheckout, upgradePlan, purchaseSinglePass, isPro, hasDealPass } = useAuth();
   const [isProcessing, setIsProcessing] = useState(false);
   const [billingCycle, setBillingCycle] = useState<'month' | 'year'>('year');
+  const [showSamplePreview, setShowSamplePreview] = useState(false);
 
   if (!isOpen) return null;
 
@@ -121,8 +123,9 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
   };
 
   return (
-    <Dialog
-      onClose={onClose}
+    <>
+      <Dialog
+        onClose={onClose}
       labelledBy="lender-dossier-title"
       overlayClassName="fixed inset-0 z-50 overflow-y-auto p-4 sm:p-6 bg-slate-900/60 backdrop-blur-xs flex justify-center items-center animate-in fade-in duration-200"
       panelClassName="relative w-full max-w-4xl bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden my-auto"
@@ -272,6 +275,33 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
                 </div>
               )}
 
+              {/* Interactive Sample Dossier Preview Callout */}
+              <button
+                type="button"
+                onClick={() => setShowSamplePreview(true)}
+                className="w-full p-3 rounded-xl bg-gradient-to-r from-indigo-50 via-blue-50 to-indigo-50 hover:from-indigo-100 hover:to-blue-100 border border-indigo-200/90 text-indigo-950 text-xs font-bold flex items-center justify-between transition-all cursor-pointer shadow-2xs group"
+              >
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-lg bg-indigo-600 text-white shadow-2xs group-hover:scale-105 transition-transform">
+                    <FileText className="size-4" />
+                  </div>
+                  <div className="text-left">
+                    <div className="text-xs font-extrabold text-indigo-950 flex items-center gap-1.5">
+                      <span>Curious what your deliverable looks like?</span>
+                      <span className="text-[10px] px-1.5 py-0.2 rounded bg-amber-200 text-amber-900 uppercase font-black">
+                        Live Preview
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-slate-600 font-normal">
+                      Click to explore an interactive 4-page underwriter packet with CFPB QM audit and broker branding
+                    </div>
+                  </div>
+                </div>
+                <span className="text-xs text-indigo-700 font-extrabold flex items-center gap-1 shrink-0 ml-2">
+                  View Sample <ArrowRight className="size-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </span>
+              </button>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Card 1: Single Deal Pass */}
                 <div className="rounded-2xl border border-slate-200 bg-white p-6 flex flex-col justify-between hover:border-slate-300 transition-all shadow-xs">
@@ -297,12 +327,21 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
                             Free Beta Pass
                           </span>
                         </div>
-                        <span className="text-[11px] text-slate-400 line-through">Standard: $9.99 one-time payment</span>
+                        <span className="text-[11px] text-slate-400 line-through">Standard: $29.99 one-time payment</span>
                       </div>
                     ) : (
-                      <div className="flex items-baseline gap-1 mb-5">
-                        <span className="text-3xl font-black font-mono text-slate-900">$9.99</span>
-                        <span className="text-xs text-slate-500 font-medium">one-time payment</span>
+                      <div className="flex flex-col gap-1 mb-5">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-3xl font-black font-mono text-slate-900">$9.99</span>
+                          <span className="text-xs text-slate-400 line-through font-mono">$29.99</span>
+                          <span className="text-[10px] font-extrabold uppercase bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full border border-emerald-200">
+                            67% OFF
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-emerald-800 font-semibold flex items-center gap-1">
+                          <BadgeCheck className="size-3.5 text-emerald-600 shrink-0" />
+                          <span>Lifetime Revisions &amp; Re-downloads for this deal</span>
+                        </span>
                       </div>
                     )}
 
@@ -317,11 +356,11 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
-                        <span>Itemized Cash-to-Close & CFPB QM 28/43% DTI Audit</span>
+                        <span>Itemized Cash-to-Close &amp; CFPB QM 28/43% DTI Audit</span>
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2 className="size-4 text-emerald-700 shrink-0 mt-0.5" />
-                        <span>30-day re-access & modification window</span>
+                        <span>Lifetime modification window with 0 extra fees</span>
                       </li>
                       <li className="flex items-start gap-2 text-slate-400">
                         <Lock className="size-3.5 shrink-0 mt-0.5" />
@@ -414,12 +453,23 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
                         </span>
                       </div>
                     ) : (
-                      <div className="flex items-baseline gap-2 mb-5">
-                        <span className="text-3xl font-black font-mono text-indigo-950">
-                          ${billingCycle === 'year' ? '12.40' : '19'}
-                        </span>
-                        <span className="text-xs text-slate-500 font-medium">
-                          / month {billingCycle === 'year' && '(billed $149/yr)'}
+                      <div className="flex flex-col gap-1 mb-5">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-3xl font-black font-mono text-indigo-950">
+                            ${billingCycle === 'year' ? '12.40' : '19'}
+                          </span>
+                          <span className="text-xs text-slate-500 font-medium">
+                            / mo
+                          </span>
+                          <span className="text-xs text-slate-400 line-through font-mono">
+                            {billingCycle === 'year' ? '$228' : '$39'}
+                          </span>
+                          <span className="text-[10px] font-extrabold uppercase bg-indigo-100 text-indigo-800 px-2 py-0.5 rounded-full border border-indigo-200">
+                            {billingCycle === 'year' ? 'Save $79' : '50% OFF'}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-indigo-900 font-semibold">
+                          {billingCycle === 'year' ? 'Billed $149/year · Unlimited deals' : 'Billed monthly · Cancel anytime'}
                         </span>
                       </div>
                     )}
@@ -490,6 +540,15 @@ export const LenderReadyDossierModal: React.FC<LenderReadyDossierModalProps> = (
             </div>
           </div>
         </div>
-    </Dialog>
+      </Dialog>
+
+      <DossierSamplePreviewModal
+        isOpen={showSamplePreview}
+        onClose={() => setShowSamplePreview(false)}
+        onUnlockClick={() => {
+          setShowSamplePreview(false);
+        }}
+      />
+    </>
   );
 };

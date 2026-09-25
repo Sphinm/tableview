@@ -286,13 +286,6 @@ export const LoanComparisonCalculator = () => {
               type="button"
               onClick={() => {
                 trackUserClick('loan_comparison_lender_dossier_click', { logged_in: Boolean(user) });
-                if (!user) {
-                  openAuthModal({
-                    reason: 'Please sign in with Google to access CFPB QM Lender-Ready Dossier.',
-                    onSuccess: () => setShowDossierModal(true),
-                  });
-                  return;
-                }
                 setShowDossierModal(true);
               }}
               className="h-9 px-3.5 rounded-xl bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white text-xs font-bold shadow-xs hover:shadow-amber-500/20 transition-all active:scale-95 cursor-pointer inline-flex items-center gap-1.5 shrink-0"
@@ -926,6 +919,44 @@ export const LoanComparisonCalculator = () => {
           </a>
         </div>
       </div>
+
+      {/* Unauthenticated User Hook Banner */}
+      {!user && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-indigo-950 via-slate-900 to-indigo-950 text-white flex flex-col md:flex-row items-center justify-between gap-4 shadow-md border border-indigo-500/30 animate-in fade-in print:hidden">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-400/30 shrink-0">
+              <Sparkles className="size-5 text-amber-300" />
+            </div>
+            <div className="text-left">
+              <div className="text-sm font-extrabold text-white flex items-center gap-2">
+                <span>Save this loan comparison &amp; track lender offers</span>
+                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-400 text-emerald-950 font-black uppercase">
+                  100% Free
+                </span>
+              </div>
+              <p className="text-xs text-slate-300 mt-0.5 leading-snug">
+                Sign in with Google to save up to 3 cross-calculator deal scenarios in cloud sync and get 30 free AI Deal Copilot credits every month.
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2.5 shrink-0 w-full sm:w-auto">
+            <button
+              type="button"
+              onClick={() => {
+                trackUserClick('loan_comp_inline_free_signup_click');
+                openAuthModal({
+                  reason: 'Sign in with Google to save your scenarios and unlock 30 free monthly AI Deal Copilot credits.',
+                });
+              }}
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-white text-slate-950 hover:bg-slate-100 font-extrabold text-xs shadow-md transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-95"
+            >
+              <span>Sign In with Google (Free)</span>
+              <ArrowRight className="size-3.5 text-indigo-600" />
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Related Calculators Cross-Sell */}
       <div className="mb-12 print:hidden">

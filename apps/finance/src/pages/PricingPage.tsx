@@ -17,6 +17,7 @@ import { trackUserClick } from '../lib/sentry';
 import { updatePageMeta } from '../lib/router';
 import { STATIC_PAGE_META } from '../data/routeMeta';
 import { BILLING_CONFIG } from '../config/billing';
+import { DossierSamplePreviewModal } from '../components/DossierSamplePreviewModal';
 
 export const PricingPage: React.FC = () => {
   const { user, openAuthModal, startCheckout, upgradePlan, purchaseSinglePass, isPro, hasDealPass } = useAuth();
@@ -24,6 +25,7 @@ export const PricingPage: React.FC = () => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(null);
   const [successBanner, setSuccessBanner] = useState<string | null>(null);
+  const [showSamplePreview, setShowSamplePreview] = useState(false);
 
   useEffect(() => {
     const meta = STATIC_PAGE_META['/pricing'] || {
@@ -141,6 +143,14 @@ export const PricingPage: React.FC = () => {
     {
       q: 'Can I cancel my TableView Pro subscription anytime?',
       a: 'Yes, with a single click. When you cancel, you will retain full Pro access until the end of your prepaid billing period with zero cancellation penalties or hidden fees.',
+    },
+    {
+      q: 'What is the Lifetime Revision Guarantee for Single Deal Pass?',
+      a: 'If market interest rates change, property tax rates shift, or your purchase price is negotiated down, you can modify any scenario parameters and re-download your official PDF Dossier and dynamic Excel model anytime with zero extra fees.',
+    },
+    {
+      q: 'Are the CFPB QM calculations compliant with federal underwriter guidelines?',
+      a: 'Yes. All underwriting rules strictly follow federal CFPB Regulation Z (12 CFR § 1026.43) Qualified Mortgage guidelines, verifying 28/43% front-and-back DTI ratios, points & fees thresholds, and standard 30-year amortization safe harbor rules.',
     },
   ];
 
@@ -378,12 +388,21 @@ export const PricingPage: React.FC = () => {
                       Free During Beta
                     </span>
                   </div>
-                  <span className="text-xs text-slate-400 line-through">Standard: $9.99 one-time payment</span>
+                  <span className="text-xs text-slate-400 line-through">Standard: $29.99 one-time payment</span>
                 </div>
               ) : (
-                <div className="flex items-baseline gap-1.5 mb-6">
-                  <span className="text-4xl font-black font-mono text-slate-950">$9.99</span>
-                  <span className="text-xs text-slate-500 font-medium">one-time payment · lifetime access</span>
+                <div className="flex flex-col gap-1.5 mb-6">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black font-mono text-slate-950">$9.99</span>
+                    <span className="text-base text-slate-400 line-through font-mono">$29.99</span>
+                    <span className="text-[11px] font-extrabold uppercase bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-200">
+                      67% OFF
+                    </span>
+                  </div>
+                  <span className="text-xs text-emerald-800 font-semibold flex items-center gap-1">
+                    <BadgeCheck className="size-4 text-emerald-600 shrink-0" />
+                    <span>One-time fee · Lifetime revision guarantee</span>
+                  </span>
                 </div>
               )}
 
@@ -398,7 +417,7 @@ export const PricingPage: React.FC = () => {
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong>Full Formula Excel (.xlsx):</strong> Dynamic 360-month PMT, IPMT & PPMT formulas</span>
+                    <span><strong>Full Formula Excel (.xlsx):</strong> Dynamic 360-month PMT, IPMT &amp; PPMT formulas</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
@@ -406,11 +425,11 @@ export const PricingPage: React.FC = () => {
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong>Itemized Cash-to-Close Audit:</strong> Prepaid interest, points & escrow reserves</span>
+                    <span><strong>Itemized Cash-to-Close Audit:</strong> Prepaid interest, points &amp; escrow reserves</span>
                   </li>
                   <li className="flex items-start gap-2.5">
                     <CheckCircle2 className="size-4 text-emerald-600 shrink-0 mt-0.5" />
-                    <span><strong>Lifetime Access:</strong> Modify and re-download anytime for this deal</span>
+                    <span><strong>Lifetime Revisions:</strong> Modify rates and re-download anytime with zero extra fees</span>
                   </li>
                   <li className="flex items-start gap-2.5 text-slate-400">
                     <Lock className="size-3.5 shrink-0 mt-0.5" />
@@ -479,7 +498,7 @@ export const PricingPage: React.FC = () => {
               </p>
 
               {BILLING_CONFIG.PUBLIC_BETA_FREE_ACCESS ? (
-                <div className="flex flex-col gap-0.5 mb-6">
+                <div className="flex flex-col gap-0.5 mb-4">
                   <div className="flex items-baseline gap-2">
                     <span className="text-4xl font-black font-mono text-indigo-950">$0</span>
                     <span className="text-[11px] font-extrabold uppercase bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full border border-emerald-200">
@@ -491,15 +510,31 @@ export const PricingPage: React.FC = () => {
                   </span>
                 </div>
               ) : (
-                <div className="flex items-baseline gap-2 mb-6">
-                  <span className="text-4xl font-black font-mono text-indigo-950">
-                    ${billingCycle === 'year' ? '12.40' : '19.00'}
-                  </span>
-                  <span className="text-xs text-slate-500 font-medium">
-                    / month {billingCycle === 'year' ? '(billed $149/year)' : '(billed monthly)'}
+                <div className="flex flex-col gap-1 mb-4">
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-4xl font-black font-mono text-indigo-950">
+                      ${billingCycle === 'year' ? '12.40' : '19.00'}
+                    </span>
+                    <span className="text-xs text-slate-500 font-medium">
+                      / mo
+                    </span>
+                    <span className="text-base text-slate-400 line-through font-mono">
+                      {billingCycle === 'year' ? '$228' : '$39'}
+                    </span>
+                    <span className="text-[11px] font-extrabold uppercase bg-indigo-100 text-indigo-800 px-2.5 py-0.5 rounded-full border border-indigo-200">
+                      {billingCycle === 'year' ? 'Save $79 (35% OFF)' : '50% OFF'}
+                    </span>
+                  </div>
+                  <span className="text-xs text-indigo-900 font-semibold">
+                    {billingCycle === 'year' ? 'Billed $149/year · Unlimited client deals' : 'Billed monthly · Cancel anytime'}
                   </span>
                 </div>
               )}
+
+              {/* ROI Reality Check Banner */}
+              <div className="p-3 rounded-xl bg-indigo-100/70 border border-indigo-200/80 mb-5 text-[11px] text-indigo-950 leading-snug">
+                💡 <strong>Broker ROI Reality Check:</strong> A single closed mortgage loan generates $3,000–$8,000 in fee commission. TableView Pro pays for itself 150x over with your very first client presentation.
+              </div>
 
               <div className="border-t border-indigo-100 pt-5 space-y-3 mb-8">
                 <div className="text-[11px] font-bold uppercase tracking-wider text-indigo-900">
@@ -594,6 +629,73 @@ export const PricingPage: React.FC = () => {
                 </button>
               );
             })()}
+          </div>
+        </div>
+      </section>
+
+      {/* Interactive Sample Deliverable Showcase */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+        <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 text-white p-7 sm:p-9 shadow-xl border border-indigo-500/30 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="space-y-2 text-center md:text-left">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-[11px] font-bold border border-indigo-400/30">
+              <Sparkles className="size-3.5 text-amber-300" />
+              <span>Full Visual Deliverable Transparency</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              See the Exact 4-Page Institutional Dossier
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-300 max-w-xl leading-relaxed">
+              Explore our live interactive sample containing the white-label brokerage header, federal CFPB QM 28/43% compliance audit, itemized cash-to-close statement, and 360-month amortization schedule.
+            </p>
+          </div>
+
+          <div className="shrink-0">
+            <button
+              type="button"
+              onClick={() => setShowSamplePreview(true)}
+              className="py-3.5 px-6 rounded-xl bg-white text-slate-950 hover:bg-slate-100 font-extrabold text-xs shadow-lg hover:shadow-white/20 transition-all flex items-center gap-2 cursor-pointer active:scale-95"
+            >
+              <span>Explore Live 4-Page Sample</span>
+              <ArrowRight className="size-4 text-indigo-600" />
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Enterprise & Brokerage Team Banner (Tier 4 High-End Anchor) */}
+      <section className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 sm:p-8 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xs">
+          <div className="space-y-1.5 text-center md:text-left">
+            <div className="flex items-center justify-center md:justify-start gap-2">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-500 font-mono">
+                Enterprise &amp; Multi-Seat
+              </span>
+              <span className="px-2 py-0.5 rounded-full bg-slate-900 text-white text-[10px] font-bold">
+                5 Team Seats
+              </span>
+            </div>
+            <h4 className="text-xl font-black text-slate-900">
+              TableView Brokerage Team &amp; Advisory Desk
+            </h4>
+            <p className="text-xs text-slate-600 max-w-xl">
+              For mortgage branches, real estate brokerages, and syndicates requiring centralized deal scenario storage, shared client pipelines, co-branded loan officer cards, and dedicated account support.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center gap-4 shrink-0">
+            <div className="text-center sm:text-right">
+              <div className="flex items-baseline gap-1">
+                <span className="text-3xl font-black font-mono text-slate-900">$59</span>
+                <span className="text-xs text-slate-500 font-medium">/ month</span>
+              </div>
+              <div className="text-[11px] text-slate-400 font-mono">$499/year (Save $209)</div>
+            </div>
+            <a
+              href="mailto:support@tableview.dev?subject=Inquiry%20about%20TableView%20Brokerage%20Team%20Plan"
+              className="py-3 px-5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs transition-colors cursor-pointer text-center"
+            >
+              Contact Team Desk
+            </a>
           </div>
         </div>
       </section>
@@ -821,6 +923,16 @@ export const PricingPage: React.FC = () => {
           })}
         </div>
       </section>
+
+      <DossierSamplePreviewModal
+        isOpen={showSamplePreview}
+        onClose={() => setShowSamplePreview(false)}
+        onUnlockClick={() => {
+          setShowSamplePreview(false);
+          // Scroll smoothly to the pricing cards
+          window.scrollTo({ top: 380, behavior: 'smooth' });
+        }}
+      />
     </div>
   );
 };
