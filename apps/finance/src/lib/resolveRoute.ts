@@ -314,7 +314,7 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
   }
 
   // Informational
-  for (const path of ['/about', '/contact', '/privacy', '/terms', '/disclaimer', '/pricing']) {
+  for (const path of ['/about', '/contact', '/privacy', '/terms', '/disclaimer', '/pricing', '/account']) {
     add(path, path);
   }
   add('/privacy-policy', '/privacy');
@@ -323,6 +323,7 @@ export function listPrerenderTargets(): { url: string; canonical: string }[] {
   add('/upgrade', '/pricing');
   add('/plans', '/pricing');
   add('/contact-us', '/contact');
+  add('/profile', '/account');
 
   return [...targets].map(([url, canonical]) => ({ url, canonical }));
 }
